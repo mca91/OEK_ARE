@@ -1,0 +1,46 @@
+---
+title: "Advanced R for Econometricians"
+author: 
+  - "Martin Arnold"
+  - "Alexander Gerber"
+date: '`r Sys.Date()`'
+output:
+  xaringan::moon_reader:
+    seal: false
+    self_contained: true # if true, fonts will be stored locally
+    lib_dir: libs
+    css: ["default", "assets/sydney-fonts.css", "assets/sydney.css", "assets/custom.css", "assets/title_slides.css"]
+    nature:
+      highlightStyle: github
+      highlightLines: true
+      countIncrementalSlides: false
+      ratio: "16:9"
+---
+## Outline
+.pull-left[
+1. [Introduction](Introduction/Introduction.html)
+2. Prerequisites
+   - Rmarkdown
+   - Git and Github
+3. Data Visualisation with ggplot 
+3. Data Wrangling and Transformation
+   - dplyr
+   - data.table
+4. Advanced R Programming 
+  - Functional Programming
+  - Object Oriented Programming 
+]
+.pull-right[
+<ol start = "6">
+<li>  Performance </li> 
+<ul>
+  <li> Profiling and Benchmarking </li> 
+  <li> Parallelisation </li>
+  <li> Rcpp </li>
+</ul>
+<li> Web Scraping  </li>
+<li> Shiny </li>
+<li> Writing Packages </li>
+<li>Text Mining  </li>
+</ol>
+]
