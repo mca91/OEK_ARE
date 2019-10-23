@@ -9,6 +9,8 @@ output:
   xaringan::moon_reader:
     seal: false
     lib_dir: libs
+    includes:
+      in_header: "../assets/meta.html"
     css: ["default", "../assets/sydney-fonts.css", "../assets/sydney.css", "../assets/custom.css", "../assets/title_slides.css"]
     nature:
       highlightStyle: github

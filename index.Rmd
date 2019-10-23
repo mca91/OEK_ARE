@@ -7,6 +7,8 @@ date: '`r Sys.Date()`'
 output:
   xaringan::moon_reader:
     seal: false
+    includes:
+      in_header: "assets/meta.html"
     self_contained: true # if true, fonts will be stored locally
     lib_dir: libs
     css: ["default", "assets/sydney-fonts.css", "assets/sydney.css", "assets/custom.css", "assets/title_slides.css"]

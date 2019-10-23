@@ -9,7 +9,7 @@ output:
     self_contained: true # if true, fonts will be stored locally
     seal: false # show a title slide with YAML information
     includes:
-      in_header: "../assets/mathjax-equation-numbers.html"
+      in_header: ["../assets/mathjax-equation-numbers.html", "../assets/meta.html"]
     nature:
       beforeInit: ["../assets/remark-zoom.js", "https://platform.twitter.com/widgets.js"]
       highlightStyle: github
