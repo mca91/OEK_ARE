@@ -5,13 +5,13 @@
     <meta charset="utf-8" />
     <meta name="author" content="Martin Arnold" />
     <meta name="author" content="Alexander Gerber" />
-    <meta name="date" content="2019-10-23" />
+    <meta name="date" content="2019-10-24" />
     <link href="libs/remark-css-0.0.1/default.css" rel="stylesheet" />
     <meta name="robots" content="noindex">
-    <link rel="stylesheet" href="../assets/sydney-fonts.css" type="text/css" />
-    <link rel="stylesheet" href="../assets/sydney.css" type="text/css" />
-    <link rel="stylesheet" href="../assets/custom.css" type="text/css" />
-    <link rel="stylesheet" href="../assets/title_slides.css" type="text/css" />
+    <link rel="stylesheet" href="..\assets\sydney-fonts.css" type="text/css" />
+    <link rel="stylesheet" href="..\assets\sydney.css" type="text/css" />
+    <link rel="stylesheet" href="..\assets\custom.css" type="text/css" />
+    <link rel="stylesheet" href="..\assets\title_slides.css" type="text/css" />
   </head>
   <body>
     <textarea id="source">
@@ -45,6 +45,12 @@ Slides, exercises and announcements will be provided on
 The password for the course is **"Hadley"**.  
 &lt;br&gt;
 On Moodle you will find a link to [Datacamp](https://www.datacamp.com) which will give you free access to all their content. 
+
+???
+Background? 
+R and Rstudio installed? 
+What do you know about R? 
+
 
 ---
 ## Grading
@@ -106,8 +112,8 @@ class: top, left
 class: top, left
 ## Sources
 
-- [Advanced R](http://adv-r.had.co.nz/) by Hadley Wickham
-- [R for Data Science](https://adv-r.hadley.nz/) by Hadley Wickham and Garrett Grolemund
+- [Advanced R](https://adv-r.hadley.nz/) by Hadley Wickham
+- [R for Data Science](https://r4ds.had.co.nz) by Hadley Wickham and Garrett Grolemund
 - The Art of R Programming by Norman Matloff
 - The [Use R!](https://www.springer.com/series/6991) Series by Springer
 - The [R Series](https://www.crcpress.com/go/the-r-series) by CRC Press
@@ -289,6 +295,9 @@ You should also be familiar with the basic data types (character, double, intege
 ???
 
 ```r
+object.size(1:1000)
+object.size(as.numeric(1:1000))
+
 char_vector &lt;- c("Hi", "there")
 typeof(char_vector)
 class(char_vector)
@@ -307,7 +316,6 @@ plus &lt;- function(a, b){
 
 plus(1, "a")
 ```
-
 
 
 ---
@@ -363,7 +371,7 @@ The basic control flows are conditionals (choices) and loops.
 2. What will be the value of `y` in the following code if `x` is `TRUE`? What if `x` is `FALSE`? What if `x` is `NA`?
     
     ```r
-    y &lt;- if (x) 3
+    y &lt;- if(x) 3
     ```
 3. What is returned by the following code? 
     
@@ -376,6 +384,10 @@ The basic control flows are conditionals (choices) and loops.
 
 
 ```r
+if("2") 3
+if(2) 3
+
+
 for(i in 1:3){
   print(i)
 }
@@ -411,7 +423,7 @@ class: top, left
     
     ```r
     f1 &lt;- function() x
-    x &lt;- "global"
+    x  &lt;- "global"
     f2 &lt;- function(){
       x &lt;- "local_f2"
       f1()
@@ -703,7 +715,10 @@ mean &lt;- function(x) sum(x)
 
 ---
 ## Exercises
-1. Combine all elements of `df_list` to one data frame. The result should be only a single line of code.   
+
+&lt;ol start = "1" &gt;
+&lt;li&gt; Combine all elements of &lt;TT&gt;df_list&lt;/TT&gt; to one data frame. The result should be only a single line of code. &lt;/li&gt;
+&lt;/ol&gt;
 
 ```r
 df_list &lt;- lapply(0:4, function(j) data.frame(c1 = (1:5) + 5 * j,
@@ -712,23 +727,29 @@ df_list &lt;- lapply(0:4, function(j) data.frame(c1 = (1:5) + 5 * j,
                   )
 ```
 
-2. Fix each of the following common data frame subsetting errors:
-    
-    ```r
+&lt;ol start = "2" &gt;
+&lt;li&gt; Fix each of the following common data frame subsetting errors: &lt;/li&gt;
+&lt;/ol&gt;
+
+```r
     mtcars[mtcars$cyl = 4, ]
     mtcars[-1:4, ]
     mtcars[mtcars$cyl &lt;= 5]
     mtcars[mtcars$cyl == 4 | 6, ]
-    ```
+```
 
-3. What does `df[is.na(df)] &lt;- 0` do?
+&lt;ol start = "3" &gt;
+&lt;li&gt;  What does &lt;TT&gt;df[is.na(df)] &lt;- 0&lt;/TT&gt; do? &lt;/li&gt;
+&lt;/ol&gt;
 
-4. How would you randomly permute the columns of a data frame? 
+&lt;ol start = "4" &gt;
+&lt;li&gt;How would you randomly permute the columns of a data frame?&lt;/li&gt;
+&lt;/ol&gt;
 
 ---
 ## Exercises
 &lt;ol start = "5" &gt;
-&lt;li&gt;Write a &lt;TT&gt;while&lt;/TT&gt; and a &lt;TT&gt;repeat&lt;/TT&gt; loop doing the same as 
+&lt;li&gt;Write a &lt;TT&gt;while&lt;/TT&gt; and a &lt;TT&gt;repeat&lt;/TT&gt; loop doing the same as &lt;/li&gt; 
 &lt;/ol&gt;
 
 ```r

@@ -8,7 +8,7 @@ date: '`r Sys.Date()`'
 output:
   xaringan::moon_reader:
     seal: false
-    self: true
+    self: false
     lib_dir: libs
     css: ["default", "../assets/sydney-fonts.css", "../assets/sydney.css", "../assets/custom.css"]
     nature:
