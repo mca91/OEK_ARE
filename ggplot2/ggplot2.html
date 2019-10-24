@@ -227,7 +227,8 @@ class: left, top
 ## Geometric Objects and Statistic Transformations
 
 - Layers may be defined in terms of a geometric object (`geom_*`) or a statistical transformation (`stat_*`).
-- Each geometric object is associated with a default statistical transformation and vice versa.
+- Each geometric object is associated with a default statistical transformation and vice versa.  
+
      **Examples**: 
 
     - `geom_point()` has the identity function as statistical transformation.
@@ -242,7 +243,7 @@ class: left, top
 1. Use the `mtcars` data set and plot `mpg` vs. `hp`. Add a smoothing line to the plot. 
 2. Add for each number of cylinders a linear smoothing function to the plot.
 3. Find out how to remove the confidence interval. 
-4. Instead of a simple linear model use a quatratic function for smoothing.  
+4. Use a simple linear regression model and a qutratic regression model for smoothing.  
  
 
 
@@ -311,9 +312,8 @@ ggplot(data = diamonds, mapping = aes(carat, price)) +
 
 ---
 class: left, top
-## Faceting
+## Faceting using one variable
 - Faceting generates multiple plots each showing a different subset of the data.
-
 
 ```r
 ggplot(data = diamonds, mapping = aes(carat, price))  + 
@@ -321,15 +321,21 @@ ggplot(data = diamonds, mapping = aes(carat, price))  +
   facet_grid( ~ cut)
 ```
 
----
-class: left, top
-## Faceting using one variable
-&lt;img src="ggplot2_files/figure-html/unnamed-chunk-22-1.png" width="72%" style="display: block; margin: auto;" /&gt;
+&lt;img src="ggplot2_files/figure-html/unnamed-chunk-21-1.png" width="50%" style="display: block; margin: auto;" /&gt;
 
 ---
 class: left, top
 ## Faceting using two variables
-&lt;img src="ggplot2_files/figure-html/unnamed-chunk-23-1.png" width="72%" style="display: block; margin: auto;" /&gt;
+
+```r
+ggplot(data = diamonds, mapping = aes(carat, price))  + 
+  geom_point() + 
+  facet_grid(color  ~ cut)
+```
+
+&lt;img src="ggplot2_files/figure-html/unnamed-chunk-22-1.png" width="50%" style="display: block; margin: auto;" /&gt;
+
+
 
 ---
 class: left, top
@@ -354,17 +360,17 @@ class: left, top
 ---
 class: left, top
 ## Stacked Bar Plot 
-&lt;img src="ggplot2_files/figure-html/unnamed-chunk-27-1.png" width="72%" style="display: block; margin: auto;" /&gt;
+&lt;img src="ggplot2_files/figure-html/unnamed-chunk-26-1.png" width="72%" style="display: block; margin: auto;" /&gt;
 
 ---
 class: left, top
 ## Dodged Bar Plot 
-&lt;img src="ggplot2_files/figure-html/unnamed-chunk-28-1.png" width="72%" style="display: block; margin: auto;" /&gt;
+&lt;img src="ggplot2_files/figure-html/unnamed-chunk-27-1.png" width="72%" style="display: block; margin: auto;" /&gt;
 
 ---
 class: left, top
 ## Filled Bar Plot
-&lt;img src="ggplot2_files/figure-html/unnamed-chunk-29-1.png" width="72%" style="display: block; margin: auto;" /&gt;
+&lt;img src="ggplot2_files/figure-html/unnamed-chunk-28-1.png" width="72%" style="display: block; margin: auto;" /&gt;
 
 ---
 class: left, top
@@ -378,7 +384,7 @@ class: left, top
 ggplot(diamonds, aes(carat, price, color = cut)) + geom_point() + scale_color_grey()
 ```
 
-&lt;img src="ggplot2_files/figure-html/unnamed-chunk-30-1.png" width="50%" style="display: block; margin: auto;" /&gt;
+&lt;img src="ggplot2_files/figure-html/unnamed-chunk-29-1.png" width="50%" style="display: block; margin: auto;" /&gt;
 
 ---
 class: left, top
@@ -392,7 +398,7 @@ ggplot(diamonds, aes(carat, price, color = cut)) +
   scale_color_manual(values = c("#c9792e", "blue", "green", "gray", "thistle2"))
 ```
 
-&lt;img src="ggplot2_files/figure-html/unnamed-chunk-31-1.png" width="50%" style="display: block; margin: auto;" /&gt;
+&lt;img src="ggplot2_files/figure-html/unnamed-chunk-30-1.png" width="50%" style="display: block; margin: auto;" /&gt;
 
 ---
 class: left, top
@@ -415,7 +421,7 @@ ggplot(diamonds, aes(x = carat, y = price, fill = cut)) +
 ---
 class: left, top
 ## Titles and labels 
-&lt;img src="ggplot2_files/figure-html/unnamed-chunk-33-1.png" width="72%" style="display: block; margin: auto;" /&gt;
+&lt;img src="ggplot2_files/figure-html/unnamed-chunk-32-1.png" width="72%" style="display: block; margin: auto;" /&gt;
 
 ---
 class: left, top
@@ -441,7 +447,7 @@ ggplot(diamonds, aes(carat, price, color = cut)) +
 class: left, top
 ## Themes
 
-&lt;img src="ggplot2_files/figure-html/unnamed-chunk-35-1.png" width="72%" style="display: block; margin: auto;" /&gt;
+&lt;img src="ggplot2_files/figure-html/unnamed-chunk-34-1.png" width="72%" style="display: block; margin: auto;" /&gt;
 
 ---
 class: left, top
@@ -469,7 +475,7 @@ class: left, top
 
 ---
 &lt;ol start="4"&gt;
-&lt;li&gt;Repreoduce the following plot with &lt;TT&gt;ggplot&lt;/TT&gt;.&lt;/li&gt;
+&lt;li&gt;Repreoduce the plot created by the following code with &lt;TT&gt;ggplot&lt;/TT&gt;.&lt;/li&gt;
 
 
 ```r
