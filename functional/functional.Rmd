@@ -6,40 +6,24 @@ author:
 date: '`r Sys.Date()`'
 output:
   xaringan::moon_reader:
-    seal: false
-    lib_dir: libs
-    css: ["../xaringan_files/xaringan-themer.css", "../xaringan_files/custom.css"]
+    css: ["default", "../assets/sydney-fonts.css", "../assets/sydney.css", "../assets/title_slides.css"]
+    self_contained: true # if true, fonts will be stored locally
+    seal: false # show a title slide with YAML information
+    includes:
+      in_header: ["../assets/mathjax-equation-numbers.html", "../assets/meta.html"]
     nature:
-      beforeInit: ../xaringan_files/macros.js
-      highlightStyle: solarized-dark
+      beforeInit: ["../assets/remark-zoom.js", "https://platform.twitter.com/widgets.js"]
+      highlightStyle: github
       highlightLines: true
       countIncrementalSlides: false
-      #ratio: '16:9'
-    includes:
-      in_header: ../xaringan_files/mathjax-equation-numbers.html
-      after_body: ../xaringan_files/terminal_highlight.html
+      ratio: '16:9' # alternatives '16:9' or '4:3' or others e.g. 13:9
+      navigation:
+        scroll: false # disable slide transitions by scrolling
 ---
 
 ```{r setup, include=FALSE}
 options(htmltools.dir.version = F)
 knitr::opts_chunk$set(warning = F, message = F)
-```
-
-```{r xaringan-themer, include=FALSE}
-# solarized_dark(
-#   code_font_family = "Fira Code",
-#   code_font_url    = "https://cdn.rawgit.com/tonsky/FiraCode/1.204/distr/fira_code.css"
-# )
-# library(xaringanthemer)
-# 
-# mono_accent(
-#     base_color           = "#09017F",
-#     header_font_google   = google_font("Roboto", "700"),
-#     text_font_google     = google_font("Roboto Condensed"),
-#     code_highlight_color = "#D2B6E8",
-#     code_font_family     = "Fira Code",
-#     code_font_url        = "https://cdn.rawgit.com/tonsky/FiraCode/1.204/distr/fira_code.css"
-#     )
 ```
 
 ```{r, include=FALSE}
