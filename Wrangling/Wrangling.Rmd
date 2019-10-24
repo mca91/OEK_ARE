@@ -580,7 +580,7 @@ class: top, left
 
 A full (outer) join matches rows from the left and the right table and keeps all observations
 ```{r, echo = TRUE, results='markup'}
-band_members %>% outer_join(band_instruments, by = "name")
+band_members %>% full_join(band_instruments, by = "name")
 ```
 ---
 class: top, left
