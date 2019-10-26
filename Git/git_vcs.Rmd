@@ -39,7 +39,7 @@ class: title-slide title-git center middle
 all versions in a data base. 
 <br>
 ```{r, eval = TRUE, echo = FALSE, out.width = "500px", fig.align='center'}
-knitr::include_graphics("img/git1.PNG")
+knitr::include_graphics("/img/git1.PNG")
 ```
 
 ---
@@ -49,7 +49,7 @@ knitr::include_graphics("img/git1.PNG")
 - You could achieve something similar with:
 <br>
 ```{r, eval = TRUE, echo = FALSE, out.width = "200px", fig.align='left'}
-knitr::include_graphics("img/git2.PNG")
+knitr::include_graphics("/img/git2.PNG")
 ```
 
 Why you should use Git instead of a simple folder structure?
