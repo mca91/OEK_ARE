@@ -175,7 +175,7 @@ With the basic command `git commit` all files in the **staging area** are commit
 - Running ` git commit` in the terminal by default opens the text editor VIM.  
 
     ```{r, eval = TRUE, echo = FALSE, out.width = "300px", fig.align='left'}
-knitr::include_graphics("img/git3.PNG")
+knitr::include_graphics("/img/git3.PNG")
     ```
 
 - If you don't want to spend time on learning VIM in order to write commit messages you should change the default editor. On windows you might switch to 
@@ -206,7 +206,7 @@ git commit - m "initial commit"
 <br>
 .center[
 ```{r, eval = TRUE, echo = FALSE, out.width = "800px"}
-knitr::include_graphics("img/git5.PNG")
+knitr::include_graphics("/img/git5.PNG")
 ```
 <br>
 Source: [Pro Git](https://git-scm.com/book/en/v2/Git-Basics-Recording-Changes-to-the-Repository)
@@ -354,7 +354,7 @@ Set up a remote repository:
 2. Login to your Github account and go to + 	&rarr; New repository
 
     ```{r, eval = TRUE, echo = FALSE, out.width = "300px", fig.align='left'}
-knitr::include_graphics("img/git4.PNG")
+knitr::include_graphics("/img/git4.PNG")
     ```
 
 ---
