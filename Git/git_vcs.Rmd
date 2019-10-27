@@ -371,14 +371,18 @@ git push -u origin master
 ---
 ## `git push`
 
-Every `commit` changes the Git repository on your local machine. To update 
+- Every `commit` changes the Git repository on your local machine. To update 
 the remote repository on Github you also need to `push` your local commits. 
 
-Add a new file to your repository. Then add, commit and push the new file.   
+- Add a new file to your repository. Then add, commit and push the new file.   
 
-```terminal 
+    ```terminal 
 C:\myProject>git push
-```
+    ```
+- The first time you push something to a remote repository you need `git push -u origin master`. 
+  After that `git push` is enough and `origin` is used as the default upstream branch. In case you start
+  working with branches you need to learn more about this.  
+
 
 ---
 ## Collaborate
