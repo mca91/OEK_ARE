@@ -280,9 +280,9 @@ git commit -m "remove HelloGit.txt"
     ```
 - If you only want to remove a file from the tracked files but keep it in your working directory run 
 
-```terminal
+    ```terminal
 git rm --cached HelloGit.txt
-```
+    ```
 
 
 ---
@@ -460,7 +460,8 @@ Automatic merge failed; fix conflicts and then commit the result.
 ---
 ## Solving conflicts
 
-- Instead of solving the conflict, Git will parepare the file in a way that makes it easy for you to solve the conflict yourself. Look for everything starting with`&lt;&lt;&lt;&lt;&lt;&lt;&lt; HEAD` and ending with `&gt;&gt;&gt;&gt;&gt;&gt;&gt; refs/...`. 
+- Instead of solving the conflict, Git will parepare the file in a way that makes it easy for you to solve the conflict yourself. Look for everything starting with `&lt;&lt;&lt;&lt;&lt;&lt;&lt; HEAD` and ending with   
+`&gt;&gt;&gt;&gt;&gt;&gt;&gt; refs/...`. 
 
 ```terminal
 &lt;&lt;&lt;&lt;&lt;&lt;&lt; HEAD
@@ -487,7 +488,7 @@ How are you? I hope you don't run into too many conflicts.
 - As a rule of thumb only track source files (e.g. only the `.rmd` but not the generated `.html` file)
 - Git ignores all files which are specified in the file `.gitignore`.
 - Since it would be cumbersome to specify each file that shouldn't be tracked separately Git allows the usage of patterns.
-- Learn more about it in the [[gitignore documentation](https://git-scm.com/docs/gitignore).
+- Learn more about it in the [gitignore documentation](https://git-scm.com/docs/gitignore).
 
 #### Example `.gitignore` file
 ```terminal
