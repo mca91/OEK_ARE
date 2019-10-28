@@ -622,7 +622,7 @@ else {
     ```{r}
 if (y < 0 && debug) message("Y is negative")
     ```
-]
+
 
 - Strive to limit your code to 80 characters per line. 
 - If you find yourself running out of room, this is a good indication that you should encapsulate some of the work in a separate function.

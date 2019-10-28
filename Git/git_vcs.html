@@ -70,14 +70,12 @@ On the Git hompage ([Git documentation](https://git-scm.com/doc)) you find
 ## First Steps 
 
 Before we can use Git we need to install it:
-- look for current releases on https://git-scm.com/downloads. &lt;br&gt;  
---
+- Look for current releases on https://git-scm.com/downloads. 
 - To check if Git was successfully installed open the terminal and run the command `git --version`.
     ```terminal
 $ git --version
 git version 2.11.0.windows.1
-    ```
---
+```
 - Next, set your user name and email address.
     ```terminal
 git config --global user.name "John Doe"
@@ -563,7 +561,24 @@ if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
     }
     deleted = true;
   });
-})();</script>
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
 
 <script>
 (function() {

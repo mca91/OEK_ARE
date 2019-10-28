@@ -71,14 +71,12 @@ On the Git hompage ([Git documentation](https://git-scm.com/doc)) you find
 ## First Steps 
 
 Before we can use Git we need to install it:
-- look for current releases on https://git-scm.com/downloads. <br>  
---
+- Look for current releases on https://git-scm.com/downloads. 
 - To check if Git was successfully installed open the terminal and run the command `git --version`.
     ```terminal
 $ git --version
 git version 2.11.0.windows.1
-    ```
---
+```
 - Next, set your user name and email address.
     ```terminal
 git config --global user.name "John Doe"
