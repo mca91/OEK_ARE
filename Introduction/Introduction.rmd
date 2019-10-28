@@ -633,7 +633,6 @@ if (y < 0 && debug) message("Y is negative")
 
 #### Assignment
 - Use `<-`, not `=`, for assignment.
-
 .code80[
     ```{r}
 # Good
