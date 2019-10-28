@@ -619,10 +619,11 @@ else {
 #### Spacing
 
 - It’s ok to leave very short statements on the same line:
+.code80[
     ```{r}
 if (y < 0 && debug) message("Y is negative")
     ```
-
+]
 
 - Strive to limit your code to 80 characters per line. 
 - If you find yourself running out of room, this is a good indication that you should encapsulate some of the work in a separate function.
@@ -632,12 +633,15 @@ if (y < 0 && debug) message("Y is negative")
 
 #### Assignment
 - Use `<-`, not `=`, for assignment.
+
+.code80[
     ```{r}
 # Good
 x <- 5
 # Bad
 x = 5
     ```
+]
 
 ---
 #### Commenting guidelines

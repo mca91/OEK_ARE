@@ -678,11 +678,12 @@ mean &lt;- function(x) sum(x)
 #### Spacing
 
 - It’s ok to leave very short statements on the same line:
+.code80[
     
     ```r
     if (y &lt; 0 &amp;&amp; debug) message("Y is negative")
     ```
-
+]
 
 - Strive to limit your code to 80 characters per line. 
 - If you find yourself running out of room, this is a good indication that you should encapsulate some of the work in a separate function.
@@ -692,6 +693,8 @@ mean &lt;- function(x) sum(x)
 
 #### Assignment
 - Use `&lt;-`, not `=`, for assignment.
+
+.code80[
     
     ```r
     # Good
@@ -699,6 +702,7 @@ mean &lt;- function(x) sum(x)
     # Bad
     x = 5
     ```
+]
 
 ---
 #### Commenting guidelines
