@@ -68,7 +68,7 @@ mtcars_tibble <- as_tibble(mtcars)
     print(mtcars_tibble)
     ```
 
-- more consistent subsetting behaviour
+- more consistent subsetting behavior
     ```{r, echo = TRUE, eval = FALSE}
 mtcars[ ,1:2] # returns a data.frame
 mtcars[ ,1]   # returns a vector 
@@ -353,7 +353,7 @@ class: top, left
   - flew to Houston (IAH or HOU).
   - were delayed by at least an hour, but made up over 30 minutes in flight.
   - departed between midnight and 6am. 
-3. Which flights took the longest? Which travelled the shortest?  
+3. Which flights took the longest? Which traveled the shortest?  
 4. Brainstorm as many ways as possible to select `dep_time`, `dep_delay`, `arr_time`, and `arr_delay`.
 5. Create a new variable `first_flight` which takes the value `TRUE` if it is the first flight of the day. 
 
@@ -504,7 +504,6 @@ iris %>% summarise_at(c("Sepal.Length", "Sepal.Width"), mean)
     ```
 
 
-
 ---
 class: top, left
 ## Advanced Topics 
@@ -604,7 +603,7 @@ band_members %>% anti_join(band_instruments, by = "name")
 class: top, left
 ## Reshaping Data with tidy R
 
-The goal of tidyr is to help you create tidy data. Tidy data is data where:
+The goal of `tidyr` is to help you create tidy data. Tidy data is data where:
 
 - Each variable is in a column.
 - Each observation is a row.
@@ -659,7 +658,7 @@ table2 %>%
 tidyr::table4b
 ```
 
-- Columns do not cointain variables and column names are values. 
+- Columns do not contain variables and column names are values. 
 
 ---
 ## Gathering

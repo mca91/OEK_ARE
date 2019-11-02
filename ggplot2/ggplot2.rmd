@@ -252,7 +252,7 @@ class: left, top
 - Often it is not a good idea to change the default behaviour (e.g. try  `geom_point(stat = "smooth", method = "lm")`) but we will see an example where it can be useful.
 
 ---
-### Exercises
+## Exercises
 1. Use the `mtcars` data set and plot `mpg` vs. `hp`. Add a smoothing line to the plot. 
 2. Add for each number of cylinders a linear smoothing function to the plot.
 3. Find out how to remove the confidence interval. 
@@ -342,7 +342,7 @@ class: left, top
 ```{r, echo = TRUE, eval = TRUE, out.width='50%'}
 ggplot(data = diamonds, mapping = aes(carat, price))  + 
   geom_point() + 
-  facet_grid(color  ~ cut)
+  facet_grid(color ~ cut)
 ```
 
 
@@ -359,7 +359,7 @@ ggplot(data = diamonds) +
     ```{r, echo = TRUE, eval = FALSE}
   geom_bar(., position = "dodge") 
     ```
-- With `fill` relative proportians can be compared.
+- With `fill` relative proportions can be compared.
     ```{r, echo = TRUE, eval = FALSE}
 geom_bar(., position = "fill") 
     ```
@@ -472,8 +472,8 @@ class: left, top
 1. Download the Titanic data set from Moodle and 
 
 - use a bar plot to show how many people survived the Titanic compared to those who didn't. 
-- add a color coding to the previous plot to visualize the differences between the passangers gender.
-- split the previous plot into three plots based on the passangers class. 
+- add a color coding to the previous plot to visualize the differences between the passengers gender.
+- split the previous plot into three plots based on the passengers class. 
 - compare the age distribution between the survivors and non-survivors.  
 
 <ol start="2">
@@ -490,7 +490,7 @@ class: left, top
 
 ---
 <ol start="4">
-<li>Repreoduce the plot created by the following code with <TT>ggplot</TT>.</li>
+<li>Reproduce the plot created by the following code with <TT>ggplot</TT>.</li>
 
 ```{r, echo = TRUE, eval = FALSE}
 plot(mtcars$mpg ~ mtcars$wt, xlab = "wt", ylab = "mpg", pch = 19, ylim = c(5, 35))
