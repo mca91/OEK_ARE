@@ -19,7 +19,7 @@ output:
 ---
 ```{r, include = FALSE, cache = FALSE}
 library(knitr)
-knitr::opts_chunk$set(eval = TRUE)
+knitr::opts_chunk$set(eval = FALSE)
 
 default_source_hook <- knit_hooks$get("source")
 knit_hooks$set(
@@ -34,6 +34,12 @@ knit_hooks$set(
   }
 )
 ```
+
+class: title-slide center middle
+
+
+# `r rmarkdown::metadata$title`
+## `r rmarkdown::metadata$subtitle`
 
 
 ---
@@ -145,7 +151,7 @@ con <- DBI::dbConnect(
                )
     ```
 
-```{r, eval = TRUE, echo = FALSE}
+```{r, eval = FALSE, echo = FALSE}
 library(dplyr)
 con <- DBI::dbConnect(
                drv = RMariaDB::MariaDB(), # MariaDB driver works for MySQL as well

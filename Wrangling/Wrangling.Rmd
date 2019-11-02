@@ -31,7 +31,7 @@ class: title-slide title-wrangling center middle
 ---
 class: top, left
 ## Tibble
-- Tibbles are the main data structure used in the tidyverse and can be viewed as a modern version of the data frame. 
+- Tibbles are the main data structure used in the `tidyverse` and can be viewed as a modern version of the data frame. 
 
 - `tibble()` creates a new tibble from scratch.
     ```{r, echo = TRUE, eval = TRUE}
@@ -379,7 +379,7 @@ by_cyl <- group_by(mtcars_tibble, cyl)
 print(summarise(by_cyl, mean(mpg)))
 ```
 
-Use `ungroup()` remove the grouping, when you want to work on the whole data set again. 
+Use `ungroup()` to remove the grouping, when you want to work on the whole data set again. 
 
 ---
 class: top, left
@@ -411,7 +411,8 @@ class: top, left
 ## The Pipe
 
 Usually, we combine multiple operations, e.g. first we filter, then we mutate, group and finally summarise. 
-To do this we could save an intermediate result after each step like this:
+
+We could do it like this: 
 
 ```{r, echo = TRUE}
 filtered   <- filter(mtcars_tibble, cyl <= 8)
@@ -441,7 +442,7 @@ However, readability gets worse and debugging will become much harder.
 class: top, left
 ## The Pipe
 
-That is where the pipe operator `%>%` from the `magrittr` comes in handy.
+That is where the pipe operator `%>%` from the `magrittr` package comes in handy.
 The value on the left side of the operator becomes the input to the function on the right side. 
 
 ```{r, echo = TRUE}
@@ -585,15 +586,15 @@ band_members %>% full_join(band_instruments, by = "name")
 class: top, left
 ## Semi Join
 
-A semi-join keeps all observations of the left table where there are matching values in the right table.
+A semi join keeps all observations of the left table where there are matching values in the right table.
 It keeps only columns from the left. 
 ```{r, echo = TRUE, results='markup'}
 band_members %>% semi_join(band_instruments, by = "name")
 ```
 ---
 class: top, left
-## Anti-Join
-A anti-join returns all rows from the first table where no matches are found in the second table.
+## Anti Join
+An anti join returns all rows from the first table where no matches are found in the second table.
  
 ```{r, echo = TRUE, results='markup'}
 band_members %>% anti_join(band_instruments, by = "name")
@@ -605,9 +606,9 @@ class: top, left
 
 The goal of `tidyr` is to help you create tidy data. Tidy data is data where:
 
-- Each variable is in a column.
-- Each observation is a row.
-- Each value is a cell.
+- each variable is in a column
+- each observation is a row
+- each value is a cell.
 
 We will talk about 
 
@@ -693,11 +694,12 @@ As input it takes:
 - `sep`, a regular expression which tells the function where to split (by default any non-alphanumeric character)
 - `convert`, a logical value which controls whether or not to run `run type.convert()` on the new columns.
 
+.code70[
 ```{r, echo = TRUE}
 table3 %>% 
   separate(rate, into = c("cases", "population"), convert = TRUE)
 ```
-
+]
 ---
 ## Untidy Data
 
@@ -718,7 +720,7 @@ As input it takes:
 
 ```{r, echo = TRUE}
 table5 %>% 
-  unite(new, century, year, sep = "")
+  unite(year, century, year, sep = "")
 ```
 
 ---
