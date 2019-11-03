@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+  <head>
+    <title>Shiny</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Alexander Gerber" />
+    <meta name="date" content="2018-11-05" />
+    <link href="Shiny_files/remark-css-0.0.1/default.css" rel="stylesheet" />
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        TeX: { equationNumbers: { autoNumber: "AMS" } },
+      });
+    </script>
+    <style>
+    .mjx-mrow a {
+      color: black;
+      pointer-events: none;
+      cursor: default;
+    }
+    </style>
+    <link rel="stylesheet" href="..\assets\sydney-fonts.css" type="text/css" />
+    <link rel="stylesheet" href="..\assets\sydney.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
+
+# Shiny
+### Alexander Gerber
+### 5 November 2018
+
+---
+
+
+
+## What is Shiny? 
+
+The `shiny` package allows to build interactive web applications for data analysis.
+
+It can be used for, e.g.
+
+- building a graphical user interface for R
+- reporting results
+- creating interactive documents.
+
+To build a Shiny app you only need to learn the Shiny syntax.  
+If you want to customize your app you can use HTML/CSS/Javascript.  
+
+Here are some examples: 
+
+- [K-Means](https://shiny.rstudio.com/gallery/kmeans-example.html)
+- [Genome Viewer](https://shiny.rstudio.com/gallery/genome-browser.html)
+- [Dashboard](https://www.rgonzo.us/shiny/apps/textanalysis/)
+  
+There is also a [cheatsheet](https://shiny.rstudio.com/images/shiny-cheatsheet.pdf). 
+  
+---
+
+
+
+## Structure
+
+A Shiny app consist of 2 parts
+
+1. The user interface script 
+    - controls the layout and appearance of your app.
+    - contains elements for user input.
+    - contains the output you want to visualize.
+2. The server script
+    - contains the instructions for the R session which always works behind the scene.
+    - takes the user input and produces the output which is send back to the UI.
+
+---
+
+## A minimal example 
+
+
+
+```r
+library(shiny)
+
+# The user interface
+ui &lt;- fluidPage()
+
+# Instructions for the R backend
+server &lt;- function(input, output) {}
+
+# Run the shiny app 
+shinyApp(ui = ui, server = server)
+```
+
+Another way to build an app is 
+- create a new directory (say `.../App-1`) with files `ui.R` and `server.R`
+- run `shiny::runApp(".../App-1"). `
+
+---
+
+## User Interface  
+
+We will now extend our app by adding a simple sidebar layout. 
+
+
+```r
+ui &lt;- fluidPage(
+  
+  titlePanel("Title Panel"), 
+
+  sidebarLayout(
+       sidebarPanel( "Sidebar Panel"),
+       mainPanel("Main Panel")
+       )
+)
+server &lt;- function(input, output) {}
+shinyApp(ui = ui, server = server)
+```
+
+- `fluidPage()` creates a new website that we can fill with content.
+-  Type any of those functions in the R console to see that HTML Code is returned. 
+
+---
+## Adding Elements for User Input 
+  
+
+```r
+ui &lt;- fluidPage(
+  titlePanel("Title Panel"), 
+  sidebarLayout(
+    sidebarPanel("Sidebar Panel",
+                 br(),                               # linebreak
+                 br(),
+                 sliderInput(
+                 inputId = "num",                    # input value can be accessed from the server 
+                 label = "Choose a number",          # function via the inputId
+                 value = 25, min = 1, max = 100)
+                 ),
+    mainPanel("Main Panel")
+  )
+)
+```
+  
+You can find an overview of input elements [here](https://shiny.rstudio.com/gallery/widget-gallery.html).
+A very convenient input element not yet contained in the overview is [varSelectInput](https://shiny.rstudio.com/reference/shiny/latest/varSelectInput.html). 
+---
+## Create Output in the Server Function 
+
+The server function takes the input from the UI and returns e.g. text, plots or tables
+back to the UI. 
+
+There are some rules: 
+
+- the input is accessed by `input$inputId`.
+- the output that depends on user input needs to be created by a render function.
+- the output to be displayed needs to be saved as `output$outputId`.
+
+
+
+```r
+server &lt;- function(input, output) {
+  
+  output$hist &lt;- renderPlot({ 
+    hist(rnorm(input$num)) 
+    })
+  
+}
+```
+
+
+---
+## Display Output in the User Interface
+
+Output can be added to the user interface by one of the output functions. 
+
+
+```r
+ui &lt;- fluidPage(
+  titlePanel("Title Panel"), 
+  sidebarLayout(
+    
+    sidebarPanel("Sidebar Panel",
+                 br(),                        
+                 br(),
+                 sliderInput(inputId = "num", 
+                       label = "Choose a number", 
+                       value = 25, min = 1, max = 100)
+                       ),
+    
+    mainPanel("Main Panel",
+              br(),                    
+              br(),
+              plotOutput("hist")
+              )
+  )
+)
+```
+
+
+
+---
+## Which Render and Output Functions belong together?
+&lt;br&gt;
+&lt;table&gt;
+ &lt;thead&gt;
+  &lt;tr&gt;
+   &lt;th style="text-align:left;"&gt; Render Function &lt;/th&gt;
+   &lt;th style="text-align:left;"&gt; Output Function &lt;/th&gt;
+   &lt;th style="text-align:left;"&gt; What? &lt;/th&gt;
+  &lt;/tr&gt;
+ &lt;/thead&gt;
+&lt;tbody&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; dataTableOutput &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; renderDataTable &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; DT::datatable &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; htmlOutput &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt;  &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; raw HTML &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; imageOutput &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; renderImage &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; e.g. .png, .jpeg &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; plotOutput &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; renderPlot &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; e.g. a ggplot &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; tableOutput &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; renderTable &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; e.g. data frame, matrix &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; textOutput &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; renderText &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; value output &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; verbatimTextOutput &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; renderPrint &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; print output &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; uiOutput &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; renderUI &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; shiny UI element &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+
+---
+## Exercises
+
+Install and load the `gapminder` package.
+
+1. Recreate the following app.  
+Hints: The variables on the x and y axis must be numeric. The values returned by the input widgets are character strings.  
+
+    &lt;img src="../img/shiny1.png" width="800px" /&gt;
+
+
+
+---
+&lt;ol start=2&gt;
+&lt;li&gt; Add two more input variables that control the color and size of the points. &lt;/li&gt;
+&lt;li&gt; Add a slider that allows to subset the data by year.&lt;br&gt;
+&lt;br&gt;
+    &lt;img src="../img/shiny2.png" width="700px" /&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+
+---
+## Reactivity
+
+We have seen that the output created by a render function changes automatically when we change input values. This behavior is called reactivity. 
+
+- There are 3 kinds of reactive objects. 
+
+&lt;img src="../img/shiny_reactivity1.png" width="50%" style="display: block; margin: auto;" /&gt;
+
+- The reactive source is usually the user input which are accessible through `input$some_input` It can only have dependents (it is always a parent node). 
+- The reactive endpoint is usually produced by one of the render functions and assigned to `output$some_output`. It can only be dependent (it is always a child node). 
+
+
+
+---
+## Reactivity
+
+We have already written a simple app using those two elements.  
+
+&lt;img src="../img/shiny_reactivity2.png" width="20%" style="display: block; margin: auto;" /&gt;
+
+Whenever  `input$some_input` changes the reactive endpoints using this input are notified that they need to re-execute. 
+
+Which reactive structure has the following code?
+
+
+```r
+# Calculate nth number in Fibonacci sequence
+fib &lt;- function(n) ifelse(n&lt;3, 1, fib(n-1)+fib(n-2))
+
+server &lt;- function(input, output) {
+  output$nthValue    &lt;- renderText({ fib(as.numeric(input$n)) })
+  output$nthValueInv &lt;- renderText({ 1 / fib(as.numeric(input$n)) })
+}
+```
+
+---
+## Reactivity
+
+Which structure has the following code?
+
+
+```r
+# Calculate nth number in Fibonacci sequence
+fib &lt;- function(n) ifelse(n&lt;3, 1, fib(n-1)+fib(n-2))
+
+server &lt;- function(input, output) {
+  output$nthValue    &lt;- renderText({ fib(as.numeric(input$n)) })
+  output$nthValueInv &lt;- renderText({ 1 / fib(as.numeric(input$n)) })
+}
+```
+
+There are two children nodes depending on one parent node. 
+
+&lt;img src="../img/shiny_reactivity4.png" width="25%" style="display: block; margin: auto;" /&gt;
+
+Furthermore, each of the children evaluates `fib()` separately, which leads to redundant computations.  
+
+---
+## Reactivity
+
+Using a reactive conductor created by `reactive()` the function `fib()` executes only once.  
+
+
+```r
+fib &lt;- function(n) ifelse(n&lt;3, 1, fib(n-1)+fib(n-2))
+
+server &lt;- function(input, output) {
+  # reactive conductor depending on reactive source
+  currentFib         &lt;- reactive({ fib(as.numeric(input$n)) })
+  # reactive endpoints depending on reactive conductor
+  output$nthValue    &lt;- renderText({ currentFib() })
+  output$nthValueInv &lt;- renderText({ 1 / currentFib() })
+}
+```
+
+&lt;img src="../img/shiny_reactivity3.png" width="30%" style="display: block; margin: auto;" /&gt;
+  
+Note that you need `()` (here ` currentFib()`) to access the value computed by `reactive()`. 
+
+---
+## Prevent reactivity with `isolate()`
+
+Consider the case where we we have multiple inputs and the receiving end node runs some heavy computation.   
+
+&lt;img src="../img/shiny_isolate1.svg" width="30%" style="display: block; margin: auto;" /&gt;
+  
+  
+  
+What is the problem here?
+
+---
+## Example 
+
+
+
+```r
+ui &lt;- fluidPage(
+  numericInput("n", "Number of observations" ,10),
+  numericInput("mean", "Mean" ,10),
+  numericInput("sd", "Standard Deviation" ,10),
+  actionButton("goButton", "Go!"),
+  plotOutput("hist")
+)
+
+server &lt;- function(input, output) {
+  
+output$hist &lt;- renderPlot({
+  x &lt;- rnorm(input$n, mean = input$mean, sd = input$sd)
+  hist(x)
+  })
+
+} 
+
+shinyApp(ui, server)
+```
+
+
+---
+## Prevent reactivity with `isolate()`
+
+We can solve this by making the render function producing the output unresponsive to the parameter inputs using `isolate()`. When we are ready e.g. a button can be used to start the 
+computation. 
+
+&lt;img src="../img/shiny_isolate2.svg" width="30%" style="display: block; margin: auto;" /&gt;
+
+---
+## Example
+
+
+```r
+ui &lt;- fluidPage(
+  numericInput("n", "Number of observations" ,100),
+  numericInput("mean", "Mean" ,0),
+  numericInput("sd", "Standard Deviation" ,1),
+  actionButton("goButton", "Go!"),
+  plotOutput("hist")
+)
+
+server &lt;- function(input, output) {
+  
+output$hist &lt;- renderPlot({
+  # Take a dependency on input$goButton
+  input$goButton
+  # Use isolate() to avoid dependency on the other inputs
+  x &lt;- isolate(rnorm(input$n, mean = input$mean, sd = input$sd))
+  hist(x)
+  })
+
+} 
+
+shinyApp(ui, server)
+```
+
+---
+## Exercise 
+
+- Add a button to the Gapminder app and let the graph only re-render if this button is hit.
+
+---
+## DataTables
+
+The `DT` package provides a powerful tool for interactive inspection and filtration of rectangular data. 
+
+
+```r
+library(DT)
+
+ui &lt;- basicPage(
+  h2("The mtcars data"),
+  DT::dataTableOutput("mytable")
+)
+
+server &lt;- function(input, output) {
+  output$mytable = DT::renderDataTable({
+    mtcars
+  }, 
+  filter = "top"
+  )
+}
+  
+shinyApp(ui, server)
+```
+
+---
+## DataTables
+
+We can even use the filtered rows for further computation. 
+
+
+```r
+ui &lt;- basicPage(
+  h2("The mtcars data"),
+  DT::dataTableOutput("mytable"),
+  plotOutput("hist")
+)
+
+server &lt;- function(input, output){
+  
+  output$mytable = DT::renderDataTable({
+    mtcars
+  }, 
+  filter = "top"
+  )
+  
+  output$hist &lt;- renderPlot({
+    hist(mtcars[input$mytable_rows_all, "wt"], xlim = c(min(mtcars$wt), max(mtcars$wt)))
+    })
+  
+}
+  
+shinyApp(ui, server)
+```
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script src="../assets/remark-zoom.js"></script>
+<script src="https://platform.twitter.com/widgets.js"></script>
+<script>var slideshow = remark.create({
+"highlightStyle": "github",
+"highlightLines": true,
+"countIncrementalSlides": false,
+"ratio": "16:9",
+"navigation": {
+"scroll": false
+}
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();</script>
+
+<script>
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>
