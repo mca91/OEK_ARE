@@ -79,7 +79,7 @@ The grammar consists of
 - scales (controls mapping from data to aesthetics ,e.g., which colors should be used)
 - facets (splitting data to create plots for subgroups)
 - statistical transformations (summarize data before plotting)
-- coordinate systems (e.g. Cartesian, semi-log, polar, ...)
+- coordinate systems (e.g. Cartesian, polar, ...)
 
 The data, mappings, statistical transformations and geometric objects form a layer.
 A plot can have multiple layers. 
@@ -549,7 +549,24 @@ if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
     }
     deleted = true;
   });
-})();</script>
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
 
 <script>
 (function() {

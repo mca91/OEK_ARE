@@ -77,7 +77,7 @@ The grammar consists of
 - scales (controls mapping from data to aesthetics ,e.g., which colors should be used)
 - facets (splitting data to create plots for subgroups)
 - statistical transformations (summarize data before plotting)
-- coordinate systems (e.g. Cartesian, semi-log, polar, ...)
+- coordinate systems (e.g. Cartesian, polar, ...)
 
 The data, mappings, statistical transformations and geometric objects form a layer.
 A plot can have multiple layers. 
