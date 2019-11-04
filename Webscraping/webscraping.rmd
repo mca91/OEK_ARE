@@ -28,7 +28,7 @@ def.chunk.hook  <- knitr::knit_hooks$get("chunk")
 class: left, top
 ## What is Web Scraping?
 
-Web Scraping is the process of extracting data from websites. It can be used if the desired data 
+Web scraping is the process of extracting data from websites. It can be used if the desired data 
 are not readily available via e.g. a download link or an API.
 
 ### Example
@@ -40,10 +40,10 @@ Each review consists of different parts such as
 - a date
 - a rating from 1 to 5 stars. 
 
-Lets say we are interested whether the ratings of a shop change over time. For this we would need 
+Let's say we are interested whether the ratings of a shop change over time. For this we would need 
 to gather the date and the star rating which are, however, not downloadable. 
 
-We will learn how we can nontheless access these data to perform the analysis. 
+We will learn how we can access these data nontheless to perform the analysis. 
 
 ---
 class: left, top
@@ -51,12 +51,12 @@ class: left, top
 
 Web scraping is generally legal. However, depending on the jurisdiction it can be considerd illegal in some cases.
 
-You should be careful if
+You should be careful if...
 
 - you have to sign in into e.g. a social network since you agree to their rules
-- circumvent web security measures
+- you circumvent web security measures
 - you scrape personal information such as email addresses, etc. 
-- you scrape a substantial amount of a websites content
+- you scrape a substantial amount of a website's content
 - you want to republish the scraped content, e.g. an article from a newspage. 
 - webscraping is prohibited by the Terms of Service, even if this doesn't make it illegal per se.  
 
@@ -114,14 +114,14 @@ Here is a very simple website bulid only with HTML:
 ```
 ]
 
-- In the body tags are used to give the displayed information a structure. In our example we use: 
+- In the body part tags are used to give the displayed information a structure. In our example we use: 
     - `<h1>...</h1>`   to define a heading
     - `<p>...</p>`     to define text
     - `<div>...</div>` to define different sections.
 
 - Look at the [w3schools tag list](https://www.w3schools.com/tags/default.asp) for other tags you might encounter. 
 
-We will start by scraping the simple HTML Page from before. 
+We will start by scraping the simple HTML page from before. 
 Create a new HTML document and copy the code form the last slide into it.
 
 ---
@@ -141,7 +141,7 @@ URL <- here::here("webscraping/examples/simple_html_page.html") # path of my htm
 ---
 ## XML Structure
 
-Our page is now stored as an xml document which have a hierarchical data structure. For our page it looks like this. 
+Our page is now stored as an xml document which has a hierarchical data structure. For our page it looks like this. 
 
 ```{r, eval = TRUE, echo = FALSE, out.width = "650px", fig.align='center'}
 knitr::include_graphics("xml_structure1.png")
@@ -185,7 +185,7 @@ page %>%
 ---
 ## CSS 
 
-Websites are not only built with HTML. CSS is the language which is used to style a websites.
+Websites are not only built with HTML. CSS is the language which is used to style a website.
 Let's add a bit more to our simple page: 
 
 - add a link to a `css` file (which doesn't exist now) in the head section of your html file 
@@ -196,7 +196,7 @@ Let's add a bit more to our simple page:
 
 - add another `div` with a heading and a paragraph
 
-- create a new file `stylesheet.css` in the same folder as your html file 
+- create a new file `stylesheet.css` in the same folder as your HTML file 
 
 - copy the following code into that file and see what happens
 
@@ -213,7 +213,7 @@ div h1 {
 What if we want different `div` sections to look differently?
 
 For this classes and ids can be specified. For web scraping we usually only need 
-to now about classes, but ids work quite similar. 
+to know about classes, but ids work quite similar. 
 
 - change the code of one `div` section to  
 
@@ -255,13 +255,13 @@ For more on selectors look at [w3chools CSS Selector Reference](https://www.w3sc
 
 
 The web developer uses selectors to style similar content in the same way (e.g. on trustpilot.com 
-each user review looks the same). We can use those to more specificly scrape the content we desire.   
+each user review looks the same). We can use those to scrape the content we desire more specifically.   
 
 
 ---
 ## Use the Selectors 
 
-Lets say we want to select all paragraphs (`p`) which are a decendent of an element with class `.red`. We can achieve this with
+Let's say we want to select all paragraphs (`p`) which are a decendent of an element with class `.red`. We can achieve this with
 
 ```{r}
 url <- here::here("webscraping/examples/simple_html_page_with_css.html")
@@ -351,7 +351,7 @@ How do we find the CSS selectors
 ---
 ## A real example: trustpilot.com
 
-We want to write a function that extracts for each review
+We want to write a function that for each review extracts
 
 - the name of the reviewer
 - the number of stars
@@ -379,7 +379,7 @@ get_reviews <- function(url){
 ---
 ## A real example: trustpilot.com
 
-We not only want to scrape all reviews from one URL but all reviews for a company which 
+Not only do we want to scrape all reviews from one URL but all reviews for a company which 
 are distributed over many URLs. Can you write a function which can do this?
 
 

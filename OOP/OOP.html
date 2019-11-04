@@ -1,36 +1,38 @@
----
-title: "Advanced R for Econometricians"
-subtitle: "Objected Oriented Programming in R"
-author: "Martin Arnold"
-date: "`r Sys.Date()`"
-output:
-  xaringan::moon_reader:
-    css: ["default", "../assets/sydney-fonts.css", "../assets/sydney.css", "../assets/title_slides.css", "../xaringan_files/custom.css"]
-    self_contained: false # if true, fonts will be stored locally
-    seal: false # show a title slide with YAML information
-    includes:
-      in_header: "../assets/mathjax-equation-numbers.html"
-    nature:
-      beforeInit: ["../assets/remark-zoom.js", "../xaringan_files/macros.js", "https://platform.twitter.com/widgets.js"]
-      highlightStyle: github
-      highlightLines: true
-      countIncrementalSlides: false
-      ratio: '16:9' # alternatives '16:9' or '4:3' or others e.g. 13:9
-      navigation:
-        scroll: false # disable slide transitions by scrolling
----
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+  <head>
+    <title>Advanced R for Econometricians</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Martin Arnold" />
+    <meta name="date" content="2019-10-26" />
+    <link href="OOP_files/remark-css/default.css" rel="stylesheet" />
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        TeX: { equationNumbers: { autoNumber: "AMS" } },
+      });
+    </script>
+    <style>
+    .mjx-mrow a {
+      color: black;
+      pointer-events: none;
+      cursor: default;
+    }
+    </style>
+    <link rel="stylesheet" href="../assets/sydney-fonts.css" type="text/css" />
+    <link rel="stylesheet" href="../assets/sydney.css" type="text/css" />
+    <link rel="stylesheet" href="../assets/title_slides.css" type="text/css" />
+    <link rel="stylesheet" href="../xaringan_files/custom.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = FALSE, warning=FALSE, message=FALSE)
-options(htmltools.dir.version = FALSE)
-# packages
-library(sloop)
-```
+
+
 class: title-slide title-oop center middle
 
-# `r rmarkdown::metadata$title`
-## `r rmarkdown::metadata$subtitle`
-### `r rmarkdown::metadata$author`
+# Advanced R for Econometricians
+## Objected Oriented Programming in R
+### Martin Arnold
 
 ---
 class: left, top
@@ -82,31 +84,51 @@ class: left, top
 
 We 'sail the seas of OOP' using the `sloop` package. It provides helper functions which facilitate the handling of OOP objects.
 
-```{r, echo=T, eval=2}
-install.packages('sloop')
+
+```r
+## install.packages('sloop')
 library('sloop')
 ```
     
-```{r, echo=T}
+
+```r
 otype(base::abs)
+```
+
+```
+## [1] "base"
+```
+
+```r
 otype(3:1)
+```
+
+```
+## [1] "base"
+```
+
+```r
 otype(lm(area ~ poptotal, data = ggplot2::midwest))
+```
+
+```
+## [1] "S3"
 ```
     
 ---
 class: left, top
 ## Base Types vs OO Objects
 
-<br>
-<blockquote>
+&lt;br&gt;
+&lt;blockquote&gt;
 Everything that exists in R is an object. 
-.right[&mdash; <cite>John Chambers</cite>]
-</blockquote>
-<br>
+.right[&amp;mdash; &lt;cite&gt;John Chambers&lt;/cite&gt;]
+&lt;/blockquote&gt;
+&lt;br&gt;
 
-Thus far we have used the term 'object' somewhat sloppily &mdash; not every R object is *object-oriented*:
+Thus far we have used the term 'object' somewhat sloppily &amp;mdash; not every R object is *object-oriented*:
 
-<br>
+&lt;br&gt;
 
 ![:image 35%](../img/oo-venn.png)
 ![:source 2019](Wickham)
@@ -117,13 +139,39 @@ class: left, top
 
 `is.object()` and `sloop::otype()` are useful for identifying objects in the wild.
 
-```{r, echo=T}
+
+```r
 # base object
 is.object(1L)
+```
+
+```
+## [1] FALSE
+```
+
+```r
 otype(1L)
+```
+
+```
+## [1] "base"
+```
+
+```r
 # OO object
 is.object(ggplot2::diamonds)
+```
+
+```
+## [1] TRUE
+```
+
+```r
 otype(ggplot2::diamonds)
+```
+
+```
+## [1] "S3"
 ```
 
 ---
@@ -132,9 +180,21 @@ class: left, top
 
 **Only OO objects have a `class` attribute.**
 
-```{r, echo=T}
+
+```r
 attr(1L, "class")
+```
+
+```
+## NULL
+```
+
+```r
 attr(ggplot2::diamonds, "class")
+```
+
+```
+## [1] "tbl_df"     "tbl"        "data.frame"
 ```
 
 ---
@@ -142,14 +202,31 @@ class: left, top
 ## Base Types vs OO Objects
 
 - There are alternate functions for checking the `class` argument
-    ```{r, echo=T}
+    
+    ```r
     s3_class(ggplot2::diamonds)
+    ```
+    
+    ```
+    ## [1] "tbl_df"     "tbl"        "data.frame"
+    ```
+    
+    ```r
     class(ggplot2::diamonds)
+    ```
+    
+    ```
+    ## [1] "tbl_df"     "tbl"        "data.frame"
     ```
 
 - Be careful with `class()`
-    ```{r, echo=T}
+    
+    ```r
     class(1L)
+    ```
+    
+    ```
+    ## [1] "integer"
     ```
 
 ???
@@ -168,15 +245,34 @@ class: left, top
 
 Important types are `NULL`, `logical`, `integer`, `double` , `complex`, `character`, `list` and `closure`
 
-```{r, echo=T}
+
+```r
 typeof(1L)
+```
+
+```
+## [1] "integer"
+```
+
+```r
 typeof(ggplot2::diamonds)
+```
+
+```
+## [1] "list"
+```
+
+```r
 typeof(lm)
+```
+
+```
+## [1] "closure"
 ```
 
 ---
 class: left, top
-## Base Types &mdash; `numeric` type
+## Base Types &amp;mdash; `numeric` type
 
 The definition of the `numeric` type is inconsistent:
 
@@ -186,7 +282,8 @@ The definition of the `numeric` type is inconsistent:
 
 Let's run the following expressions and comment on the results.
 
-```{r, echo=T, eval=FALSE}
+
+```r
 is.numeric(3.14159)
 is.numeric(1L)
 typeof(factor('x'))
@@ -195,7 +292,7 @@ is.numeric(factor('x'))
 
 ---
 class: left, top
-## S3 &mdash; Basics
+## S3 &amp;mdash; Basics
 
 **What is S3?**
 
@@ -217,20 +314,40 @@ class: left, top
 
 ---
 class: left, top
-## S3 &mdash; Basics
+## S3 &amp;mdash; Basics
 
 Every S3 object has a base type and at least one class.
 
-```{r, echo=T}
-f <- structure(1:3, class = "factor", levels = c("a", "b", "c"))
+
+```r
+f &lt;- structure(1:3, class = "factor", levels = c("a", "b", "c"))
 ```
 
 We check S3 membership, base type and the class of `f`.
 
-```{r, echo=T}
+
+```r
 otype(f)
+```
+
+```
+## [1] "S3"
+```
+
+```r
 typeof(f)
+```
+
+```
+## [1] "integer"
+```
+
+```r
 class(f)
+```
+
+```
+## [1] "factor"
 ```
 
 ???
@@ -239,7 +356,7 @@ Check that `class` is simply an `attribute` of `f` using `attribute()`.
 
 ---
 class: left, top
-## S3 &mdash; Generics
+## S3 &amp;mdash; Generics
 
 - A generic function (**generic**) is an interface. It behaves dependent on the class of the passed S3 object. 
 
@@ -253,17 +370,39 @@ class: left, top
 
 ---
 class: left, top
-## S3 &mdash; Generics
+## S3 &amp;mdash; Generics
 
 **Example: `print()`**
 
 Executing `f` calls a generic (`print`) with specific behavior for objects of class `factor`.
 
-```{r, echo=T}
+
+```r
 ftype(print)
+```
+
+```
+## [1] "S3"      "generic"
+```
+
+```r
 print(f) # Or simply `f`
+```
+
+```
+## [1] a b c
+## Levels: a b c
+```
+
+```r
 # Integer behaviour
 print(unclass(f))
+```
+
+```
+## [1] 1 2 3
+## attr(,"levels")
+## [1] "a" "b" "c"
 ```
 
 ???
@@ -272,63 +411,107 @@ unclass(f) + unclass(f)
 
 ---
 class: left, top
-## S3 &mdash; Method Dispatch
+## S3 &amp;mdash; Method Dispatch
 
 - S3 methods follow the name convention `generic.class()`.
 
 - We may use `s3_dispatch()` to investigate the process of method dispatch for an S3 object.
-  ```{r, echo = T}
+  
+  ```r
   s3_dispatch(print(f))
   ```
   
-    `=>` indicates the method used  
+  ```
+  ## =&gt; print.factor
+  ##  * print.default
+  ```
+  
+    `=&gt;` indicates the method used  
     `*` idicates that the method is defined (but not used)
       
 - Methods are sometimes exported from the package namespace (like `print.factor()`) but generally should not be used directly
-  ```{r, echo = T}
+  
+  ```r
   ftype(print.factor) # check if method 
+  ```
+  
+  ```
+  ## [1] "S3"     "method"
   ```
 
 ---
 class: left, top
-## S3 &mdash; Method Dispatch
+## S3 &amp;mdash; Method Dispatch
 
 Use `s3_get_method()` to see the source code of a method which is not exported.
 
 **Example: `lm.print()`**
 
-```{r, echo=TRUE}
-mod <- lm(price ~ carat, data = ggplot2::diamonds)
+
+```r
+mod &lt;- lm(price ~ carat, data = ggplot2::diamonds)
 typeof(mod)
+```
+
+```
+## [1] "list"
+```
+
+```r
 class(mod)
+```
+
+```
+## [1] "lm"
 ```
 
 ---
 class: left, top
-## S3 Basics &mdash; Method Dispatch
+## S3 Basics &amp;mdash; Method Dispatch
 
-**Example: `lm.print()` &mdash; ctd.**
+**Example: `lm.print()` &amp;mdash; ctd.**
 
-```{r, echo=TRUE}
+
+```r
 # Inspect hidden print method for lm objects
 s3_get_method(print.lm)
 ```
 
+```
+## function (x, digits = max(3L, getOption("digits") - 3L), ...) 
+## {
+##     cat("\nCall:\n", paste(deparse(x$call), sep = "\n", collapse = "\n"), 
+##         "\n\n", sep = "")
+##     if (length(coef(x))) {
+##         cat("Coefficients:\n")
+##         print.default(format(coef(x), digits = digits), print.gap = 2L, 
+##             quote = FALSE)
+##     }
+##     else cat("No coefficients\n")
+##     cat("\n")
+##     invisible(x)
+## }
+## &lt;bytecode: 0x7f9e82d915c8&gt;
+## &lt;environment: namespace:stats&gt;
+```
+
 ---
 class: left, top
-## S3 Basics &mdash; Exercises
+## S3 Basics &amp;mdash; Exercises
 
 1. Describe the difference between `t.test()` and `t.data.frame()`. When is each function called?
 
 2. What class of object does the following code return? What base type is it built on? What attributes does it use?
-  ```{r, echo=T, eval=F}
-  x <- ecdf(rpois(100, 10))
+  
+  ```r
+  x &lt;- ecdf(rpois(100, 10))
   x
   ```
   
 3. What class of object does the following code return? What base type is it built on? What attributes does it use?
-  ```{r, echo=T, eval=F}
-  x <- table(rpois(100, 5))
+  
+  ```r
+  x &lt;- table(rpois(100, 5))
   x
   ```
   
@@ -341,14 +524,22 @@ class: left, top
     We have already seen how to generate an OO object using a base type and a class with `structure()`.
     
 - We may use `class()` to change the class of existing objects. There are no checks if objects of the same class share the same structure!
-  ```{r, echo = T}
-  class(mod) <- "data.frame"
+  
+  ```r
+  class(mod) &lt;- "data.frame"
   mod
+  ```
+  
+  ```
+  ##  [1] coefficients  residuals     effects       rank          fitted.values
+  ##  [6] assign        qr            df.residual   xlevels       call         
+  ## [11] terms         model        
+  ## &lt;0 rows&gt; (or 0-length row.names)
   ```
   
 ---
 class: left, top
-## S3 Classes &mdash; Robust Implementation
+## S3 Classes &amp;mdash; Robust Implementation
 
 We recommended to follow the following conventions when creating your own classes:
 
@@ -362,20 +553,21 @@ We recommended to follow the following conventions when creating your own classe
 
 ---
 class: left, top
-## Case Study &mdash; An S3 Class for Prime Numbers
+## Case Study &amp;mdash; An S3 Class for Prime Numbers
 
 We now demonstrate how to implement a simple S3 class for prime numbers.
 
 Let's start with a constructor function which accepts integer input and returns an object with classes 'data frame' and 'prime'.
 
-```{r, echo=T}
-new_prime <- function(x = integer()) {
+
+```r
+new_prime &lt;- function(x = integer()) {
   
   stopifnot(is.integer(x))
   
-  x <- list(x)
+  x &lt;- list(x)
   
-  class(x) <- 'prime'
+  class(x) &lt;- 'prime'
   
   x
 }
@@ -383,45 +575,49 @@ new_prime <- function(x = integer()) {
 
 ---
 class: left, top
-## Case Study &mdash; An S3 Class for Prime Numbers
+## Case Study &amp;mdash; An S3 Class for Prime Numbers
 
 The validator function should check whether the values of a `prime` object are indeed prime numbers.
 
-Note that the integer $z>2$ is a prime number if $$z\,\text{mod}\,y > 0 \, \forall \, y\in[2,3,...,z-1].$$
+Note that the integer `\(z&gt;2\)` is a prime number if `$$z\,\text{mod}\,y &gt; 0 \, \forall \, y\in[2,3,...,z-1].$$`
 
-```{r, echo=T}
-validate_prime <- function(x = list()) {
+
+```r
+validate_prime &lt;- function(x = list()) {
   sapply(
     unique(unlist(x)), function(z) {
-      if(!all(z==2 || z %% 2:(z-1) > 0)) {
+      if(!all(z==2 || z %% 2:(z-1) &gt; 0)) {
         stop('Input contains non-prime number(s)!', call. = F)
       }
     } 
   )
   x
 }
-```  
+```
 
 (This code is not efficient. Can you come up with a better implementation?)
 
 ---
 class: left, top
-## Case Study &mdash; An S3 Class for Prime Numbers
+## Case Study &amp;mdash; An S3 Class for Prime Numbers
 
 At last we provide a user-friendly helper function which generates and validates `prime` objects.
 
-```{r, echo=T}
-prime <- function(x = integer()) {
+
+```r
+prime &lt;- function(x = integer()) {
     validate_prime(new_prime(x))
 }
 ```
 
-```{r, echo=T}
-(x <- prime(c(3L, 5L, 7L, 11L)))
+
+```r
+(x &lt;- prime(c(3L, 5L, 7L, 11L)))
 ```
 
-```{r}
-class(x)
+
+```
+## [1] "prime"
 ```
 
 ---
@@ -429,14 +625,28 @@ class: left, top
 ## S3 Generics and Methods
 
 - Many prominent R functions are generics, e.g. `mean()`. Method dispatch is done by `UseMethod()`.
-  ```{r, echo = T}
+  
+  ```r
   mean
   ```
   
+  ```
+  ## function (x, ...) 
+  ## UseMethod("mean")
+  ## &lt;bytecode: 0x7f9e79f70428&gt;
+  ## &lt;environment: namespace:base&gt;
+  ```
+  
 - Let's see the dispatch for `mean(x)` if `x` has class `Date`:
-  ```{r, echo = T}
-  x <- Sys.Date
+  
+  ```r
+  x &lt;- Sys.Date
   s3_dispatch(mean(x))
+  ```
+  
+  ```
+  ##    mean.function
+  ## =&gt; mean.default
   ```
 
 ---
@@ -446,8 +656,22 @@ class: left, top
 - Note that the pseudo-class `default` for standard fallback could be used for `Date` objects but there is a specific method `mean.Date()` which is called instead
 
 - Use `s3_methods_generic()` to see all available methods of a generic
-  ```{r, echo = T}
+  
+  ```r
   s3_methods_generic('mean')
+  ```
+  
+  ```
+  ## # A tibble: 7 x 4
+  ##   generic class      visible source             
+  ##   &lt;chr&gt;   &lt;chr&gt;      &lt;lgl&gt;   &lt;chr&gt;              
+  ## 1 mean    Date       TRUE    base               
+  ## 2 mean    default    TRUE    base               
+  ## 3 mean    difftime   TRUE    base               
+  ## 4 mean    POSIXct    TRUE    base               
+  ## 5 mean    POSIXlt    TRUE    base               
+  ## 6 mean    quosure    FALSE   registered S3method
+  ## 7 mean    vctrs_vctr FALSE   registered S3method
   ```
 ---
 class: left, top
@@ -455,10 +679,27 @@ class: left, top
 
 `s3_method_class()` provides all registered methods for a given class.
 
-```{r, echo = T}
+
+```r
 head(
   s3_methods_class('Date'), 10
 )
+```
+
+```
+## # A tibble: 10 x 4
+##    generic       class visible source
+##    &lt;chr&gt;         &lt;chr&gt; &lt;lgl&gt;   &lt;chr&gt; 
+##  1 -             Date  TRUE    base  
+##  2 [             Date  TRUE    base  
+##  3 [[            Date  TRUE    base  
+##  4 [&lt;-           Date  TRUE    base  
+##  5 +             Date  TRUE    base  
+##  6 as.character  Date  TRUE    base  
+##  7 as.data.frame Date  TRUE    base  
+##  8 as.list       Date  TRUE    base  
+##  9 as.POSIXct    Date  TRUE    base  
+## 10 as.POSIXlt    Date  TRUE    base
 ```
 
 ---
@@ -466,8 +707,9 @@ class: left, top
 ## S3 Generics and Methods
   
 - Writing your own generic is straightforward
-    ```{r, echo = T}
-    my_generic <- function(x) {
+    
+    ```r
+    my_generic &lt;- function(x) {
       UseMethod('my_generic')
     }
     ```
@@ -475,12 +717,13 @@ class: left, top
     `UseMethod()` dispatches based on `x` by default. Dispatch based on a second argument is optional.
 
 - Let's define methods for default behavior and `my_class`
-    ```{r, echo=T}
-    my_generic.default <- function(x) {
+    
+    ```r
+    my_generic.default &lt;- function(x) {
       x
     }
     
-    my_generic.my_class <- function(x) {
+    my_generic.my_class &lt;- function(x) {
       cat("Output for class 'my_class':\n", x)
     }
     ```
@@ -495,10 +738,25 @@ class: left, top
 
 We next check that method dispatch works as desired:
 
-```{r, echo=T}
-y <- structure(x<-1, class = 'my_class')
+
+```r
+y &lt;- structure(x&lt;-1, class = 'my_class')
 s3_dispatch(my_generic(x))
+```
+
+```
+##    my_generic.double
+##    my_generic.numeric
+## =&gt; my_generic.default
+```
+
+```r
 s3_dispatch(my_generic(y))
+```
+
+```
+## =&gt; my_generic.my_class
+##  * my_generic.default
 ```
 
 ---
@@ -507,80 +765,76 @@ class: left, top
 
 We next check that method dispatch works as desired:
 
-```{r, echo=T}
-y <- structure(x<-1, class = 'my_class')
+
+```r
+y &lt;- structure(x&lt;-1, class = 'my_class')
 my_generic(x)
+```
+
+```
+## [1] 1
+```
+
+```r
 my_generic(y)
 ```
 
----
-class: left, top
-## Case Study &mdash; A Plot Method for `prime` Objects
-
-```{r, fig.align='center', dpi=170, out.width='50%'}
-# subset of all prime numbers in 2,...,1e4
-x <- 2:1e4
-x <- x[sapply(x, function(z) all(z %% 2:(z-1) > 0))] 
-x <- prime(x)
-
-plot.prime <- function(x = list(), coord,...) {
-  x <- unlist(x)
-  if(missing(coord)) {
-    d <- data.frame(x = x, y = x)
-  } else if(coord == "polar") {
-    d <- data.frame(x = cos(x * 180/pi) * x, y = sin(x * 180/pi) * x)
-  } 
-  plot(d, ...)
-}
-
-par(mar=c(5,2,4,2) + 0.1)
-plot(x, coord = "polar", pch = 19, col = "red", cex = 0.5, xlab = "", ylab="", bty = "n", xaxt = "n", yaxt = "n")
+```
+## Output for class 'my_class':
+##  1
 ```
 
 ---
 class: left, top
-## Case Study &mdash; A Plot Method for `prime` Objects
+## Case Study &amp;mdash; A Plot Method for `prime` Objects
 
-- The image from the previous slide is inspired by [this](https://math.stackexchange.com/questions/885879/meaning-of-rays-in-polar-plot-of-prime-numbers/885894) mathexchange post. 
-
-- Make sure to checkout 3Blue1Brown's [video](https://www.youtube.com/watch?v=EK32jo7i5LQ&t=418s) for a nice explanation of what's going on. 🙃👍🏼
-
-<br>
-<div style="margin:auto;width:50%;">
-<iframe width="720" height="326" src="https://www.youtube.com/embed/EK32jo7i5LQ" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-</div>
+&lt;img src="OOP_files/figure-html/unnamed-chunk-32-1.png" width="50%" style="display: block; margin: auto;" /&gt;
 
 ---
 class: left, top
-## Case Study &mdash; A Plot Method for `prime` Objects
+## Case Study &amp;mdash; A Plot Method for `prime` Objects
+
+- The image from the previous slide is inspired by [this](https://math.stackexchange.com/questions/885879/meaning-of-rays-in-polar-plot-of-prime-numbers/885894) mathexchange post. 
+
+- Make sure to checkout 3Blue1Brown's [video](https://www.youtube.com/watch?v=EK32jo7i5LQ&amp;t=418s) for a nice explanation of what's going on. 🙃👍🏼
+
+&lt;br&gt;
+&lt;div style="margin:auto;width:50%;"&gt;
+&lt;iframe width="720" height="326" src="https://www.youtube.com/embed/EK32jo7i5LQ" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen&gt;&lt;/iframe&gt;
+&lt;/div&gt;
+
+---
+class: left, top
+## Case Study &amp;mdash; A Plot Method for `prime` Objects
 
 Let's write a method for objects of class `prime` for the generic `plot()`. The method should 
 
 - take objects of class prime and all additional arguments which can be passed to `plot()`
 
-- be able to visualise a prime number $p$ in Cartesian and polar coordinates 
+- be able to visualise a prime number `\(p\)` in Cartesian and polar coordinates 
 
-<br>
+&lt;br&gt;
 ![:image 40%](../img/polar.gif)
 
 ![:source_url](http://www.maths.usyd.edu.au/)
 
 ---
 class: left, top
-## Case Study &mdash; A Plot Method for `prime` Objects
+## Case Study &amp;mdash; A Plot Method for `prime` Objects
 
-```{r, echo=T}
-plot.prime <- function(x = list(), coord, ...) {
+
+```r
+plot.prime &lt;- function(x = list(), coord, ...) {
   
-  x <- unlist(x)
+  x &lt;- unlist(x)
   
   if(missing(coord)) {
     
-    d <- data.frame(x = x, y = x)
+    d &lt;- data.frame(x = x, y = x)
     
   } else if(coord == "polar") {
     
-    d <- data.frame(x = cos(x * 180/pi) * x, y = sin(x * 180/pi) * x)
+    d &lt;- data.frame(x = cos(x * 180/pi) * x, y = sin(x * 180/pi) * x)
     
   } 
   
@@ -592,30 +846,40 @@ Note that we may pass additional arguments to `plot()` using `...`
 
 ---
 class: left, top
-## Case Study &mdash; A Plot Method for `prime` Objects
+## Case Study &amp;mdash; A Plot Method for `prime` Objects
 
-```{r, echo=T, eval=F, cache=T}
+
+```r
 # Subset of all prime numbers in 2,...,1e4
-x <- 2:1e4
-x <- x[sapply(unique(x), function(z) all(z %% 2:(z-1) > 0))]
+x &lt;- 2:1e4
+x &lt;- x[sapply(unique(x), function(z) all(z %% 2:(z-1) &gt; 0))]
 
 # Assign 'prime' class
-x <- prime(x)
+x &lt;- prime(x)
 ```
 
 Let's check the method dispatch for `plot(x)`
 
-```{r, echo=T, eval=T}
+
+```r
 s3_dispatch(plot(x))
+```
+
+```
+## =&gt; plot.prime
+##  * plot.default
 ```
 
 ---
 class: left, top
-## Case Study &mdash; A Plot Method for `prime` Objects
+## Case Study &amp;mdash; A Plot Method for `prime` Objects
 
-```{r, echo=T, fig.align='center', dpi=170, out.width='40%', cache=T}
+
+```r
 plot(x, coord = "polar", pch = 19, cex = 0.5, col = "red")
 ```
+
+&lt;img src="OOP_files/figure-html/unnamed-chunk-36-1.png" width="40%" style="display: block; margin: auto;" /&gt;
 
 ---
 class: left, top
@@ -646,9 +910,10 @@ class: left, top
 ## S3 Inheritance
 
 - Note that we may assign multiple classes to an S3 object
-    ```{r, echo=T, eval = F}
-    class(x) <- c('A', 'B')
-    class(x) <- c('B', 'A')
+    
+    ```r
+    class(x) &lt;- c('A', 'B')
+    class(x) &lt;- c('B', 'A')
     ```
 
 - Method dispatch *always* starts with the first element of the class vector and proceeds with subsequent classes if a method is not found.
@@ -659,17 +924,29 @@ class: left, top
 class: left, top
 ## S3 Inheritance
 
-```{r, echo = T}
+
+```r
 # New generic
-g <- function(x) UseMethod("g", x)
+g &lt;- function(x) UseMethod("g", x)
 
 # Methods for classes 'A' and 'B'
-g.A <- function(x) "A"; g.B <- function(x) "B"
+g.A &lt;- function(x) "A"; g.B &lt;- function(x) "B"
 
 # Two objects with different inheritance hierachies
-ab <- structure(1, class = c("A", "B")); ba <- structure(1, class = c("B", "A"))
+ab &lt;- structure(1, class = c("A", "B")); ba &lt;- structure(1, class = c("B", "A"))
 g(ab)
+```
+
+```
+## [1] "A"
+```
+
+```r
 g(ba)
+```
+
+```
+## [1] "B"
 ```
 
 ---
@@ -678,12 +955,24 @@ class: left, top
 
 It's possible to force delegation to the method of the subsequent class (if defined) using `NextMethod()`. This provides a simple inheritance mechanism:
 
-```{r, echo=T}
-g.C <- function(x) NextMethod()
-ca <- structure(1, class = c("C", "A"))
-cb <- structure(1, class = c("C", "B"))
+
+```r
+g.C &lt;- function(x) NextMethod()
+ca &lt;- structure(1, class = c("C", "A"))
+cb &lt;- structure(1, class = c("C", "B"))
 g(ca)
+```
+
+```
+## [1] "A"
+```
+
+```r
 g(cb)
+```
+
+```
+## [1] "B"
 ```
 
 Notice that inheritance depends on how we define the class vector:
@@ -697,18 +986,20 @@ class: left, top
 
 We may use these mechanics to implement 2 (child) classes which inherit (parts of) their `print()` method from the `prime` class.
 
-```{r, echo = T}
-print.prime <- function(x) {
+
+```r
+print.prime &lt;- function(x) {
      x[[1]]
 }
 ```
 
-```{r, echo = T}
-print.mersenne <- function(x) {
+
+```r
+print.mersenne &lt;- function(x) {
   cat('Mersenne primes:', NextMethod(x))
 }
 
-print.fermat <- function(x) {
+print.fermat &lt;- function(x) {
   cat('Fermat primes:', NextMethod(x))
 }
 ```
@@ -717,37 +1008,164 @@ print.fermat <- function(x) {
 class: left, top
 ## S3 Inheritance
 
-```{r, echo = T}
-x <- prime(c(3L, 7L, 31L))
-class(x) <- c('mersenne', class(x))
 
-y <- prime(c(3L, 5L, 17L, 257L))
-class(y) <- c('fermat', class(y))
+```r
+x &lt;- prime(c(3L, 7L, 31L))
+class(x) &lt;- c('mersenne', class(x))
+
+y &lt;- prime(c(3L, 5L, 17L, 257L))
+class(y) &lt;- c('fermat', class(y))
 
 x
+```
+
+```
+## Mersenne primes: 3 7 31
+```
+
+```r
 y
+```
+
+```
+## Fermat primes: 3 5 17 257
 ```
 
 ---
 class: left, top
 ## S3 Inheritance
 
-```{r, echo = T}
+
+```r
 s3_dispatch(print(x))
+```
+
+```
+## =&gt; print.mersenne
+## -&gt; print.prime
+##  * print.default
+```
+
+```r
 s3_dispatch(print(y))
 ```
 
-`->` indicates the method the call to the original method has been delegated to. 
+```
+## =&gt; print.fermat
+## -&gt; print.prime
+##  * print.default
+```
+
+`-&gt;` indicates the method the call to the original method has been delegated to. 
 
 ---
 class: left, top
-## S3 Inheritance &mdash; Exercises
+## S3 Inheritance &amp;mdash; Exercises
 
 1. Adjust the constructor function `new_prime()` such that it allows for subclasses. Then implement a constructor function `new_fermat()` for objects with subclass `fermat`.
 
 2. What happens if you subset `x` (generated as below) using `[[`?
-    ```{r, echo = T}
-    x <- prime(c(2L, 3L, 5L))
+    
+    ```r
+    x &lt;- prime(c(2L, 3L, 5L))
     ```
 
 3. Implement a `[[` method which preserves the `prime` class.
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script src="../assets/remark-zoom.js"></script>
+<script src="../xaringan_files/macros.js"></script>
+<script src="https://platform.twitter.com/widgets.js"></script>
+<script>var slideshow = remark.create({
+"highlightStyle": "github",
+"highlightLines": true,
+"countIncrementalSlides": false,
+"ratio": "16:9",
+"navigation": {
+"scroll": false
+}
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();</script>
+
+<script>
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>

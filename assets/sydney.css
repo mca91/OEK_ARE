@@ -223,6 +223,7 @@ slides > slide {
 .content-box-green,
 .content-box-purple,
 .content-box-red,
+.content-box-white,
 .content-box-yellow {
   box-sizing: border-box;
   border-radius: 15px;
@@ -249,6 +250,13 @@ slides > slide {
 .content-box-red .remark-inline-code,
 .content-box-yellow .remark-inline-code { 
   background: none;
+}
+
+.content-box-white {
+  background-color: #FFFFFF;
+  border-width: 3px;
+  border-color: #e64626;
+  border-style: solid;
 }
 
 .full-width {
