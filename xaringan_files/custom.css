@@ -2,6 +2,10 @@
   font-size: 65%
 }
 
+.medium {
+  font-size: 80%
+}
+
 .smaller {
   font-size: 90%
 }
@@ -14,4 +18,15 @@
 .scaled {
   LINE-HEIGHT:20px;
   transform: scale(0.7); 
+}
+
+/* blockquote for exercises */
+/* to ensure that code font color is preserved in blockquote envorinments and child divs do not overflow */
+.exercise {
+  overflow:hidden;
+  margin-top:35px;
+}
+
+.exercise .remark-code-line, .exercise p {
+    color:black;
 }
