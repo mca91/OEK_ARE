@@ -36,9 +36,10 @@ class: title-slide title-ggplot2 center middle
 class: left, top
 ## Data Visualization 
 
-From Wikipedia:
-
-"R is a programming language and free software environment for statistical computing and **graphics** ... ." 
+&lt;blockquote style ="margin-top:0%;"&gt;
+R is a programming language and free software environment for statistical computing and  &lt;b&gt;graphics&lt;/b&gt; ... .
+.right[&amp;mdash; &lt;cite&gt;Wikipedia&lt;/cite&gt;]
+&lt;/blockquote&gt;
 
 There are three major graphical systems: 
 
@@ -451,8 +452,90 @@ class: left, top
 
 ---
 class: left, top
+## Overplotting
 
-## Exercises 
+- If plotting many data points with similar values individual points overlap and disappear.
+- Overplotting can make it hard to see the pattern in the data and may render a plot useless. 
+- There are a couple of ways to address overplotting such as:
+    - only plot subsets of the data (e.g. `facet_grid`)
+    - making the points transparent
+
+
+
+```r
+library(cowplot)
+
+over1 &lt;- ggplot(diamonds, aes(carat, price)) + 
+  geom_point()
+
+trans &lt;- ggplot(diamonds, aes(carat, price)) + 
+  geom_point(alpha = 0.05)
+
+plot_grid(over1, trans)
+```
+
+---
+class: left, top
+## Transparency
+
+&lt;img src="ggplot2_files/figure-html/unnamed-chunk-36-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+
+---
+class: left, top
+## Jittering
+
+- Even in cases with only a few data points overplotting can become an issue if there is only a small number of unique values. 
+- Adding small random numbers can help to reduce overplotting. 
+
+```r
+over2 &lt;- ggplot(mtcars, aes(am, cyl)) + 
+  geom_point() 
+
+jitter &lt;- ggplot(mtcars, aes(am, cyl)) + 
+  geom_jitter(width = 0.03, height = 0.1) 
+
+plot_grid(over2, jitter) # from cowplot 
+```
+
+---
+class: left, top
+## Jittering
+
+&lt;img src="ggplot2_files/figure-html/unnamed-chunk-38-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+
+---
+class: left, top
+## Composite Plots
+
+- There are many packages extending `ggplot2` such as `cowplot` and `ggExtra`. 
+- With basic `ggplot2` it is e.g. quite tricky to create a composite plot as 
+  created by `ggExtra::ggMarginal()`
+
+
+```r
+library(ggExtra)
+scatter_plot &lt;- ggplot(diamonds, aes(carat, price)) + 
+  geom_point()
+
+ggMarginal(scatter_plot,          # ggExtra            
+            type = 'density',
+            margins = 'both',
+            size = 5,
+            colour = '#FF0000',
+            fill = '#FFA500'
+           )
+```
+
+---
+class: left, top
+## Composite Plots
+
+&lt;img src="ggplot2_files/figure-html/unnamed-chunk-40-1.png" width="72%" style="display: block; margin: auto;" /&gt;
+
+---
+class: left, top
+
+## Exercises
 
 1. Download the Titanic data set from Moodle and 
 
