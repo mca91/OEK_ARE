@@ -34,9 +34,10 @@ class: title-slide title-ggplot2 center middle
 class: left, top
 ## Data Visualization 
 
-From Wikipedia:
-
-"R is a programming language and free software environment for statistical computing and **graphics** ... ." 
+<blockquote style ="margin-top:0%;">
+R is a programming language and free software environment for statistical computing and  <b>graphics</b> ... .
+.right[&mdash; <cite>Wikipedia</cite>]
+</blockquote>
 
 There are three major graphical systems: 
 
@@ -77,7 +78,7 @@ The grammar consists of
 - scales (controls mapping from data to aesthetics ,e.g., which colors should be used)
 - facets (splitting data to create plots for subgroups)
 - statistical transformations (summarize data before plotting)
-- coordinate systems (e.g. Cartesian, semi-log, polar, ...)
+- coordinate systems (e.g. Cartesian, polar, ...)
 
 The data, mappings, statistical transformations and geometric objects form a layer.
 A plot can have multiple layers. 
@@ -466,8 +467,119 @@ ggplot(diamonds, aes(carat, price, color = cut)) +
 
 ---
 class: left, top
+## Overplotting
 
-## Exercises 
+- If plotting many data points with similar values individual points overlap and disappear.
+- Overplotting can make it hard to see the pattern in the data and may render a plot useless. 
+- There are a couple of ways to address overplotting such as:
+    - only plot subsets of the data (e.g. `facet_grid`)
+    - making the points transparent
+
+
+```{r, eval = FALSE, echo = TRUE}
+library(cowplot)
+
+over1 <- ggplot(diamonds, aes(carat, price)) + 
+  geom_point()
+
+trans <- ggplot(diamonds, aes(carat, price)) + 
+  geom_point(alpha = 0.05)
+
+plot_grid(over1, trans)
+```
+
+---
+class: left, top
+## Transparency
+
+```{r, eval = TRUE, echo = FALSE, fig.width=10, out.width='100%',fig.height=5}
+library(cowplot)
+
+over1 <- ggplot(diamonds, aes(carat, price)) + 
+  geom_point()
+
+trans <- ggplot(diamonds, aes(carat, price)) + 
+  geom_point(alpha = 0.05)
+
+plot_grid(over1, trans) # from cowplot 
+```
+
+---
+class: left, top
+## Jittering
+
+- Even in cases with only a few data points overplotting can become an issue if there is only a small number of unique values. 
+- Adding small random numbers can help to reduce overplotting. 
+```{r, eval = FALSE, echo = TRUE, fig.width=10, out.width='100%'}
+over2 <- ggplot(mtcars, aes(am, cyl)) + 
+  geom_point() 
+
+jitter <- ggplot(mtcars, aes(am, cyl)) + 
+  geom_jitter(width = 0.03, height = 0.1) 
+
+plot_grid(over2, jitter) # from cowplot 
+```
+
+---
+class: left, top
+## Jittering
+
+```{r, eval = TRUE, echo = FALSE, fig.width=10, out.width='100%',fig.height=5}
+over2 <- ggplot(mtcars, aes(am, cyl)) + 
+  geom_point() 
+
+jitter <- ggplot(mtcars, aes(am, cyl)) + 
+  geom_jitter(width = 0.03, height = 0.1) 
+
+plot_grid(over2, jitter) # from cowplot 
+```
+
+---
+class: left, top
+## Composite Plots
+
+- There are many packages extending `ggplot2` such as `cowplot` and `ggExtra`. 
+- With basic `ggplot2` it is e.g. quite tricky to create a composite plot as 
+  created by `ggExtra::ggMarginal()`
+
+```{r, eval = FALSE, echo = TRUE}
+library(ggExtra)
+scatter_plot <- ggplot(diamonds, aes(carat, price)) + 
+  geom_point()
+
+ggMarginal(scatter_plot,          # ggExtra            
+            type = 'density',
+            margins = 'both',
+            size = 5,
+            colour = '#FF0000',
+            fill = '#FFA500'
+           )
+```
+
+---
+class: left, top
+## Composite Plots
+
+```{r, eval = TRUE, echo = FALSE}
+library(ggExtra)
+
+scatter_plot <- ggplot(diamonds, aes(carat, price)) + 
+  geom_point()
+
+ggMarginal(scatter_plot,
+           type = 'boxplot',
+            margins = 'both',
+            size = 5,
+            colour = '#FF0000',
+            fill = '#FFA500'
+           )
+
+```
+
+---
+class: left, top
+
+## Exercises
 
 1. Download the Titanic data set from Moodle and 
 
