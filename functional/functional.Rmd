@@ -10,6 +10,7 @@ output:
     seal: false # show a title slide with YAML information
     includes:
       in_header: "../assets/mathjax-equation-numbers.html"
+      after_body: "../assets/copybutton.html"
     nature:
       beforeInit: ["../assets/remark-zoom.js", "../xaringan_files/macros.js", "https://platform.twitter.com/widgets.js"]
       highlightStyle: github
