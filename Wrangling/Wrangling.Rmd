@@ -544,10 +544,10 @@ Use dplyr on the Boston crime data to:
 
 1. Find out in which district the most incident where reported. 
 2. Create an ordered list of the top ten districts according to the number of drug violations. Start with the district with most drug violations. 
-3. What is the most dangerous hour of the week?
-4. Calculate for each district the proportion of motor vehicle accidents to all reported incidents. 
+3. What was the most dangerous hour of the week according to the number of homicides (`OFFENSE_CODE_GROUP == "Homicide"`)?
+4. Calculate for each district the proportion of motor vehicle accidents to all reported incidents (`OFFENSE_CODE_GROUP == "Motor Vehicle Accident Response"`). 
 5. Sort the data set chronologically by year and month. Then take the first 10.000 observations and compute the proportion of incidents where a 
-shooting was involved for each district. Now take a random sample of size 10.000. Is there a noteworthy difference?
+shooting was involved for each district. Now take a random sample of size 10.000. Is there a noteworthy difference? **Hint:** There is a variable called `SHOOTING`.
 
 
 ---

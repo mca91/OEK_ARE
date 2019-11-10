@@ -1,0 +1,148 @@
+
+
+1. Load the nycflights13::flights data set. Does it come formatted as a tibble?
+
+```{r}
+library(tidyverse)
+library(nycflights13)
+data("flights")
+flights
+```
+
+2. Find all flights that
+    - had an arrival delay of two or more hours.
+    ```{r}
+    flights %>% filter(arr_delay >= 120)
+    ```
+        
+   - had an arrival delay of two or more hours.
+    ```{r}
+    flights %>% filter(dest %in% c("IAH", "HOU"))
+    ```
+   - were delayed by at least an hour, but made up over 30 minutes in flight.
+    ```{r}
+    flights %>% filter(dep_delay > 60 & arr_delay <= dep_delay - 30)
+    ```
+   - departed between midnight and 6 am.
+    ```{r}
+    flights %>% filter(between(sched_dep_time, 0, 600))
+    ```
+   
+3. Which flights took the longest? Which traveled the shortest? 
+    ```{r}
+    flights %>% slice(which.max(air_time))
+    flights %>% slice(which.min(air_time))
+    ```
+
+4. Brainstorm as many ways as possible to select `dep_time`, `dep_delay`, `arr_time`, and `arr_delay`.
+
+```{r}
+selection <- c("dep_time", "dep_delay", "arr_time", "arr_delay")
+flights[ ,selection]
+
+flights %>% select(selection)
+```
+
+5. Create a new variable `first_flight` which takes the value `TRUE` if it is the first flight of the day.
+```{r}
+# First way
+flights <- flights %>% 
+  mutate(first_flight = if_else(day - lag(day) != 0 | is.na(day - lag(day)), TRUE, FALSE )) 
+
+# flights <- flights %>% 
+#   group_by(year, month, day) %>% 
+#   mutate(first_flight = if_else(row_number() == 1, TRUE, FALSE )) %>%
+#   select(first_flight)
+```
+
+6.Find out in which district the most incident where reported. 
+```{r}
+crime <- as_tibble(read.csv(here::here("datasets", "BostonCrime.csv")))
+crime %>% 
+  group_by(DISTRICT) %>%
+  summarise(N = n()) %>% 
+  arrange(desc(N))
+```
+
+7.Find out in which district the most incident where reported. 
+
+```{r}
+crime %>% 
+  filter(OFFENSE_CODE_GROUP == "Drug Violation") %>% 
+  group_by(DISTRICT) %>% 
+  summarise(N = n()) %>% 
+  arrange(desc(N)) 
+```
+
+8. What is the most dangerous hour of the week?
+
+```{r}
+crime %>% 
+  filter(OFFENSE_CODE_GROUP == "Homicide") %>% 
+  group_by(HOUR, DAY_OF_WEEK) %>%
+  summarise(N = n()) %>% 
+  arrange(desc(N))
+```
+
+10. Calculate for each district the proportion of motor vehicle accidents to all reported incidents.
+
+```{r}
+crime %>% 
+  group_by(DISTRICT) %>%  
+  transmute(prop_accidents = sum(OFFENSE_CODE_GROUP == "Motor Vehicle Accident Response") / n()  )
+  
+```
+
+11. Sort the data set chronologically by year and month. Then take the first 10.000 observations and compute the proportion of incidents where a shooting was involved for each district. Now take a random sample of size 10.000. Is there a noteworthy difference?
+
+```{r}
+set.seed(1245)
+
+crime %>% 
+  arrange(desc(YEAR), desc(MONTH)) %>%
+  slice(1:10000) %>% 
+  summarise(shooting = mean(SHOOTING == "Y"))
+
+crime %>% 
+  sample_n(10000) %>% 
+  summarise(shooting = mean(SHOOTING == "Y"))
+```
+
+12. Compute the rate for `table2`, and `table4a` + `table4b`.
+
+```{r}
+# Using table 2. Adding the computed data to the table would be inconvenient.
+table2[table2$type == "cases", "count"] / table2[table2$type == "population", "count"]
+# Using table4a + `table4b
+table4a[ ,-1] / table4b[ ,-1]
+```
+
+
+13. Recreate the plot given by the code below using `table2` instead of `table1`.
+
+```{r}
+## Using Table 1
+library(ggplot2)
+ggplot(table1, aes(year, cases)) + 
+  geom_line(aes(group = country), colour = "grey50") + 
+  geom_point(aes(colour = country))
+
+## Using Table 2
+ggplot(table2 %>% filter(type == "cases"), aes(x = year, y = count)) +
+    geom_line(aes( group = country)) +
+    geom_point(aes(color = country))
+
+```
+
+
+
+
+
+
+
+
+
+
+   
+   
+        
