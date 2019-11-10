@@ -4,7 +4,7 @@
     <title>Advanced R for Econometricians</title>
     <meta charset="utf-8" />
     <meta name="author" content="Martin Arnold" />
-    <meta name="date" content="2019-11-04" />
+    <meta name="date" content="2019-11-06" />
     <link href="functional_files/remark-css/default.css" rel="stylesheet" />
     <link href="functional_files/font-awesome/css/fontawesome-all.min.css" rel="stylesheet" />
     <script type="text/x-mathjax-config">
@@ -19,6 +19,10 @@
       cursor: default;
     }
     </style>
+    
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"
+      integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
+      crossorigin="anonymous"></script>
     <link rel="stylesheet" href="../assets/sydney-fonts.css" type="text/css" />
     <link rel="stylesheet" href="../assets/sydney.css" type="text/css" />
     <link rel="stylesheet" href="../assets/title_slides.css" type="text/css" />
@@ -117,7 +121,7 @@ randomise(mean)
 ```
 
 ```
-## [1] -0.001331086
+## [1] -0.05614989
 ```
 
 ```r
@@ -125,7 +129,7 @@ randomise(sum)
 ```
 
 ```
-## [1] 15.11266
+## [1] 34.42731
 ```
 
 More prominent examples are, e.g. `lapply()` and `integrate()`.
@@ -416,13 +420,13 @@ map(1:3, rnorm, mean = c(100, 10, 1))
 
 ```
 ## [[1]]
-## [1] 98.38236
+## [1] 100.5772
 ## 
 ## [[2]]
-## [1] 99.02788 11.68949
+## [1] 100.263766   9.930119
 ## 
 ## [[3]]
-## [1] 99.912977  8.073848  1.765147
+## [1] 99.081078 11.363416  1.224209
 ```
 ]]
 
@@ -441,7 +445,7 @@ map_dbl(x, plus, runif(1))
 ```
 
 ```
-## [1] 0.983897 0.983897 0.983897 0.983897
+## [1] 0.01127486 0.01127486 0.01127486 0.01127486
 ```
 
 ```r
@@ -449,7 +453,7 @@ map_dbl(x, ~ plus(.x, runif(1)))
 ```
 
 ```
-## [1] 0.9801161 0.4382347 0.3190144 0.3651393
+## [1] 0.3304464 0.8102219 0.9929278 0.8205790
 ```
 ]
 
@@ -490,7 +494,7 @@ map_dbl(trims, ~ mean(x, trim = .x))
 ```
 
 ```
-## [1] 1.16794448 0.09289544 0.04830035 0.01686533
+## [1] -0.959561604  0.039431782  0.009016071  0.021749311
 ```
 
 This is equivalent to:
@@ -501,7 +505,7 @@ map_dbl(trims, function(trim) mean(x, trim = trim))
 ```
 
 ```
-## [1] 1.16794448 0.09289544 0.04830035 0.01686533
+## [1] -0.959561604  0.039431782  0.009016071  0.021749311
 ```
 
 ]]]
@@ -512,14 +516,14 @@ map_dbl(trims, function(trim) mean(x, trim = trim))
 1. `map(1:3, ~ runif(2))` is a useful pattern for generating random numbers, but `map(1:3, runif(2))` is not. Why not? Can you explain why it returns the result that it does?
 
 2. The following code simulates the performance of a t-test for non-normal data. Extract the p-value from each test, then visualise.
-
-    ```nohighlights
+    
+    ```r
     trials &lt;- map(1:100, ~ t.test(rpois(10, 10), rpois(7, 10)))
     ```
 
 3. Use `map()` to fit linear models to the `mtcars` dataset using the formulas stored in this list:
-
-    ```nohighlights
+    
+    ```r
     formulas &lt;- list(
        mpg ~ disp,
        mpg ~ disp + wt,
@@ -1279,6 +1283,47 @@ if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
     deleted = true;
   });
 })();</script>
+<script type="text/x-mathjax-config">
+  
+  function addCopyButtonToCode(){
+    // get all code elements
+    var allCodeBlocksElements = $( ".r" );
+    // For each element, do the following steps
+    allCodeBlocksElements.each(function(ii) {
+      // define a unique id for this element and add it
+      var currentId = "codeblock" + (ii + 1);
+      $(this).attr('id', currentId);
+      
+
+      // add the button just after the text in the code block w/ jquery
+      var clipButton = '<img src="https://image.flaticon.com/icons/svg/54/54662.svg" width="16" alt="Copy to clipboard" onclick=copyToClipboard("#' + currentId + '") style="float:right;cursor:pointer;">';
+      $(this).prepend(clipButton);
+    });
+    
+  }
+
+$(document).ready(function () {
+  // Once the DOM is loaded for the page, attach clipboard buttons
+  addCopyButtonToCode();
+});
+
+
+function copyToClipboard(element) {
+  var $temp = $("<textarea>");
+  $("body").append($temp);
+  
+  let vars = '';
+  
+  $(element).children().each((i, v) => {
+      vars += $(v).text() + '\n'
+    })
+  
+  $temp.val(vars).select();
+  document.execCommand("copy");
+  $temp.remove();
+}
+
+</script>
 
 <script>
 (function() {

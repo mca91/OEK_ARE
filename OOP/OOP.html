@@ -4,8 +4,9 @@
     <title>Advanced R for Econometricians</title>
     <meta charset="utf-8" />
     <meta name="author" content="Martin Arnold" />
-    <meta name="date" content="2019-10-26" />
+    <meta name="date" content="2019-11-06" />
     <link href="OOP_files/remark-css/default.css" rel="stylesheet" />
+    <link href="OOP_files/font-awesome/css/fontawesome-all.min.css" rel="stylesheet" />
     <script type="text/x-mathjax-config">
       MathJax.Hub.Config({
         TeX: { equationNumbers: { autoNumber: "AMS" } },
@@ -18,6 +19,10 @@
       cursor: default;
     }
     </style>
+    
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"
+      integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
+      crossorigin="anonymous"></script>
     <link rel="stylesheet" href="../assets/sydney-fonts.css" type="text/css" />
     <link rel="stylesheet" href="../assets/sydney.css" type="text/css" />
     <link rel="stylesheet" href="../assets/title_slides.css" type="text/css" />
@@ -31,13 +36,14 @@
 class: title-slide title-oop center middle
 
 # Advanced R for Econometricians
-## Objected Oriented Programming in R
+## Object Oriented Programming in R
 ### Martin Arnold
 
 ---
 class: left, top
 ## Introduction
 
+.smaller[
 - Object oriented programming (OOP) is a widespread philosophy: it's the cornerstone of popular languages like Java, Python and C++. 
 
 - The concepts of class and method are central to any OOP system:
@@ -55,11 +61,13 @@ class: left, top
     - a more general understanding of the language
     
     - being able to understand and expand on object oriented code from other authors 
+]
 
 ---
 class: left, top
 ## Introduction
 
+.smaller[
 - R's most important OOP systems are **S3**, **S4**, **R6** and **RC**
 
     - S3 is R's oldest OO system. It's minimal but elegant. 
@@ -77,11 +85,13 @@ class: left, top
     - disagreement over the realtive importance of the available OOP systems
     
 - We will elaborate key principles in OOP with R, thereby focusing on S3
+]
 
 ---
 class: left, top
 ## The `sloop` Package
 
+.smaller[
 We 'sail the seas of OOP' using the `sloop` package. It provides helper functions which facilitate the handling of OOP objects.
 
 
@@ -114,11 +124,13 @@ otype(lm(area ~ poptotal, data = ggplot2::midwest))
 ```
 ## [1] "S3"
 ```
-    
+]
+
 ---
 class: left, top
 ## Base Types vs OO Objects
 
+.smaller[
 &lt;br&gt;
 &lt;blockquote&gt;
 Everything that exists in R is an object. 
@@ -132,11 +144,13 @@ Thus far we have used the term 'object' somewhat sloppily &amp;mdash; not every 
 
 ![:image 35%](../img/oo-venn.png)
 ![:source 2019](Wickham)
+]
 
 ---
 class: left, top
 ## Base Types vs OO Objects
 
+.smaller[
 `is.object()` and `sloop::otype()` are useful for identifying objects in the wild.
 
 
@@ -173,6 +187,7 @@ otype(ggplot2::diamonds)
 ```
 ## [1] "S3"
 ```
+]
 
 ---
 class: left, top
@@ -201,6 +216,7 @@ attr(ggplot2::diamonds, "class")
 class: left, top
 ## Base Types vs OO Objects
 
+.smaller[
 - There are alternate functions for checking the `class` argument
     
     ```r
@@ -228,6 +244,7 @@ class: left, top
     ```
     ## [1] "integer"
     ```
+]
 
 ???
 
@@ -294,6 +311,8 @@ is.numeric(factor('x'))
 class: left, top
 ## S3 &amp;mdash; Basics
 
+.smaller[
+
 **What is S3?**
 
 - C++ and Java use *message-passing style* where objects **encapsulate** data and functions that may modify the data. 
@@ -311,12 +330,16 @@ class: left, top
 - It's used in `base` and `stats` and is the most commonly used system on CRAN.
 
 - This sections provides you with a working knowledge of the system and its limitations. Being familiar with S3 is a good starting point for engaging with the other systems, if necessary for your work.
+]
 
 ---
 class: left, top
 ## S3 &amp;mdash; Basics
 
+.medium[
 Every S3 object has a base type and at least one class.
+.blockquote.exercise[
+#### <i class="fas  fa-desktop "></i> Example: class and type of factor object
 
 
 ```r
@@ -349,6 +372,7 @@ class(f)
 ```
 ## [1] "factor"
 ```
+]]
 
 ???
 
@@ -367,12 +391,13 @@ class: left, top
 - The process of looking for a class-specific implementation (**method**) upon a generic function call is called **method dispatch**
 
 
-
 ---
 class: left, top
 ## S3 &amp;mdash; Generics
 
-**Example: `print()`**
+.smaller[
+.blockquote.exercise[
+#### <i class="fas  fa-desktop "></i> Example: `print()`
 
 Executing `f` calls a generic (`print`) with specific behavior for objects of class `factor`.
 
@@ -404,6 +429,7 @@ print(unclass(f))
 ## attr(,"levels")
 ## [1] "a" "b" "c"
 ```
+]]
 
 ???
 
@@ -413,9 +439,10 @@ unclass(f) + unclass(f)
 class: left, top
 ## S3 &amp;mdash; Method Dispatch
 
-- S3 methods follow the name convention `generic.class()`.
+.smaller[
+- S3 methods follow the name convention `generic.class()`
 
-- We may use `s3_dispatch()` to investigate the process of method dispatch for an S3 object.
+- We may use `s3_dispatch()` to investigate the process of method dispatch for an S3 object
   
   ```r
   s3_dispatch(print(f))
@@ -438,14 +465,17 @@ class: left, top
   ```
   ## [1] "S3"     "method"
   ```
+]
 
 ---
 class: left, top
 ## S3 &amp;mdash; Method Dispatch
 
+.smaller[
 Use `s3_get_method()` to see the source code of a method which is not exported.
 
-**Example: `lm.print()`**
+.blockquote.exercise[
+#### <i class="fas  fa-desktop "></i> Example: `lm.print()`
 
 
 ```r
@@ -464,12 +494,15 @@ class(mod)
 ```
 ## [1] "lm"
 ```
+]]
 
 ---
 class: left, top
 ## S3 Basics &amp;mdash; Method Dispatch
 
-**Example: `lm.print()` &amp;mdash; ctd.**
+.smaller[
+.blockquote.exercise[
+#### <i class="fas  fa-desktop "></i> Example: `lm.print()` &amp;mdash; ctd.
 
 
 ```r
@@ -491,9 +524,10 @@ s3_get_method(print.lm)
 ##     cat("\n")
 ##     invisible(x)
 ## }
-## &lt;bytecode: 0x7f9e82d915c8&gt;
+## &lt;bytecode: 0x7ff06a2e3268&gt;
 ## &lt;environment: namespace:stats&gt;
 ```
+]]
 
 ---
 class: left, top
@@ -557,6 +591,9 @@ class: left, top
 
 We now demonstrate how to implement a simple S3 class for prime numbers.
 
+.blockquote.exercise[
+#### S3 &amp;mdash; constructur function for `prime` class
+
 Let's start with a constructor function which accepts integer input and returns an object with classes 'data frame' and 'prime'.
 
 
@@ -572,10 +609,15 @@ new_prime &lt;- function(x = integer()) {
   x
 }
 ```
+]
 
 ---
 class: left, top
 ## Case Study &amp;mdash; An S3 Class for Prime Numbers
+
+.smaller[
+.blockquote.exercise[
+#### S3 &amp;mdash; validator function for `prime` class
 
 The validator function should check whether the values of a `prime` object are indeed prime numbers.
 
@@ -594,12 +636,16 @@ validate_prime &lt;- function(x = list()) {
   x
 }
 ```
-
 (This code is not efficient. Can you come up with a better implementation?)
+]]
 
 ---
 class: left, top
 ## Case Study &amp;mdash; An S3 Class for Prime Numbers
+
+.smaller[
+.blockquote.exercise[
+#### S3 &amp;mdash; helper function for `prime` class
 
 At last we provide a user-friendly helper function which generates and validates `prime` objects.
 
@@ -615,15 +661,25 @@ prime &lt;- function(x = integer()) {
 (x &lt;- prime(c(3L, 5L, 7L, 11L)))
 ```
 
+```
+## [[1]]
+## [1]  3  5  7 11
+## 
+## attr(,"class")
+## [1] "prime"
+```
+
 
 ```
 ## [1] "prime"
 ```
+]]
 
 ---
 class: left, top
 ## S3 Generics and Methods
 
+.smaller[
 - Many prominent R functions are generics, e.g. `mean()`. Method dispatch is done by `UseMethod()`.
   
   ```r
@@ -633,7 +689,7 @@ class: left, top
   ```
   ## function (x, ...) 
   ## UseMethod("mean")
-  ## &lt;bytecode: 0x7f9e79f70428&gt;
+  ## &lt;bytecode: 0x7ff0649a1738&gt;
   ## &lt;environment: namespace:base&gt;
   ```
   
@@ -648,11 +704,13 @@ class: left, top
   ##    mean.function
   ## =&gt; mean.default
   ```
+]
 
 ---
 class: left, top
 ## S3 Generics and Methods
 
+.smaller[
 - Note that the pseudo-class `default` for standard fallback could be used for `Date` objects but there is a specific method `mean.Date()` which is called instead
 
 - Use `s3_methods_generic()` to see all available methods of a generic
@@ -662,17 +720,18 @@ class: left, top
   ```
   
   ```
-  ## # A tibble: 7 x 4
-  ##   generic class      visible source             
-  ##   &lt;chr&gt;   &lt;chr&gt;      &lt;lgl&gt;   &lt;chr&gt;              
-  ## 1 mean    Date       TRUE    base               
-  ## 2 mean    default    TRUE    base               
-  ## 3 mean    difftime   TRUE    base               
-  ## 4 mean    POSIXct    TRUE    base               
-  ## 5 mean    POSIXlt    TRUE    base               
-  ## 6 mean    quosure    FALSE   registered S3method
-  ## 7 mean    vctrs_vctr FALSE   registered S3method
+  ## # A tibble: 6 x 4
+  ##   generic class    visible source             
+  ##   &lt;chr&gt;   &lt;chr&gt;    &lt;lgl&gt;   &lt;chr&gt;              
+  ## 1 mean    Date     TRUE    base               
+  ## 2 mean    default  TRUE    base               
+  ## 3 mean    difftime TRUE    base               
+  ## 4 mean    POSIXct  TRUE    base               
+  ## 5 mean    POSIXlt  TRUE    base               
+  ## 6 mean    quosure  FALSE   registered S3method
   ```
+]
+
 ---
 class: left, top
 ## S3 Generics and Methods
@@ -705,28 +764,33 @@ head(
 ---
 class: left, top
 ## S3 Generics and Methods
-  
-- Writing your own generic is straightforward
-    
-    ```r
-    my_generic &lt;- function(x) {
-      UseMethod('my_generic')
-    }
-    ```
-  
-    `UseMethod()` dispatches based on `x` by default. Dispatch based on a second argument is optional.
 
-- Let's define methods for default behavior and `my_class`
-    
-    ```r
-    my_generic.default &lt;- function(x) {
-      x
-    }
-    
-    my_generic.my_class &lt;- function(x) {
-      cat("Output for class 'my_class':\n", x)
-    }
-    ```
+.smaller[
+.blockquote.exercise[
+#### <i class="fas  fa-desktop "></i> Example: How to write a generic
+
+Writing your own generic is straightforward
+
+```r
+my_generic &lt;- function(x) {
+  UseMethod('my_generic')
+}
+```
+  
+`UseMethod()` dispatches based on `x` by default. Dispatch based on a second argument is optional.
+
+Let's define methods for default behavior and `my_class`
+
+```r
+my_generic.default &lt;- function(x) {
+  x
+}
+
+my_generic.my_class &lt;- function(x) {
+  cat("Output for class 'my_class':\n", x)
+}
+```
+]]
 
 ???
 
@@ -735,6 +799,10 @@ comment on rules for creating methods (CH 13.4.3 in Advanced R)
 ---
 class: left, top
 ## S3 Generics and Methods
+
+.smaller[
+.blockquote.exercise[
+#### <i class="fas  fa-desktop "></i> Example: How to write a generic &amp;mdash; ctd.
 
 We next check that method dispatch works as desired:
 
@@ -758,10 +826,15 @@ s3_dispatch(my_generic(y))
 ## =&gt; my_generic.my_class
 ##  * my_generic.default
 ```
+]]
 
 ---
 class: left, top
 ## S3 Generics and Methods
+
+.smaller[
+.blockquote.exercise[
+#### <i class="fas  fa-desktop "></i> Example: How to write a generic &amp;mdash; ctd.
 
 We next check that method dispatch works as desired:
 
@@ -783,6 +856,8 @@ my_generic(y)
 ## Output for class 'my_class':
 ##  1
 ```
+
+]]
 
 ---
 class: left, top
@@ -984,7 +1059,11 @@ Notice that inheritance depends on how we define the class vector:
 class: left, top
 ## S3 Inheritance
 
+.smaller[
 We may use these mechanics to implement 2 (child) classes which inherit (parts of) their `print()` method from the `prime` class.
+
+.blockquote.exercise[
+#### <i class="fas  fa-desktop "></i> Example: Inheritance of `print()` method
 
 
 ```r
@@ -1004,9 +1083,16 @@ print.fermat &lt;- function(x) {
 }
 ```
 
+]
+]
+
 ---
 class: left, top
 ## S3 Inheritance
+
+.smaller[
+.blockquote.exercise[
+#### <i class="fas  fa-desktop "></i> Example: Inheritance of `print()` method  &amp;mdash; ctd.
 
 
 ```r
@@ -1031,10 +1117,15 @@ y
 ## Fermat primes: 3 5 17 257
 ```
 
+]]
+
 ---
 class: left, top
 ## S3 Inheritance
 
+.smaller[
+.blockquote.exercise[
+#### <i class="fas  fa-desktop "></i> Example: Inheritance of `print()` method  &amp;mdash; ctd.
 
 ```r
 s3_dispatch(print(x))
@@ -1057,7 +1148,7 @@ s3_dispatch(print(y))
 ```
 
 `-&gt;` indicates the method the call to the original method has been delegated to. 
-
+]]
 ---
 class: left, top
 ## S3 Inheritance &amp;mdash; Exercises
@@ -1125,6 +1216,47 @@ if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
     deleted = true;
   });
 })();</script>
+<script type="text/x-mathjax-config">
+  
+  function addCopyButtonToCode(){
+    // get all code elements
+    var allCodeBlocksElements = $( ".r" );
+    // For each element, do the following steps
+    allCodeBlocksElements.each(function(ii) {
+      // define a unique id for this element and add it
+      var currentId = "codeblock" + (ii + 1);
+      $(this).attr('id', currentId);
+      
+
+      // add the button just after the text in the code block w/ jquery
+      var clipButton = '<img src="https://image.flaticon.com/icons/svg/54/54662.svg" width="16" alt="Copy to clipboard" onclick=copyToClipboard("#' + currentId + '") style="float:right;cursor:pointer;">';
+      $(this).prepend(clipButton);
+    });
+    
+  }
+
+$(document).ready(function () {
+  // Once the DOM is loaded for the page, attach clipboard buttons
+  addCopyButtonToCode();
+});
+
+
+function copyToClipboard(element) {
+  var $temp = $("<textarea>");
+  $("body").append($temp);
+  
+  let vars = '';
+  
+  $(element).children().each((i, v) => {
+      vars += $(v).text() + '\n'
+    })
+  
+  $temp.val(vars).select();
+  document.execCommand("copy");
+  $temp.remove();
+}
+
+</script>
 
 <script>
 (function() {
