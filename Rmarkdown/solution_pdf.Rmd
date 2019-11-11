@@ -1,0 +1,59 @@
+---
+title: "Solution"
+author: "Alexander Gerber & Martin Arnold"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+output: pdf_document
+---
+
+# Obtain the Crime Incidents Data
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+First, we download the data and import it to R.
+
+```{r, cache=TRUE}
+library(tidyverse)
+
+download.file("https://data.boston.gov/dataset/6220d948-eae2-4e4b-8723-2dc8e67722a3/resource/9c30453a-fefa-4fe0-b51a-5fc09b0f4655/download/rmscrimeincidentfieldexplanation.xlsx", destfile = "crime_description.xlsx")
+
+crime_description <- readxl::read_xlsx("crime_description.xlsx")
+
+download.file("https://data.boston.gov/dataset/6220d948-eae2-4e4b-8723-2dc8e67722a3/resource/12cb3883-56f5-47de-afa5-3b1cf61b257b/download/tmp5kc2h34q.csv", destfile = "crime_data.csv")
+
+# readr's read_csv function is significantly faster than the read_csv function
+# from the utils package which is part of base R.
+crime_data <- readr::read_csv("crime_data.csv")
+```
+
+Let's have a look at the variable description:
+
+```{r}
+knitr::kable(crime_description)
+```
+
+
+# Some exploratory data analysis (EDA)
+
+First we want to get an overview of the data.
+
+```{r, cache=T}
+glimpse(crime_data)
+```
+
+As we can see, the Dataset consists of `r dim(crime_data)[1]` Observations in `r dim(crime_data)[2]` Variables.
+
+Lets focus on the DAY_OC_WEEK.
+
+```{r, cache= T}
+# OFFENSE_CODE should be a factor
+crime_data <- crime_data %>% mutate(DAY_OF_WEEK = as_factor(DAY_OF_WEEK))
+
+ggplot(crime_data) +
+  geom_bar(aes(x = DAY_OF_WEEK, fill = DISTRICT))
+
+```
+
+Some districts have more crimes than others and the crime is a little bit lazy on sundays.
+
