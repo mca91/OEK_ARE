@@ -387,7 +387,7 @@ data.frame("Join type" = c("INNER", "LEFT", "RIGHT", "FULL", "ANTI"),
 ```{r}
 Y <- data.table(id=1:3,t=c(1.0,3.3,9.0) ) 
 X <- data.table(t=c(1.2,2.8,4.5,10)) 
-X[Y,on="t",roll=TRUE]
+X[Y, on="t",roll=TRUE]
 ```
 Looks for closest value in t which is smaller than t in the lookup-table.
 
@@ -400,3 +400,23 @@ Looks for closest value in t which is smaller than t in the lookup-table.
 -  `fsetdiff(DT1,DT2)`, `funion(DT1,DT2)`, ...: Fast set operations for `data.tables`
 -  `uniqueN(cut)`: Number of unique elements
 -  `shift()`: For lead and lag
+
+---
+## Exercises 
+
+1. Repeat the exercises from the chapter on `dplyr` using `data.table`. 
+2. Compare the speed of reading in the Boston crime dataset with `read.csv()` and `fread()`. Use the 
+   function `system.time()` find out how long it takes. 
+
+
+
+
+
+
+
+
+
+
+
+
+

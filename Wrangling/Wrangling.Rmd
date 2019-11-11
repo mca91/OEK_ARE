@@ -188,7 +188,7 @@ The function `filter()` selects rows based on their values.
 filter(mtcars_tibble, hp == 100)
     ```
 
-- Use logical operators such as  `&` (and) and `|` (or) to combine multiple conditions. 
+- Use logical operators such as  `&` and `|` to combine multiple conditions. 
     ```{r, echo = TRUE, eval = FALSE}
 filter(mtcars_tibble, hp > 100 & cyl == 4)
 filter(mtcars_tibble, hp > 100 | cyl == 4)
@@ -250,7 +250,7 @@ select(iris, ends_with("Length"))
 select(iris, matches(".t."))
     ```
 
-- Select columns named x1, x2, x3, x4, x5.
+- Select columns named `x1`, `x2`, `x3`, `x4`, `x5`.
     ```{r, echo=TRUE, eval = FALSE}
 select(iris, num_range("x", 1:5))
     ```
@@ -272,11 +272,6 @@ select(iris, one_of(c("Species", "Genus")))
 - Select columns whose name starts with a character string.
     ```{r, echo=TRUE, eval = FALSE}
 select(iris, starts_with("Sepal"))
-    ```
-
-- Select all columns between Sepal.Length and Petal.Width (inclusive).
-    ```{r, echo=TRUE, eval = FALSE}
-select(iris, Sepal.Length:Petal.Width)
     ```
 
 ---
@@ -404,7 +399,7 @@ count(by_cyl)
 filter(by_cyl, n() > 10)  
 
 # sorts one group after the other
-arrange(by_cyl, disp)                          
+arrange(by_cyl, disp, .by_group = TRUE)                        
 ```
 ---
 class: top, left
