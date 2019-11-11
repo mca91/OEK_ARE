@@ -55,3 +55,37 @@ ggplot(crime_data) +
 ```
 
 Some districts have more crimes than others and the crime is a little bit lazy on sundays.
+
+## Nested ordered list for HTML output
+
+https://stackoverflow.com/questions/10405945/html-ordered-list-1-1-1-2-nested-counters-and-scope-not-working
+
+```{r, echo=F, eval = TRUE, results='asis'}
+cat('
+<style>
+  ol {
+    counter-reset: item;
+    content: counters(item, "."); 
+  }
+  li {
+    margin: 10px 0;
+    display: block;
+  }
+  li:before { 
+    content: counters(item, ".") ". "; 
+    counter-increment: item 
+  }
+</style>
+
+<ol>
+  <li> Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum.
+      <ol>
+          <li>Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum.</li>
+      </ol>
+  </li>
+
+  <li>Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum.</li>
+
+</ol>
+')
+```

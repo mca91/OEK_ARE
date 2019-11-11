@@ -57,3 +57,14 @@ ggplot(crime_data) +
 
 Some districts have more crimes than others and the crime is a little bit lazy on sundays.
 
+## Nested ordered list for LaTeX output
+
+https://tex.stackexchange.com/questions/78842/nested-enumeration-numbering
+
+\begin{enumerate}
+  \item Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum.
+  \begin{enumerate}
+    \item Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum.
+  \end{enumerate}
+  \item Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum.
+\end{enumerate}
