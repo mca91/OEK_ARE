@@ -821,7 +821,7 @@ table `RMS_Crime_Incident_Field_Explanation`.
 ---
 class: left, top
 ## Exercises
-<ol start="6"> 
+<ol start="7"> 
 <li>  Remember that nested ordered lists are not supported by Rmarkdown. Produce one nonetheless in your HTML and your PDF document. </li>
 <li> Also build some slides using the code you have written. You are free to choose one among all available presentation formats. </li>
 <li> Find out how to always use the current date in the YAML header.</li>
