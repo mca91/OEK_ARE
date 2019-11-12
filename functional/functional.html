@@ -4,7 +4,7 @@
     <title>Advanced R for Econometricians</title>
     <meta charset="utf-8" />
     <meta name="author" content="Martin Arnold" />
-    <meta name="date" content="2019-11-06" />
+    <meta name="date" content="2019-11-08" />
     <link href="functional_files/remark-css/default.css" rel="stylesheet" />
     <link href="functional_files/font-awesome/css/fontawesome-all.min.css" rel="stylesheet" />
     <script type="text/x-mathjax-config">
@@ -37,8 +37,14 @@
 class: title-slide title-purrr center middle
 
 # Advanced R for Econometricians
-## Functional Style R Programming  using `purrr`
+## Functional Style R Programming
 ### Martin Arnold
+
+---
+class: segue-red
+### Part I
+
+Functional Programming Using `purrr`
 
 ---
 class: left 
@@ -121,7 +127,7 @@ randomise(mean)
 ```
 
 ```
-## [1] -0.05614989
+## [1] -0.03466461
 ```
 
 ```r
@@ -129,7 +135,7 @@ randomise(sum)
 ```
 
 ```
-## [1] 34.42731
+## [1] 2.371015
 ```
 
 More prominent examples are, e.g. `lapply()` and `integrate()`.
@@ -420,13 +426,13 @@ map(1:3, rnorm, mean = c(100, 10, 1))
 
 ```
 ## [[1]]
-## [1] 100.5772
+## [1] 100.9989
 ## 
 ## [[2]]
-## [1] 100.263766   9.930119
+## [1] 101.92385   9.80575
 ## 
 ## [[3]]
-## [1] 99.081078 11.363416  1.224209
+## [1] 98.7993789  8.6978922  0.3832112
 ```
 ]]
 
@@ -445,7 +451,7 @@ map_dbl(x, plus, runif(1))
 ```
 
 ```
-## [1] 0.01127486 0.01127486 0.01127486 0.01127486
+## [1] 0.2231636 0.2231636 0.2231636 0.2231636
 ```
 
 ```r
@@ -453,7 +459,7 @@ map_dbl(x, ~ plus(.x, runif(1)))
 ```
 
 ```
-## [1] 0.3304464 0.8102219 0.9929278 0.8205790
+## [1] 0.19560549 0.74581645 0.89345733 0.06402537
 ```
 ]
 
@@ -494,7 +500,7 @@ map_dbl(trims, ~ mean(x, trim = .x))
 ```
 
 ```
-## [1] -0.959561604  0.039431782  0.009016071  0.021749311
+## [1] 0.002528779 0.102908313 0.078623074 0.098530975
 ```
 
 This is equivalent to:
@@ -505,7 +511,7 @@ map_dbl(trims, function(trim) mean(x, trim = trim))
 ```
 
 ```
-## [1] -0.959561604  0.039431782  0.009016071  0.021749311
+## [1] 0.002528779 0.102908313 0.078623074 0.098530975
 ```
 
 ]]]
@@ -1229,6 +1235,14 @@ accumulate(l, intersect)
 ## [1] 2 9 8 3 1 4
 ```
 ]]
+
+---
+class: segue-red
+### Part II
+
+Function Factories
+
+---
     </textarea>
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
 <script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
