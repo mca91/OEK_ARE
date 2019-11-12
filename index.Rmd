@@ -9,7 +9,7 @@ output:
     seal: false
     includes:
       in_header: "assets/meta.html"
-    self_contained: true # if true, fonts will be stored locally
+    self_contained: false # if true, fonts will be stored locally
     lib_dir: libs
     css: ["default", "assets/sydney-fonts.css", "assets/sydney.css", "assets/custom.css", "assets/title_slides.css"]
     nature:
@@ -28,6 +28,7 @@ output:
 3. Data Wrangling and Transformation
    - [dplyr](Wrangling/Wrangling.html)
    - [data.table](Datatable/datatable.html)
+   - [Databases](databases/databases.html)
 4. Advanced R Programming 
   - Functional Programming
   - Object Oriented Programming 

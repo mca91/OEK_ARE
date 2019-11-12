@@ -127,7 +127,7 @@ install.packages("dbplyr")
 - You’ll also need to install a `DBI` backend package. The `DBI` package provides a common interface that allows `dplyr` to work with many different databases using the same code. 
 
 - Some commonly used backends are:
-    - `RMySQL` connects to MySQL and MariaDB.
+    - `RMariaDB` connects to MySQL and MariaDB.
     - `RPostgreSQL` connects to Postgres and Redshift.
     - `RSQLite` embeds a SQLite database.
     - `bigrquery` connects to Google’s BigQuery.
@@ -172,7 +172,7 @@ DBI::dbWriteTable(con, "country_codes", gapminder::country_codes)
 ## Access Data
 
 - When the connection is established we can use the object `con` to communicate with the database.
-- The function `DBI::dbListTables()` tells us which tables are in the database 
+- The function `DBI::dbListTables()` tells us which tables are in the database.
 ```{r}
 DBI::dbListTables(con)
 ```
@@ -205,7 +205,7 @@ show_query(gap_avg_db)
 ## Use Standard `dplyr`  functions on the Database
 
 
-When working with databases, dplyr tries to be as lazy as possible:
+When working with databases, `dplyr` tries to be as lazy as possible:
 
 - It never pulls data into R unless you explicitly ask for it.
 - It delays doing any work until the last possible moment: it collects everything you want to do and then sends it to the database in one step.
@@ -220,7 +220,7 @@ print(gap_avg)
 ---
 ## Disconnect
 
-- After the connection to the database is no longer needed you should disconnect. 
+- If the connection to the database is no longer needed you should disconnect to free system ressources. 
 
 ```{r}
 DBI::dbDisconnect(con)
@@ -234,7 +234,7 @@ rm(con)
 
 - SQLite is very light weighted Database Management System 
 - An SQLite database is contained in a single file. There is no need for a server. 
-- Everything you need is installed if the package `RSQLite` is installed. 
+- Everything you need is to install the `RSQLite` packages. 
 
 #### Create an SQLite Database
 - A new SQLite database is automatically created if you call `DBI::dbConnect()`
