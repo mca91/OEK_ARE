@@ -27,7 +27,7 @@ output:
 3. [Data Visualisation with ggplot](ggplot2/ggplot2.html) 
 3. Data Wrangling and Transformation
    - [dplyr](Wrangling/Wrangling.html)
-   - data.table(Datatable/datatable.html)
+   - [data.table](Datatable/datatable.html)
 4. Advanced R Programming 
   - Functional Programming
   - Object Oriented Programming 
