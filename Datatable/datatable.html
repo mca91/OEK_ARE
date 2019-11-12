@@ -16,8 +16,13 @@
       cursor: default;
     }
     </style>
+    
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"
+      integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
+      crossorigin="anonymous"></script>
     <link rel="stylesheet" href="..\assets\sydney-fonts.css" type="text/css" />
     <link rel="stylesheet" href="..\assets\sydney.css" type="text/css" />
+    <link rel="stylesheet" href="..\assets\title_slides.css" type="text/css" />
   </head>
   <body>
     <textarea id="source">
@@ -25,12 +30,11 @@
 
 
 
-class: title-slide center middle
+class: title-slide title-datatable center middle
 
 # Advanced R for Econometricians
 
 ## `data.table`
-
 
 ---
 ## What is a `data.table`?
@@ -99,7 +103,7 @@ obj_addr(X$a)
 ```
 
 ```
-## [1] "0x1692ff00"
+## [1] "0x12094160"
 ```
 
 ```r
@@ -108,7 +112,7 @@ obj_addr(X$a)
 ```
 
 ```
-## [1] "0x12193d48"
+## [1] "0x120958c0"
 ```
 
 
@@ -119,7 +123,7 @@ obj_addr(X$a)
 ```
 
 ```
-## [1] "0x16065ee0"
+## [1] "0x14b4fd00"
 ```
 
 ```r
@@ -128,7 +132,7 @@ obj_addr(X$a)
 ```
 
 ```
-## [1] "0x16065ee0"
+## [1] "0x14b4fd00"
 ```
 
 ---
@@ -435,8 +439,8 @@ numeric_DT[ ,lapply(.SD, mean)]
 ```
 
 ```
-##             a          b         c
-## 1: -0.2514579 -0.1053122 0.5627119
+##            a          b          c
+## 1: 0.1996274 -0.1681845 -0.3989881
 ```
 
 We can however change `.SD` to only contain a subset of all columns using `.SDcols`.
@@ -581,7 +585,7 @@ merge(members, instruments, all=TRUE)[is.na(plays)]
 ```r
 Y &lt;- data.table(id=1:3,t=c(1.0,3.3,9.0) ) 
 X &lt;- data.table(t=c(1.2,2.8,4.5,10)) 
-X[Y,on="t",roll=TRUE]
+X[Y, on="t",roll=TRUE]
 ```
 
 ```
@@ -601,6 +605,13 @@ Looks for closest value in t which is smaller than t in the lookup-table.
 -  `fsetdiff(DT1,DT2)`, `funion(DT1,DT2)`, ...: Fast set operations for `data.tables`
 -  `uniqueN(cut)`: Number of unique elements
 -  `shift()`: For lead and lag
+
+---
+## Exercises 
+
+1. Repeat the exercises from the chapter on `dplyr` using `data.table`. 
+2. Compare the speed of reading in the Boston crime dataset with `read.csv()` and `fread()`. Use the 
+   function `system.time()` find out how long it takes.
     </textarea>
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
 <script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
@@ -653,7 +664,24 @@ if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
     }
     deleted = true;
   });
-})();</script>
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
 
 <script>
 (function() {
