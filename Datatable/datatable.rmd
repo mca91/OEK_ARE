@@ -30,7 +30,6 @@ class: title-slide center middle
 
 ## `r rmarkdown::metadata$subtitle`
 
-
 ---
 ## What is a `data.table`?
 
