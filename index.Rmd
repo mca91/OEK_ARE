@@ -44,6 +44,6 @@ output:
 <li> Web Scraping  </li>
 <li> Shiny </li>
 <li> Writing Packages </li>
-<li>Text Mining  </li>
+<!-- <li>Text Mining  </li> -->
 </ol>
 ]
