@@ -3,7 +3,7 @@ title: "Advanced R for Econometricians"
 subtitle: "`data.table`"
 output:
   xaringan::moon_reader:
-    css: ["default", "../assets/sydney-fonts.css", "../assets/sydney.css", "../assets/title_slides.css"]
+    css: ["default", "../assets/sydney-fonts.css", "../assets/sydney.css", "../assets/custom.css", "../assets/title_slides.css"]
     self_contained: false # if true, fonts will be stored locally
     seal: false # show a title slide with YAML information
     includes:
@@ -127,7 +127,7 @@ The general form of `data.table` syntax is:
 ```
 
 
-Preparing a data.table.
+Preparing a data.table:
 ```{r}
 library(ggplot2)
 # setDT connot be used on data sets coming with packages 
@@ -146,7 +146,7 @@ DT[cut=="Fair"|cut=="Good"]
 ---
 ## i: keys
 
-When setting the `key` attribute a `data.table` is sorted in memory using a radix-sort. This can be used for very fast lookup.
+When setting the `key` attribute a `data.table` is sorted in memory using a [radix-sort](https://en.wikipedia.org/wiki/Radix_sort). This can be used for very fast lookup.
 
 ```{r, eval = FALSE}
 # one key column
@@ -194,9 +194,9 @@ DT[ , .(price, depth)]
     ```
 - Returning `data.table` with multiple columns.
     ```{r, eval = FALSE}
-DT[ ,.(price, depth)]
-DT[ ,1:2]
-DT[ ,c("price", "depth")]
+DT[ , .(price, depth)]
+DT[ , 1:2]
+DT[ , c("price", "depth")]
     ```
 
 ---
@@ -213,47 +213,44 @@ DT[ , cols, with = FALSE]
 ## j: Add and Remove Columns by Reference
 
 - Add a variable. 
-
-```{r}
+    ```{r}
 DT[ ,price_eur := price/0.91]
-```
+    ```
 
 - Add multiple variables
-```{r}
+    ```{r}
 # Here, we need to quote at the left hand side: 
 DT[ , c("x","y") := .(log(price), price - mean(price))]
-```
+    ```
 
 - Remove one variable. 
-```{r}
+    ```{r}
 DT[ , price_eur := NULL]
-```
+    ```
 
 - Remove multiple variables. 
-```{r, eval = FALSE}
+    ```{r, eval = FALSE}
 DT[ , c("x", "price_eur") := NULL]
-```
+    ```
 
 ---
 ## Update Columns by Reference
 
 - Simple update
-
-```{r}
+    ```{r}
 DT[price > 2500, price := 2500]
-```
+    ```
 
 - Updating multiple columns.
-
-```{r}
+    ```{r}
 DT[price > 2500, c("price","depth") := .(log(price), sqrt(depth))]
-```
+    ```
 
 
 ---
 ## j: Evaluate Expressions
 
-`j` can be used to evaluate expressions. Columns can be accessed as if they were in the global environment (compare to `dplyr::summarise()`.  
+`j` can be used to evaluate expressions. Columns can be accessed as if they were in the global environment (compare to `dplyr::summarise()`).  
 
 ```{r}
 DT[ , mean(price) / sd(depth)]
@@ -275,19 +272,19 @@ DT[ , .(mean_price = mean(price), sd_depth = sd(depth))]
 The `by` argument allows operations by group (compare to `dplyr::group_by()`).
 
 - Grouping by a single variable
-```{r, eval = FALSE}
+    ```{r, eval = FALSE}
 DT[ , .(mean_price = mean(price)), by = clarity]
-```
+    ```
 
 - Grouping by multiple variables.
-```{r, eval = FALSE}
+    ```{r, eval = FALSE}
 DT[ , .(mean_price = mean(price)), by = .(clarity, color)]
-```
+    ```
 
 - Grouping by expressions.
-```{r, eval = FALSE}
-DT[ , mean(carat), by = list("is price bigger than 2300?" = price > 2300)]
-```
+    ```{r, eval = FALSE}
+DT[ , mean(carat), by = list("Is price larger than 2300?" = price > 2300)]
+    ```
 
 ---
 ## `keyby`
@@ -337,37 +334,32 @@ instruments <- as.data.table(band_instruments)
 ```
 
 - Left join
-
-```{r}
+    ```{r}
 instruments[members, on = "name"]
-```
+    ```
 
 - Left join by reference. 
-
-```{r}
+    ```{r}
 instruments[members, instruments := plays ,on = "name"]
-```
+    ```
 
 ---
 ## Joins
 - Inner join
-
-```{r}
+    ```{r}
 instruments[members, on = "name",  nomatch = 0]
-```
+    ```
 
-- Full join
-  - this cannot be achieved with standard `data.table` syntax. Use `data.table::merge()`.
-```{r}
+- A full join cannot be achieved with standard `data.table` syntax. Use `data.table::merge()`.
+    ```{r}
 merge(members, instruments, all=TRUE)
-```
+    ```
 ---
 ## Joins
 - Anti-Join
-
-```{r}
+    ```{r}
 merge(members, instruments, all=TRUE)[is.na(plays)]
-```
+    ```
 ---
 ## Joins: Overview
 <br>
@@ -384,11 +376,11 @@ data.frame("Join type" = c("INNER", "LEFT", "RIGHT", "FULL", "ANTI"),
 ## Rolling Join 
 
 ```{r}
-Y <- data.table(id=1:3,t=c(1.0,3.3,9.0) ) 
-X <- data.table(t=c(1.2,2.8,4.5,10)) 
-X[Y, on="t",roll=TRUE]
+DT <- data.table(t = c(1.2, 2.8, 4.5, 10), value = c(3, 8, 4, 2), id_DT = 1:4) 
+LU <- data.table(id_LU = 1:3, t = c(3.3, 1.0, 9.0)) 
+DT[LU, on = "t", roll = TRUE]
 ```
-Looks for closest value in t which is smaller than t in the lookup-table.
+Looks for closest value of `t` in `DT` which is smaller than `t` in `LU`.
 
 ---
 ## Other Useful Functions from the `data.table` package
@@ -405,7 +397,7 @@ Looks for closest value in t which is smaller than t in the lookup-table.
 
 1. Repeat the exercises from the chapter on `dplyr` using `data.table`. 
 2. Compare the speed of reading in the Boston crime dataset with `read.csv()` and `fread()`. Use the 
-   function `system.time()` find out how long it takes. 
+   function `system.time()` to find out how long it takes. 
 
 
 
