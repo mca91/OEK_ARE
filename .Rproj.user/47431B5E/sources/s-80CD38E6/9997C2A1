@@ -1,0 +1,25 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1572733054151.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "171712174",
+    "id" : "9997C2A1",
+    "lastKnownWriteTime" : 1572804144,
+    "last_content_update" : 1572804144239,
+    "path" : "~/Git projects/ARE_fork/ARE/assets/sydney.css",
+    "project_path" : "assets/sydney.css",
+    "properties" : {
+        "cursorPosition" : "103,1",
+        "scrollLine" : "0"
+    },
+    "read_only" : false,
+    "read_only_alternatives" : [
+    ],
+    "relative_order" : 5,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "css"
+}

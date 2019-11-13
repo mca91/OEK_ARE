@@ -1,0 +1,25 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1572459114602.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "2607748967",
+    "id" : "99F0F4F7",
+    "lastKnownWriteTime" : 1572970006,
+    "last_content_update" : 1572970006986,
+    "path" : "~/Git projects/ARE_fork/ARE/xaringan_files/custom.css",
+    "project_path" : "xaringan_files/custom.css",
+    "properties" : {
+        "cursorPosition" : "32,0",
+        "scrollLine" : "0"
+    },
+    "read_only" : false,
+    "read_only_alternatives" : [
+    ],
+    "relative_order" : 3,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "css"
+}

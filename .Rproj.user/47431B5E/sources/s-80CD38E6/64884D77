@@ -1,0 +1,25 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1573057681953.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "4001779581",
+    "id" : "64884D77",
+    "lastKnownWriteTime" : 1573060947,
+    "last_content_update" : 1573060947652,
+    "path" : "~/Git projects/ARE_fork/ARE/OOP/OOP.Rmd",
+    "project_path" : "OOP/OOP.Rmd",
+    "properties" : {
+        "cursorPosition" : "245,7",
+        "scrollLine" : "0"
+    },
+    "read_only" : false,
+    "read_only_alternatives" : [
+    ],
+    "relative_order" : 11,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_markdown"
+}
