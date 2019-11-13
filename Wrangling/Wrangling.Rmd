@@ -357,8 +357,8 @@ class: top, left
       <li> Departed between midnight and 6am.</li>
     </ul>
 <li>  Which flights took the longest? Which traveled the shortest?</li>
-<li>  Brainstorm as many ways as possible to select `dep_time`, `dep_delay`, `arr_time`, and `arr_delay`. </li>
-<li>  Create a new variable `first_flight` which takes the value `TRUE` if it is the first flight of the day. </li>
+<li>  Brainstorm as many ways as possible to select `dep\text{_}time`, `dep\text{_}d elay`, `arr\text{_}time`, and `arr\text{_}d elay`. </li>
+<li>  Create a new variable `first\text{_}flight` which takes the value `TRUE` if it is the first flight of the day. </li>
 </ol>
 
 ```{r, echo=FALSE, eval = FALSE}
@@ -548,8 +548,8 @@ Use dplyr on the Boston crime data to:
 <ol start="6"> 
 <li>  Find out in which district the most incident where reported.  </li>
 <li>  Create an ordered list of the top ten districts according to the number of drug violations. Start with the district with most drug violations. </li>
-<li>  What was the most dangerous hour of the week according to the number of homicides (`OFFENSE_CODE_GROUP == "Homicide"`)?  </li>
-<li>  Calculate for each district the proportion of motor vehicle accidents to all reported incidents (`OFFENSE_CODE_GROUP == "Motor Vehicle Accident Response"`).   </li>
+<li>  What was the most dangerous hour of the week according to the number of homicides (`OFFENSE\text{_}CODE\text{_}GROUP == "Homicide"`)?  </li>
+<li>  Calculate for each district the proportion of motor vehicle accidents to all reported incidents (`OFFENSE\text{_}CODE\text{_}GROUP == "Motor Vehicle Accident Response"`).   </li>
 <li>  Sort the data set chronologically by year and month. Then take the first 10.000 observations and compute the proportion of incidents where a 
 shooting was involved for each district. Now take a random sample of size 10.000. Is there a noteworthy difference? **Hint:** There is a variable called `SHOOTING`.
   </li>
