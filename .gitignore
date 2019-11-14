@@ -1,0 +1,55 @@
+# History files
+.Rhistory
+.Rapp.history
+.Ruserdata
+
+# R-profile
+.Rprofile
+
+# data files
+*.Rds
+
+# Session Data files
+.RData
+
+# Output files from R CMD build
+/*.tar.gz
+
+# Output files from R CMD check
+/*.Rcheck/
+
+# RStudio files
+.Rproj.user/
+*.Rproj
+
+# knitr and R markdown default cache directories
+/*_cache/
+/cache/
+*/*_cache/
+#*/*_files/
+
+# Temporary files created by R markdown
+*.utf8.md
+*.knit.md
+
+# Shiny token, see https://shiny.rstudio.com/articles/shinyapps.html
+rsconnect/
+
+# DS_Store files created by MacOS
+*.DS_Store
+.Rproj.user
+
+# Ignore
+*.R
+.sqlite3
+
+# Local Alex
+good_to_know.*
+Rmarkdown/Exercises/
+databases/gapminder.sqlite3
+datasets/BostonCrime.csv
+datasets/BostonCrime.rar
+datasets/BostonCrimeexplanation.xlsx
+Packages/example/
+Packages/example*
+*Notebook*
