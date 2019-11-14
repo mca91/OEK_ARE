@@ -42,7 +42,7 @@ output:
   <li> Rcpp </li>
 </ul>
 <li> Web Scraping  </li>
-<li> Shiny </li>
+<li> <a href = Shiny/Shiny.html>Shiny</a> </li>
 <li> Writing Packages </li>
 <!-- <li>Text Mining  </li> -->
 </ol>
