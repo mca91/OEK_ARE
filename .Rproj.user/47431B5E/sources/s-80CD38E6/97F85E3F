@@ -1,0 +1,25 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1572716244419.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "595307975",
+    "id" : "97F85E3F",
+    "lastKnownWriteTime" : 1572734498,
+    "last_content_update" : 1572734498433,
+    "path" : "~/Git projects/ARE_fork/ARE/xaringan_files/macros.js",
+    "project_path" : "xaringan_files/macros.js",
+    "properties" : {
+        "cursorPosition" : "13,2",
+        "scrollLine" : "0"
+    },
+    "read_only" : false,
+    "read_only_alternatives" : [
+    ],
+    "relative_order" : 4,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "js"
+}

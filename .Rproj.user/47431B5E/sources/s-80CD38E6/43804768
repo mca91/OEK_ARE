@@ -1,0 +1,25 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1572445304506.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "2929811484",
+    "id" : "43804768",
+    "lastKnownWriteTime" : 1572445315,
+    "last_content_update" : 1572445315903,
+    "path" : "~/Git projects/ARE_fork/ARE/improving performance/improving performance.Rmd",
+    "project_path" : "improving performance/improving performance.Rmd",
+    "properties" : {
+        "cursorPosition" : "495,11",
+        "scrollLine" : "0"
+    },
+    "read_only" : false,
+    "read_only_alternatives" : [
+    ],
+    "relative_order" : 2,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_markdown"
+}

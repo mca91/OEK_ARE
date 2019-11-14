@@ -1,0 +1,26 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1573491905869.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "0",
+    "id" : "3943464B",
+    "lastKnownWriteTime" : 1573637572,
+    "last_content_update" : 1573637572327,
+    "path" : "~/Git projects/ARE_fork/ARE/Advanced R Concepts/Advanced.Rmd",
+    "project_path" : "Advanced R Concepts/Advanced.Rmd",
+    "properties" : {
+        "cursorPosition" : "86,60",
+        "last_setup_crc32" : "80CD38E6a4b9f957",
+        "scrollLine" : "80"
+    },
+    "read_only" : false,
+    "read_only_alternatives" : [
+    ],
+    "relative_order" : 9,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_markdown"
+}

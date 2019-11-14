@@ -1,0 +1,25 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1572806030624.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "1132406428",
+    "id" : "1D05E5A",
+    "lastKnownWriteTime" : 1573497961,
+    "last_content_update" : 1573497961042,
+    "path" : "~/Git projects/ARE_fork/ARE/assets/title_slides.css",
+    "project_path" : "assets/title_slides.css",
+    "properties" : {
+        "cursorPosition" : "54,18",
+        "scrollLine" : "38"
+    },
+    "read_only" : false,
+    "read_only_alternatives" : [
+    ],
+    "relative_order" : 6,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "css"
+}

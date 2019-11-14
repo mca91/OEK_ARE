@@ -1,3 +1,8 @@
+```{r}
+knitr::opts_chunk$set(echo=TRUE, warning=FALSE, message=FALSE, eval = FALSE)
+
+
+```
 
 
 1. Load the nycflights13::flights data set. Does it come formatted as a tibble?
