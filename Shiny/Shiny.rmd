@@ -1,14 +1,15 @@
 ---
-title: "Shiny"
+title: "Advanced R for Econometricians"
+subtitle: "Shiny"
 author: "Alexander Gerber"
 date: "5 November 2018"
 output:
   xaringan::moon_reader:
-    css: ["default", "../assets/sydney-fonts.css", "../assets/sydney.css"]
+    css:  ["default", "../assets/sydney-fonts.css", "../assets/sydney.css", "../assets/custom.css", "../assets/title_slides.css"]
     self_contained: false # if true, fonts will be stored locally
-    seal: true # show a title slide with YAML information
+    seal: false # show a title slide with YAML information
     includes:
-      in_header: "../assets/mathjax-equation-numbers.html"
+      in_header: ["../assets/mathjax-equation-numbers.html", "../assets/meta.html"]
     nature:
       beforeInit: ["../assets/remark-zoom.js", "https://platform.twitter.com/widgets.js"]
       highlightStyle: github
@@ -22,6 +23,13 @@ output:
 knitr::opts_chunk$set(echo = TRUE, eval = FALSE)
 ```
 
+
+class: title-slide title-shiny center middle
+
+# `r rmarkdown::metadata$title`
+## `r rmarkdown::metadata$subtitle`
+
+---
 ## What is Shiny? 
 
 The `shiny` package allows to build interactive web applications for data analysis.
@@ -187,13 +195,18 @@ library(pander)
 a <- cbind(c("dataTableOutput","htmlOutput","imageOutput","plotOutput","tableOutput","textOutput", "verbatimTextOutput", "uiOutput"),
            c("renderDataTable","","renderImage","renderPlot","renderTable"," renderText", "renderPrint","renderUI"),
            c("DT::datatable","raw HTML","e.g. .png, .jpeg","e.g. a ggplot","e.g. data frame, matrix","value output", "print output","shiny UI element"))
-colnames(a) <- c("Render Function", "Output Function", "What?")
+colnames(a) <- c("Output Function","Render Function",  "What?")
 a <- as.data.frame(a)
 #emphasize.strong.cols(c(1,2,3))
 #panderOptions("table.style", "rmarkdown")
 print(knitr::kable(a, format = "html"))
 ```
 
+
+---
+## Gapminder 
+
+<iframe width="1051" height="550" src="https://www.youtube.com/embed/jbkSRLYSojo?list=PLB33D8_2SjkZvPYB1CbyMtQhlM-D106hk" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
 ---
 ## Exercises
@@ -227,69 +240,56 @@ We have seen that the output created by a render function changes automatically 
 
 - There are 3 kinds of reactive objects. 
 
-```{r, eval = TRUE, echo = FALSE, fig.align='center', out.width="50%"}
-knitr::include_graphics("../img/shiny_reactivity1.png")
+```{r, eval = TRUE, echo = FALSE, fig.align='center', out.width="40%"}
+knitr::include_graphics("./draw.io/shiny_slide_12.png")
 ```
 
-- The reactive source is usually the user input which are accessible through `input$some_input` It can only have dependents (it is always a parent node). 
+- The reactive source is usually the user input which are accessible through `input$inputId`. It can only have dependents (it is always a parent node). 
 - The reactive endpoint is usually produced by one of the render functions and assigned to `output$some_output`. It can only be dependent (it is always a child node). 
-
-
 
 ---
 ## Reactivity
 
 We have already written a simple app using those two elements.  
 
-```{r, eval = TRUE, echo = FALSE, fig.align='center', out.width="20%"}
-knitr::include_graphics("../img/shiny_reactivity2.png")
+```{r, eval = TRUE, echo = FALSE, fig.align='center', out.width="40%"}
+knitr::include_graphics("./draw.io/shiny_slide_13.png")
 ```
 
-Whenever  `input$some_input` changes the reactive endpoints using this input are notified that they need to re-execute. 
-
-Which reactive structure has the following code?
-
-```{r, echo = TRUE}
-# Calculate nth number in Fibonacci sequence
-fib <- function(n) ifelse(n<3, 1, fib(n-1)+fib(n-2))
-
-server <- function(input, output) {
-  output$nthValue    <- renderText({ fib(as.numeric(input$n)) })
-  output$nthValueInv <- renderText({ 1 / fib(as.numeric(input$n)) })
-}
-```
+Whenever  `input$num` changes the reactive endpoints using this input are notified that they need to re-execute. 
 
 ---
 ## Reactivity
 
+.font90[
 Which structure has the following code?
 
 ```{r, echo = TRUE}
 # Calculate nth number in Fibonacci sequence
 fib <- function(n) ifelse(n<3, 1, fib(n-1)+fib(n-2))
-
 server <- function(input, output) {
   output$nthValue    <- renderText({ fib(as.numeric(input$n)) })
   output$nthValueInv <- renderText({ 1 / fib(as.numeric(input$n)) })
 }
 ```
-
+]
+--
+.font90[
 There are two children nodes depending on one parent node. 
 
-```{r, eval = TRUE, echo = FALSE, fig.align='center', out.width="25%"}
-knitr::include_graphics("../img/shiny_reactivity4.png")
+```{r, eval = TRUE, echo = FALSE, fig.align='center', out.width="35%"}
+knitr::include_graphics("./draw.io/shiny_slide_14.png")
 ```
 
 Furthermore, each of the children evaluates `fib()` separately, which leads to redundant computations.  
+]
 
 ---
 ## Reactivity
 
-Using a reactive conductor created by `reactive()` the function `fib()` executes only once.  
+By using a reactive conductor created by `reactive()` we can rewrite the code so that `fib()` executes only once. 
 
 ```{r}
-fib <- function(n) ifelse(n<3, 1, fib(n-1)+fib(n-2))
-
 server <- function(input, output) {
   # reactive conductor depending on reactive source
   currentFib         <- reactive({ fib(as.numeric(input$n)) })
@@ -299,8 +299,8 @@ server <- function(input, output) {
 }
 ```
 
-```{r, eval = TRUE, echo = FALSE, fig.align='center', out.width="30%"}
-knitr::include_graphics("../img/shiny_reactivity3.png")
+```{r, eval = TRUE, echo = FALSE, fig.align='center', out.width="35%"}
+knitr::include_graphics("./draw.io/shiny_slide_15.png")
 ```
   
 Note that you need `()` (here ` currentFib()`) to access the value computed by `reactive()`. 
@@ -310,10 +310,10 @@ Note that you need `()` (here ` currentFib()`) to access the value computed by `
 
 Consider the case where we we have multiple inputs and the receiving end node runs some heavy computation.   
 
-```{r, echo = FALSE, eval = TRUE, fig.align='center', out.width="30%"}
-knitr::include_graphics("../img/shiny_isolate1.svg")
+
+```{r, eval = TRUE, echo = FALSE, fig.align='center', out.width="35%"}
+knitr::include_graphics("./draw.io/shiny_slide_16.png")
 ```
-  
   
   
 What is the problem here?
@@ -347,13 +347,13 @@ shinyApp(ui, server)
 ---
 ## Prevent reactivity with `isolate()`
 
-We can solve this by making the render function producing the output unresponsive to the parameter inputs using `isolate()`. When we are ready e.g. a button can be used to start the 
+We can solve this by making the render function producing the output unresponsive to a change of the inputs using `isolate()`. When the user finished entering all input values e.g. a button could be used to start the 
 computation. 
 
-```{r, echo = FALSE, eval = TRUE, fig.align='center', out.width="30%"}
-knitr::include_graphics("../img/shiny_isolate2.svg")
+```{r, eval = TRUE, echo = FALSE, fig.align='center', out.width="35%"}
+knitr::include_graphics("./draw.io/shiny_slide_18.png")
 ```
-
+  
 ---
 ## Example
 
@@ -438,14 +438,6 @@ server <- function(input, output){
   
 shinyApp(ui, server)
 ```
-
----
-## Für Assignment.
-
-1. Create an app that allows `.csv` file input.
-2. Display the data to the user of you App as a `DT::DataTable`. 
-3. Figure out how to create an `varSelectInput` Element 
-   
 
 
 

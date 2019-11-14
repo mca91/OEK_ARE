@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
   <head>
-    <title>Shiny</title>
+    <title>Advanced R for Econometricians</title>
     <meta charset="utf-8" />
     <meta name="author" content="Alexander Gerber" />
     <meta name="date" content="2018-11-05" />
@@ -18,21 +18,28 @@
       cursor: default;
     }
     </style>
+    
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"
+      integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
+      crossorigin="anonymous"></script>
+    <meta name="robots" content="noindex">
     <link rel="stylesheet" href="..\assets\sydney-fonts.css" type="text/css" />
     <link rel="stylesheet" href="..\assets\sydney.css" type="text/css" />
+    <link rel="stylesheet" href="..\assets\custom.css" type="text/css" />
+    <link rel="stylesheet" href="..\assets\title_slides.css" type="text/css" />
   </head>
   <body>
     <textarea id="source">
-class: center, middle, inverse, title-slide
 
-# Shiny
-### Alexander Gerber
-### 5 November 2018
+
+
+
+class: title-slide title-shiny center middle
+
+# Advanced R for Econometricians
+## Shiny
 
 ---
-
-
-
 ## What is Shiny? 
 
 The `shiny` package allows to build interactive web applications for data analysis.
@@ -201,8 +208,8 @@ ui &lt;- fluidPage(
 &lt;table&gt;
  &lt;thead&gt;
   &lt;tr&gt;
-   &lt;th style="text-align:left;"&gt; Render Function &lt;/th&gt;
    &lt;th style="text-align:left;"&gt; Output Function &lt;/th&gt;
+   &lt;th style="text-align:left;"&gt; Render Function &lt;/th&gt;
    &lt;th style="text-align:left;"&gt; What? &lt;/th&gt;
   &lt;/tr&gt;
  &lt;/thead&gt;
@@ -252,6 +259,11 @@ ui &lt;- fluidPage(
 
 
 ---
+## Gapminder 
+
+&lt;iframe width="1051" height="550" src="https://www.youtube.com/embed/jbkSRLYSojo?list=PLB33D8_2SjkZvPYB1CbyMtQhlM-D106hk" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen&gt;&lt;/iframe&gt;
+
+---
 ## Exercises
 
 Install and load the `gapminder` package.
@@ -279,66 +291,52 @@ We have seen that the output created by a render function changes automatically 
 
 - There are 3 kinds of reactive objects. 
 
-&lt;img src="../img/shiny_reactivity1.png" width="50%" style="display: block; margin: auto;" /&gt;
+&lt;img src="./draw.io/shiny_slide_12.png" width="40%" style="display: block; margin: auto;" /&gt;
 
-- The reactive source is usually the user input which are accessible through `input$some_input` It can only have dependents (it is always a parent node). 
+- The reactive source is usually the user input which are accessible through `input$inputId`. It can only have dependents (it is always a parent node). 
 - The reactive endpoint is usually produced by one of the render functions and assigned to `output$some_output`. It can only be dependent (it is always a child node). 
-
-
 
 ---
 ## Reactivity
 
 We have already written a simple app using those two elements.  
 
-&lt;img src="../img/shiny_reactivity2.png" width="20%" style="display: block; margin: auto;" /&gt;
+&lt;img src="./draw.io/shiny_slide_13.png" width="40%" style="display: block; margin: auto;" /&gt;
 
-Whenever  `input$some_input` changes the reactive endpoints using this input are notified that they need to re-execute. 
-
-Which reactive structure has the following code?
-
-
-```r
-# Calculate nth number in Fibonacci sequence
-fib &lt;- function(n) ifelse(n&lt;3, 1, fib(n-1)+fib(n-2))
-
-server &lt;- function(input, output) {
-  output$nthValue    &lt;- renderText({ fib(as.numeric(input$n)) })
-  output$nthValueInv &lt;- renderText({ 1 / fib(as.numeric(input$n)) })
-}
-```
+Whenever  `input$num` changes the reactive endpoints using this input are notified that they need to re-execute. 
 
 ---
 ## Reactivity
 
+.font90[
 Which structure has the following code?
 
 
 ```r
 # Calculate nth number in Fibonacci sequence
 fib &lt;- function(n) ifelse(n&lt;3, 1, fib(n-1)+fib(n-2))
-
 server &lt;- function(input, output) {
   output$nthValue    &lt;- renderText({ fib(as.numeric(input$n)) })
   output$nthValueInv &lt;- renderText({ 1 / fib(as.numeric(input$n)) })
 }
 ```
-
+]
+--
+.font90[
 There are two children nodes depending on one parent node. 
 
-&lt;img src="../img/shiny_reactivity4.png" width="25%" style="display: block; margin: auto;" /&gt;
+&lt;img src="./draw.io/shiny_slide_14.png" width="35%" style="display: block; margin: auto;" /&gt;
 
 Furthermore, each of the children evaluates `fib()` separately, which leads to redundant computations.  
+]
 
 ---
 ## Reactivity
 
-Using a reactive conductor created by `reactive()` the function `fib()` executes only once.  
+By using a reactive conductor created by `reactive()` we can rewrite the code so that `fib()` executes only once. 
 
 
 ```r
-fib &lt;- function(n) ifelse(n&lt;3, 1, fib(n-1)+fib(n-2))
-
 server &lt;- function(input, output) {
   # reactive conductor depending on reactive source
   currentFib         &lt;- reactive({ fib(as.numeric(input$n)) })
@@ -348,7 +346,7 @@ server &lt;- function(input, output) {
 }
 ```
 
-&lt;img src="../img/shiny_reactivity3.png" width="30%" style="display: block; margin: auto;" /&gt;
+&lt;img src="./draw.io/shiny_slide_15.png" width="35%" style="display: block; margin: auto;" /&gt;
   
 Note that you need `()` (here ` currentFib()`) to access the value computed by `reactive()`. 
 
@@ -357,8 +355,8 @@ Note that you need `()` (here ` currentFib()`) to access the value computed by `
 
 Consider the case where we we have multiple inputs and the receiving end node runs some heavy computation.   
 
-&lt;img src="../img/shiny_isolate1.svg" width="30%" style="display: block; margin: auto;" /&gt;
-  
+
+&lt;img src="./draw.io/shiny_slide_16.png" width="35%" style="display: block; margin: auto;" /&gt;
   
   
 What is the problem here?
@@ -393,11 +391,11 @@ shinyApp(ui, server)
 ---
 ## Prevent reactivity with `isolate()`
 
-We can solve this by making the render function producing the output unresponsive to the parameter inputs using `isolate()`. When we are ready e.g. a button can be used to start the 
+We can solve this by making the render function producing the output unresponsive to a change of the inputs using `isolate()`. When the user finished entering all input values e.g. a button could be used to start the 
 computation. 
 
-&lt;img src="../img/shiny_isolate2.svg" width="30%" style="display: block; margin: auto;" /&gt;
-
+&lt;img src="./draw.io/shiny_slide_18.png" width="35%" style="display: block; margin: auto;" /&gt;
+  
 ---
 ## Example
 
@@ -537,7 +535,24 @@ if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
     }
     deleted = true;
   });
-})();</script>
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
 
 <script>
 (function() {
