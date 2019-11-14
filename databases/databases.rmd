@@ -46,7 +46,7 @@ class: title-slide title-sqlite center middle
 ## Memory Limitations of R
 
 - The amount of data you can work with in R is mainly constraint by your computers memory. 
-- In times where data sets with several 100 GB or even TB are become more and more common
+- In times where data sets with several 100 GB or even TB become more and more common,
   loading all data into memory is usually not feasable. 
 - Often only a subset or an aggregation of the data is required for the analysis which requires much less memory space.
 - How to subset or aggregate data? &rarr; Use a database!
@@ -151,14 +151,14 @@ con <- DBI::dbConnect(
                )
     ```
 
-```{r, eval = FALSE, echo = FALSE}
+```{r, eval = TRUE, echo = FALSE}
 library(dplyr)
 con <- DBI::dbConnect(
                drv = RMariaDB::MariaDB(), # MariaDB driver works for MySQL as well
-               username = "sql7308621",
-               dbname   = "sql7308621", 
+               username = "sql7312029",
+               dbname   = "sql7312029", 
                host     = "sql7.freesqldatabase.com",
-               password = "MH1M64RSY4",
+               password = "hl9DXe4aZJ",
                port     = "3306"
                )
 ```
@@ -173,19 +173,19 @@ DBI::dbWriteTable(con, "country_codes", gapminder::country_codes)
 
 - When the connection is established we can use the object `con` to communicate with the database.
 - The function `DBI::dbListTables()` tells us which tables are in the database.
-```{r}
+    ```{r, eval = TRUE}
 DBI::dbListTables(con)
-```
+    ```
 - With `dplyr::tbl()` we can create an object which is a reference to a table in the database. Most `dplyr` functions work on this object as it was as a data frame (or `tibble`).
-```{r}
+    ```{r, eval = TRUE}
 gap_db <- tbl(con, "gapminder")
 class(gap_db)
-```
+    ```
 
 ---
 ## Use Standard `dplyr`  Functions on the Database
 
-```{r, message=FALSE, warning=FALSE}
+```{r, message=FALSE, warning=FALSE, eval = TRUE}
 gap_avg_db <- gap_db %>% 
                 group_by(continent) %>% 
                 select_if(is.numeric) %>% 
@@ -196,9 +196,9 @@ gap_avg_db <- gap_db %>%
 
 - Even if it seems as if `gap_avg_db` is a data frame it still is only a set of instructions to be performed by the data base. 
 - `show_query()` tells us which instructions are sent to the database. 
-```{r, warning=FALSE}
+    ```{r, warning=FALSE, eval = TRUE}
 show_query(gap_avg_db)
-```
+    ```
 
 
 ---
@@ -209,23 +209,20 @@ When working with databases, `dplyr` tries to be as lazy as possible:
 
 - It never pulls data into R unless you explicitly ask for it.
 - It delays doing any work until the last possible moment: it collects everything you want to do and then sends it to the database in one step.
-
-`collect()` actually pulls the data into R.  
-
-```{r}
+- `collect()` actually pulls the data into R.  
+    ```{r, eval = TRUE}
 gap_avg <- gap_avg_db %>% collect()
 print(gap_avg)
-```
+    ```
 
 ---
 ## Disconnect
 
 - If the connection to the database is no longer needed you should disconnect to free system ressources. 
-
-```{r}
+    ```{r, eval = TRUE}
 DBI::dbDisconnect(con)
 rm(con)
-```
+    ```
 
 
 
@@ -242,14 +239,13 @@ with argument `dbname = "path_to_database"` where `"path_to_database"` is a path
 a non-existing file. 
 - In case `"path_to_database"` is an existing SQLite database it 
 connects to that database. 
-
-```{r, echo = TRUE, eval = FALSE}
+    ```{r, echo = TRUE, eval = FALSE}
 library(dplyr)
 con <- DBI::dbConnect(
                drv = RSQLite::SQLite(),
-               dbname = here::here("databases","gapminder.sqlite3"), 
+               dbname = here::here("databases","mtcars.sqlite3"), 
                )
-```
+    ```
 
 ---
 ## Write Data to the Database
@@ -273,6 +269,23 @@ DBI::dbWriteTable(con,
                   value = new_car, 
                   append = TRUE)
     ```
+
+```{r}
+DBI::dbDisconnect(con)
+```
+
+---
+## Exercises
+
+1. Set up a new SQLite database containing the Boston Crime data. 
+2. Without retrieving the data to R let the database compute the percentage of incidents involving a shooting. 
+
+
+
+
+
+
+
 
 
 

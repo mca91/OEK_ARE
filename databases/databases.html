@@ -5,7 +5,7 @@
     <meta charset="utf-8" />
     <meta name="author" content="Martin Arnold" />
     <meta name="author" content="Alexander Gerber" />
-    <meta name="date" content="2019-11-12" />
+    <meta name="date" content="2019-11-14" />
     <link href="libs/remark-css-0.0.1/default.css" rel="stylesheet" />
     <link rel="stylesheet" href="..\assets\sydney-fonts.css" type="text/css" />
     <link rel="stylesheet" href="..\assets\sydney.css" type="text/css" />
@@ -28,7 +28,7 @@ class: title-slide title-sqlite center middle
 ## Memory Limitations of R
 
 - The amount of data you can work with in R is mainly constraint by your computers memory. 
-- In times where data sets with several 100 GB or even TB are become more and more common
+- In times where data sets with several 100 GB or even TB become more and more common,
   loading all data into memory is usually not feasable. 
 - Often only a subset or an aggregation of the data is required for the analysis which requires much less memory space.
 - How to subset or aggregate data? &amp;rarr; Use a database!
@@ -313,16 +313,25 @@ class: title-slide title-sqlite center middle
 
 - When the connection is established we can use the object `con` to communicate with the database.
 - The function `DBI::dbListTables()` tells us which tables are in the database.
-
-```r
-DBI::dbListTables(con)
-```
+    
+    ```r
+    DBI::dbListTables(con)
+    ```
+    
+    ```
+    ## [1] "country_codes" "gapminder"
+    ```
 - With `dplyr::tbl()` we can create an object which is a reference to a table in the database. Most `dplyr` functions work on this object as it was as a data frame (or `tibble`).
-
-```r
-gap_db &lt;- tbl(con, "gapminder")
-class(gap_db)
-```
+    
+    ```r
+    gap_db &lt;- tbl(con, "gapminder")
+    class(gap_db)
+    ```
+    
+    ```
+    ## [1] "tbl_MariaDBConnection" "tbl_dbi"               "tbl_sql"              
+    ## [4] "tbl_lazy"              "tbl"
+    ```
 
 ---
 ## Use Standard `dplyr`  Functions on the Database
@@ -338,10 +347,18 @@ gap_avg_db &lt;- gap_db %&gt;%
 
 - Even if it seems as if `gap_avg_db` is a data frame it still is only a set of instructions to be performed by the data base. 
 - `show_query()` tells us which instructions are sent to the database. 
-
-```r
-show_query(gap_avg_db)
-```
+    
+    ```r
+    show_query(gap_avg_db)
+    ```
+    
+    ```
+    ## &lt;SQL&gt;
+    ## SELECT `continent`, AVG(`lifeExp`) AS `lifeExp`, AVG(`pop`) AS `pop`, AVG(`gdpPercap`) AS `gdpPercap`
+    ## FROM (SELECT `continent`, `lifeExp`, `pop`, `gdpPercap`
+    ## FROM `gapminder`) `dbplyr_001`
+    ## GROUP BY `continent`
+    ```
 
 
 ---
@@ -352,25 +369,33 @@ When working with databases, `dplyr` tries to be as lazy as possible:
 
 - It never pulls data into R unless you explicitly ask for it.
 - It delays doing any work until the last possible moment: it collects everything you want to do and then sends it to the database in one step.
-
-`collect()` actually pulls the data into R.  
-
-
-```r
-gap_avg &lt;- gap_avg_db %&gt;% collect()
-print(gap_avg)
-```
+- `collect()` actually pulls the data into R.  
+    
+    ```r
+    gap_avg &lt;- gap_avg_db %&gt;% collect()
+    print(gap_avg)
+    ```
+    
+    ```
+    ## # A tibble: 5 x 4
+    ##   continent lifeExp       pop gdpPercap
+    ##   &lt;chr&gt;       &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;
+    ## 1 Africa       48.9  9916003.     2194.
+    ## 2 Americas     64.7 24504795.     7136.
+    ## 3 Asia         60.1 77038722.     7902.
+    ## 4 Europe       71.9 17169765.    14469.
+    ## 5 Oceania      74.3  8874672.    18622.
+    ```
 
 ---
 ## Disconnect
 
 - If the connection to the database is no longer needed you should disconnect to free system ressources. 
-
-
-```r
-DBI::dbDisconnect(con)
-rm(con)
-```
+    
+    ```r
+    DBI::dbDisconnect(con)
+    rm(con)
+    ```
 
 
 
@@ -387,15 +412,14 @@ with argument `dbname = "path_to_database"` where `"path_to_database"` is a path
 a non-existing file. 
 - In case `"path_to_database"` is an existing SQLite database it 
 connects to that database. 
-
-
-```r
-library(dplyr)
-con &lt;- DBI::dbConnect(
+    
+    ```r
+    library(dplyr)
+    con &lt;- DBI::dbConnect(
                drv = RSQLite::SQLite(),
-               dbname = here::here("databases","gapminder.sqlite3"), 
+               dbname = here::here("databases","mtcars.sqlite3"), 
                )
-```
+    ```
 
 ---
 ## Write Data to the Database
@@ -421,6 +445,17 @@ we add the data frame `mtcars` as a new table with name `mtcars_db` to the datab
                   value = new_car, 
                   append = TRUE)
     ```
+
+
+```r
+DBI::dbDisconnect(con)
+```
+
+---
+## Exercises
+
+1. Set up a new SQLite database containing the Boston Crime data. 
+2. Without retrieving the data to R let the database compute the percentage of incidents involving a shooting.
     </textarea>
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
 <script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
