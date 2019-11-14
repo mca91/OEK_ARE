@@ -51,6 +51,8 @@ flights %>% select(selection)
 # First way
 flights <-  mutate(flights, first_flight = if_else(day - lag(day) != 0 | is.na(day - lag(day)), TRUE, FALSE )) 
 
+filter(flights, first_flight == TRUE)
+
 # flights <- flights %>% 
 #   group_by(year, month, day) %>% 
 #   mutate(first_flight = if_else(row_number() == 1, TRUE, FALSE )) %>%
