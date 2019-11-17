@@ -257,7 +257,7 @@ class: left, top
 
 <ol start="2"> 
 <li> Use the `mtcars` data set and plot `mpg` vs. `hp`. Add a smoothing line to the plot. </li>
-<li> Add for each number of cylinders a linear smoothing function to the plot. </li>
+<li> Add a smoothing function to the plot for each number of cylinders. </li>
 <li> Find out how to remove the confidence interval. </li>
 <li> Use a simple linear regression model and a quadratic regression model for smoothing. </li>
 </ol>
@@ -586,9 +586,9 @@ class: left, top
 </ol>
 <ul>
     <li> use a bar plot to show how many people survived the Titanic compared to those who didn't.</li>
-    <li> add a color coding to the previous plot to visualize the differences between the passengers gender.</li>
-    <li> split the previous plot into three plots based on the passengers class.</li>
-    <li> compare the age distribution between the survivors and non-survivors.</li>
+    <li> add a color coding to the previous plot to visualize the differences between the passengers' gender.</li>
+    <li> split the previous plot into three plots based on the passengers' class.</li>
+    <li> compare the age distribution between survivors and non-survivors.</li>
 </ul>
 
 
