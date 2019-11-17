@@ -245,7 +245,7 @@ knitr::include_graphics("./draw.io/shiny_slide_12.png")
 ```
 
 - The reactive source is usually the user input which are accessible through `input$inputId`. It can only have dependents (it is always a parent node). 
-- The reactive endpoint is usually produced by one of the render functions and assigned to `output$some_output`. It can only be dependent (it is always a child node). 
+- The reactive endpoint is usually produced by one of the render functions and assigned to `output$OutputId`. It can only be dependent (it is always a child node). 
 
 ---
 ## Reactivity
@@ -382,9 +382,17 @@ shinyApp(ui, server)
 ```
 
 ---
-## Exercise 
+## Exercises 
 
-- Add a button to the Gapminder app and let the graph only re-render if this button is hit.
+<ol start=4>
+<li> Add a button to the Gapminder app and let the graph only re-render if this button is hit. </li>
+<li> Add a checkbox "only Continents" to your app. If this checkbox is activated, a new data set
+  should be computed which contains for each variable the average of all countries belonging
+  to one continent (for simplicity you only have to compute a simple average). 
+  Use a reactive conductor to only compute the aggregated data set once when the checkbox is activated. </li>
+</ol> 
+
+
 
 ---
 ## DataTables
@@ -438,6 +446,16 @@ server <- function(input, output){
   
 shinyApp(ui, server)
 ```
+
+---
+## Exercises 
+<ol start=6>
+<li> Add to your Gapminder app a DataTable displaying the selcted data. Use a <a href = "https://shiny.rstudio.com/articles/tabsets.html">Tab Panel </a>  to allow switching between the
+table and the plot. </li>  
+</ol>
+
+
+
 
 
 

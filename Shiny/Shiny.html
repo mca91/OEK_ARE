@@ -294,7 +294,7 @@ We have seen that the output created by a render function changes automatically 
 &lt;img src="./draw.io/shiny_slide_12.png" width="40%" style="display: block; margin: auto;" /&gt;
 
 - The reactive source is usually the user input which are accessible through `input$inputId`. It can only have dependents (it is always a parent node). 
-- The reactive endpoint is usually produced by one of the render functions and assigned to `output$some_output`. It can only be dependent (it is always a child node). 
+- The reactive endpoint is usually produced by one of the render functions and assigned to `output$OutputId`. It can only be dependent (it is always a child node). 
 
 ---
 ## Reactivity
@@ -425,9 +425,17 @@ shinyApp(ui, server)
 ```
 
 ---
-## Exercise 
+## Exercises 
 
-- Add a button to the Gapminder app and let the graph only re-render if this button is hit.
+&lt;ol start=4&gt;
+&lt;li&gt; Add a button to the Gapminder app and let the graph only re-render if this button is hit. &lt;/li&gt;
+&lt;li&gt; Add a checkbox "only Continents" to your app. If this checkbox is activated, a new data set
+  should be computed which contains for each variable the average of all countries belonging
+  to one continent (for simplicity you only have to compute a simple average). 
+  Use a reactive conductor to only compute the aggregated data set once when the checkbox is activated. &lt;/li&gt;
+&lt;/ol&gt; 
+
+
 
 ---
 ## DataTables
@@ -483,6 +491,13 @@ server &lt;- function(input, output){
   
 shinyApp(ui, server)
 ```
+
+---
+## Exercises 
+&lt;ol start=6&gt;
+&lt;li&gt; Add to your Gapminder app a DataTable displaying the selcted data. Use a &lt;a href = "https://shiny.rstudio.com/articles/tabsets.html"&gt;Tab Panel &lt;/a&gt;  to allow switching between the
+table and the plot. &lt;/li&gt;  
+&lt;/ol&gt;
     </textarea>
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
 <script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
@@ -535,24 +550,7 @@ if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
     }
     deleted = true;
   });
-})();
-// adds .remark-code-has-line-highlighted class to <pre> parent elements
-// of code chunks containing highlighted lines with class .remark-code-line-highlighted
-(function(d) {
-  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
-  const preParents = [];
-  const findPreParent = function(line, p = 0) {
-    if (p > 1) return null; // traverse up no further than grandparent
-    const el = line.parentElement;
-    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
-  };
-
-  for (let line of hlines) {
-    let pre = findPreParent(line);
-    if (pre && !preParents.includes(pre)) preParents.push(pre);
-  }
-  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
-})(document);</script>
+})();</script>
 
 <script>
 (function() {
