@@ -53,7 +53,7 @@ class: title-slide title-sqlite center middle
 
 ---
 ## (Relational) Databases
-- A database is a place to store, manipulate and retreat data.
+- A database is a place where data is stored and can be manipulated.
 - A relational database aims to reduce redundancies by spreading the data over multiple tables and
   relate them to each other. 
 
@@ -141,14 +141,16 @@ install.packages("dbplyr")
 - There is a remote MySQL database hosted on the web which we have access to:
     ```{r, eval = FALSE}
 library(dplyr)
+library(dplyr)
 con <- DBI::dbConnect(
-               drv = RMariaDB::MariaDB(), # MariaDB driver works for MySQL as well
-               username = "sql7308621",
-               dbname   = "sql7308621", 
-               host     = "sql7.freesqldatabase.com",
-               password = rstudioapi::askForPassword("Database password"),
-               port     = "3306"
-               )
+          drv = RMariaDB::MariaDB(), # MariaDB driver works for MySQL as well
+          username = "sql7312029",
+          dbname   = "sql7312029", 
+          host     = "sql7.freesqldatabase.com",
+          password = rstudioapi::askForPassword("Database password"),
+          port     = "3306"
+          )
+
     ```
 
 ```{r, eval = TRUE, echo = FALSE}
@@ -268,9 +270,7 @@ DBI::dbWriteTable(con,
                   name = "mtcars_db", 
                   value = new_car, 
                   append = TRUE)
-    ```
 
-```{r}
 DBI::dbDisconnect(con)
 ```
 

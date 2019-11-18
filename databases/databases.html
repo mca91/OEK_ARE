@@ -5,7 +5,7 @@
     <meta charset="utf-8" />
     <meta name="author" content="Martin Arnold" />
     <meta name="author" content="Alexander Gerber" />
-    <meta name="date" content="2019-11-14" />
+    <meta name="date" content="2019-11-18" />
     <link href="libs/remark-css-0.0.1/default.css" rel="stylesheet" />
     <link rel="stylesheet" href="..\assets\sydney-fonts.css" type="text/css" />
     <link rel="stylesheet" href="..\assets\sydney.css" type="text/css" />
@@ -35,7 +35,7 @@ class: title-slide title-sqlite center middle
 
 ---
 ## (Relational) Databases
-- A database is a place to store, manipulate and retreat data.
+- A database is a place where data is stored and can be manipulated.
 - A relational database aims to reduce redundancies by spreading the data over multiple tables and
   relate them to each other. 
 
@@ -294,14 +294,15 @@ class: title-slide title-sqlite center middle
     
     ```r
     library(dplyr)
+    library(dplyr)
     con &lt;- DBI::dbConnect(
-               drv = RMariaDB::MariaDB(), # MariaDB driver works for MySQL as well
-               username = "sql7308621",
-               dbname   = "sql7308621", 
-               host     = "sql7.freesqldatabase.com",
-               password = rstudioapi::askForPassword("Database password"),
-               port     = "3306"
-               )
+          drv = RMariaDB::MariaDB(), # MariaDB driver works for MySQL as well
+          username = "sql7312029",
+          dbname   = "sql7312029", 
+          host     = "sql7.freesqldatabase.com",
+          password = rstudioapi::askForPassword("Database password"),
+          port     = "3306"
+          )
     ```
 
 
@@ -444,12 +445,9 @@ we add the data frame `mtcars` as a new table with name `mtcars_db` to the datab
                   name = "mtcars_db", 
                   value = new_car, 
                   append = TRUE)
+    
+    DBI::dbDisconnect(con)
     ```
-
-
-```r
-DBI::dbDisconnect(con)
-```
 
 ---
 ## Exercises
