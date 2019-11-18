@@ -104,7 +104,7 @@ obj_addr(X$a)
 ```
 
 ```
-## [1] "0x12f9abe0"
+## [1] "0x120cff10"
 ```
 
 ```r
@@ -113,7 +113,7 @@ obj_addr(X$a)
 ```
 
 ```
-## [1] "0x1228b518"
+## [1] "0x120d1300"
 ```
 
 
@@ -124,7 +124,7 @@ obj_addr(X$a)
 ```
 
 ```
-## [1] "0x168aef90"
+## [1] "0x14b4fd30"
 ```
 
 ```r
@@ -133,7 +133,7 @@ obj_addr(X$a)
 ```
 
 ```
-## [1] "0x168aef90"
+## [1] "0x14b4fd30"
 ```
 
 ---
@@ -188,7 +188,7 @@ DT &lt;- as.data.table(diamonds)
 
 
 ```r
-DT[cut=="Fair"|cut=="Good"]
+DT[cut== "Fair" | cut == "Good"]
 ```
 
 ```
@@ -219,14 +219,14 @@ DT["Fair"]
 
 # multiple key columns
 setkey(DT,cut,color)
-DT[list("Fair","J")] 
+DT[list("Fair", "J")] 
 ```
 
  `.(...)` is a convenient alias for `list(...)`. 
 
 
 ```r
-DT[.("Fair","J")]
+DT[.("Fair", "J")]
 ```
 
 ---
@@ -237,13 +237,13 @@ A list or a `data.table` can be passed to `i` to run a lookup. (This is actually
 
 ```r
 # Lookup table: 
-LU &lt;- data.table(color = c("E","I") , clarity = c("SI2","VS2")) 
+LU &lt;- data.table(color = c("E", "I") , clarity = c("SI2", "VS2")) 
 ```
 
 For every row in LU, look up corresponding rows in DT,  using the variables specified in "on".
 
 ```r
-DT[LU, on=c("color","clarity")]
+DT[LU, on = c("color", "clarity")]
 ```
 
 ```
@@ -274,7 +274,7 @@ DT[LU, on=c("color","clarity")]
 - Returning a `data.table` with only one column. 
     
     ```r
-    DT[ , .(price, depth)]
+    DT[ , .(price)]
     ```
 - Returning `data.table` with multiple columns.
     
@@ -308,7 +308,7 @@ DT[LU, on=c("color","clarity")]
     
     ```r
     # Here, we need to quote at the left hand side: 
-    DT[ , c("x","y") := .(log(price), price - mean(price))]
+    DT[ ,c("x","y") := .(log(price), price - mean(price))]
     ```
 
 - Remove one variable. 
@@ -401,7 +401,7 @@ Additionally to grouping `keyby` runs `setkey()` on the by columns 	&amp;rarr; r
 
 
 ```r
-DT[ , mean(price), keyby = .(clarity,color)]
+DT[ , mean(price), keyby = .(clarity, color)]
 ```
 
 ```
@@ -437,8 +437,8 @@ numeric_DT[ ,lapply(.SD, mean)]
 ```
 
 ```
-##            a         b          c
-## 1: 0.5030709 0.2409837 0.01684235
+##             a          b         c
+## 1: 0.06382081 -0.2432529 0.3149921
 ```
 
 We can however change `.SD` to only contain a subset of all columns using `.SDcols`.
@@ -466,7 +466,7 @@ members &lt;- as.data.table(band_members)
 instruments &lt;- as.data.table(band_instruments)
 ```
 
-- Left join
+- Left join (`members` is the left table )
     
     ```r
     instruments[members, on = "name"]
@@ -479,10 +479,10 @@ instruments &lt;- as.data.table(band_instruments)
     ## 3: Paul   bass Beatles
     ```
 
-- Left join by reference. 
+- Left join by reference
     
     ```r
-    instruments[members, instruments := plays ,on = "name"]
+    members[instruments, band := band, on = "name"]
     ```
 
 ---
@@ -490,39 +490,39 @@ instruments &lt;- as.data.table(band_instruments)
 - Inner join
     
     ```r
-    instruments[members, on = "name",  nomatch = 0]
+    instruments[members, on = "name", nomatch = 0]
     ```
     
     ```
-    ##    name  plays instruments    band
-    ## 1: John guitar      guitar Beatles
-    ## 2: Paul   bass        bass Beatles
+    ##    name  plays    band
+    ## 1: John guitar Beatles
+    ## 2: Paul   bass Beatles
     ```
 
 - A full join cannot be achieved with standard `data.table` syntax. Use `data.table::merge()`.
     
     ```r
-    merge(members, instruments, all=TRUE)
+    merge(members, instruments, all = TRUE)
     ```
     
     ```
-    ##     name    band  plays instruments
-    ## 1:  John Beatles guitar      guitar
-    ## 2: Keith    &lt;NA&gt; guitar        &lt;NA&gt;
-    ## 3:  Mick  Stones   &lt;NA&gt;        &lt;NA&gt;
-    ## 4:  Paul Beatles   bass        bass
+    ##     name    band  plays
+    ## 1:  John Beatles guitar
+    ## 2: Keith    &lt;NA&gt; guitar
+    ## 3:  Mick  Stones   &lt;NA&gt;
+    ## 4:  Paul Beatles   bass
     ```
 ---
 ## Joins
 - Anti-Join
     
     ```r
-    merge(members, instruments, all=TRUE)[is.na(plays)]
+    merge(members, instruments, all = TRUE)[is.na(plays)]
     ```
     
     ```
-    ##    name   band plays instruments
-    ## 1: Mick Stones  &lt;NA&gt;        &lt;NA&gt;
+    ##    name   band plays
+    ## 1: Mick Stones  &lt;NA&gt;
     ```
 ---
 ## Joins: Overview
@@ -657,7 +657,24 @@ if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
     }
     deleted = true;
   });
-})();</script>
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
 
 <script>
 (function() {
