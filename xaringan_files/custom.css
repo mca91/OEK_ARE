@@ -30,3 +30,10 @@
 .exercise .remark-code-line, .exercise p {
     color:black;
 }
+
+/* */
+
+.row {
+  overflow:hidden;
+}
+

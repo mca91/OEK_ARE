@@ -4,7 +4,7 @@
     <title>Advanced R for Econometricians</title>
     <meta charset="utf-8" />
     <meta name="author" content="Martin Arnold" />
-    <meta name="date" content="2019-11-13" />
+    <meta name="date" content="2019-11-18" />
     <link href="Advanced_files/remark-css/default.css" rel="stylesheet" />
     <link href="Advanced_files/font-awesome/css/fontawesome-all.min.css" rel="stylesheet" />
     <script type="text/x-mathjax-config">
@@ -43,9 +43,24 @@ class: title-slide title-rintro center middle
 ---
 ## Overview
 
-Make sure the `lobstr` package is attached!
+First, make sure the `lobstr` package is attached!
 
-- Bindings / References / Copy-on-modify
+
+```r
+install.packages('lobstr')
+library(lobstr)
+```
+
+**Outline**
+
+- Bindings / References
+
+- Copy-on-modify
+
+- Unbinding / Garbage Collection
+
+
+
 
 ---
 ## Assigment Operators (?)
@@ -235,7 +250,7 @@ obj_addr(x)
 ```
 
 ```
-## [1] "0x7fc9176455f8"
+## [1] "0x7fc178f6f548"
 ```
 
 ```r
@@ -243,7 +258,7 @@ obj_addr(y)
 ```
 
 ```
-## [1] "0x7fc91a440bf8"
+## [1] "0x7fc178f9e678"
 ```
 ]
 ]]]
@@ -264,30 +279,24 @@ We may use `tracemem()` to obtain info when a copy of an object is generated.
 .blockquote.exercise[
 #### <i class="fas  fa-desktop "></i> Example: `tracemem()`
 
-`tracemem()` returns the copied object, the new address and the **call stack**
-
+`tracemem()` returns the copied object, the new address (and the **call stack**, if functions are involved).
 
 ```r
 x &lt;- c(1, 2, 3)
 tracemem(x)
 ```
 
-```
-## [1] "&lt;0x7fc91a3eace8&gt;"
-```
+`[1] "&lt;0x7fba7740ebb8&gt;"`
 
 ```r
 y &lt;- x
 y[[3]] &lt;- 4
 ```
 
-```
-## tracemem[0x7fc91a3eace8 -&gt; 0x7fc9173e8298]: eval eval withVisible withCallingHandlers handle timing_fn evaluate_call &lt;Anonymous&gt; evaluate in_dir block_exec call_block process_group.block process_group withCallingHandlers process_file &lt;Anonymous&gt; &lt;Anonymous&gt;
-```
+`tracemem[0x7fba7740ebb8 -&gt; 0x7fba76883958]:`
 
 ```r
 y[[3]] &lt;- 5
-
 # stop tracking
 untracemem(x)
 ```
@@ -319,7 +328,7 @@ tracemem(x)
 ```
 
 ```
-## [1] "&lt;0x7fc916ac3858&gt;"
+## [1] "&lt;0x7fc1755f7098&gt;"
 ```
 
 ```r
@@ -340,21 +349,30 @@ untracemem(x)
 .content-box-white[
 **Task:** 
 
-Predict what is returned if the highlighted line gets executed.
+Predict what `tracemem()` returns if the highlighted lines get executed, respectively.
 
 ```r
 f &lt;- function(a) {
   a[[1]] &lt;- 0
+  a
 }
 
 x &lt;- c(1, 2, 3)
 tracemem(x)
+
+*f(x)
 
 *z &lt;- f(x)
 
 untracemem(x)
 ```
 ]]
+
+???
+
+- **`f(x)`**: `f()` binds `a` to the same memeroy location `x` points to *during execution*. A copy is made since `f()` modifies `a`.
+
+- **`z&lt;-f(x)`**: as above. `z` is a binding the same location as `a` (no additional copy made).
 
 ---
 ## Copy-on-modify &amp;mdash; Lists
@@ -403,15 +421,15 @@ ref(l1, l2)
 ```
 
 ```
-## █ [1:0x7fc91b811ae8] &lt;list&gt; 
-## ├─[2:0x7fc91775fdc0] &lt;dbl&gt; 
-## ├─[3:0x7fc91775fd88] &lt;dbl&gt; 
-## └─[4:0x7fc91775fd50] &lt;dbl&gt; 
+## █ [1:0x7fc1745cbed8] &lt;list&gt; 
+## ├─[2:0x7fc178c53328] &lt;dbl&gt; 
+## ├─[3:0x7fc178c532f0] &lt;dbl&gt; 
+## └─[4:0x7fc178c532b8] &lt;dbl&gt; 
 ##  
-## █ [5:0x7fc91b8af7c8] &lt;list&gt; 
-## ├─[2:0x7fc91775fdc0] 
-## ├─[3:0x7fc91775fd88] 
-## └─[6:0x7fc91775fc70] &lt;dbl&gt;
+## █ [5:0x7fc1798783b8] &lt;list&gt; 
+## ├─[2:0x7fc178c53328] 
+## ├─[3:0x7fc178c532f0] 
+## └─[6:0x7fc178c531d8] &lt;dbl&gt;
 ```
 
 ]
@@ -449,7 +467,7 @@ d1 &lt;- data.frame(
 
 1. Why is `tracemem(1:10)` not useful?
 
-2. Explain why `tracemem() shows two copies when you run this code. *Hint:* carefully look at the difference between this code and the code shown earlier in the section.
+2. Explain why `tracemem()` shows two copies when you run this code. *Hint:* carefully look at the difference between this code and the code shown earlier in the section.
     ```r
     x &lt;- c(1L, 2L, 3L)
     tracemem(x)
@@ -484,9 +502,9 @@ d1 &lt;- data.frame(
 
 R modifies-in-place if
 
-- the object has only a single binding
+- the object has **only one** binding
 
-- the object is an environment
+- the object is an **environment**
 
 .blockquote.exercise[
 #### <i class="fas  fa-desktop "></i> Example: optimized modification
@@ -500,6 +518,278 @@ ref(v)
 ```
 
 ]]
+
+---
+## Modify-in-place (?)
+
+Wether or not R copies an object &amp;mdash; and if so, how many times &amp;mdash; is often very hard to predict.
+
+.blockquote.exercise[
+#### <i class="fas  fa-desktop "></i> Example: slow loop due to copies
+
+You should never modify a data frame in a loop.
+
+
+```r
+x &lt;- data.frame(matrix(runif(5 * 1e4), ncol = 5))
+medians &lt;- vapply(x, median, numeric(1))
+
+tracemem(x)
+
+for (i in seq_along(medians)) {
+  x[[i]] &lt;- x[[i]] - medians[[i]]
+}
+```
+
+]
+
+---
+## Modify-in-place (?)
+
+`[[&lt;-.data.frame` is revaled to be quite expensive.
+
+```r
+tracemem[0x7fe1aed76628 -&gt; 0x7fe1ad4dc428]: 
+tracemem[0x7fe1ad4dc428 -&gt; 0x7fe1ad4dc578]: [[&lt;-.data.frame [[&lt;- 
+tracemem[0x7fe1ad4dc578 -&gt; 0x7fe1ad4dc658]: [[&lt;-.data.frame [[&lt;- 
+tracemem[0x7fe1ad4dc658 -&gt; 0x7fe1ad4dc7a8]: 
+tracemem[0x7fe1ad4dc7a8 -&gt; 0x7fe1ad4dc8f8]: [[&lt;-.data.frame [[&lt;- 
+tracemem[0x7fe1ad4dc8f8 -&gt; 0x7fe1ad4dcb98]: [[&lt;-.data.frame [[&lt;- 
+tracemem[0x7fe1ad4dcb98 -&gt; 0x7fe1ad4dcdc8]: 
+tracemem[0x7fe1ad4dcdc8 -&gt; 0x7fe1ad4dd068]: [[&lt;-.data.frame [[&lt;- 
+tracemem[0x7fe1ad4dd068 -&gt; 0x7fe1ad4dd308]: [[&lt;-.data.frame [[&lt;- 
+tracemem[0x7fe1ad4dd308 -&gt; 0x7fe1ad4dd4c8]: 
+tracemem[0x7fe1ad4dd4c8 -&gt; 0x7fe1ad4dd618]: [[&lt;-.data.frame [[&lt;- 
+tracemem[0x7fe1ad4dd618 -&gt; 0x7fe1ad4ddae8]: [[&lt;-.data.frame [[&lt;- 
+tracemem[0x7fe1ad4ddae8 -&gt; 0x7fe1acdbda28]: 
+tracemem[0x7fe1acdbda28 -&gt; 0x7fe1acdbe198]: [[&lt;-.data.frame [[&lt;- 
+tracemem[0x7fe1acdbe198 -&gt; 0x7fe1acdbe6d8]: [[&lt;-.data.frame [[&lt;- 
+```
+
+---
+## Modify-in-place (?)
+
+What's happening here and why?
+
+- `x` is referenced more than once: global environment, inside of `[[` and also inside of `[[&lt;-.data.frame()` &amp;rarr; modifying `x` results in a copy
+
+- The following runs inside `[[`:
+    ```r
+    `*tmp*` &lt;- df
+    df &lt;- `[[&lt;-.data.frame`(`*tmp*`, &lt;additional arguments&gt;)
+    rm(`*tmp*`)
+    ```
+    
+    - The binding to `*tmp*` results in a copy
+    
+    - `[[&lt;-.data.frame` changes the class and alters a component of `x` (two additional copies)
+
+???
+
+- The two copies made by `[[&lt;-.data.frame` are **shallow copies** (only column references are copied)
+
+- **Q to students**: What kind of function is `[[&lt;-.data.frame`?
+
+    **A**: A regular function. It is a method of  `[[&lt;-` which is a primitive (a fast C function)
+
+- **Q to students**: How can you view the source? 
+
+    **A**: &lt;code&gt;\`[[&lt;-.data.frame\`&lt;/code&gt;
+
+- More on primitives on the next slides. More on methods, dispatch etc. in the 'OOP' Chapter.
+
+- More on how to write efficient code (and especially efficient `for()` loops) in Chapter 'Improving Performance' 
+
+
+---
+## Modify-in-place (?)
+
+It's better to use a list.
+
+
+```r
+y &lt;- as.list(x)
+tracemem(y)
+
+for (i in 1:5) {
+  y[[i]] &lt;- y[[i]] - medians[[i]]
+}
+```
+
+```r
+tracemem[0x7fba72971928 -&gt; 0x7fba72a2e178]:
+```
+
+.pull-left[
+*Before loop:*
+```r
+█ [1:0x7fba72971928] &lt;named list&gt; 
+├─X1 = [2:0x10f1ec000] &lt;dbl&gt; 
+├─X2 = [3:0x115c56000] &lt;dbl&gt; 
+├─X3 = [4:0x115c6a000] &lt;dbl&gt; 
+├─X4 = [5:0x115c7e000] &lt;dbl&gt; 
+└─X5 = [6:0x115c92000] &lt;dbl&gt; 
+```
+]
+.pull-right[
+*After loop:*
+```r
+█ [1:0x7fba72a2e178] &lt;named list&gt; 
+├─X1 = [2:0x115cc7000] &lt;dbl&gt; 
+├─X2 = [3:0x115ca6000] &lt;dbl&gt; 
+├─X3 = [4:0x10f07e000] &lt;dbl&gt; 
+├─X4 = [5:0x10ef83000] &lt;dbl&gt; 
+└─X5 = [6:0x10f056000] &lt;dbl&gt; 
+```
+]
+
+???
+
+- A single copy is made since the loop modifies (existing) list entries.
+
+- This a good example where tweaking the code reduces the amount of copies made. If such a solution is not readily at hand we may resort to C++ code. More on this in the Rcpp chapter.
+
+---
+## Modify-in-place (?)
+
+.smaller[
+
+What happens if we modify list entries is better understood using the following example.
+
+.blockquote.exercise[
+#### <i class="fas  fa-desktop "></i> Example: modifying a list
+
+Can you explain what's going on?
+
+.pull-left[
+
+```r
+# Step 1
+x &lt;- list(1:10)
+lobstr::ref(x)
+
+# Step 2
+x[[2]] &lt;- x
+lobstr::ref(x)
+
+# Step 3
+x[[1]] &lt;- 11:20
+lobstr::ref(x)
+```
+]
+
+.pull-right[
+
+```
+## █ [1:0x7fc179df3a70] &lt;list&gt; 
+## └─[2:0x7fc179c1f920] &lt;int&gt;
+```
+
+```
+## █ [1:0x7fc176697f48] &lt;list&gt; 
+## ├─[2:0x7fc179c1f920] &lt;int&gt; 
+## └─█ [3:0x7fc179df3a70] &lt;list&gt; 
+##   └─[2:0x7fc179c1f920]
+```
+
+```
+## █ [1:0x7fc179986288] &lt;list&gt; 
+## ├─[2:0x7fc179ee0058] &lt;int&gt; 
+## └─█ [3:0x7fc179df3a70] &lt;list&gt; 
+##   └─[4:0x7fc179c1f920] &lt;int&gt;
+```
+]]]
+
+---
+## Garbage Collection
+
+.smaller[
+
+Everyday operations that are reflected in the RStudio's 'Environment' tab are unbinding and deletion. What does actually happen if we alter a name or even 'remove' the object from the (global) environment?
+
+.blockquote.exercise[
+#### <i class="fas  fa-desktop "></i> Example: unbinding an object
+
+.row[
+.pull-left[
+**(a)**
+  ![:image 32%](../img/unbinding-1.png)
+]
+
+.pull-right[
+
+```r
+x &lt;- 1:3
+```
+]]
+
+.row[
+.pull-left[
+**(b)**
+  ![:image 32%](../img/unbinding-2.png)
+]
+
+.pull-right[
+
+```r
+x &lt;- 2:4
+```
+]]
+
+.row[
+.pull-left[
+**(c)**
+  ![:image 32%](../img/unbinding-3.png)
+]
+
+.pull-right[
+
+```r
+rm(x)
+```
+]]]]
+
+---
+## Garbage Collection &amp;mdash; Quick Facts
+
+.smaller[
+
+- R uses a tracing **Garbage Colector** (GC): it keeps track of objects in the global environment and references therein.
+
+- The GC runs automatically if needed for creating new objects. There is *no need to actively force garbage collection*. You can, however, do so by calling `gc()` with the side effect of info on memory occupation.
+
+- You may run `gcinfo(TRUE)` if you wish to be informed when the GC runs
+
+.blockquote.exercise[
+#### <i class="fas  fa-desktop "></i> Example: garbage collection
+.medium[
+
+```r
+gc()          # for side effect
+```
+
+```
+##           used (Mb) gc trigger (Mb) limit (Mb) max used (Mb)
+## Ncells  570595 30.5    1186888 63.4         NA  1186888 63.4
+## Vcells 1038746  8.0    8388608 64.0      16384  1808509 13.8
+```
+
+```r
+mem_used()    # more exact
+```
+
+```
+## 40,257,912 B
+```
+]]
+
+]
+
+???
+
+- The only reason to call `gc()` is if you need to free-up memory for your operating system &amp;mdash; which will hardly ever happen.
+
+- `lobstr::mem_used()` does not agree with what's reported by you OS: there are other objects (generated by, e.g., the R interpreter) which are not captured.
 
 ---
 class: segue-red
