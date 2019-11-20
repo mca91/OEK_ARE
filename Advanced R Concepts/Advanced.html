@@ -4,7 +4,7 @@
     <title>Advanced R for Econometricians</title>
     <meta charset="utf-8" />
     <meta name="author" content="Martin Arnold" />
-    <meta name="date" content="2019-11-18" />
+    <meta name="date" content="2019-11-20" />
     <link href="Advanced_files/remark-css/default.css" rel="stylesheet" />
     <link href="Advanced_files/font-awesome/css/fontawesome-all.min.css" rel="stylesheet" />
     <script type="text/x-mathjax-config">
@@ -53,14 +53,23 @@ library(lobstr)
 
 **Outline**
 
-- Bindings / References
+- Names and values
 
-- Copy-on-modify
+    - Bindings and References
 
-- Unbinding / Garbage Collection
+    - Copy-on-modify / Inplace Modification
 
+    - Unbinding and Garbage Collection
+    
+- Functions
+    
+    - Some fundamentals, scoping and Lazy Evaluation
+    
+    - Function forms
 
-
+---
+class: segue-red
+### Names and Values
 
 ---
 ## Assigment Operators (?)
@@ -250,7 +259,7 @@ obj_addr(x)
 ```
 
 ```
-## [1] "0x7fc178f6f548"
+## [1] "0x7fb937813f98"
 ```
 
 ```r
@@ -258,7 +267,7 @@ obj_addr(y)
 ```
 
 ```
-## [1] "0x7fc178f9e678"
+## [1] "0x7fb9327cd3e8"
 ```
 ]
 ]]]
@@ -328,7 +337,7 @@ tracemem(x)
 ```
 
 ```
-## [1] "&lt;0x7fc1755f7098&gt;"
+## [1] "&lt;0x7fb9349a8108&gt;"
 ```
 
 ```r
@@ -421,15 +430,15 @@ ref(l1, l2)
 ```
 
 ```
-## █ [1:0x7fc1745cbed8] &lt;list&gt; 
-## ├─[2:0x7fc178c53328] &lt;dbl&gt; 
-## ├─[3:0x7fc178c532f0] &lt;dbl&gt; 
-## └─[4:0x7fc178c532b8] &lt;dbl&gt; 
+## █ [1:0x7fb936e4dc08] &lt;list&gt; 
+## ├─[2:0x7fb936d96880] &lt;dbl&gt; 
+## ├─[3:0x7fb936d96848] &lt;dbl&gt; 
+## └─[4:0x7fb936d96810] &lt;dbl&gt; 
 ##  
-## █ [5:0x7fc1798783b8] &lt;list&gt; 
-## ├─[2:0x7fc178c53328] 
-## ├─[3:0x7fc178c532f0] 
-## └─[6:0x7fc178c531d8] &lt;dbl&gt;
+## █ [5:0x7fb9379aa3d8] &lt;list&gt; 
+## ├─[2:0x7fb936d96880] 
+## ├─[3:0x7fb936d96848] 
+## └─[6:0x7fb936d96730] &lt;dbl&gt;
 ```
 
 ]
@@ -681,22 +690,22 @@ lobstr::ref(x)
 .pull-right[
 
 ```
-## █ [1:0x7fc179df3a70] &lt;list&gt; 
-## └─[2:0x7fc179c1f920] &lt;int&gt;
+## █ [1:0x7fb937aade70] &lt;list&gt; 
+## └─[2:0x7fb936f57448] &lt;int&gt;
 ```
 
 ```
-## █ [1:0x7fc176697f48] &lt;list&gt; 
-## ├─[2:0x7fc179c1f920] &lt;int&gt; 
-## └─█ [3:0x7fc179df3a70] &lt;list&gt; 
-##   └─[2:0x7fc179c1f920]
+## █ [1:0x7fb9343a31c8] &lt;list&gt; 
+## ├─[2:0x7fb936f57448] &lt;int&gt; 
+## └─█ [3:0x7fb937aade70] &lt;list&gt; 
+##   └─[2:0x7fb936f57448]
 ```
 
 ```
-## █ [1:0x7fc179986288] &lt;list&gt; 
-## ├─[2:0x7fc179ee0058] &lt;int&gt; 
-## └─█ [3:0x7fc179df3a70] &lt;list&gt; 
-##   └─[4:0x7fc179c1f920] &lt;int&gt;
+## █ [1:0x7fb93669bbc8] &lt;list&gt; 
+## ├─[2:0x7fb9347083d8] &lt;int&gt; 
+## └─█ [3:0x7fb937aade70] &lt;list&gt; 
+##   └─[4:0x7fb936f57448] &lt;int&gt;
 ```
 ]]]
 
@@ -793,7 +802,456 @@ mem_used()    # more exact
 
 ---
 class: segue-red
-### Part I
+### Functions
+
+---
+## Functions
+
+&lt;blockquote style ="margin-top:15%;"&gt;
+To understand computations in R, two slogans are helpful:&lt;br&gt;&lt;br&gt;
+Everything that exists is an object.
+Everything that happens is a function call.
+.right[&amp;mdash; &lt;cite&gt;John Chambers&lt;/cite&gt;]
+&lt;/blockquote&gt;
+
+---
+## Regular Functions vs. Primitives
+
+.smaller[
+
+- **Regular functions** live in environments and consists of a body along with formals
+
+- **Primitives** are special `base` R functions that call C code
+
+.blockquote.exercise[
+#### <i class="fas  fa-desktop "></i> Example: primitives vs. regular functions
+
+.medium[
+.pull-left[
+
+```r
+typeof(lm)
+```
+
+```
+## [1] "closure"
+```
+
+```r
+environment(lm)
+```
+
+```
+## &lt;environment: namespace:stats&gt;
+```
+
+```r
+names(formals(lm))[1:4]
+```
+
+```
+## [1] "formula" "data"    "subset"  "weights"
+```
+
+```r
+# body(lm)
+```
+]
+.pull-right[
+
+```r
+typeof(sum)
+```
+
+```
+## [1] "builtin"
+```
+
+```r
+environment(sum)
+```
+
+```
+## NULL
+```
+
+```r
+names(formals(sum))
+```
+
+```
+## NULL
+```
+
+```r
+body(sum)
+```
+
+```
+## NULL
+```
+]]]]
+
+---
+## First-Class Functions
+
+.smaller[
+
+R functions are **objects**. We may do stuff that seems quite exotic when compared to much more 'restrictive' languages like C and Python.
+
+.blockquote.exercise[
+#### <i class="fas  fa-desktop "></i> Example: fun with anonymous functions
+
+.pull-left[
+
+```r
+funs &lt;- list(
+  function(x) x^2,
+  function(x) x^3
+)
+lobstr::ref(funs)
+```
+
+```
+## █ [1:0x7fb93611dc08] &lt;list&gt; 
+## ├─[2:0x7fb936a9b598] &lt;fn&gt; 
+## └─[3:0x7fb936a9b640] &lt;fn&gt;
+```
+
+```r
+sapply(funs, function(z) z(5))
+```
+
+```
+## [1]  25 125
+```
+]
+
+.pull-right[
+
+```r
+(function(x) x^2)(5)
+```
+
+```
+## [1] 25
+```
+
+```r
+(function(x) x^3)(5)
+```
+
+```
+## [1] 125
+```
+]]]
+
+???
+
+Obviously, R functions are objects on their own right &amp;mdash; they need not be bound to a name!
+
+---
+## First-Class Functions
+
+.smaller[
+
+&lt;br&gt;
+&lt;br&gt;
+.content-box-white[
+**Task:** 
+
+Explore what kind of function `(` is, what it does and explain why the statements
+```r
+(function(x) x^2)(5)
+```
+and
+
+
+```r
+(x&lt;-5)
+```
+
+```
+## [1] 5
+```
+
+make sense.
+
+]]
+
+???
+
+- `(` is a primitive:
+    
+    ```r
+    `(`
+    ```
+    
+    ```
+    ## .Primitive("(")
+    ```
+
+-  The R-help hints that `(` is semantically equivalent to `function(x) x`. 
+
+    E.g., `(x&lt;-5)` is valid (and useful) R code!
+
+---
+## Lexical Scoping
+
+.smaller[
+
+**Scoping** reffers to the routine of finding the value associated with a name. R's scoping mechanism follows four concepts you should already be familiar with.
+
+1. **Name Masking**: 
+
+    names defined inside a function mask names defined outside of it.
+
+2. **Functions before variables**: 
+
+    functions and objects in different environments may share the same name. R ignores non-function objects in function calls. 
+
+3. **Execution Environments**:
+
+    functions generate ephemeral environments.
+    
+4. **Dynamic Lookup**: 
+
+    R searches for values when the function is run (and not when it's created).
+
+.content-box-white[
+**Task:** 
+Write a code snippet which is useful for demonstrating all of the above concepts.
+]]
+
+???
+
+
+```r
+rm(x)
+y &lt;- 20
+z &lt;- function(x) x^2
+
+f &lt;- function(g) {
+    if(!exists("x")) {
+        x &lt;- 1   
+    } else {
+        x &lt;- x + 1
+    }
+    z &lt;- 2
+    z(x + y)
+}
+f(x)
+```
+
+```
+## [1] 441
+```
+
+---
+## Lazy Evaluation &amp;mdash; Promises
+
+.smaller[
+
+- A **Promise** consists of an expression along with an environment and a value which is computed an cached the first time the promise is accessed
+
+- We implicitly use them when writing functions as they use **lazy evaluation**. Here we refer to **unevaluated arguments** as promises.  
+
+- Lazy evaluation allows R functions to behave quite differently than, e.g., C functions and it is important to understand what's special about that. 
+
+.blockquote.exercise[
+#### <i class="fas  fa-desktop "></i> Example: outside evaluation
+
+
+```r
+f1 &lt;- function(x) { y &lt;- 5; x + 1 }
+f1(y &lt;- 6)
+```
+
+```
+## [1] 7
+```
+
+```r
+y
+```
+
+```
+## [1] 6
+```
+
+]]
+
+???
+
+This style is used by many base R function but it's not recommended since it's hard to understand what's going on.
+
+---
+## Lazy Evaluation
+
+.smaller[
+.blockquote.exercise[
+#### <i class="fas  fa-desktop "></i> Example: laziness and efficiency
+
+
+```r
+double &lt;- function(x) { 
+  message("Calculating...")
+  x * 2
+}
+
+clone &lt;- function(x) {
+  c(x, x)
+}
+
+clone(double(20))
+```
+
+```
+## [1] 40 40
+```
+
+]]
+
+???
+
+We see that `double(20)` is evaluated only once when `c()` inside of `clone()` looks for `x` for the first time.
+
+---
+## Lazy Evaluation
+
+.smaller[
+
+.blockquote.exercise[
+#### <i class="fas  fa-desktop "></i> Example: lazy evaluation of (default) function arguments
+
+
+```r
+f &lt;- function(x) {
+  cat("f: 'x doesn't matter to me.'")
+}
+f(x = stop("I don't matter."))
+```
+
+```
+## f: 'x doesn't matter to me.'
+```
+&lt;br&gt;
+
+```r
+# (default arguments)
+f &lt;- function(x = 1, y = x * 2, z = a + b) {
+  a &lt;- 10
+  b &lt;- 100
+  c(x, y, z)
+}
+f()
+```
+
+```
+## [1]   1   2 110
+```
+
+]]
+
+---
+## Lazy Evaluation
+
+.smaller[
+.content-box-white[
+**Task:** 
+
+`ls()` list names of objects defined in the environment where it's called. Explain the results below. 
+
+
+```r
+f &lt;- function(x = ls()) {
+  a &lt;- 1
+  x
+}
+f()
+```
+
+```
+## [1] "a" "x"
+```
+
+```r
+f(ls())
+```
+
+```
+## [1] "f"
+```
+
+]]
+
+???
+
+The evaluation environment for default arguments is the function environment whereas user supplied arguments are evaluated in the parent (i.e. global) environment.
+
+---
+## Lazy Evaluation
+
+Lazy evaluation also applies to other situations, e.g. in control flow.
+
+
+```r
+x &lt;- NULL
+if (!is.null(x) &amp;&amp; x &gt; 0) {
+ # do something
+}
+```
+
+.content-box-white[
+**Task:** 
+
+1. Which part of the code seems problematic at first sight? 
+
+2. Give an explanation why the statement above does not produce an error.
+]
+
+???
+
+- The second statement would be evaluated only if the first is true
+
+- Without lazy evaluation this statement would throw an error because `x &gt; 0` evaluates to a logical value of length zero
+
+---
+## Exercises
+
+1. Explain why the following does not work. Can you come up with a work-around without changing the definition of `f()`?
+    
+    ```r
+    f &lt;- function(x, z) {
+      z + x^2
+    }
+    f(x = z^2, z = 2)
+    ```
+    
+    ```
+    ## Error in f(x = z^2, z = 2): object 'z' not found
+    ```
+
+2. What's going wrong in the closures generated below? 
+  
+  ```r
+  multiplier &lt;- function(x) {
+    function(y) x * y
+  }
+  multipliers &lt;- lapply(1:3, multiplier)
+  ```
+
+???
+
+1. Lazy evaluation applies only at function definition, not invocation: R looks for `z` in the global environment because `x` is not `z^2` by default, like below.
+    ```r
+    f &lt;- function(x = z^2, z) {
+      z + x^2
+    }
+    ```
+    Workaround: `with(list(z=2), f(x = z^2, z))`
+
+2. `x` is only evaluated once when calling `lapply()`. We need to use `force(x)` such that `x` is evaluated in each invocation of `multiplier()`. More on closures in the Functional Programming chapter.
     </textarea>
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
 <script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
