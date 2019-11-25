@@ -179,9 +179,8 @@ ggplot(diamonds, aes(x = carat, y = price,
 ---
 ## Exercise
 
-<ol start="1"> 
-<li>  Experiment with `geom_point()` using the `mtcars` data set. Try out different aesthetics with different variables. What do you note?  </li>
-</ol>
+
+1. Experiment with `geom_point()` using the `mtcars` data set. Try out different aesthetics with different variables. What do you note? 
 
 ???
 Specifically explain the different behaviour of factor and numeric variables for e.g. color. 
