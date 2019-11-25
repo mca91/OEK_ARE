@@ -351,7 +351,7 @@ class: top, left
       <li> Were delayed by at least an hour, but made up over 30 minutes in flight.</li>
       <li> Departed between midnight and 6am.</li>
     </ul>
-<li>  Which flights took the longest? Which traveled the shortest?</li>
+<li> Which flights took the longest and which the shortest? </li>
 <li>  Brainstorm as many ways as possible to select `dep\text{_}time`, `dep\text{_}d elay`, `arr\text{_}time`, and `arr\text{_}d elay`. </li>
 <li>  Create a new variable `first\text{_}flight` which takes the value `TRUE` if it is the first flight of the day. </li>
 </ol>
