@@ -4,7 +4,7 @@
     <title>Advanced R for Econometricians</title>
     <meta charset="utf-8" />
     <meta name="author" content="Martin Arnold" />
-    <meta name="date" content="2019-11-13" />
+    <meta name="date" content="2019-11-20" />
     <link href="Advanced_files/remark-css/default.css" rel="stylesheet" />
     <link href="Advanced_files/font-awesome/css/fontawesome-all.min.css" rel="stylesheet" />
     <script type="text/x-mathjax-config">
@@ -43,9 +43,33 @@ class: title-slide title-rintro center middle
 ---
 ## Overview
 
-Make sure the `lobstr` package is attached!
+First, make sure the `lobstr` package is attached!
 
-- Bindings / References / Copy-on-modify
+
+```r
+install.packages('lobstr')
+library(lobstr)
+```
+
+**Outline**
+
+- Names and values
+
+    - Bindings and References
+
+    - Copy-on-modify / Inplace Modification
+
+    - Unbinding and Garbage Collection
+    
+- Functions
+    
+    - Some fundamentals, scoping and Lazy Evaluation
+    
+    - Function forms
+
+---
+class: segue-red
+### Names and Values
 
 ---
 ## Assigment Operators (?)
@@ -235,7 +259,7 @@ obj_addr(x)
 ```
 
 ```
-## [1] "0x7fc9176455f8"
+## [1] "0x7fb937813f98"
 ```
 
 ```r
@@ -243,7 +267,7 @@ obj_addr(y)
 ```
 
 ```
-## [1] "0x7fc91a440bf8"
+## [1] "0x7fb9327cd3e8"
 ```
 ]
 ]]]
@@ -264,30 +288,24 @@ We may use `tracemem()` to obtain info when a copy of an object is generated.
 .blockquote.exercise[
 #### <i class="fas  fa-desktop "></i> Example: `tracemem()`
 
-`tracemem()` returns the copied object, the new address and the **call stack**
-
+`tracemem()` returns the copied object, the new address (and the **call stack**, if functions are involved).
 
 ```r
 x &lt;- c(1, 2, 3)
 tracemem(x)
 ```
 
-```
-## [1] "&lt;0x7fc91a3eace8&gt;"
-```
+`[1] "&lt;0x7fba7740ebb8&gt;"`
 
 ```r
 y &lt;- x
 y[[3]] &lt;- 4
 ```
 
-```
-## tracemem[0x7fc91a3eace8 -&gt; 0x7fc9173e8298]: eval eval withVisible withCallingHandlers handle timing_fn evaluate_call &lt;Anonymous&gt; evaluate in_dir block_exec call_block process_group.block process_group withCallingHandlers process_file &lt;Anonymous&gt; &lt;Anonymous&gt;
-```
+`tracemem[0x7fba7740ebb8 -&gt; 0x7fba76883958]:`
 
 ```r
 y[[3]] &lt;- 5
-
 # stop tracking
 untracemem(x)
 ```
@@ -319,7 +337,7 @@ tracemem(x)
 ```
 
 ```
-## [1] "&lt;0x7fc916ac3858&gt;"
+## [1] "&lt;0x7fb9349a8108&gt;"
 ```
 
 ```r
@@ -340,21 +358,30 @@ untracemem(x)
 .content-box-white[
 **Task:** 
 
-Predict what is returned if the highlighted line gets executed.
+Predict what `tracemem()` returns if the highlighted lines get executed, respectively.
 
 ```r
 f &lt;- function(a) {
   a[[1]] &lt;- 0
+  a
 }
 
 x &lt;- c(1, 2, 3)
 tracemem(x)
+
+*f(x)
 
 *z &lt;- f(x)
 
 untracemem(x)
 ```
 ]]
+
+???
+
+- **`f(x)`**: `f()` binds `a` to the same memeroy location `x` points to *during execution*. A copy is made since `f()` modifies `a`.
+
+- **`z&lt;-f(x)`**: as above. `z` is a binding the same location as `a` (no additional copy made).
 
 ---
 ## Copy-on-modify &amp;mdash; Lists
@@ -403,15 +430,15 @@ ref(l1, l2)
 ```
 
 ```
-## █ [1:0x7fc91b811ae8] &lt;list&gt; 
-## ├─[2:0x7fc91775fdc0] &lt;dbl&gt; 
-## ├─[3:0x7fc91775fd88] &lt;dbl&gt; 
-## └─[4:0x7fc91775fd50] &lt;dbl&gt; 
+## █ [1:0x7fb936e4dc08] &lt;list&gt; 
+## ├─[2:0x7fb936d96880] &lt;dbl&gt; 
+## ├─[3:0x7fb936d96848] &lt;dbl&gt; 
+## └─[4:0x7fb936d96810] &lt;dbl&gt; 
 ##  
-## █ [5:0x7fc91b8af7c8] &lt;list&gt; 
-## ├─[2:0x7fc91775fdc0] 
-## ├─[3:0x7fc91775fd88] 
-## └─[6:0x7fc91775fc70] &lt;dbl&gt;
+## █ [5:0x7fb9379aa3d8] &lt;list&gt; 
+## ├─[2:0x7fb936d96880] 
+## ├─[3:0x7fb936d96848] 
+## └─[6:0x7fb936d96730] &lt;dbl&gt;
 ```
 
 ]
@@ -449,7 +476,7 @@ d1 &lt;- data.frame(
 
 1. Why is `tracemem(1:10)` not useful?
 
-2. Explain why `tracemem() shows two copies when you run this code. *Hint:* carefully look at the difference between this code and the code shown earlier in the section.
+2. Explain why `tracemem()` shows two copies when you run this code. *Hint:* carefully look at the difference between this code and the code shown earlier in the section.
     ```r
     x &lt;- c(1L, 2L, 3L)
     tracemem(x)
@@ -484,9 +511,9 @@ d1 &lt;- data.frame(
 
 R modifies-in-place if
 
-- the object has only a single binding
+- the object has **only one** binding
 
-- the object is an environment
+- the object is an **environment**
 
 .blockquote.exercise[
 #### <i class="fas  fa-desktop "></i> Example: optimized modification
@@ -502,8 +529,729 @@ ref(v)
 ]]
 
 ---
+## Modify-in-place (?)
+
+Wether or not R copies an object &amp;mdash; and if so, how many times &amp;mdash; is often very hard to predict.
+
+.blockquote.exercise[
+#### <i class="fas  fa-desktop "></i> Example: slow loop due to copies
+
+You should never modify a data frame in a loop.
+
+
+```r
+x &lt;- data.frame(matrix(runif(5 * 1e4), ncol = 5))
+medians &lt;- vapply(x, median, numeric(1))
+
+tracemem(x)
+
+for (i in seq_along(medians)) {
+  x[[i]] &lt;- x[[i]] - medians[[i]]
+}
+```
+
+]
+
+---
+## Modify-in-place (?)
+
+`[[&lt;-.data.frame` is revaled to be quite expensive.
+
+```r
+tracemem[0x7fe1aed76628 -&gt; 0x7fe1ad4dc428]: 
+tracemem[0x7fe1ad4dc428 -&gt; 0x7fe1ad4dc578]: [[&lt;-.data.frame [[&lt;- 
+tracemem[0x7fe1ad4dc578 -&gt; 0x7fe1ad4dc658]: [[&lt;-.data.frame [[&lt;- 
+tracemem[0x7fe1ad4dc658 -&gt; 0x7fe1ad4dc7a8]: 
+tracemem[0x7fe1ad4dc7a8 -&gt; 0x7fe1ad4dc8f8]: [[&lt;-.data.frame [[&lt;- 
+tracemem[0x7fe1ad4dc8f8 -&gt; 0x7fe1ad4dcb98]: [[&lt;-.data.frame [[&lt;- 
+tracemem[0x7fe1ad4dcb98 -&gt; 0x7fe1ad4dcdc8]: 
+tracemem[0x7fe1ad4dcdc8 -&gt; 0x7fe1ad4dd068]: [[&lt;-.data.frame [[&lt;- 
+tracemem[0x7fe1ad4dd068 -&gt; 0x7fe1ad4dd308]: [[&lt;-.data.frame [[&lt;- 
+tracemem[0x7fe1ad4dd308 -&gt; 0x7fe1ad4dd4c8]: 
+tracemem[0x7fe1ad4dd4c8 -&gt; 0x7fe1ad4dd618]: [[&lt;-.data.frame [[&lt;- 
+tracemem[0x7fe1ad4dd618 -&gt; 0x7fe1ad4ddae8]: [[&lt;-.data.frame [[&lt;- 
+tracemem[0x7fe1ad4ddae8 -&gt; 0x7fe1acdbda28]: 
+tracemem[0x7fe1acdbda28 -&gt; 0x7fe1acdbe198]: [[&lt;-.data.frame [[&lt;- 
+tracemem[0x7fe1acdbe198 -&gt; 0x7fe1acdbe6d8]: [[&lt;-.data.frame [[&lt;- 
+```
+
+---
+## Modify-in-place (?)
+
+What's happening here and why?
+
+- `x` is referenced more than once: global environment, inside of `[[` and also inside of `[[&lt;-.data.frame()` &amp;rarr; modifying `x` results in a copy
+
+- The following runs inside `[[`:
+    ```r
+    `*tmp*` &lt;- df
+    df &lt;- `[[&lt;-.data.frame`(`*tmp*`, &lt;additional arguments&gt;)
+    rm(`*tmp*`)
+    ```
+    
+    - The binding to `*tmp*` results in a copy
+    
+    - `[[&lt;-.data.frame` changes the class and alters a component of `x` (two additional copies)
+
+???
+
+- The two copies made by `[[&lt;-.data.frame` are **shallow copies** (only column references are copied)
+
+- **Q to students**: What kind of function is `[[&lt;-.data.frame`?
+
+    **A**: A regular function. It is a method of  `[[&lt;-` which is a primitive (a fast C function)
+
+- **Q to students**: How can you view the source? 
+
+    **A**: &lt;code&gt;\`[[&lt;-.data.frame\`&lt;/code&gt;
+
+- More on primitives on the next slides. More on methods, dispatch etc. in the 'OOP' Chapter.
+
+- More on how to write efficient code (and especially efficient `for()` loops) in Chapter 'Improving Performance' 
+
+
+---
+## Modify-in-place (?)
+
+It's better to use a list.
+
+
+```r
+y &lt;- as.list(x)
+tracemem(y)
+
+for (i in 1:5) {
+  y[[i]] &lt;- y[[i]] - medians[[i]]
+}
+```
+
+```r
+tracemem[0x7fba72971928 -&gt; 0x7fba72a2e178]:
+```
+
+.pull-left[
+*Before loop:*
+```r
+█ [1:0x7fba72971928] &lt;named list&gt; 
+├─X1 = [2:0x10f1ec000] &lt;dbl&gt; 
+├─X2 = [3:0x115c56000] &lt;dbl&gt; 
+├─X3 = [4:0x115c6a000] &lt;dbl&gt; 
+├─X4 = [5:0x115c7e000] &lt;dbl&gt; 
+└─X5 = [6:0x115c92000] &lt;dbl&gt; 
+```
+]
+.pull-right[
+*After loop:*
+```r
+█ [1:0x7fba72a2e178] &lt;named list&gt; 
+├─X1 = [2:0x115cc7000] &lt;dbl&gt; 
+├─X2 = [3:0x115ca6000] &lt;dbl&gt; 
+├─X3 = [4:0x10f07e000] &lt;dbl&gt; 
+├─X4 = [5:0x10ef83000] &lt;dbl&gt; 
+└─X5 = [6:0x10f056000] &lt;dbl&gt; 
+```
+]
+
+???
+
+- A single copy is made since the loop modifies (existing) list entries.
+
+- This a good example where tweaking the code reduces the amount of copies made. If such a solution is not readily at hand we may resort to C++ code. More on this in the Rcpp chapter.
+
+---
+## Modify-in-place (?)
+
+.smaller[
+
+What happens if we modify list entries is better understood using the following example.
+
+.blockquote.exercise[
+#### <i class="fas  fa-desktop "></i> Example: modifying a list
+
+Can you explain what's going on?
+
+.pull-left[
+
+```r
+# Step 1
+x &lt;- list(1:10)
+lobstr::ref(x)
+
+# Step 2
+x[[2]] &lt;- x
+lobstr::ref(x)
+
+# Step 3
+x[[1]] &lt;- 11:20
+lobstr::ref(x)
+```
+]
+
+.pull-right[
+
+```
+## █ [1:0x7fb937aade70] &lt;list&gt; 
+## └─[2:0x7fb936f57448] &lt;int&gt;
+```
+
+```
+## █ [1:0x7fb9343a31c8] &lt;list&gt; 
+## ├─[2:0x7fb936f57448] &lt;int&gt; 
+## └─█ [3:0x7fb937aade70] &lt;list&gt; 
+##   └─[2:0x7fb936f57448]
+```
+
+```
+## █ [1:0x7fb93669bbc8] &lt;list&gt; 
+## ├─[2:0x7fb9347083d8] &lt;int&gt; 
+## └─█ [3:0x7fb937aade70] &lt;list&gt; 
+##   └─[4:0x7fb936f57448] &lt;int&gt;
+```
+]]]
+
+---
+## Garbage Collection
+
+.smaller[
+
+Everyday operations that are reflected in the RStudio's 'Environment' tab are unbinding and deletion. What does actually happen if we alter a name or even 'remove' the object from the (global) environment?
+
+.blockquote.exercise[
+#### <i class="fas  fa-desktop "></i> Example: unbinding an object
+
+.row[
+.pull-left[
+**(a)**
+  ![:image 32%](../img/unbinding-1.png)
+]
+
+.pull-right[
+
+```r
+x &lt;- 1:3
+```
+]]
+
+.row[
+.pull-left[
+**(b)**
+  ![:image 32%](../img/unbinding-2.png)
+]
+
+.pull-right[
+
+```r
+x &lt;- 2:4
+```
+]]
+
+.row[
+.pull-left[
+**(c)**
+  ![:image 32%](../img/unbinding-3.png)
+]
+
+.pull-right[
+
+```r
+rm(x)
+```
+]]]]
+
+---
+## Garbage Collection &amp;mdash; Quick Facts
+
+.smaller[
+
+- R uses a tracing **Garbage Colector** (GC): it keeps track of objects in the global environment and references therein.
+
+- The GC runs automatically if needed for creating new objects. There is *no need to actively force garbage collection*. You can, however, do so by calling `gc()` with the side effect of info on memory occupation.
+
+- You may run `gcinfo(TRUE)` if you wish to be informed when the GC runs
+
+.blockquote.exercise[
+#### <i class="fas  fa-desktop "></i> Example: garbage collection
+.medium[
+
+```r
+gc()          # for side effect
+```
+
+```
+##           used (Mb) gc trigger (Mb) limit (Mb) max used (Mb)
+## Ncells  570595 30.5    1186888 63.4         NA  1186888 63.4
+## Vcells 1038746  8.0    8388608 64.0      16384  1808509 13.8
+```
+
+```r
+mem_used()    # more exact
+```
+
+```
+## 40,257,912 B
+```
+]]
+
+]
+
+???
+
+- The only reason to call `gc()` is if you need to free-up memory for your operating system &amp;mdash; which will hardly ever happen.
+
+- `lobstr::mem_used()` does not agree with what's reported by you OS: there are other objects (generated by, e.g., the R interpreter) which are not captured.
+
+---
 class: segue-red
-### Part I
+### Functions
+
+---
+## Functions
+
+&lt;blockquote style ="margin-top:15%;"&gt;
+To understand computations in R, two slogans are helpful:&lt;br&gt;&lt;br&gt;
+Everything that exists is an object.
+Everything that happens is a function call.
+.right[&amp;mdash; &lt;cite&gt;John Chambers&lt;/cite&gt;]
+&lt;/blockquote&gt;
+
+---
+## Regular Functions vs. Primitives
+
+.smaller[
+
+- **Regular functions** live in environments and consists of a body along with formals
+
+- **Primitives** are special `base` R functions that call C code
+
+.blockquote.exercise[
+#### <i class="fas  fa-desktop "></i> Example: primitives vs. regular functions
+
+.medium[
+.pull-left[
+
+```r
+typeof(lm)
+```
+
+```
+## [1] "closure"
+```
+
+```r
+environment(lm)
+```
+
+```
+## &lt;environment: namespace:stats&gt;
+```
+
+```r
+names(formals(lm))[1:4]
+```
+
+```
+## [1] "formula" "data"    "subset"  "weights"
+```
+
+```r
+# body(lm)
+```
+]
+.pull-right[
+
+```r
+typeof(sum)
+```
+
+```
+## [1] "builtin"
+```
+
+```r
+environment(sum)
+```
+
+```
+## NULL
+```
+
+```r
+names(formals(sum))
+```
+
+```
+## NULL
+```
+
+```r
+body(sum)
+```
+
+```
+## NULL
+```
+]]]]
+
+---
+## First-Class Functions
+
+.smaller[
+
+R functions are **objects**. We may do stuff that seems quite exotic when compared to much more 'restrictive' languages like C and Python.
+
+.blockquote.exercise[
+#### <i class="fas  fa-desktop "></i> Example: fun with anonymous functions
+
+.pull-left[
+
+```r
+funs &lt;- list(
+  function(x) x^2,
+  function(x) x^3
+)
+lobstr::ref(funs)
+```
+
+```
+## █ [1:0x7fb93611dc08] &lt;list&gt; 
+## ├─[2:0x7fb936a9b598] &lt;fn&gt; 
+## └─[3:0x7fb936a9b640] &lt;fn&gt;
+```
+
+```r
+sapply(funs, function(z) z(5))
+```
+
+```
+## [1]  25 125
+```
+]
+
+.pull-right[
+
+```r
+(function(x) x^2)(5)
+```
+
+```
+## [1] 25
+```
+
+```r
+(function(x) x^3)(5)
+```
+
+```
+## [1] 125
+```
+]]]
+
+???
+
+Obviously, R functions are objects on their own right &amp;mdash; they need not be bound to a name!
+
+---
+## First-Class Functions
+
+.smaller[
+
+&lt;br&gt;
+&lt;br&gt;
+.content-box-white[
+**Task:** 
+
+Explore what kind of function `(` is, what it does and explain why the statements
+```r
+(function(x) x^2)(5)
+```
+and
+
+
+```r
+(x&lt;-5)
+```
+
+```
+## [1] 5
+```
+
+make sense.
+
+]]
+
+???
+
+- `(` is a primitive:
+    
+    ```r
+    `(`
+    ```
+    
+    ```
+    ## .Primitive("(")
+    ```
+
+-  The R-help hints that `(` is semantically equivalent to `function(x) x`. 
+
+    E.g., `(x&lt;-5)` is valid (and useful) R code!
+
+---
+## Lexical Scoping
+
+.smaller[
+
+**Scoping** reffers to the routine of finding the value associated with a name. R's scoping mechanism follows four concepts you should already be familiar with.
+
+1. **Name Masking**: 
+
+    names defined inside a function mask names defined outside of it.
+
+2. **Functions before variables**: 
+
+    functions and objects in different environments may share the same name. R ignores non-function objects in function calls. 
+
+3. **Execution Environments**:
+
+    functions generate ephemeral environments.
+    
+4. **Dynamic Lookup**: 
+
+    R searches for values when the function is run (and not when it's created).
+
+.content-box-white[
+**Task:** 
+Write a code snippet which is useful for demonstrating all of the above concepts.
+]]
+
+???
+
+
+```r
+rm(x)
+y &lt;- 20
+z &lt;- function(x) x^2
+
+f &lt;- function(g) {
+    if(!exists("x")) {
+        x &lt;- 1   
+    } else {
+        x &lt;- x + 1
+    }
+    z &lt;- 2
+    z(x + y)
+}
+f(x)
+```
+
+```
+## [1] 441
+```
+
+---
+## Lazy Evaluation &amp;mdash; Promises
+
+.smaller[
+
+- A **Promise** consists of an expression along with an environment and a value which is computed an cached the first time the promise is accessed
+
+- We implicitly use them when writing functions as they use **lazy evaluation**. Here we refer to **unevaluated arguments** as promises.  
+
+- Lazy evaluation allows R functions to behave quite differently than, e.g., C functions and it is important to understand what's special about that. 
+
+.blockquote.exercise[
+#### <i class="fas  fa-desktop "></i> Example: outside evaluation
+
+
+```r
+f1 &lt;- function(x) { y &lt;- 5; x + 1 }
+f1(y &lt;- 6)
+```
+
+```
+## [1] 7
+```
+
+```r
+y
+```
+
+```
+## [1] 6
+```
+
+]]
+
+???
+
+This style is used by many base R function but it's not recommended since it's hard to understand what's going on.
+
+---
+## Lazy Evaluation
+
+.smaller[
+.blockquote.exercise[
+#### <i class="fas  fa-desktop "></i> Example: laziness and efficiency
+
+
+```r
+double &lt;- function(x) { 
+  message("Calculating...")
+  x * 2
+}
+
+clone &lt;- function(x) {
+  c(x, x)
+}
+
+clone(double(20))
+```
+
+```
+## [1] 40 40
+```
+
+]]
+
+???
+
+We see that `double(20)` is evaluated only once when `c()` inside of `clone()` looks for `x` for the first time.
+
+---
+## Lazy Evaluation
+
+.smaller[
+
+.blockquote.exercise[
+#### <i class="fas  fa-desktop "></i> Example: lazy evaluation of (default) function arguments
+
+
+```r
+f &lt;- function(x) {
+  cat("f: 'x doesn't matter to me.'")
+}
+f(x = stop("I don't matter."))
+```
+
+```
+## f: 'x doesn't matter to me.'
+```
+&lt;br&gt;
+
+```r
+# (default arguments)
+f &lt;- function(x = 1, y = x * 2, z = a + b) {
+  a &lt;- 10
+  b &lt;- 100
+  c(x, y, z)
+}
+f()
+```
+
+```
+## [1]   1   2 110
+```
+
+]]
+
+---
+## Lazy Evaluation
+
+.smaller[
+.content-box-white[
+**Task:** 
+
+`ls()` list names of objects defined in the environment where it's called. Explain the results below. 
+
+
+```r
+f &lt;- function(x = ls()) {
+  a &lt;- 1
+  x
+}
+f()
+```
+
+```
+## [1] "a" "x"
+```
+
+```r
+f(ls())
+```
+
+```
+## [1] "f"
+```
+
+]]
+
+???
+
+The evaluation environment for default arguments is the function environment whereas user supplied arguments are evaluated in the parent (i.e. global) environment.
+
+---
+## Lazy Evaluation
+
+Lazy evaluation also applies to other situations, e.g. in control flow.
+
+
+```r
+x &lt;- NULL
+if (!is.null(x) &amp;&amp; x &gt; 0) {
+ # do something
+}
+```
+
+.content-box-white[
+**Task:** 
+
+1. Which part of the code seems problematic at first sight? 
+
+2. Give an explanation why the statement above does not produce an error.
+]
+
+???
+
+- The second statement would be evaluated only if the first is true
+
+- Without lazy evaluation this statement would throw an error because `x &gt; 0` evaluates to a logical value of length zero
+
+---
+## Exercises
+
+1. Explain why the following does not work. Can you come up with a work-around without changing the definition of `f()`?
+    
+    ```r
+    f &lt;- function(x, z) {
+      z + x^2
+    }
+    f(x = z^2, z = 2)
+    ```
+    
+    ```
+    ## Error in f(x = z^2, z = 2): object 'z' not found
+    ```
+
+2. What's going wrong in the closures generated below? 
+  
+  ```r
+  multiplier &lt;- function(x) {
+    function(y) x * y
+  }
+  multipliers &lt;- lapply(1:3, multiplier)
+  ```
+
+???
+
+1. Lazy evaluation applies only at function definition, not invocation: R looks for `z` in the global environment because `x` is not `z^2` by default, like below.
+    ```r
+    f &lt;- function(x = z^2, z) {
+      z + x^2
+    }
+    ```
+    Workaround: `with(list(z=2), f(x = z^2, z))`
+
+2. `x` is only evaluated once when calling `lapply()`. We need to use `force(x)` such that `x` is evaluated in each invocation of `multiplier()`. More on closures in the Functional Programming chapter.
     </textarea>
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
 <script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>

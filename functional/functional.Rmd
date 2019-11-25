@@ -623,7 +623,7 @@ map2_dbl(1:6, 1, ~ .x + .y)
 
 - `walk()` ignores the return of  `.f` and returns `.x` invisibly. This is useful for functions that are called for their side-effects.
 
-- There is no base R equivalent but wrapping `lapply()` by `invisible()` comes close
+- There is no base R equivalent but wrapping `lapply()` by `utnvisible()` comes close
 
 .blockquote.exercise[
 #### `r icon::fa("desktop")` Example: assigning and passing objects

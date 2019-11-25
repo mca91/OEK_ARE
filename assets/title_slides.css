@@ -58,4 +58,10 @@
     background-size: 220px, 180px;
 }
 
+.title-shiny {
+    background-image: url(../assets/ude_logo.png), url(../assets/shiny.png);
+    background-position: 7% 10%, 90% 90%;
+    background-size: 220px, 180px;
+}
+
 
