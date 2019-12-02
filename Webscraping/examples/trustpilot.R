@@ -1,49 +1,14 @@
 library(tidyverse)  
+library(magrittr)
 library(rvest)    
 library(stringr)   
-library(rebus)     
-library(lubridate)
-library(readr)
-library(V8)
-library(httr)
-library(jsonlite)
-library(magrittr)
+
 
 get_name <- function(html){
   html %>%
     html_nodes('.consumer-information__name') %>%   
     html_text() %>% 
     str_trim()
-}
-
-
-
-get_date <- function(html){
-
-html %>%  
-  html_text %>%
-  str_trim() %>% 
-  str_match_all('publishedDate\\D+(\\d.+?Z)\\D') %>% data.frame(stringsAsFactors = F) %>%
-  extract2(2) %>%
-  lubridate::ymd_hms()
- }
-
-get_rating <- function(html){
-
- html %>%
-  html_nodes('.review .star-rating img') %>%  
-  map(.x = ., ~ html_attr(.x, "alt")) %>% 
-  map(~ str_match(.x, "[1-5]")) %>% 
-  as.numeric()
-  
-}
-
-
-get_title <- function(html){
-  html %>% html_nodes('.link--dark') %>%   
-    html_text() %>% 
-    str_trim()  %>% 
-    unlist
 }
 
 get_review <- function(html){
@@ -53,6 +18,30 @@ get_review <- function(html){
     unlist
 }
 
+get_title <- function(html){
+  html %>% html_nodes('.link--dark') %>%   
+    html_text() %>% 
+    str_trim()  %>% 
+    unlist
+}
+
+
+get_date <- function(html){
+  html %>%  
+    html_text %>%
+    str_trim() %>% 
+    str_match_all('publishedDate\\D+(\\d.+?Z)\\D') %>% data.frame(stringsAsFactors = F) %>%
+    extract2(2) %>%
+    lubridate::ymd_hms()
+}
+
+get_rating <- function(html){
+ html %>%
+  html_nodes('.review .star-rating img') %>%  
+  map(.x = ., ~ html_attr(.x, "alt")) %>% 
+  map(~ str_match(.x, "[1-5]")) %>% 
+  as.numeric()
+}
 
 extract_page_data <- function(url){
   html <- read_html(url) 
@@ -63,9 +52,6 @@ extract_page_data <- function(url){
          review = get_review(html))
 
 }
-
-
-
 
 get_company_data <- function(company, num_pages){
   i <- 1
