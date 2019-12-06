@@ -252,13 +252,6 @@ slides > slide {
   background: none;
 }
 
-.content-box-white {
-  background-color: #FFFFFF;
-  border-width: 3px;
-  border-color: #e64626;
-  border-style: solid;
-}
-
 .full-width {
     display: flex;
     width: 100%;

@@ -4,7 +4,7 @@
     <title>Advanced R for Econometricians</title>
     <meta charset="utf-8" />
     <meta name="author" content="Martin Arnold" />
-    <meta name="date" content="2019-11-20" />
+    <meta name="date" content="2019-12-05" />
     <link href="Advanced_files/remark-css/default.css" rel="stylesheet" />
     <link href="Advanced_files/font-awesome/css/fontawesome-all.min.css" rel="stylesheet" />
     <script type="text/x-mathjax-config">
@@ -43,7 +43,14 @@ class: title-slide title-rintro center middle
 ---
 ## Overview
 
-First, make sure the `lobstr` package is attached!
+&lt;style&gt;
+  strong {
+    color:#e64626;
+  }
+  
+&lt;/style&gt;
+
+Make sure the `lobstr` package is attached!
 
 
 ```r
@@ -72,14 +79,14 @@ class: segue-red
 ### Names and Values
 
 ---
-## Assigment Operators (?)
+## Assignment Operators (?)
 
 .smaller[
 
 `&lt;-` is often used for assignment but some people use `=` instead. There is, however, a subtle difference in how they are evaluated when mixed in the same expression. 
 
 .blockquote.exercise[
-#### <i class="fas  fa-desktop "></i> Example: operator *precedence* of `&lt;-` and `=`
+#### <i class="fas  fa-desktop "></i> Example: operator *precedence*
 
 .medium[
 
@@ -128,9 +135,11 @@ x &lt;- b = 1
 - Fact: `&lt;-` comes from a time where there actually was a `&lt;-` key on keyboards.
 
 ---
-## Assigment Operators (?)
+## Assignment Operators (?)
 
-- For consistency we (have and) will use `&lt;-` for assignment and `=` for function argument binding.
+.smaller[
+
+- For consistency we (have and will) use `&lt;-` for binding and `=` for assigning function arguments.
 
 - Note, however, that there are reasonable [proposals](http://www.win-vector.com/blog/2016/12/the-case-for-using-in-r/comment-page-1/) for using other conventions.
 
@@ -141,18 +150,48 @@ x &lt;- b = 1
 Find out what `-&gt;` does and think of an application where it might be useful.
 
 *Hint:* Experiment to find out about the precedence relation between `&lt;-`, `-&gt;` and `=`.
-]
+]]
 
 ???
 
 Precedence relation is `-&gt;` &gt;&gt; `&lt;-` &gt;&gt; `=` so `x &lt;- 1 -&gt; b` is another working alternative to the last line on the previous slide.
 
 ---
+## Assignment Operators (?)
+
+.smaller[
+Assignment operators work in the environment they are invoked in. The super assignment operator `&lt;&lt;-` assigns in the enclosing environment, provided the binding exists there.
+
+.blockquote.exercise[
+#### <i class="fas  fa-desktop "></i> Example: super assignment
+
+
+```r
+var_GE &lt;- 1
+a &lt;- function(x) {
+  b &lt;- function(x) var_GE &lt;&lt;- x
+  b(x)
+}
+a(3)
+var_GE
+```
+
+```
+## [1] 3
+```
+
+]]
+
+???
+
+- If `&lt;&lt;-` does not find a corresponding binding in the enclosing environment, it looks in the parent environment and works it's way up towards to global environment. If the binding does not exist there it will be created.
+
+---
 ## Bindings
 
 .smaller[
 
-Knowing assigment does internally is crucial for understanding performance and memory usage of your code and R's functional programming tools.
+Knowing what assignment does internally is crucial for understanding performance and memory usage of your code and R's functional programming tools.
 
 So what happens if we define a vector `x`? The idiom *'the object `x` stores the vector'* is not quite right. 
 
@@ -223,7 +262,7 @@ obj_sizes("a", "a", "abc", "d")
 
 .smaller[
 
-R's copy-on-modify behaviour is blessing and curse: we generally may use references to an object without the risk of breaking existing code.
+R's copy-on-modify behavior is blessing and curse: we generally may use references to an object without the risk of breaking existing code.
 
 .blockquote.exercise[
 #### <i class="fas  fa-desktop "></i> Example: copy-on-modify
@@ -259,7 +298,7 @@ obj_addr(x)
 ```
 
 ```
-## [1] "0x7fb937813f98"
+## [1] "0x7fc588fe4ef8"
 ```
 
 ```r
@@ -267,7 +306,7 @@ obj_addr(y)
 ```
 
 ```
-## [1] "0x7fb9327cd3e8"
+## [1] "0x7fc588fd3648"
 ```
 ]
 ]]]
@@ -276,7 +315,7 @@ obj_addr(y)
 
 - This is very different for many other languages, including c++ which we will see later during the course.
 
-- Question: object addresses (like `0x7f9ef3059d38`) will be different if rhe code is re-run. Why?
+- Question: object addresses (like `0x7f9ef3059d38`) will be different if the code is re-run. Why?
 
 ---
 ## Copy-on-modify
@@ -337,7 +376,7 @@ tracemem(x)
 ```
 
 ```
-## [1] "&lt;0x7fb9349a8108&gt;"
+## [1] "&lt;0x7fc58c0193f8&gt;"
 ```
 
 ```r
@@ -379,7 +418,7 @@ untracemem(x)
 
 ???
 
-- **`f(x)`**: `f()` binds `a` to the same memeroy location `x` points to *during execution*. A copy is made since `f()` modifies `a`.
+- **`f(x)`**: `f()` binds `a` to the same memory location `x` points to *during execution*. A copy is made since `f()` modifies `a`.
 
 - **`z&lt;-f(x)`**: as above. `z` is a binding the same location as `a` (no additional copy made).
 
@@ -394,7 +433,7 @@ Lists are special: list elements are references to values.
 .content-box-white[
 **Task:** 
 
-Which code statement generates the result shown in each diagramm? What is special about the last one?
+Which code statement generates the result shown in each diagram? What is special about the last one?
 
 .pull-left[
   ![:image 35%](img/list.png)
@@ -430,15 +469,15 @@ ref(l1, l2)
 ```
 
 ```
-## █ [1:0x7fb936e4dc08] &lt;list&gt; 
-## ├─[2:0x7fb936d96880] &lt;dbl&gt; 
-## ├─[3:0x7fb936d96848] &lt;dbl&gt; 
-## └─[4:0x7fb936d96810] &lt;dbl&gt; 
+## █ [1:0x7fc58c908418] &lt;list&gt; 
+## ├─[2:0x7fc58c8489a8] &lt;dbl&gt; 
+## ├─[3:0x7fc58c848970] &lt;dbl&gt; 
+## └─[4:0x7fc58c848938] &lt;dbl&gt; 
 ##  
-## █ [5:0x7fb9379aa3d8] &lt;list&gt; 
-## ├─[2:0x7fb936d96880] 
-## ├─[3:0x7fb936d96848] 
-## └─[6:0x7fb936d96730] &lt;dbl&gt;
+## █ [5:0x7fc58c9560f8] &lt;list&gt; 
+## ├─[2:0x7fc58c8489a8] 
+## ├─[3:0x7fc58c848970] 
+## └─[6:0x7fc58c848858] &lt;dbl&gt;
 ```
 
 ]
@@ -509,21 +548,32 @@ d1 &lt;- data.frame(
 
 .smaller[
 
-R modifies-in-place if
+R modifies-in-place in two cases:
 
-- the object has **only one** binding
+1. the object has **only one** binding
 
-- the object is an **environment**
+2. the object is an **environment**
 
 .blockquote.exercise[
 #### <i class="fas  fa-desktop "></i> Example: optimized modification
 
 ```r
 v &lt;- c(1, 2, 3)
-ref(v)
+obj_addr(v)
+```
+
+```
+## [1] "0x7fcce1ca03d8"
+```
+
+```r
 v[[2]] &lt;- 4
-# check that v points to the same memory location
-ref(v)
+# check that v still points to the same memory location
+obj_addr(v)
+```
+
+```
+## [1] "0x7fcce1ca03d8"
 ```
 
 ]]
@@ -531,16 +581,17 @@ ref(v)
 ---
 ## Modify-in-place (?)
 
-Wether or not R copies an object &amp;mdash; and if so, how many times &amp;mdash; is often very hard to predict.
+Whether or not R copies an object &amp;mdash; and if so, how many times &amp;mdash; is often very hard to predict.
 
 .blockquote.exercise[
 #### <i class="fas  fa-desktop "></i> Example: slow loop due to copies
 
-You should never modify a data frame in a loop.
+You should **never** modify a data frame in a loop.
 
 
 ```r
 x &lt;- data.frame(matrix(runif(5 * 1e4), ncol = 5))
+
 medians &lt;- vapply(x, median, numeric(1))
 
 tracemem(x)
@@ -555,7 +606,7 @@ for (i in seq_along(medians)) {
 ---
 ## Modify-in-place (?)
 
-`[[&lt;-.data.frame` is revaled to be quite expensive.
+`[[&lt;-.data.frame` is revealed to be quite expensive.
 
 ```r
 tracemem[0x7fe1aed76628 -&gt; 0x7fe1ad4dc428]: 
@@ -580,7 +631,13 @@ tracemem[0x7fe1acdbe198 -&gt; 0x7fe1acdbe6d8]: [[&lt;-.data.frame [[&lt;-
 
 What's happening here and why?
 
-- `x` is referenced more than once: global environment, inside of `[[` and also inside of `[[&lt;-.data.frame()` &amp;rarr; modifying `x` results in a copy
+- `x` is referenced more than once: 
+
+      - global environment 
+      - inside of `[[` 
+      - inside of `[[&lt;-.data.frame()` 
+    
+    &amp;rarr; modifying `x` results in a copy
 
 - The following runs inside `[[`:
     ```r
@@ -591,7 +648,7 @@ What's happening here and why?
     
     - The binding to `*tmp*` results in a copy
     
-    - `[[&lt;-.data.frame` changes the class and alters a component of `x` (two additional copies)
+    - `[[&lt;-.data.frame` changes the class and a component of `x` (two additional copies)
 
 ???
 
@@ -631,7 +688,7 @@ tracemem[0x7fba72971928 -&gt; 0x7fba72a2e178]:
 
 .pull-left[
 *Before loop:*
-```r
+```
 █ [1:0x7fba72971928] &lt;named list&gt; 
 ├─X1 = [2:0x10f1ec000] &lt;dbl&gt; 
 ├─X2 = [3:0x115c56000] &lt;dbl&gt; 
@@ -642,7 +699,7 @@ tracemem[0x7fba72971928 -&gt; 0x7fba72a2e178]:
 ]
 .pull-right[
 *After loop:*
-```r
+```
 █ [1:0x7fba72a2e178] &lt;named list&gt; 
 ├─X1 = [2:0x115cc7000] &lt;dbl&gt; 
 ├─X2 = [3:0x115ca6000] &lt;dbl&gt; 
@@ -690,22 +747,22 @@ lobstr::ref(x)
 .pull-right[
 
 ```
-## █ [1:0x7fb937aade70] &lt;list&gt; 
-## └─[2:0x7fb936f57448] &lt;int&gt;
+## █ [1:0x7fc58a8bc2a8] &lt;list&gt; 
+## └─[2:0x7fc58cd661b8] &lt;int&gt;
 ```
 
 ```
-## █ [1:0x7fb9343a31c8] &lt;list&gt; 
-## ├─[2:0x7fb936f57448] &lt;int&gt; 
-## └─█ [3:0x7fb937aade70] &lt;list&gt; 
-##   └─[2:0x7fb936f57448]
+## █ [1:0x7fc586f618c8] &lt;list&gt; 
+## ├─[2:0x7fc58cd661b8] &lt;int&gt; 
+## └─█ [3:0x7fc58a8bc2a8] &lt;list&gt; 
+##   └─[2:0x7fc58cd661b8]
 ```
 
 ```
-## █ [1:0x7fb93669bbc8] &lt;list&gt; 
-## ├─[2:0x7fb9347083d8] &lt;int&gt; 
-## └─█ [3:0x7fb937aade70] &lt;list&gt; 
-##   └─[4:0x7fb936f57448] &lt;int&gt;
+## █ [1:0x7fc58c8f5cc8] &lt;list&gt; 
+## ├─[2:0x7fc58cfb5f90] &lt;int&gt; 
+## └─█ [3:0x7fc58a8bc2a8] &lt;list&gt; 
+##   └─[4:0x7fc58cd661b8] &lt;int&gt;
 ```
 ]]]
 
@@ -763,15 +820,15 @@ rm(x)
 
 .smaller[
 
-- R uses a tracing **Garbage Colector** (GC): it keeps track of objects in the global environment and references therein.
+- R uses a tracing **Garbage Collector** (GC): it keeps track of objects in the global environment and references therein.
 
-- The GC runs automatically if needed for creating new objects. There is *no need to actively force garbage collection*. You can, however, do so by calling `gc()` with the side effect of info on memory occupation.
+- The GC runs automatically if space is needed for creating new objects. There is *no need to actively force garbage collection*. You can, however, do so by calling `gc()` with the side effect of info on memory occupation.
 
 - You may run `gcinfo(TRUE)` if you wish to be informed when the GC runs
 
 .blockquote.exercise[
 #### <i class="fas  fa-desktop "></i> Example: garbage collection
-.medium[
+
 
 ```r
 gc()          # for side effect
@@ -779,8 +836,8 @@ gc()          # for side effect
 
 ```
 ##           used (Mb) gc trigger (Mb) limit (Mb) max used (Mb)
-## Ncells  570595 30.5    1186888 63.4         NA  1186888 63.4
-## Vcells 1038746  8.0    8388608 64.0      16384  1808509 13.8
+## Ncells  570495 30.5    1185794 63.4         NA  1185794 63.4
+## Vcells 1038091  8.0    8388608 64.0      16384  1808509 13.8
 ```
 
 ```r
@@ -788,11 +845,9 @@ mem_used()    # more exact
 ```
 
 ```
-## 40,257,912 B
+## 40,255,392 B
 ```
 ]]
-
-]
 
 ???
 
@@ -913,9 +968,9 @@ lobstr::ref(funs)
 ```
 
 ```
-## █ [1:0x7fb93611dc08] &lt;list&gt; 
-## ├─[2:0x7fb936a9b598] &lt;fn&gt; 
-## └─[3:0x7fb936a9b640] &lt;fn&gt;
+## █ [1:0x7fc58b3a0048] &lt;list&gt; 
+## ├─[2:0x7fc58a861df8] &lt;fn&gt; 
+## └─[3:0x7fc58a861d50] &lt;fn&gt;
 ```
 
 ```r
@@ -1000,7 +1055,7 @@ make sense.
 
 .smaller[
 
-**Scoping** reffers to the routine of finding the value associated with a name. R's scoping mechanism follows four concepts you should already be familiar with.
+**Scoping** refers to the routine of finding the value associated with a name. R's scoping mechanism follows four concepts you should already be familiar with.
 
 1. **Name Masking**: 
 
@@ -1014,7 +1069,7 @@ make sense.
 
     functions generate ephemeral environments.
     
-4. **Dynamic Lookup**: 
+4. **Dynamic Look-up**: 
 
     R searches for values when the function is run (and not when it's created).
 
@@ -1090,7 +1145,7 @@ This style is used by many base R function but it's not recommended since it's h
 
 .smaller[
 .blockquote.exercise[
-#### <i class="fas  fa-desktop "></i> Example: laziness and efficiency
+#### <i class="fas  fa-desktop "></i> Example: laziness
 
 
 ```r
@@ -1104,6 +1159,10 @@ clone &lt;- function(x) {
 }
 
 clone(double(20))
+```
+
+```
+## Calculating...
 ```
 
 ```
@@ -1135,7 +1194,7 @@ f(x = stop("I don't matter."))
 ```
 ## f: 'x doesn't matter to me.'
 ```
-&lt;br&gt;
+
 
 ```r
 # (default arguments)
@@ -1153,6 +1212,12 @@ f()
 
 ]]
 
+???
+
+- Although we do not recommend this style, it reflects great flexibility due to lazy evaluation
+
+- Note that this is very useful when a default argument is computationally expensive to evaluate and not needed in every call to `f()`
+
 ---
 ## Lazy Evaluation
 
@@ -1160,7 +1225,7 @@ f()
 .content-box-white[
 **Task:** 
 
-`ls()` list names of objects defined in the environment where it's called. Explain the results below. 
+`ls()` lists objects in the environment where it's called. Explain the results below. 
 
 
 ```r
@@ -1187,12 +1252,12 @@ f(ls())
 
 ???
 
-The evaluation environment for default arguments is the function environment whereas user supplied arguments are evaluated in the parent (i.e. global) environment.
+- The evaluation environment for *default arguments* is the function environment whereas user supplied arguments are evaluated in the parent (i.e. the global) environment.
 
 ---
 ## Lazy Evaluation
 
-Lazy evaluation also applies to other situations, e.g. in control flow.
+Lazy evaluation also applies to other situations, e.g., in control flow.
 
 
 ```r
@@ -1219,6 +1284,8 @@ if (!is.null(x) &amp;&amp; x &gt; 0) {
 ---
 ## Exercises
 
+.smaller[
+
 1. Explain why the following does not work. Can you come up with a work-around without changing the definition of `f()`?
     
     ```r
@@ -1232,26 +1299,206 @@ if (!is.null(x) &amp;&amp; x &gt; 0) {
     ## Error in f(x = z^2, z = 2): object 'z' not found
     ```
 
-2. What's going wrong in the closures generated below? 
-  
-  ```r
-  multiplier &lt;- function(x) {
-    function(y) x * y
-  }
-  multipliers &lt;- lapply(1:3, multiplier)
-  ```
+2. Explain what the `...` argument does by means of the following example:
+    
+    ```r
+    f &lt;- function(...) {
+      names(list(...))
+    }
+    f(a = 1, b = 2)
+    ```
+    
+    ```
+    ## [1] "a" "b"
+    ```
+
+]
 
 ???
 
 1. Lazy evaluation applies only at function definition, not invocation: R looks for `z` in the global environment because `x` is not `z^2` by default, like below.
+    
     ```r
     f &lt;- function(x = z^2, z) {
       z + x^2
     }
+    f(2, 2)
     ```
-    Workaround: `with(list(z=2), f(x = z^2, z))`
+    Workaround: `with(list(z = 2), f(x = z^2, z))`
 
-2. `x` is only evaluated once when calling `lapply()`. We need to use `force(x)` such that `x` is evaluated in each invocation of `multiplier()`. More on closures in the Functional Programming chapter.
+2. `...` enables us to pass arguments (to other functions) which do not have to be prespecified.
+
+---
+## Function Forms
+
+Not all function calls look the same:
+
+- **prefix**: `f(a, b)`
+
+- **infix**: `a + b`. Also `==`, `&lt;-`, `::`, ...
+
+- **replacement**: `names(c) &lt;- c("x", "y")`
+
+- **special**: `for`, `[[`, `if`, ...
+
+Every function call can be written in prefix form!
+
+
+```r
+`[`(1:3, 3)
+```
+
+```
+## [1] 3
+```
+
+???
+
+@ infix: user defined operators (which begin and end with `%`)
+
+---
+## Function Forms
+
+.smaller[
+.blockquote.exercise[
+#### <i class="fas  fa-desktop "></i> Example: rewrite special and infix as prefix
+
+
+```r
+1 + 2
+```
+
+```
+## [1] 3
+```
+
+```r
+`+`(1, 2)
+```
+
+```
+## [1] 3
+```
+
+```r
+x &lt;- `:`(1, 10); x
+```
+
+```
+##  [1]  1  2  3  4  5  6  7  8  9 10
+```
+
+```r
+`(`(x)
+```
+
+```
+##  [1]  1  2  3  4  5  6  7  8  9 10
+```
+
+]]
+
+---
+## Function Forms &amp;mdash; User defined infix
+
+It is straightforward to write your own operators in infix form.
+
+.blockquote.exercise[
+#### <i class="fas  fa-desktop "></i> Example: `paste0` as infix
+
+
+```r
+`%+%` &lt;- function(a, b) paste0(a, b)
+"new " %+% "string"
+```
+
+```
+## [1] "new string"
+```
+
+]
+
+---
+## Function Forms &amp;mdash; Replacement Functions
+
+Replacement functions have the below form.
+
+```r
+`name&lt;-` &lt;- function(x, value) {
+  &lt;...&gt;
+  x
+} 
+```
+
+.blockquote.exercise[
+#### <i class="fas  fa-desktop "></i> Example: replacement of last vector element
+
+
+```r
+`last&lt;-` &lt;- function(x, value) {
+  x[length(x)] &lt;- value
+  x
+}
+
+x &lt;- c(1, 2, 3)
+last(x) &lt;- 99; x
+```
+
+```
+## [1]  1  2 99
+```
+
+]
+
+???
+
+- Note that replacement functions must have `x` and `value` as arguments and must return the modified object `x`
+
+- Additional arguments may be passed between `x` and `value`
+
+
+- `tracemem()` reports two copies. This is because `x` is copied inside of `last&lt;-` and R runs
+    ```r
+    x &lt;- `last&lt;-`(x, 420)
+    ```
+    under the hood.
+
+---
+## Function Forms &amp;mdash; Replacement Functions
+
+Replacement functions are handy but there is no free lunch: they *always* trigger a copy.
+
+.blockquote.exercise[
+#### <i class="fas  fa-desktop "></i> Example: replacement of last vector element &amp;mdash; ctd.
+
+
+```r
+tracemem(x)
+```
+
+```
+## [1] "&lt;0x7fc58be05438&gt;"
+```
+
+```r
+## last(x) &lt;- 420
+```
+
+```
+tracemem[0x7feac1eb7598 -&gt; 0x7feaa7ce3908]: 
+tracemem[0x7feaa7ce3908 -&gt; 0x7feaa7ce68c8]: last&lt;- 
+```
+
+
+```r
+x
+```
+
+```
+## [1]  1  2 99
+```
+
+]
     </textarea>
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
 <script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
@@ -1305,7 +1552,24 @@ if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
     }
     deleted = true;
   });
-})();</script>
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
 <script type="text/x-mathjax-config">
   
   function addCopyButtonToCode(){

@@ -37,7 +37,14 @@ class: title-slide title-rintro center middle
 ---
 ## Overview
 
-First, make sure the `lobstr` package is attached!
+<style>
+  strong {
+    color:#e64626;
+  }
+  
+</style>
+
+Make sure the `lobstr` package is attached!
 
 ```{r, eval=F}
 install.packages('lobstr')
@@ -48,15 +55,15 @@ library(lobstr)
 
 - Names and values
 
-    - Bindings and References
+    - Bindings and references
 
-    - Copy-on-modify / Inplace Modification
+    - Copy-on-modify / in-place modification
 
     - Unbinding and Garbage Collection
     
 - Functions
     
-    - Some fundamentals, scoping and Lazy Evaluation
+    - Fundamentals, scoping and Lazy Evaluation
     
     - Function forms
 
@@ -65,14 +72,14 @@ class: segue-red
 ### Names and Values
 
 ---
-## Assigment Operators (?)
+## Assignment Operators (?)
 
 .smaller[
 
 `<-` is often used for assignment but some people use `=` instead. There is, however, a subtle difference in how they are evaluated when mixed in the same expression. 
 
 .blockquote.exercise[
-#### `r icon::fa("desktop")` Example: operator *precedence* of `<-` and `=`
+#### `r icon::fa("desktop")` Example: operator *precedence*
 
 .medium[
 
@@ -95,9 +102,11 @@ x <- b = 1
 - Fact: `<-` comes from a time where there actually was a `<-` key on keyboards.
 
 ---
-## Assigment Operators (?)
+## Assignment Operators (?)
 
-- For consistency we (have and) will use `<-` for assignment and `=` for function argument binding.
+.smaller[
+
+- For consistency we (have and will) use `<-` for binding and `=` for assigning function arguments.
 
 - Note, however, that there are reasonable [proposals](http://www.win-vector.com/blog/2016/12/the-case-for-using-in-r/comment-page-1/) for using other conventions.
 
@@ -108,18 +117,43 @@ x <- b = 1
 Find out what `->` does and think of an application where it might be useful.
 
 *Hint:* Experiment to find out about the precedence relation between `<-`, `->` and `=`.
-]
+]]
 
 ???
 
 Precedence relation is `->` >> `<-` >> `=` so `x <- 1 -> b` is another working alternative to the last line on the previous slide.
 
 ---
+## Assignment Operators (?)
+
+.smaller[
+Assignment operators work in the environment they are invoked in. The super assignment operator `<<-` assigns in the enclosing environment, provided the binding exists there.
+
+.blockquote.exercise[
+#### `r icon::fa("desktop")` Example: super assignment
+
+```{r}
+var_GE <- 1
+a <- function(x) {
+  b <- function(x) var_GE <<- x
+  b(x)
+}
+a(3)
+var_GE
+```
+
+]]
+
+???
+
+- If `<<-` does not find a corresponding binding in the enclosing environment, it looks in the parent environment and works it's way up towards to global environment. If the binding does not exist there it will be created.
+
+---
 ## Bindings
 
 .smaller[
 
-Knowing assigment does internally is crucial for understanding performance and memory usage of your code and R's functional programming tools.
+Knowing what assignment does internally is crucial for understanding performance and memory usage of your code and R's functional programming tools.
 
 So what happens if we define a vector `x`? The idiom *'the object `x` stores the vector'* is not quite right. 
 
@@ -173,7 +207,7 @@ obj_sizes("a", "a", "abc", "d")
 
 .smaller[
 
-R's copy-on-modify behaviour is blessing and curse: we generally may use references to an object without the risk of breaking existing code.
+R's copy-on-modify behavior is blessing and curse: we generally may use references to an object without the risk of breaking existing code.
 
 .blockquote.exercise[
 #### `r icon::fa("desktop")` Example: copy-on-modify
@@ -209,7 +243,7 @@ obj_addr(y)
 
 - This is very different for many other languages, including c++ which we will see later during the course.
 
-- Question: object addresses (like `0x7f9ef3059d38`) will be different if rhe code is re-run. Why?
+- Question: object addresses (like `0x7f9ef3059d38`) will be different if the code is re-run. Why?
 
 ---
 ## Copy-on-modify
@@ -305,7 +339,7 @@ untracemem(x)
 
 ???
 
-- **`f(x)`**: `f()` binds `a` to the same memeroy location `x` points to *during execution*. A copy is made since `f()` modifies `a`.
+- **`f(x)`**: `f()` binds `a` to the same memory location `x` points to *during execution*. A copy is made since `f()` modifies `a`.
 
 - **`z<-f(x)`**: as above. `z` is a binding the same location as `a` (no additional copy made).
 
@@ -320,7 +354,7 @@ Lists are special: list elements are references to values.
 .content-box-white[
 **Task:** 
 
-Which code statement generates the result shown in each diagramm? What is special about the last one?
+Which code statement generates the result shown in each diagram? What is special about the last one?
 
 .pull-left[
   ![:image 35%](img/list.png)
@@ -413,21 +447,32 @@ d1 <- data.frame(
 
 .smaller[
 
-R modifies-in-place if
+R modifies-in-place in two cases:
 
-- the object has **only one** binding
+1. the object has **only one** binding
 
-- the object is an **environment**
+2. the object is an **environment**
 
 .blockquote.exercise[
 #### `r icon::fa("desktop")` Example: optimized modification
 
 ```r
 v <- c(1, 2, 3)
-ref(v)
+obj_addr(v)
+```
+
+```
+## [1] "0x7fcce1ca03d8"
+```
+
+```r
 v[[2]] <- 4
-# check that v points to the same memory location
-ref(v)
+# check that v still points to the same memory location
+obj_addr(v)
+```
+
+```
+## [1] "0x7fcce1ca03d8"
 ```
 
 ]]
@@ -435,15 +480,16 @@ ref(v)
 ---
 ## Modify-in-place (?)
 
-Wether or not R copies an object &mdash; and if so, how many times &mdash; is often very hard to predict.
+Whether or not R copies an object &mdash; and if so, how many times &mdash; is often very hard to predict.
 
 .blockquote.exercise[
 #### `r icon::fa("desktop")` Example: slow loop due to copies
 
-You should never modify a data frame in a loop.
+You should **never** modify a data frame in a loop.
 
 ```{r, eval=F}
 x <- data.frame(matrix(runif(5 * 1e4), ncol = 5))
+
 medians <- vapply(x, median, numeric(1))
 
 tracemem(x)
@@ -458,7 +504,7 @@ for (i in seq_along(medians)) {
 ---
 ## Modify-in-place (?)
 
-`[[<-.data.frame` is revaled to be quite expensive.
+`[[<-.data.frame` is revealed to be quite expensive.
 
 ```r
 tracemem[0x7fe1aed76628 -> 0x7fe1ad4dc428]: 
@@ -483,7 +529,13 @@ tracemem[0x7fe1acdbe198 -> 0x7fe1acdbe6d8]: [[<-.data.frame [[<-
 
 What's happening here and why?
 
-- `x` is referenced more than once: global environment, inside of `[[` and also inside of `[[<-.data.frame()` &rarr; modifying `x` results in a copy
+- `x` is referenced more than once: 
+
+      - global environment 
+      - inside of `[[` 
+      - inside of `[[<-.data.frame()` 
+    
+    &rarr; modifying `x` results in a copy
 
 - The following runs inside `[[`:
     ```r
@@ -494,7 +546,7 @@ What's happening here and why?
     
     - The binding to `*tmp*` results in a copy
     
-    - `[[<-.data.frame` changes the class and alters a component of `x` (two additional copies)
+    - `[[<-.data.frame` changes the class and a component of `x` (two additional copies)
 
 ???
 
@@ -533,7 +585,7 @@ tracemem[0x7fba72971928 -> 0x7fba72a2e178]:
 
 .pull-left[
 *Before loop:*
-```r
+```
 █ [1:0x7fba72971928] <named list> 
 ├─X1 = [2:0x10f1ec000] <dbl> 
 ├─X2 = [3:0x115c56000] <dbl> 
@@ -544,7 +596,7 @@ tracemem[0x7fba72971928 -> 0x7fba72a2e178]:
 ]
 .pull-right[
 *After loop:*
-```r
+```
 █ [1:0x7fba72a2e178] <named list> 
 ├─X1 = [2:0x115cc7000] <dbl> 
 ├─X2 = [3:0x115ca6000] <dbl> 
@@ -655,22 +707,20 @@ rm(x)
 
 .smaller[
 
-- R uses a tracing **Garbage Colector** (GC): it keeps track of objects in the global environment and references therein.
+- R uses a tracing **Garbage Collector** (GC): it keeps track of objects in the global environment and references therein.
 
-- The GC runs automatically if needed for creating new objects. There is *no need to actively force garbage collection*. You can, however, do so by calling `gc()` with the side effect of info on memory occupation.
+- The GC runs automatically if space is needed for creating new objects. There is *no need to actively force garbage collection*. You can, however, do so by calling `gc()` with the side effect of info on memory occupation.
 
 - You may run `gcinfo(TRUE)` if you wish to be informed when the GC runs
 
 .blockquote.exercise[
 #### `r icon::fa("desktop")` Example: garbage collection
-.medium[
+
 ```{r, cache = T}
 gc()          # for side effect
 mem_used()    # more exact
 ```
 ]]
-
-]
 
 ???
 
@@ -795,7 +845,7 @@ make sense.
 
 .smaller[
 
-**Scoping** reffers to the routine of finding the value associated with a name. R's scoping mechanism follows four concepts you should already be familiar with.
+**Scoping** refers to the routine of finding the value associated with a name. R's scoping mechanism follows four concepts you should already be familiar with.
 
 1. **Name Masking**: 
 
@@ -809,7 +859,7 @@ make sense.
 
     functions generate ephemeral environments.
     
-4. **Dynamic Lookup**: 
+4. **Dynamic Look-up**: 
 
     R searches for values when the function is run (and not when it's created).
 
@@ -868,9 +918,9 @@ This style is used by many base R function but it's not recommended since it's h
 
 .smaller[
 .blockquote.exercise[
-#### `r icon::fa("desktop")` Example: laziness and efficiency
+#### `r icon::fa("desktop")` Example: laziness
 
-```{r}
+```{r, message=T}
 double <- function(x) { 
   message("Calculating...")
   x * 2
@@ -903,7 +953,7 @@ f <- function(x) {
 }
 f(x = stop("I don't matter."))
 ```
-<br>
+
 ```{r}
 # (default arguments)
 f <- function(x = 1, y = x * 2, z = a + b) {
@@ -916,6 +966,12 @@ f()
 
 ]]
 
+???
+
+- Although we do not recommend this style, it reflects great flexibility due to lazy evaluation
+
+- Note that this is very useful when a default argument is computationally expensive to evaluate and not needed in every call to `f()`
+
 ---
 ## Lazy Evaluation
 
@@ -923,7 +979,7 @@ f()
 .content-box-white[
 **Task:** 
 
-`ls()` list names of objects defined in the environment where it's called. Explain the results below. 
+`ls()` lists objects in the environment where it's called. Explain the results below. 
 
 ```{r, echo=-1}
 rm(list = ls())
@@ -939,12 +995,12 @@ f(ls())
 
 ???
 
-The evaluation environment for default arguments is the function environment whereas user supplied arguments are evaluated in the parent (i.e. global) environment.
+- The evaluation environment for *default arguments* is the function environment whereas user supplied arguments are evaluated in the parent (i.e. the global) environment.
 
 ---
 ## Lazy Evaluation
 
-Lazy evaluation also applies to other situations, e.g. in control flow.
+Lazy evaluation also applies to other situations, e.g., in control flow.
 
 ```{r}
 x <- NULL
@@ -970,6 +1026,8 @@ if (!is.null(x) && x > 0) {
 ---
 ## Exercises
 
+.smaller[
+
 1. Explain why the following does not work. Can you come up with a work-around without changing the definition of `f()`?
     ```{r, error=T}
     f <- function(x, z) {
@@ -978,25 +1036,147 @@ if (!is.null(x) && x > 0) {
     f(x = z^2, z = 2)
     ```
 
-2. What's going wrong in the closures generated below? 
-  ```{r}
-  multiplier <- function(x) {
-    function(y) x * y
-  }
-  multipliers <- lapply(1:3, multiplier)
-  ```
+2. Explain what the `...` argument does by means of the following example:
+    ```{r}
+    f <- function(...) {
+      names(list(...))
+    }
+    f(a = 1, b = 2)
+    ```
+
+]
 
 ???
 
 1. Lazy evaluation applies only at function definition, not invocation: R looks for `z` in the global environment because `x` is not `z^2` by default, like below.
-    ```r
+    ```{r, eval = F}
     f <- function(x = z^2, z) {
       z + x^2
     }
+    f(2, 2)
     ```
-    Workaround: `with(list(z=2), f(x = z^2, z))`
+    Workaround: `with(list(z = 2), f(x = z^2, z))`
 
-2. `x` is only evaluated once when calling `lapply()`. We need to use `force(x)` such that `x` is evaluated in each invocation of `multiplier()`. More on closures in the Functional Programming chapter.
+2. `...` enables us to pass arguments (to other functions) which do not have to be prespecified.
 
+---
+## Function Forms
+
+Not all function calls look the same:
+
+- **prefix**: `f(a, b)`
+
+- **infix**: `a + b`. Also `==`, `<-`, `::`, ...
+
+- **replacement**: `names(c) <- c("x", "y")`
+
+- **special**: `for`, `[[`, `if`, ...
+
+Every function call can be written in prefix form!
+
+```{r}
+`[`(1:3, 3)
+```
+
+???
+
+@ infix: user defined operators (which begin and end with `%`)
+
+---
+## Function Forms
+
+.smaller[
+.blockquote.exercise[
+#### `r icon::fa("desktop")` Example: rewrite special and infix as prefix
+
+```{r}
+1 + 2
+`+`(1, 2)
+
+x <- `:`(1, 10); x
+
+`(`(x)
+```
+
+]]
+
+---
+## Function Forms &mdash; User defined infix
+
+It is straightforward to write your own operators in infix form.
+
+.blockquote.exercise[
+#### `r icon::fa("desktop")` Example: `paste0` as infix
+
+```{r}
+`%+%` <- function(a, b) paste0(a, b)
+"new " %+% "string"
+````
+
+]
+
+---
+## Function Forms &mdash; Replacement Functions
+
+Replacement functions have the below form.
+
+```r
+`name<-` <- function(x, value) {
+  <...>
+  x
+} 
+```
+
+.blockquote.exercise[
+#### `r icon::fa("desktop")` Example: replacement of last vector element
+
+```{r}
+`last<-` <- function(x, value) {
+  x[length(x)] <- value
+  x
+}
+
+x <- c(1, 2, 3)
+last(x) <- 99; x
+```
+
+]
+
+???
+
+- Note that replacement functions must have `x` and `value` as arguments and must return the modified object `x`
+
+- Additional arguments may be passed between `x` and `value`
+
+
+- `tracemem()` reports two copies. This is because `x` is copied inside of `last<-` and R runs
+    ```r
+    x <- `last<-`(x, 420)
+    ```
+    under the hood.
+
+---
+## Function Forms &mdash; Replacement Functions
+
+Replacement functions are handy but there is no free lunch: they *always* trigger a copy.
+
+.blockquote.exercise[
+#### `r icon::fa("desktop")` Example: replacement of last vector element &mdash; ctd.
+
+```{r, eval = c(1,3)}
+tracemem(x)
+last(x) <- 420
+```
+
+```
+tracemem[0x7feac1eb7598 -> 0x7feaa7ce3908]: 
+tracemem[0x7feaa7ce3908 -> 0x7feaa7ce68c8]: last<- 
+```
+
+```{r}
+x
+```
+
+]
 
 
