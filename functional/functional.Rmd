@@ -67,25 +67,28 @@ To become significantly more reliable, code must become more transparent. In par
 
 - There are two common threats:
 
-    1. A functional language has **first-class functions** which behave like any other data type. In R this means we may treat function like variables (e.g. assign them, store them in alist or pass them as arguments in other functions)
+    1. A functional language has **first-class functions** which behave like any other data type. In R this means we may treat function like variables (e.g. assign them, store them in a list or pass them as arguments to other functions)
     
-    2. Many functional languages require **pure** functions. These are functions which have no side-effects: they do not interfer with anything outside their scope and produce output which depends only on input.
+    2. Many functional languages require **pure** functions. These are functions which have no side-effects: they do not interfere with anything outside their scope and produce output which depends only on the input.
 
 ???
 
-Does R allow for pure functions only? No: e.g. `print()` has side-effects. Obviously all functions which return pseudo-prandom numbers are not pure functions.
+Does R allow for pure functions only? No: e.g. `print()` has side-effects. Obviously all functions which return pseudo-random numbers are not pure functions.
 ---
 ## FAQs
     
 **Is R a functional programming language?**
 
-In view of the above (no requirement of pure functions), strictly speaking R is not a functional programming language but we may adopt a functional *style* of programming, which is what we will focus on.
+R is not a functional programming language but we may adopt a functional *style* of programming.
 
 **Why should I use functional style programming?**
 
 - Functional programming is often space efficient, very comprehensible and easily adopted to new situations
 
 - Functionals are easily analysed in isolation and thus are often straightforward to optimize and parallelise
+
+???
+What are functionals? Not clear at this point. 
 
 ---
 ## FAQs
@@ -124,6 +127,9 @@ randomise(sum)
 
 More prominent examples are, e.g. `lapply()` and `integrate()`.
 
+???
+Functionals can also produce other data structures e.g. dataframes as output.
+
 ---
 ## Functionals
 
@@ -131,9 +137,13 @@ Functionals are often used as an alternative to loops. Not because they are inhe
 
 - Loops convey that an iteration is done, but not what should be done with the results.
     
-- Functionals are taylored to specific tasks which immedeatly convey *why* they are being used.
+- Functionals are tailored to specific tasks which immediately convey *why* they are being used.
     
-Switching from loops to functionals doesn't necessarily mean that we must write our own functionals: the `purrr` package has functionals which are very concise in application and also fast as they are written in C.
+Switching from loops to functionals doesn't necessarily mean that we must write our own functionals: the `purrr` package provides functionals which are very concise and also fast as they are written in C.
+
+???
+You want to say flexibility is bad? 
+
 
 ---
 ## Functionals &mdash; `purrr::map()`
@@ -446,7 +456,7 @@ models <- lapply(by_drive, function(data) lm(MPG ~ Cylinders, data = data))
 vapply(models, function(x) coef(x)[[2]], double(1))
 ```
 
-**Pure base R**
+**for-loop**
 
 ```{r}
 slopes <- double(length(by_drive))
@@ -458,6 +468,10 @@ slopes
 ```
 
 ]
+
+
+???
+apply is also base R.
 
 ---
 ## `purrr`-style Model Fitting 
@@ -474,17 +488,18 @@ slopes
 
 <br>
 .content-box-white[
-**Take-away-message**: functional-style programming using `purrr` allows to decompose the task into simple steps. The code easier to understand, modify and adapt to other applications.
+**Take-away-message**: functional-style programming using `purrr` allows to decompose the task into simple steps. The code easis ier to understand, modify and adapt to other applications.
 ]
+
+??? 
+What do you mean with the number of iterations decreases? I would say they stay the same? Is iteration the correct term here?
 
 ---
 ## Map Variants
 
 .smaller[
 
-There are 23 variants of `map()` in total which are easily understood as variants of the following 5 (new) functions with helpers for different input and outputs.
-
-- Output same type as input: **`modify()`**
+TheIn total te are 23 variants of `map()` in ich are easily understood as variants of the following 5 (nections wi- Output same type as input: **`modify()`**
 
 - Iterate over two inputs: **`map2()`**
 
@@ -621,7 +636,7 @@ map2_dbl(1:6, 1, ~ .x + .y)
 
 .smaller[
 
-- `walk()` ignores the return of  `.f` and returns `.x` invisibly. This is useful for functions that are called for their side-effects.
+- `walk()` ignores the return of value  `.f` and returns `.x` invisibly. This is useful for functions that are called for their side-effects.
 
 - There is no base R equivalent but wrapping `lapply()` but `invisible()` comes close
 
@@ -960,5 +975,8 @@ class: segue-red
 
 Function Factories
 
----
+---???
+Upcoming?
+
+
 
