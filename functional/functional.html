@@ -4,7 +4,7 @@
     <title>Advanced R for Econometricians</title>
     <meta charset="utf-8" />
     <meta name="author" content="Martin Arnold" />
-    <meta name="date" content="2019-11-30" />
+    <meta name="date" content="2019-12-07" />
     <link href="functional_files/remark-css/default.css" rel="stylesheet" />
     <link href="functional_files/font-awesome/css/fontawesome-all.min.css" rel="stylesheet" />
     <script type="text/x-mathjax-config">
@@ -69,27 +69,34 @@ To become significantly more reliable, code must become more transparent. In par
 
 - Simply put: a language which is centered on problem solving using functions!
 
-- There are two common threats:
+- There are two common threads:
 
-    1. A functional language has **first-class functions** which behave like any other data type. In R this means we may treat function like variables (e.g. assign them, store them in alist or pass them as arguments in other functions)
+    1. A functional language has **first-class functions** which behave like any other data type. In R this means we may treat function like variables (i.e. assign them, store them in a list or pass them as arguments to other functions)
     
-    2. Many functional languages require **pure** functions. These are functions which have no side-effects: they do not interfer with anything outside their scope and produce output which depends only on input.
+    2. Many functional languages require **pure** functions only. These are functions which have no side-effects: they do not interfere with anything outside their scope and produce output which depends only on the input.
 
 ???
 
-Does R allow for pure functions only? No: e.g. `print()` has side-effects. Obviously all functions which return pseudo-prandom numbers are not pure functions.
+Does R allow for pure functions only? No: e.g. `print()` has side-effects. Obviously all functions which return pseudo-random numbers are not pure functions.
 ---
 ## FAQs
     
 **Is R a functional programming language?**
 
-In view of the above (no requirement of pure functions), strictly speaking R is not a functional programming language but we may adopt a functional *style* of programming, which is what we will focus on.
+- R is not a functional programming language but we may adopt a *functional style* of programming.
+
+- Functionals are functions which take functions as input and produce, e.g. vector output
 
 **Why should I use functional style programming?**
 
 - Functional programming is often space efficient, very comprehensible and easily adopted to new situations
 
-- Functionals are easily analysed in isolation and thus are often straightforward to optimize and parallelise
+- **Functionals** are easily analysed in isolation and thus are often straightforward to optimize and parallelise
+
+(We'll discuss functionals in a minute)
+
+???
+You've probably used functionals already: `lapply()` and `integrate()` are prominent examples.
 
 ---
 ## FAQs
@@ -127,7 +134,7 @@ randomise(mean)
 ```
 
 ```
-## [1] 0.0008420205
+## [1] -0.031086
 ```
 
 ```r
@@ -135,21 +142,31 @@ randomise(sum)
 ```
 
 ```
-## [1] -28.16906
+## [1] 24.25084
 ```
 
-More prominent examples are, e.g. `lapply()` and `integrate()`.
+???
+
+Functionals can also produce other data structures, e.g., data frames as output.
 
 ---
 ## Functionals
 
-Functionals are often used as an alternative to loops. Not because they are inherently slow (which is common wisdom), but because loops are very flexible:
+Functionals are often used as an alternative to loops. Not because loops are inherently slow (which is common wisdom), but because loops can be overly flexible:
 
 - Loops convey that an iteration is done, but not what should be done with the results.
     
-- Functionals are taylored to specific tasks which immedeatly convey *why* they are being used.
+- Functionals are tailored to specific tasks which immediately convey *why* they are being used and what output format they produce.
     
-Switching from loops to functionals doesn't necessarily mean that we must write our own functionals: the `purrr` package has functionals which are very concise in application and also fast as they are written in C.
+Switching from loops to functionals doesn't necessarily mean that we must write our own functionals: the `purrr` package provides functionals which are very concise and also fast as they are written in C.
+
+???
+- Of course, flexibility isn't bad. They idea of a functional programming is to use functionals that perform a specific iteration which returns a specific output format.
+
+- Others are likely to be puzzled by looking at your code if it uses a lot of for loops. Functionals immediately convey which iteration is done and which output is returned.
+
+  'Others' also includes your future self :-)
+
 
 ---
 ## Functionals &amp;mdash; `purrr::map()`
@@ -232,7 +249,7 @@ map_int(mtcars, n_unique)
 
 The *twiddle operator* `~` allows to use anonymous functions in a less verbose manner. It conveys that the subsequent expression is a formula.
 
-A good rule of thumb is that if a function spans lines or uses `{...}`, we should give it a name.
+(A good rule of thumb is that if a function spans lines or uses `{...}`, we should give it a name.)
 
 .blockquote.exercise[
 #### <i class="fas  fa-desktop "></i> Example: `map_*()` with inline anonymous function
@@ -426,13 +443,13 @@ map(1:3, rnorm, mean = c(100, 10, 1))
 
 ```
 ## [[1]]
-## [1] 100.6714
+## [1] 98.99014
 ## 
 ## [[2]]
-## [1] 97.790154  9.916405
+## [1] 99.903570  9.004926
 ## 
 ## [[3]]
-## [1] 101.455957   9.369656  -1.195117
+## [1] 98.628241  7.998981  1.713946
 ```
 ]]
 
@@ -451,7 +468,7 @@ map_dbl(x, plus, runif(1))
 ```
 
 ```
-## [1] 0.5784735 0.5784735 0.5784735 0.5784735
+## [1] 0.3587976 0.3587976 0.3587976 0.3587976
 ```
 
 ```r
@@ -459,7 +476,7 @@ map_dbl(x, ~ plus(.x, runif(1)))
 ```
 
 ```
-## [1] 0.899824280 0.251664217 0.230589058 0.002421326
+## [1] 0.4979472 0.4486474 0.3924894 0.7481986
 ```
 ]
 
@@ -500,7 +517,7 @@ map_dbl(trims, ~ mean(x, trim = .x))
 ```
 
 ```
-## [1] -2.7748701497 -0.0151921406 -0.0005238055  0.0205041943
+## [1] -5.747544944  0.036517575  0.014874031 -0.004012157
 ```
 
 This is equivalent to:
@@ -511,7 +528,7 @@ map_dbl(trims, function(trim) mean(x, trim = trim))
 ```
 
 ```
-## [1] -2.7748701497 -0.0151921406 -0.0005238055  0.0205041943
+## [1] -5.747544944  0.036517575  0.014874031 -0.004012157
 ```
 
 ]]]
@@ -591,7 +608,7 @@ vapply(models, function(x) coef(x)[[2]], double(1))
 ##            -1.582750
 ```
 
-**Pure base R**
+**for-loop**
 
 
 ```r
@@ -609,12 +626,16 @@ slopes
 
 ]
 
+
+???
+apply is also base R.
+
 ---
 ## `purrr`-style Model Fitting 
 
 - `purrr` code is most accessible as each line encapsulates a single step and the `purrr` helpers allow us to concisely describe what to do in each step.
 
-- Moving from `purrr` to base R we see that the number of iterations decreases while each iteration becomes increasingly complicated:
+- Moving from `purrr` to base R we see that the number functions which iterate decreases while each iteration becomes increasingly complicated:
 
   - Using `purrr` we iterate 3 times (`map()`, `map()` and `map_dbl()`)
   
@@ -624,7 +645,7 @@ slopes
 
 &lt;br&gt;
 .content-box-white[
-**Take-away-message**: functional-style programming using `purrr` allows to decompose the task into simple steps. The code easier to understand, modify and adapt to other applications.
+**Take-away-message**: functional-style programming using `purrr` allows to decompose the task into simple steps. The code is easier to understand, modify and adapt to other applications.
 ]
 
 ---
@@ -632,7 +653,7 @@ slopes
 
 .smaller[
 
-There are 23 variants of `map()` in total which are easily understood as variants of the following 5 (new) functions with helpers for different input and outputs.
+In total there are 23 variants of `map()` which are easily understood as variants of the following functions:
 
 - Output same type as input: **`modify()`**
 
@@ -796,9 +817,9 @@ map2_dbl(1:6, 1, ~ .x + .y)
 
 .smaller[
 
-- `walk()` ignores the return of  `.f` and returns `.x` invisibly. This is useful for functions that are called for their side-effects.
+- `walk()` ignores the return value of `.f` and returns `.x` invisibly. This is useful for functions that are called for their side-effects.
 
-- There is no base R equivalent but wrapping `lapply()` by `utnvisible()` comes close
+- There is no base R equivalent but wrapping `lapply()` but `invisible()` comes close
 
 .blockquote.exercise[
 #### <i class="fas  fa-desktop "></i> Example: assigning and passing objects
@@ -1212,7 +1233,7 @@ accumulate(x, `+`)
 
 .smaller[
 .blockquote.exercise[
-#### <i class="fas  fa-desktop "></i> set operations with vectors &amp;mdash; ctd.
+#### <i class="fas  fa-desktop "></i> Example: set operations with vectors &amp;mdash; ctd.
 
 So with `.f` a function for binary intersection we also obtain the 'intermediate' sets.
 
@@ -1243,6 +1264,283 @@ class: segue-red
 Function Factories
 
 ---
+## Function Factories
+
+.smaller[
+
+A function factory is a function that makes functions.
+
+.blockquote.exercise[
+#### <i class="fas  fa-desktop "></i> Example: function factory
+
+
+```r
+nth_root &lt;- function(n) {   # function factory
+  function(x) {
+    x^(1/n)
+  }
+}
+
+cube_root &lt;- nth_root(3)    # manufactured function
+cube_root(8)
+```
+
+```
+## [1] 2
+```
+
+]]
+
+---
+## Function Factories
+
+.smaller[
+The enclosing environment of the manufactured function is an execution environment of the function factory.
+
+.blockquote.exercise[
+#### <i class="fas  fa-desktop "></i> Example: function factory &amp;mdash; ctd.
+
+
+```r
+rlang::env_print(cube_root)     # inspect enclosing environment
+```
+
+```
+## &lt;environment: 0x7fc28e480e10&gt;
+## parent: &lt;environment: global&gt;
+## bindings:
+##  * n: &lt;dbl&gt;
+```
+
+```r
+rlang::fn_env(cube_root)$n      # retrieve from enclosing environment
+```
+
+```
+## [1] 3
+```
+
+]]
+
+???
+
+- Remember that in execution environments are ephemeral in general: they are destroyed if the function has run.
+
+- Here the enclosing environment of `cube_root()` was the execution environment of `nth_root()` &amp;mdash; a mechanism which makes function factories possible.
+
+---
+## Function Factories
+
+.smaller[
+
+Remember lazy evaluation!
+
+.blockquote.exercise[
+#### <i class="fas  fa-desktop "></i> Example: function factory &amp;mdash; ctd.
+
+
+```r
+x &lt;- 2
+sq &lt;- nth_root(x)
+x &lt;- 16
+sq(64)             # should evaluate to 8?!
+```
+
+```
+## [1] 1.29684
+```
+
+]]
+
+???
+
+- `64^(1/16) = 1.29684`
+
+- `x` is lazily evaluated when `sq()` is run, not when `nth_root()` is run. We thus need to force evaluation.
+
+- This is likely to happen rarely but it's a good practive to avoid such a bug by using `force()` in your factories
+
+---
+## Function Factories
+
+.smaller[
+
+Remember lazy evaluation!
+
+.blockquote.exercise[
+#### <i class="fas  fa-desktop "></i> Example: function factory &amp;mdash; ctd.
+
+
+```r
+nth_root &lt;- function(n) {
+    force(n)
+    function(x) {
+      x^(1/n)
+    }
+}
+
+x &lt;- 2
+sq &lt;- nth_root(x)
+x &lt;- 16
+sq(64)             # better :-)
+```
+
+```
+## [1] 8
+```
+
+]]
+
+???
+
+- To students: why `force(x)` and not just `x`? (check def. of `force()`
+
+- Note on Garbage Collection:
+    
+    As manufactured functions hold on to the execution environment of the function factory you need to remove large objects manually.
+```r
+f1 &lt;- function(n) {
+  x &lt;- runif(n)
+  m &lt;- mean(x)
+  rm(x) # use lobstr::obj_size() on a man. function to see difference
+  function() m
+}
+```
+
+---
+## Function Factories &amp;mdash; Stateful Functions
+
+.smaller[
+Function factories allow us to create functions with a memory.
+.blockquote.exercise[
+#### <i class="fas  fa-desktop "></i> Example: counter
+
+
+```r
+new_counter &lt;- function() {
+  i &lt;- 0
+  function() {
+    i &lt;&lt;- i + 1
+    i
+  }
+}
+counter_one &lt;- new_counter()
+counter_two &lt;- new_counter()
+
+replicate(2, counter_one())
+```
+
+```
+## [1] 1 2
+```
+
+```r
+replicate(5, counter_two())
+```
+
+```
+## [1] 1 2 3 4 5
+```
+
+]]
+
+???
+
+Should be used with moderation. The S6 system is more suitable if your manufactured functions are to manage multiple variables.
+
+---
+## Case Study: Maximum Likelihood Estimation
+
+.smaller[
+
+Consider the problem of finding the MLE for `\(\lambda\)` when modelling data `\(\mathbb{x} = (x_1, x_2, \dots, x_n)\)` using the Poisson distribution. We have
+
+`\begin{align*}
+P(\lambda, \mathbb{x}) =&amp; \, \prod_{i=1}^n\frac{\lambda^{x_i}\exp{\lambda}}{x_i!}\\\Leftrightarrow \log(P(\lambda, \mathbb{x})) =&amp; \, \log(\lambda)\sum_{i=1}^n x_i - n\lambda - \sum_{i=1}^n\log(x_i!).
+\end{align*}`
+
+The log-likelihood is easily implemented as an R function:
+
+
+```r
+lprob_poisson &lt;- function(lambda, x) {
+  n &lt;- length(x)
+  (log(lambda) * sum(x)) - (n * lambda) - sum(lfactorial(x))
+}
+```
+
+]
+
+---
+## Case Study: Maximum Likelihood Estimation
+
+.smaller[
+A general Poisson log-likelihood for data `x` can also be implemented using a function factory.
+]
+
+
+```r
+ll_poisson &lt;- function(x) {
+  # components that depend on x only
+  n &lt;- length(x)
+  sum_x &lt;- sum(x)
+  c &lt;- sum(lfactorial(x))
+  
+  # manufactured function
+  function(lambda) {
+    log(lambda) * sum_x - n * lambda - c
+  }
+}
+```
+
+
+???
+
+- The advantage of using a function factory here is fairly small, but there are two niceties:
+
+    - We can precompute some values in the factory, saving computation time in each iteration.
+
+    - The two-level design better reflects the mathematical structure of the underlying problem.
+
+- These advantages get bigger in more complex MLE problems, where you have multiple parameters and multiple data vectors.
+
+---
+## Case Study: Maximum Likelihood Estimation
+
+Let's find the MLE for a Poisson random vector.
+
+
+```r
+x1 &lt;- rpois(100, 30)
+llp &lt;- ll_poisson(x1)
+
+optimise(lprob_poisson, x = x1, c(0, 40), maximum = T)
+```
+
+```
+## $maximum
+## [1] 29.39
+## 
+## $objective
+## [1] -311.8749
+```
+
+```r
+# better:
+optimise(llp, c(0, 40), maximum = T)
+```
+
+```
+## $maximum
+## [1] 29.39
+## 
+## $objective
+## [1] -311.8749
+```
+
+---
+class: segue-red
+### Thank You!
     </textarea>
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
 <script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>

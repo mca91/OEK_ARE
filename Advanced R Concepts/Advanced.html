@@ -4,7 +4,7 @@
     <title>Advanced R for Econometricians</title>
     <meta charset="utf-8" />
     <meta name="author" content="Martin Arnold" />
-    <meta name="date" content="2019-12-05" />
+    <meta name="date" content="2019-12-08" />
     <link href="Advanced_files/remark-css/default.css" rel="stylesheet" />
     <link href="Advanced_files/font-awesome/css/fontawesome-all.min.css" rel="stylesheet" />
     <script type="text/x-mathjax-config">
@@ -62,15 +62,15 @@ library(lobstr)
 
 - Names and values
 
-    - Bindings and References
+    - Bindings and references
 
-    - Copy-on-modify / Inplace Modification
+    - Copy-on-modify / in-place modification
 
     - Unbinding and Garbage Collection
     
 - Functions
     
-    - Some fundamentals, scoping and Lazy Evaluation
+    - Fundamentals, scoping and Lazy Evaluation
     
     - Function forms
 
@@ -298,7 +298,7 @@ obj_addr(x)
 ```
 
 ```
-## [1] "0x7fc588fe4ef8"
+## [1] "0x7fbe08d02b98"
 ```
 
 ```r
@@ -306,7 +306,7 @@ obj_addr(y)
 ```
 
 ```
-## [1] "0x7fc588fd3648"
+## [1] "0x7fbe08cf1338"
 ```
 ]
 ]]]
@@ -376,7 +376,7 @@ tracemem(x)
 ```
 
 ```
-## [1] "&lt;0x7fc58c0193f8&gt;"
+## [1] "&lt;0x7fbe09fa3fc8&gt;"
 ```
 
 ```r
@@ -469,15 +469,15 @@ ref(l1, l2)
 ```
 
 ```
-## █ [1:0x7fc58c908418] &lt;list&gt; 
-## ├─[2:0x7fc58c8489a8] &lt;dbl&gt; 
-## ├─[3:0x7fc58c848970] &lt;dbl&gt; 
-## └─[4:0x7fc58c848938] &lt;dbl&gt; 
+## █ [1:0x7fbe0be761e8] &lt;list&gt; 
+## ├─[2:0x7fbe0da66fe8] &lt;dbl&gt; 
+## ├─[3:0x7fbe0da66fb0] &lt;dbl&gt; 
+## └─[4:0x7fbe0da66f78] &lt;dbl&gt; 
 ##  
-## █ [5:0x7fc58c9560f8] &lt;list&gt; 
-## ├─[2:0x7fc58c8489a8] 
-## ├─[3:0x7fc58c848970] 
-## └─[6:0x7fc58c848858] &lt;dbl&gt;
+## █ [5:0x7fbe0bf5bdb8] &lt;list&gt; 
+## ├─[2:0x7fbe0da66fe8] 
+## ├─[3:0x7fbe0da66fb0] 
+## └─[6:0x7fbe0da66e98] &lt;dbl&gt;
 ```
 
 ]
@@ -747,22 +747,22 @@ lobstr::ref(x)
 .pull-right[
 
 ```
-## █ [1:0x7fc58a8bc2a8] &lt;list&gt; 
-## └─[2:0x7fc58cd661b8] &lt;int&gt;
+## █ [1:0x7fbe0e106120] &lt;list&gt; 
+## └─[2:0x7fbe0e1267e8] &lt;int&gt;
 ```
 
 ```
-## █ [1:0x7fc586f618c8] &lt;list&gt; 
-## ├─[2:0x7fc58cd661b8] &lt;int&gt; 
-## └─█ [3:0x7fc58a8bc2a8] &lt;list&gt; 
-##   └─[2:0x7fc58cd661b8]
+## █ [1:0x7fbe0d98c088] &lt;list&gt; 
+## ├─[2:0x7fbe0e1267e8] &lt;int&gt; 
+## └─█ [3:0x7fbe0e106120] &lt;list&gt; 
+##   └─[2:0x7fbe0e1267e8]
 ```
 
 ```
-## █ [1:0x7fc58c8f5cc8] &lt;list&gt; 
-## ├─[2:0x7fc58cfb5f90] &lt;int&gt; 
-## └─█ [3:0x7fc58a8bc2a8] &lt;list&gt; 
-##   └─[4:0x7fc58cd661b8] &lt;int&gt;
+## █ [1:0x7fbe0be63c88] &lt;list&gt; 
+## ├─[2:0x7fbe0de7c1c0] &lt;int&gt; 
+## └─█ [3:0x7fbe0e106120] &lt;list&gt; 
+##   └─[4:0x7fbe0e1267e8] &lt;int&gt;
 ```
 ]]]
 
@@ -968,9 +968,9 @@ lobstr::ref(funs)
 ```
 
 ```
-## █ [1:0x7fc58b3a0048] &lt;list&gt; 
-## ├─[2:0x7fc58a861df8] &lt;fn&gt; 
-## └─[3:0x7fc58a861d50] &lt;fn&gt;
+## █ [1:0x7fbe0bd17ec8] &lt;list&gt; 
+## ├─[2:0x7fbe09e10dc0] &lt;fn&gt; 
+## └─[3:0x7fbe09e10d18] &lt;fn&gt;
 ```
 
 ```r
@@ -1477,7 +1477,7 @@ tracemem(x)
 ```
 
 ```
-## [1] "&lt;0x7fc58be05438&gt;"
+## [1] "&lt;0x7fbe0f154db8&gt;"
 ```
 
 ```r
@@ -1499,6 +1499,10 @@ x
 ```
 
 ]
+
+---
+class: segue-red
+### Thank You!
     </textarea>
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
 <script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
