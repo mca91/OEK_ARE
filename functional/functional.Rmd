@@ -65,11 +65,11 @@ To become significantly more reliable, code must become more transparent. In par
 
 - Simply put: a language which is centered on problem solving using functions!
 
-- There are two common threats:
+- There are two common threads:
 
-    1. A functional language has **first-class functions** which behave like any other data type. In R this means we may treat function like variables (e.g. assign them, store them in a list or pass them as arguments to other functions)
+    1. A functional language has **first-class functions** which behave like any other data type. In R this means we may treat function like variables (i.e. assign them, store them in a list or pass them as arguments to other functions)
     
-    2. Many functional languages require **pure** functions. These are functions which have no side-effects: they do not interfere with anything outside their scope and produce output which depends only on the input.
+    2. Many functional languages require **pure** functions only. These are functions which have no side-effects: they do not interfere with anything outside their scope and produce output which depends only on the input.
 
 ???
 
@@ -79,16 +79,20 @@ Does R allow for pure functions only? No: e.g. `print()` has side-effects. Obvio
     
 **Is R a functional programming language?**
 
-R is not a functional programming language but we may adopt a functional *style* of programming.
+- R is not a functional programming language but we may adopt a *functional style* of programming.
+
+- Functionals are functions which take functions as input and produce, e.g. vector output
 
 **Why should I use functional style programming?**
 
 - Functional programming is often space efficient, very comprehensible and easily adopted to new situations
 
-- Functionals are easily analysed in isolation and thus are often straightforward to optimize and parallelise
+- **Functionals** are easily analysed in isolation and thus are often straightforward to optimize and parallelise
+
+(We'll discuss functionals in a minute)
 
 ???
-What are functionals? Not clear at this point. 
+You've probably used functionals already: `lapply()` and `integrate()` are prominent examples.
 
 ---
 ## FAQs
@@ -125,24 +129,27 @@ randomise(mean)
 randomise(sum)
 ```
 
-More prominent examples are, e.g. `lapply()` and `integrate()`.
-
 ???
-Functionals can also produce other data structures e.g. dataframes as output.
+
+Functionals can also produce other data structures, e.g., data frames as output.
 
 ---
 ## Functionals
 
-Functionals are often used as an alternative to loops. Not because they are inherently slow (which is common wisdom), but because loops are very flexible:
+Functionals are often used as an alternative to loops. Not because loops are inherently slow (which is common wisdom), but because loops can be overly flexible:
 
 - Loops convey that an iteration is done, but not what should be done with the results.
     
-- Functionals are tailored to specific tasks which immediately convey *why* they are being used.
+- Functionals are tailored to specific tasks which immediately convey *why* they are being used and what output format they produce.
     
 Switching from loops to functionals doesn't necessarily mean that we must write our own functionals: the `purrr` package provides functionals which are very concise and also fast as they are written in C.
 
 ???
-You want to say flexibility is bad? 
+- Of course, flexibility isn't bad. They idea of a functional programming is to use functionals that perform a specific iteration which returns a specific output format.
+
+- Others are likely to be puzzled by looking at your code if it uses a lot of for loops. Functionals immediately convey which iteration is done and which output is returned.
+
+  'Others' also includes your future self :-)
 
 
 ---
@@ -201,7 +208,7 @@ map_int(mtcars, n_unique)
 
 The *twiddle operator* `~` allows to use anonymous functions in a less verbose manner. It conveys that the subsequent expression is a formula.
 
-A good rule of thumb is that if a function spans lines or uses `{...}`, we should give it a name.
+(A good rule of thumb is that if a function spans lines or uses `{...}`, we should give it a name.)
 
 .blockquote.exercise[
 #### `r icon::fa("desktop")` Example: `map_*()` with inline anonymous function
@@ -478,7 +485,7 @@ apply is also base R.
 
 - `purrr` code is most accessible as each line encapsulates a single step and the `purrr` helpers allow us to concisely describe what to do in each step.
 
-- Moving from `purrr` to base R we see that the number of iterations decreases while each iteration becomes increasingly complicated:
+- Moving from `purrr` to base R we see that the number functions which iterate decreases while each iteration becomes increasingly complicated:
 
   - Using `purrr` we iterate 3 times (`map()`, `map()` and `map_dbl()`)
   
@@ -488,18 +495,17 @@ apply is also base R.
 
 <br>
 .content-box-white[
-**Take-away-message**: functional-style programming using `purrr` allows to decompose the task into simple steps. The code easis ier to understand, modify and adapt to other applications.
+**Take-away-message**: functional-style programming using `purrr` allows to decompose the task into simple steps. The code is easier to understand, modify and adapt to other applications.
 ]
-
-??? 
-What do you mean with the number of iterations decreases? I would say they stay the same? Is iteration the correct term here?
 
 ---
 ## Map Variants
 
 .smaller[
 
-TheIn total te are 23 variants of `map()` in ich are easily understood as variants of the following 5 (nections wi- Output same type as input: **`modify()`**
+In total there are 23 variants of `map()` which are easily understood as variants of the following functions:
+
+- Output same type as input: **`modify()`**
 
 - Iterate over two inputs: **`map2()`**
 
@@ -636,9 +642,9 @@ map2_dbl(1:6, 1, ~ .x + .y)
 
 .smaller[
 
-- `walk()` ignores the return of value  `.f` and returns `.x` invisibly. This is useful for functions that are called for their side-effects.
+- `walk()` ignores the return value of `.f` and returns `.x` invisibly. This is useful for functions that are called for their side-effects.
 
-- There is no base R equivalent but wrapping `lapply()` by `utnvisible()` comes close
+- There is no base R equivalent but wrapping `lapply()` but `invisible()` comes close
 
 .blockquote.exercise[
 #### `r icon::fa("desktop")` Example: assigning and passing objects
@@ -960,7 +966,7 @@ accumulate(x, `+`)
 
 .smaller[
 .blockquote.exercise[
-#### `r icon::fa("desktop")` set operations with vectors &mdash; ctd.
+#### `r icon::fa("desktop")` Example: set operations with vectors &mdash; ctd.
 
 So with `.f` a function for binary intersection we also obtain the 'intermediate' sets.
 
@@ -975,8 +981,219 @@ class: segue-red
 
 Function Factories
 
----???
-Upcoming?
+---
+## Function Factories
 
+.smaller[
+
+A function factory is a function that makes functions.
+
+.blockquote.exercise[
+#### `r icon::fa("desktop")` Example: function factory
+
+```{r}
+nth_root <- function(n) {   # function factory
+  function(x) {
+    x^(1/n)
+  }
+}
+
+cube_root <- nth_root(3)    # manufactured function
+cube_root(8)
+```
+
+]]
+
+---
+## Function Factories
+
+.smaller[
+The enclosing environment of the manufactured function is an execution environment of the function factory.
+
+.blockquote.exercise[
+#### `r icon::fa("desktop")` Example: function factory &mdash; ctd.
+
+```{r}
+rlang::env_print(cube_root)     # inspect enclosing environment
+rlang::fn_env(cube_root)$n      # retrieve from enclosing environment
+```
+
+]]
+
+???
+
+- Remember that in execution environments are ephemeral in general: they are destroyed if the function has run.
+
+- Here the enclosing environment of `cube_root()` was the execution environment of `nth_root()` &mdash; a mechanism which makes function factories possible.
+
+---
+## Function Factories
+
+.smaller[
+
+Remember lazy evaluation!
+
+.blockquote.exercise[
+#### `r icon::fa("desktop")` Example: function factory &mdash; ctd.
+
+```{r}
+x <- 2
+sq <- nth_root(x)
+x <- 16
+sq(64)             # should evaluate to 8?!
+```
+
+]]
+
+???
+
+- `64^(1/16) = 1.29684`
+
+- `x` is lazily evaluated when `sq()` is run, not when `nth_root()` is run. We thus need to force evaluation.
+
+- This is likely to happen rarely but it's a good practice to avoid such a bug by using `force()` in your factories
+
+---
+## Function Factories
+
+.smaller[
+
+Remember lazy evaluation!
+
+.blockquote.exercise[
+#### `r icon::fa("desktop")` Example: function factory &mdash; ctd.
+
+```{r}
+nth_root <- function(n) {
+    force(n)
+    function(x) {
+      x^(1/n)
+    }
+}
+
+x <- 2
+sq <- nth_root(x)
+x <- 16
+sq(64)             # better :-)
+```
+
+]]
+
+???
+
+- To students: why `force(x)` and not just `x`? (check def. of `force()`
+
+- Note on Garbage Collection:
+    
+    As manufactured functions hold on to the execution environment of the function factory you need to remove large objects manually.
+```r
+f1 <- function(n) {
+  x <- runif(n)
+  m <- mean(x)
+  rm(x) # use lobstr::obj_size() on a man. function to see difference
+  function() m
+}
+```
+
+---
+## Function Factories &mdash; Stateful Functions
+
+.smaller[
+Function factories allow us to create functions with a memory.
+.blockquote.exercise[
+#### `r icon::fa("desktop")` Example: counter
+
+```{r}
+new_counter <- function() {
+  i <- 0
+  function() {
+    i <<- i + 1
+    i
+  }
+}
+counter_one <- new_counter()
+counter_two <- new_counter()
+
+replicate(2, counter_one())
+replicate(5, counter_two())
+```
+
+]]
+
+???
+
+Should be used with moderation. The S6 system is more suitable if your manufactured functions are to manage multiple variables.
+
+---
+## Case Study: Maximum Likelihood Estimation
+
+.smaller[
+
+Consider the problem of finding the MLE for $\lambda$ when modelling data $\mathbb{x} = (x_1, x_2, \dots, x_n)$ using the Poisson distribution. We have
+
+\begin{align*}
+P(\lambda, \mathbb{x}) =& \, \prod_{i=1}^n\frac{\lambda^{x_i}\exp{\lambda}}{x_i!}\\\Leftrightarrow \log(P(\lambda, \mathbb{x})) =& \, \log(\lambda)\sum_{i=1}^n x_i - n\lambda - \sum_{i=1}^n\log(x_i!).
+\end{align*}
+
+The log-likelihood is easily implemented as an R function:
+
+```{r}
+lprob_poisson <- function(lambda, x) {
+  n <- length(x)
+  (log(lambda) * sum(x)) - (n * lambda) - sum(lfactorial(x))
+}
+```
+
+]
+
+---
+## Case Study: Maximum Likelihood Estimation
+
+.smaller[
+A general Poisson log-likelihood for data `x` can also be implemented using a function factory.
+]
+
+```{r}
+ll_poisson <- function(x) {
+  # components that depend on x only
+  n <- length(x)
+  sum_x <- sum(x)
+  c <- sum(lfactorial(x))
+  
+  # manufactured function
+  function(lambda) {
+    log(lambda) * sum_x - n * lambda - c
+  }
+}
+```
+
+
+???
+
+- The advantage of using a function factory here is fairly small, but there are two niceties:
+
+    - We can precompute some values in the factory, saving computation time in each iteration.
+
+    - The two-level design better reflects the mathematical structure of the underlying problem.
+
+- These advantages get bigger in more complex MLE problems, where you have multiple parameters and multiple data vectors.
+
+---
+## Case Study: Maximum Likelihood Estimation
+
+Let's find the MLE for a Poisson random vector.
+
+```{r, cache=T}
+x1 <- rpois(100, 30)
+llp <- ll_poisson(x1)
+
+optimise(lprob_poisson, x = x1, c(0, 40), maximum = T)
+# better:
+optimise(llp, c(0, 40), maximum = T)
+```
+
+---
+class: segue-red
+### Thank You! 
 
 

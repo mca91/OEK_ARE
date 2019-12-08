@@ -1,21 +1,24 @@
 ---
-title: "Improving Performance"
-author: 
-  - "Martin Arnold"
-  - "Alexander Gerber"
-date: '`r Sys.Date()`'
+title: "Advanced R for Econometricians"
+subtitle: "Improving Performance"
+author: "Martin Arnold"
+date: "`r Sys.Date()`"
 output:
   xaringan::moon_reader:
-    seal: false
-    lib_dir: libs
-    css: ["../xaringan_files/xaringan-themer.css", "../xaringan_files/custom.css"]
+    css: ["default", "../assets/sydney-fonts.css", "../assets/sydney.css", "../assets/title_slides.css", "../xaringan_files/custom.css"]
+    self_contained: false # if true, fonts will be stored locally
+    seal: false # show a title slide with YAML information
+    includes:
+      in_header: "../assets/mathjax-equation-numbers.html"
+      after_body: "../assets/copybutton.html"
     nature:
-      beforeInit: ../xaringan_files/macros.js
-      highlightStyle: solarized-dark
+      beforeInit: ["../assets/remark-zoom.js", "../xaringan_files/macros.js", "https://platform.twitter.com/widgets.js"]
+      highlightStyle: github
       highlightLines: true
       countIncrementalSlides: false
-    includes:
-      after_body: ../xaringan_files/terminal_highlight.html
+      ratio: '16:9' # alternatives '16:9' or '4:3' or others e.g. 13:9
+      navigation:
+        scroll: false # disable slide transitions by scrolling
 ---
 
 ```{r setup, include=FALSE}
@@ -32,17 +35,30 @@ library(dplyr)
 library(tidyr)
 ```
 
-class: inverse, left, middle
-background-image: url(../img/road.jpg)
-background-size: cover
-### Improving Performance
+class: title-slide title-performance center middle
 
-*We should forget about small efficiencies, say about 97% of the time: premature optimization is the root of all evil. Yet we should not pass up our opportunities in that critical 3%. A good programmer will not be lulled into complacency by such reasoning, he will be wise to look carefully at the critical code; but only after that code has been identified.*
-
-— Donald Knuth
+# `r rmarkdown::metadata$title`
+## `r rmarkdown::metadata$subtitle`
+### `r rmarkdown::metadata$author`
 
 ---
-### Improving Performance &mdash; Overview
+class: left
+## Improving Performance
+
+<style>
+  strong {
+    color:#e64626;
+  }
+  
+</style>
+
+<blockquote style ="margin-top:15%;">
+We should forget about small efficiencies, say about 97% of the time: premature optimisation is the root of all evil. Yet we should not pass up our opportunities in that critical 3%. A good programmer will not be lulled into complacency by such reasoning, he will be wise to look carefully at the critical code; but only after that code has been identified.
+.right[&mdash; <cite>Donald Knuth</cite>]
+</blockquote>
+
+---
+## Improving Performance &mdash; Overview
 
 Once profiling has revealed a bottleneck, we need to make it faster. In the following we will discuss some techniques that are broadly useful:
 
@@ -56,14 +72,14 @@ Once profiling has revealed a bottleneck, we need to make it faster. In the foll
 
 3. **Vectorise your code.**
 
-    This often relates to avoiding `for()`-loops and the associated inefficiencies.
+    This often relates to avoiding loops and the associated inefficiencies.
 
 4. **Parallelise (if possible).**
 
     Using multiple CPU cores in parallel is enormously helpful when the computation involves a large number of tasks that may be solved independently.
 
 ---
-### 1. Look for Existing Solutions
+## 1. Look for Existing Solutions
 
 There's a good chance that someone has already tackled the same problem.
 
@@ -82,26 +98,25 @@ There's a good chance that someone has already tackled the same problem.
 - Sometimes combining the fastest parts from different approaches is helpful. 
 
 ---
-### Improving Performance &mdash; Golden Rule
+## Improving Performance &mdash; Golden Rule
 
-Before we continue, we introduce a rule we have already been implicitly following &mdash; the **golden rule of R programming**:
+Before we continue, we introduce a rule we have already followed implicitly: the **golden rule of R programming**:
 
   ***Access the underlying C/FORTRAN routines as quickly as possible; the fewer functions calls required to achieve this, the better.***
 
   ***(Lovelace and Gillespie, 2016)***
 
-![:image 40%](../img/goldenR.png)
+![:image 30%](../img/goldenR.png)
 
-The techniques discussed next follow this paradigm. 
-
-If this is not enough, we still may rewrite (some of) the code in C++ using the Rcpp package (discussed in the next chapter).
+The techniques discussed next follow this paradigm. If this is not enough, we still may rewrite (some of) the code in C++ using the Rcpp package (discussed in the next chapter).
 
 ---
-### 2. Do as Little as Possible
+## 2. Do as Little as Possible
 
 If you cannot find existing solutions, start by reducing your code to the bare essentials.
 
-**Example: coercion of inputs / robustness checks**
+.blockquote.exercise[
+#### `r icon::fa("desktop")` Example: coercion of inputs / robustness checks
 
 `apply()` accepts various inputs and outputs which requires coercion (which is slow).
 
@@ -115,16 +130,20 @@ bench::mark(
 )
 ```
 
+]
+
+???
+
+Apply coerces `Y` to matrix which triggers a copy. You can check this using `lobstr::tracemem()`.
+
 ---
-### 2. Do as Little as Possible
+## 2. Do as Little as Possible
+.smaller[
+A function is faster if it has less to do &mdash; obvious but often neglected! Use functions tailored to specific input and output types / specific problems.
+.blockquote.exercise[
+#### `r icon::fa("desktop")` Example: row sums &mdash; `rowSums()` vs. `apply()`
 
-A function is faster if it has less to do &mdash; obvious but often neglected!
-
-Use a function tailored to a more specific type of input or output, or a more specific problem.
-
-**Example: row sums &mdash; `rowSums()` vs. `apply()`**
-
-`apply()` has a much longer call stack than `rowSums()` which is much more specific. 
+Using `apply()` yields a much longer call stack than `rowSums()` which is much more specific. 
 
 ```{r, cache = T}
 bench::mark(
@@ -133,10 +152,17 @@ bench::mark(
 )
 ```
 
----
-### 2. Do as Little as Possible
+]]
 
-**Example: search vector for entry**
+???
+
+Note that `any()` calls the primitive `any`.
+
+---
+## 2. Do as Little as Possible
+
+.blockquote.exercise[
+#### `r icon::fa("desktop")` Example: searching a vector
 
 Testing equality is faster than testing inclusion in a set.
 
@@ -149,14 +175,18 @@ bench::mark(
 )
 ```
 
+]
+
 ---
-### 2. Do as Little as Possible
+## 2. Do as Little as Possible
 
-**Example: Linear Regression &mdash; computation of $SE(\widehat\beta)$**
+.smaller[
+.blockquote.exercise[
+#### `r icon::fa("desktop")` Example: Linear Regression &mdash; computation of $SE(\widehat\beta)$
 
-`a()` is what we teach undergraduates which is totally fine &mdash; except if you want (only) $SE(\widehat\beta)$ and fast.
+- `a()` is what we teach undergraduates which is totally fine &mdash; except if you want (only) $SE(\widehat\beta)$ and fast.
 
-`b()` is rather focused on the essentials.
+- `b()` is rather focused on the essentials.
 
 ```{r, cache=T}
 set.seed(1)
@@ -175,10 +205,14 @@ b <- function() {
 }
 ```
 
----
-### 2. Do as Little as Possible
+]]
 
-**Example: Linear Regression &mdash; computation of $SE(\widehat\beta)$**
+---
+## 2. Do as Little as Possible
+
+.smaller[
+.blockquote.exercise[
+#### `r icon::fa("desktop")` Example: Linear Regression &mdash; computation of $SE(\widehat\beta)$ &mdash; ctd.
 
 Let's compare both approaches in a microbenchmark.
 
@@ -191,12 +225,15 @@ bench::mark(
 
 The difference is indeed huge.
 
+]]
+
 ---
-### 2. Do as Little as Possible
+## 2. Do as Little as Possible
 
 Be as explicit as possible.
 
-**Example: method dispatch**
+.blockquote.exercise[
+#### `r icon::fa("desktop")` Example:  method dispatch takes time
 
 ```{r}
 x <- runif(1e2)
@@ -206,25 +243,28 @@ bench::mark(
   mean.default(x)
 )
 ```
+]
+
 
 ---
-### 2. Do as Little as Possible
+## 2. Do as Little as Possible
 
 Benchmark against alternatives that rely on primitive functions.
 
-**Example: primitives are faster**
-
+.blockquote.exercise[
+#### `r icon::fa("desktop")` Example: primitives are faster
 ```{r}
 bench::mark(
   mean.default(x),
   sum(x)/length(x)
 )
 ```
+]
 
 ---
-### 2. Do as Little as Possible &mdash; Byte Compiler
+## 2. Do as Little as Possible &mdash; Byte Compiler
 
-As discussed before, R's interpreter performs a number of costly operations, e.g. variable and method look-up. The `compiler` package reduces the resulting slowdown by providing a translator which generates a byte compiled version of an R function.
+R's interpreter performs a number of costly operations. The `compiler` package reduces the resulting slowdown by providing a translator which generates a byte compiled version of an R function.
 
 ```{r, message=F, warning=F}
 library(compiler)
@@ -238,12 +278,16 @@ mean
 
 Recent R versions perform just-in-time (JIT) compilation by default so there is no reason to compile explicitly. The following example demonstrates the usefulness of this approach.
 
+???
+
+`bytecode: <...>` points to the memory location of the *compiled* function
+
 ---
-### 2. Do as Little as Possible &mdash; Byte Compiler
-
-**Example: compiled correlation matrix**
-
-Interpreting the code is relatively more demanding than the actual 'computation'.
+## 2. Do as Little as Possible &mdash; Byte Compiler
+.smaller[
+.blockquote.exercise[
+#### `r icon::fa("desktop")` Example: compiled correlation matrix
+Interpreting the code is more demanding than the actual 'computation'.
 
 ```{r}
 corr <- my.correlation <- function(X) {
@@ -254,7 +298,7 @@ corr <- my.correlation <- function(X) {
   for (i in 1:p) {
     for (j in 1:p) {
       for (k in 1:n) {
-        M[i,j] <- M[i, j] + TY[i, k] * Y[k, j]
+        M[i, j] <- M[i, j] + TY[i, k] * Y[k, j]
       }
     }
   }
@@ -262,14 +306,16 @@ corr <- my.correlation <- function(X) {
   return(M)
 }
 ```
+]]
 
 ---
-### 2. Do as Little as Possible &mdash; Byte Compiler
+## 2. Do as Little as Possible &mdash; Byte Compiler
 
-**Example: compiled correlation matrix**
+.smaller[
+.blockquote.exercise[
+#### `r icon::fa("desktop")` Example: compiled correlation matrix &mdash; ctd.
 
 Let's generate a compiled version of `corr()`.
-
 ```{r}
 corr_cmp <- cmpfun(corr)  # compiled version of corr()
 enableJIT(0)              # disable JIT compilation
@@ -281,47 +327,45 @@ bench::mark(
   corr_cmp(x),
   relative = T)[, 1:4]
 ```
-
 ```{r, echo=F, results='hide'}
 enableJIT(3)
 ```
+]]
 
 ---
-### 2. Do as Little as Possible &mdash; Exercises
+## 2. Do as Little as Possible &mdash; Exercises
 
-1\. Can you come up with an even faster implementation of `b()` in the linear regression example?
-
-2\. `rowSums2()` is an alternative implementation of `rowSums()`. Is it faster for the input `df`? Why?
-
-```{r, eval=F}
-rowSums2 <- function(df) {
-out <- df[[1L]]
-if (ncol(df) == 1) return(out)
-    
-  for (i in 2:ncol(df)) {
-    out <- out + df[[i]]
-  }
-  out
-}
-    
-df <- as.data.frame(
-  replicate(1e3, sample(100, 1e4, replace = TRUE))
-)
+.smaller[
+1. Can you come up with an even faster implementation of `b()` in the linear regression example?
+```{r, include=F}
+fit <- .lm.fit(X, Y)
+sqrt(1/(length(X)-1) * sum(fit$residuals^2) * 1/X^2)
 ```
+2. `rowSums2()` is an alternative implementation of `rowSums()`. Is it faster for the input `df`? Why?
+    ```{r, eval=F}
+    rowSums2 <- function(df) {
+      out <- df[[1L]]
+      if (ncol(df) == 1) return(out)
+        for (i in 2:ncol(df)) {
+          out <- out + df[[i]]
+        }
+      out
+    }
+        
+    df <- as.data.frame(
+      replicate(1e3, sample(100, 1e4, replace = TRUE))
+    )
+    ```
 
-3\. What’s the difference between `rowSums()` and `.rowSums()`?
+3. What’s the difference between `rowSums()` and `.rowSums()`?
+
+4. Write a faster version of `chisq.test()` that only computes the chi-square test statistic when the input is two numeric vectors with no missing values. Start by coding from the [definition](https://en.wikipedia.org/wiki/Pearson%27s_chi-squared_test).
+]
 
 ---
-### 2. Do as Little as Possible &mdash; Exercises
-
-4\. Write a faster version of `chisq.test()` that only computes the chi-square test statistic when the input is two numeric vectors with no missing values. Start by coding from the [definition](https://en.wikipedia.org/wiki/Pearson%27s_chi-squared_test).
-
----
-### 2. Do as Little as Possible &mdash; Case Study
+## 2. Do as Little as Possible &mdash; Case Study
 
 Imagine you want to compute the bootstrap distribution of a sample correlation using `cor_df()` and the data in the example below. Given that you want to run this many times, how can you make this code faster? 
-
-(Hint: the function has three components that you can speed up.)
 
 ```{r, eval=F}
 n <- 1e6
@@ -333,8 +377,21 @@ cor_df <- function(df, n) {
 }
 ```
 
+???
+
+- `:` is a primitive and is faster than `seq()`. We circument generating the sequence and use `sample.int(n, n)`.
+- Passing vectors using `$` is faster than looking up the correct method of $[$
+- `cor()` runs faster on vectors
+
+```
+cor_df2 <- function(x, n) {
+  i <- sample(1:n, n, replace = T)
+  cor(df$a[i], df$b[i])
+}
+```
+
 ---
-### 3. Vectorise your code
+## 3. Vectorise your code
 
 **What is vectorisation?** 
 
@@ -349,7 +406,7 @@ cor_df <- function(df, n) {
 - Your computer is designed to run vectorised operations: a vectorised function may run multiple operations from a single instruction which is faster than sending individual instructions for each operation.  
 
 ---
-### 3. Vectorise your code
+## 3. Vectorise your code
 
 **Why is vectorisation efficient? &mdash; ctd.** 
 
@@ -360,13 +417,13 @@ Many languages (including R) work on arrays that are stored in [column-major ord
 Disregarding these patterns by writing code which operates on $1\times1$ vectors thus means 'fighting the language'.
 
 ---
-### 3. Vectorise your code
+## 3. Vectorise your code
 
+.smaller[
 **Why is vectorisation more efficient? &mdash; ctd. **
 
-(again less related to R itself but to what your CPU does)
-
-**Example: vector addition**
+.blockquote.exercise[
+#### `r icon::fa("desktop")` Example: vector addition
 
 $$\begin{pmatrix} 1 \\ 2\\ 3 \end{pmatrix}+\begin{pmatrix} 4 \\ 5\\ 6 \end{pmatrix} = \begin{pmatrix} 5 \\ 7\\ 9 \end{pmatrix}$$
 
@@ -378,42 +435,48 @@ $$\begin{pmatrix} 1 \\ 2\\ 3 \end{pmatrix}+\begin{pmatrix} 4 \\ 5\\ 6 \end{pmatr
 
 - **Fast:** one instruction, one vectorised operation:
 
-    *add $\begin{pmatrix} 1 \ 2 \  3 \end{pmatrix}'$ and $\begin{pmatrix} 4 \ 5 \  6 \end{pmatrix}'$*
+    - *add $\begin{pmatrix} 1 \ 2 \  3 \end{pmatrix}'$ and $\begin{pmatrix} 4 \ 5 \  6 \end{pmatrix}'$*
 
-    The three additions are effectively done *in parallel*.
+    - The three additions are effectively done *in parallel*.
+]]
+
+???
+Aagain, less related to R itself but to what the CPU does.
 
 
 ---
-### 3. Vectorise your code
+## 3. Vectorise your code
 
+.smaller[
 **What does it mean to write 'vectorised' code in R?**
 
 Remember that there are no 'real' scalars in R. Everything that looks like a scalar is actually a $1\times1$ vector.
 
-![:image 30%](../img/atomic_vectors.png)
+![:image 23%](../img/atomic_vectors.png)
 
 ```{r}
-# otherwise this shouldn't work:
+# Otherwise this shouldn't work:
 1[1]
 ```
-
-Scalar operations thus operate on vector *elements* which (often) is needlessly cumbersome. 
+Scalar operations thus work on vector *elements* which (often) is needlessly cumbersome.
+]
 
 ---
-### 3. Vectorise your code
+## 3. Vectorise your code
 
 **What does it mean to write 'vectorised' code in R?**
 
 By 'vectorised' we mean that the function works on vectors, i.e., performs vector arithmetic and calls functions which work on vectors.
 
-**Example: scalar vs. vectorised computation of euclidean norm** 
+.blockquote.exercise[
+#### `r icon::fa("desktop")` Example: scalar vs. vectorised computation of euclidean norm
 
 .pull-left[
 ```{r}
 L2_scalar <- function(x) {
   out <- numeric(1)
   for(i in 1:length(x)) {
-    out <- x[i]^2 + out 
+    out <- x[i] * x[i] + out 
   }
   return(sqrt(out))
 }
@@ -425,39 +488,38 @@ L2_scalar <- function(x) {
 L2_vec <- function(x) {
  return(
    sqrt(
-     sum(x^2)
+     sum(x * x)
      )
    )
 }
 ```
-]
+]]
 
 ---
-### 3. Vectorise your code
+## 3. Vectorise your code
 
 **What does it mean to write 'vectorised' code in R?**
 
-**Example: scalar vs. vectorised computation of euclidean norm** 
-
+.blockquote.exercise[
+#### `r icon::fa("desktop")` Example: scalar vs. vectorised computation of euclidean norm
 ```{r, cache=T}
 bench::mark(
   L2_scalar(1:1e4),
   L2_vec(1:1e4)
 )
 ```
+]
 
 ---
-### 3. Vectorise your code
-
-**What does it mean to write 'vectorised' code in R?**
+## 3. Vectorise your code &mdash; Some Principles
 
 - **Do not torture the interpreter**
 
-    Vectorization reduces the amount of intepreting R has to do: Validating that `x <- 1L` and `y <- 1:100L` are of type `integer` is equally expensive. Checking that each element of `y` is an integer is not!   
+    Vectorisation reduces the amount of intepreting R has to do: Validating that `x <- 1L` and `y <- 1:100L` are of type `integer` is equally expensive. Checking that each element of `y` is an integer is not!   
 
 - **Use functions from base R that work on vectors**
 
-    Vectorization may avoid loops in R. Loops in many 'vectorised' R functions are carried out in C and thus are much faster. 
+    Vectorisation may avoid loops in R. Loops in many 'vectorised' R functions are carried out in C and thus are much faster. 
 
     The following functions are prominent examples:
 
@@ -468,34 +530,105 @@ bench::mark(
     Most matrix operations that involve loops are executed by highly optimized external Fortran and C libraries. See, e.g., [BLAS](https://en.wikipedia.org/wiki/Basic_Linear_Algebra_Subprograms).
 
 ---
-### 3. Vectorise your code
+## 3. Vectorise your code
 
-**Are `for()`-loops slower than `apply()`?**
+**Are `for()` loops slower than `apply()`?**
 
-`for()`-loops have the reputation of being slow(er than `apply()`). This is widespread wisdom and not always true:
+`for()` loops have the reputation of being slow(er than `apply()`). This is widespread wisdom and not generally true:
 
 - `for()` is *not* slow if we iterate over data and apply a (non-vectorised) function. Execution time is comparable to `apply()`.
 
 - Loops are often used in an *inefficient* manner: 
 
-    growing an object without proper initialization. &#8594; overhead due to **growing and copying** in every iteration (which is indeed slow).
+    growing an object with improper initialisation means overhead due to **growing and copying** in every iteration.
 
-**Idiomatic use of `for()`**
+**What if I need to use `for()`?**
 
-*Allocate required storage before the loop and fill the allocated object.*
+Allocate required storage before the loop and *fill* the allocated object!
 
-(This is what `apply()` does under the hood.)
+(BTW, this is what `apply()` does under the hood.)
 
 ---
-### 3. Vectorise your code
+## 3. Vectorise your code
 
-**Are `for()`-loops slow(er than `apply()`)?**
+.blockquote.exercise[
+#### `r icon::fa("desktop")` Example: avoid growing objects
 
-**Example: good and bad `for()`-loops**
+```r
+# grow
+vec <- numeric(0)
+for(i in 1:n) vec <- c(vec, i)
 
+# fill
+vec <- numeric(n)
+for(i in 1:n) vec[i] <- i
+
+# primitive
+vec <- 1:n
+```
+]
+
+???
+
+Technically this does not directly relate to vectorisation but it demonstrates that growing objects using loops is a bad idea. A vectorised approach is often faster.
+
+---
+## 3. Vectorise your code
+
+.blockquote.exercise[
+#### `r icon::fa("desktop")` Example: avoid growing objects
+
+```{r, include=FALSE, eval=F}
+library(tidyverse)
+
+grow <- function(n) {
+  vec <- numeric(0)
+  for(i in 1:n) vec <- c(vec, i)
+  vec
+  }
+
+fill <- function(n) {
+  vec <- numeric(n)
+  for(i in 1:n) vec[i] <- i
+  vec
+}
+
+direct <- function(n) {
+  vec <- 1:n
+  vec
+  }
+
+bmk <- bench::press(n = seq(1e3, 1e4, 250), 
+             {
+               bench::mark(
+                "grow" = grow(n),
+                "fill" = fill(n),
+                ":" = direct(n),
+                iterations = 100
+                )
+             }
+)
+
+bmk %>% unnest() %>% ggplot(aes(x = n, y = as.numeric(median), color = as.character(expression))) +
+  geom_point() +
+  geom_smooth(method = "loess") +
+  scale_y_continuous(trans='log10') + 
+  labs(color = "Method", y = "Median duration in seconds (log-scale)", x = "sequence length") +
+  ggsave(filename = "../img/growing_objects.png", device = "png", width = 30, height = 16, units = "cm")
+```
+
+![:image 80%](../img/growing_objects.png)
+]
+
+
+---
+## 3. Vectorise your code
+
+.blockquote.exercise[
+#### `r icon::fa("desktop")` Example: good and bad `for()` loops
 .pull-left[.smaller[
 ```{r}
-# bad: using c()/cbind()/rbind()
+# Bad: c()/cbind()/rbind()
 rw_bad <- function(N) {
   set.seed(1)
   out <- rnorm(1)
@@ -507,20 +640,18 @@ rw_bad <- function(N) {
 }
 ```
 ]]
-
 .pull-right[
 ![:image 48%](../img/bad.png)
-]
+]]
+
 ---
-### 3. Vectorise your code
+## 3. Vectorise your code
 
-**Are `for()`-loops slow(er than `apply()`)?**
-
-**Example: good and bad `for()`-loops**
-
+.blockquote.exercise[
+#### `r icon::fa("desktop")` Example: good and bad `for()` loops
 .pull-left[.smaller[
 ```{r}
-# proper initialization / iteration
+# Good: proper initialisation/iteration
 rw_good <- function(N) {
   set.seed(1)
   out <- vector("double", N)
@@ -532,33 +663,32 @@ rw_good <- function(N) {
 }
 ```
 ]]
-
 .pull-right[
 ![:image 48%](../img/good.png)
+]]
+
+???
+
+---
+## 3. Vectorise your code
+
+.blockquote.exercise[
+#### `r icon::fa("desktop")` Example: good and bad `for()` loops
+```{r, cache = T}
+bench::mark(rw_good(1e4), 
+            rw_bad(1e4))
+```
 ]
 
 ---
-### 3. Vectorise your code
+## 3. Vectorise your code
 
-**Are `for()`-loops slow(er than `apply()`)?**
+**Are `for()` loops slower than the `*apply()` functions?**
 
-**Example: good and bad `for()`-loops**
-
-```{r, cache = T}
-bench::mark(rw_good(10000), 
-            rw_bad(10000))
-```
-
----
-### 3. Vectorise your code
-
-**Are `for()`-loops slower than the `apply()` functions?**
-
-**Example: `for()` vs. `apply()`**
-
+.blockquote.exercise[
+#### `r icon::fa("desktop")` Example: `for()` vs. `apply()`
 ```{r}
-X <- matrix(rnorm(1000), 
-            ncol = 100)
+X <- matrix(rnorm(1e4), ncol = 1e4)
 
 colmax <- function(x) {
   out <- numeric(ncol(x))
@@ -568,33 +698,31 @@ colmax <- function(x) {
   return(out)
 }
 ```
+]
 
 ---
-### 3. Vectorise your code
+## 3. Vectorise your code
 
-**Are `for()`-loops slower than the `apply()` functions?**
+**Are `for()` loops slower than the `*apply()` functions?**
 
-**Example: `for()` vs. `apply()`**
-
+.blockquote.exercise[
+#### `r icon::fa("desktop")` Example: `for()` vs. `apply()` &mdash; ctd. 
 ```{r}
 bench::mark(
   colmax(X),
-  apply(X, 2, max),
-  check = F
+  apply(X, 2, max)
 )
 ```
+]
 
 ---
-### 3. Vectorise your code
-  
-- Avoid `ifelse()` &mdash; despite being a vectorised version of the standard control flow `'if(condition) if_yes else if_no'` it is slower
-    
----
-### 3. Vectorise your code &mdash; Exercises
+## 3. Vectorise your code &mdash; Exercises
 
-1. Compare the speed of `apply(X, 1, sum)` with the vectorised `rowSums(X)` for varying sizes of the square matrix `X` using `bench::mark()`. Consider the dimensions `1`, `1e1`, `1e2`, `1e3`, `0.5e4` and `1e5`. Visualize the results using a violin plot.
+1. Which approach is faster `if()` or `ifelse()`?
 
-2. 
+2. Compare the speed of `apply(X, 1, sum)` with the vectorised `rowSums(X)` for varying sizes of the square matrix `X` using `bench::mark()`. Consider the dimensions `1`, `1e1`, `1e2`, `1e3`, `0.5e4` and `1e5`. Visualize the results using a violin plot.
+
+3. 
 
     (a) How can you vectorise the computation of a weighted sum?
 
@@ -602,23 +730,27 @@ bench::mark(
 
     (c) How much faster are the approaches in (a) and (b) compared to the 'naive' approach `sum(x * w)`?
 
-3.  Find an approach to compute column maxima of a numeric matrix `X` using a `*apply()`-function which outperforms `apply(X, 2, max)`.
+4.  Find an approach to compute column maxima of a numeric matrix `X` using a `*apply()`-function which outperforms `apply(X, 2, max)`.
+    ```{r, include=F}
+    X <- matrix(rnorm(1000), 
+                ncol = 100)
+    
+    X_list <- split(X, col(X))
+    
+    sapply(X_list, max)
+    ```
 
-```{r, include=F}
-X <- matrix(rnorm(1000), 
-            ncol = 100)
+???
 
-X_list <- split(X, col(X))
-
-sapply(X_list, max)
-```
+1. `ifelse()` is vectorized, `if()` is not. However `ifelse()` evaluates both the condition and the `else` statement whereas `if()` is lazy. `if()` is only faster when the condition is of length one.
 
 ---
-### 3. Vectorise your code &mdash; Case Study
+## 3. Vectorise your code &mdash; Case Study
 
-**Case Study: Efficient Monte Carlo Integration**
+.smaller[
+**Case Study: Monte Carlo Integration**
 
-Suppose you are interested in computing $$A = \int_0^1 x^2 \mathrm{d}x$$ using Monte Carlo (MC) integration. Consider the following algorithm which operates on $1\times 1$ vectors in a `for()`-loop:
+Suppose you are interested in computing $$A = \int_0^1 x^2 \mathrm{d}x$$ using Monte Carlo (MC) integration. Consider the following algorithm which operates on $1\times 1$ vectors in a `for()` loop:
 
 1. *initialize `counts`*
 
@@ -630,29 +762,30 @@ Suppose you are interested in computing $$A = \int_0^1 x^2 \mathrm{d}x$$ using M
 
 3. *end* `for`
 
-4. *Estimate $A$ by `counts/N`*
+4. *Estimate $A$ by* `counts/N`
+]
 
 ---
-### 3. Vectorise your code &mdash; Case Study
+## 3. Vectorise your code &mdash; Case Study
 
 **Case Study: Monte Carlo Integration**
 
 1. 
     
-    (a) Implement the algorithm in a function `A_loop(N)` which returns the MC estimate of A with `N` the number of MC iterations.
+    (a) Implement the algorithm in a function `A_loop(N)`. A should use a loop to compute the MC estimate of $A$ with `N` MC iterations.
     
     (b) Estimate $A$ using `A_loop(N)` with 5e5 MC iterations.
 
 2. 
 
-    (a) Define a function `A_vec(N)` which implements the MC algorithm in a vectorised fashion.
+    (a) Define a function `A_vec(N)` which implements the MC algorithm using a vectorised approach.
     
-    (b) Compare `A_vec(N)` and `A_loop(N)` in a microbenchmark for `N=5e5` iterations.
+    (b) Compare `A_vec(N)` and `A_loop(N)` in a microbenchmark for `N = 5e5` iterations.
     
     (c) How does the difference in performance relate to `N`?
 
 ---
-### 4. Parallelisation &mdash; FAQs
+## 4. Parallelisation &mdash; FAQs
 
 **What is parallelisation?**
 
@@ -665,7 +798,7 @@ Suppose you are interested in computing $$A = \int_0^1 x^2 \mathrm{d}x$$ using M
 No. The 'stock' R version on CRAN is a single-threaded program, i.e., R does not benefit from modern multi-threaded CPUs, multiple cores let alone multiple CPUs.
 
 ---
-### 4. Parallelisation &mdash; FAQs
+## 4. Parallelisation &mdash; FAQs
 
 **Is it complicated to parallelise code?**
 
@@ -681,10 +814,10 @@ No. The 'stock' R version on CRAN is a single-threaded program, i.e., R does not
 
 **Is parallelisation always faster than serial computation?**
 
-No. The costs of managing the computations (the *overhead*) may offset or even surpass time savings gained by parallel computation. This occurs, e.g., when a small number of simple tasks is solved in parallel. We will discuss an example on that.
+No. The cost of managing the computations (the *overhead*) may offset or even surpass time savings gained by parallel computation. This occurs, e.g., when a small number of simple tasks is solved in parallel. We will discuss an example.
 
 ---
-### 4. Parallelisation &mdash; the `parallel` package
+## 4. Parallelisation &mdash; the `parallel` package
 
 The `parallel` package (comes with base R) is a good starting point for parallel computing.
 
@@ -704,25 +837,24 @@ detectCores(logical = F)
 Note that the behavior of `detectCores()` is platform specific and not always reliable, see `?detectCores()`.
 
 ---
-### 4. Parallelisation - `parallel::mclapply()`
+## 4. Parallelisation - `parallel::mclapply()`
 
-**Example: send them cores to sleep**
-
+.smaller[
+.blockquote.exercise[
+#### `r icon::fa("desktop")` Example: send them cores to sleep
 ```{r, eval=F}
-r <- mclapply(1:8, 
-              function(i) {
-                Sys.sleep(20)  # do nothing for 20 seconds
-              }, 
-              mc.cores = 8)    # split job across 8 cores
+r <- mclapply(1:8, function(i) Sys.sleep(20), mc.cores = 8)
 ```
 
-![:image 65%](../img/cpumonitor.png)
+![:image 50%](../img/cpumonitor.png)
+]]
 
 ---
-### 4. Parallelisation - `parallel::mclapply()`
+## 4. Parallelisation - `parallel::mclapply()`
 
-**Example: send them cores to sleep**
-
+.smaller[
+.blockquote.exercise[
+#### `r icon::fa("desktop")` Example: send them cores to sleep &mdash; ctd.
 What happened?
 
 - The R session (the main Process) opened 8 sub-processes, so-called *forks* (labeled `rsession` in the activity monitor)
@@ -732,38 +864,53 @@ What happened?
 - `mclapply()` passes a call of `function(i) Sys.sleep(20)` to each fork. Computation (or rather doing nothing for 20 seconds) now proceeds in parallel.
 
 - After 20 seconds the results are gathered in `r` and all forks are killed. Note that `r` is just a list with `NULL` entries.
+]]
               
 ---
-### 4. Parallelisation
+## 4. Parallelisation
 
 **"Embarrassingly parallel operations"**
 
-![:image 100%](../img/parallelization.png)
-
-(source: [R-Bloggers](http://www.parallelr.com/r-with-parallel-computing/))
+![:image 80%](../img/parallelization.png)
+![:source_url](https://bit.ly/2OX6e3e)
 
 ---
-### 4. Parallelisation
+## 4. Parallelisation
 
-**Example: parallelised bootstrapping**
+.blockquote.exercise[
+#### `r icon::fa("desktop")` Example: parallelised bootstrapping
 
-Remember the function `cor_df()` from the case study in *2. Do as Little as Possible*. A faster approach, `cor_df2`, is given  below.
+Remember the function `cor_df()` from the case study in *2. Do as Little as Possible*. A faster approach, `cor_df2()`, is given  below.
 
 ```{r, cache=T}
 n <- 1e4
 df <- data.frame(a = rnorm(n), b = rnorm(n))
 
-cor_df2 <- function(x) {
-  i <- sample(seq(n), n, replace = T)
+cor_df2 <- function(x, n) {
+  i <- sample(1:n, n, replace = T)
   m <- cbind(df$a[i], df$b[i])
+  cor(m)[2, 1]
+}
+```
+]
+
+???
+
+`cor_df2()` would be even faster if `df` was a `matrix` object.
+
+```
+function(df, n) {
+  i <- sample(1:n, n, replace = T)
+  m <- df[i,]
   cor(m)[2, 1]
 }
 ```
 
 ---
-### 4. Parallelisation
+## 4. Parallelisation
 
-**Example: parallelised bootstrapping**
+.blockquote.exercise[
+#### `r icon::fa("desktop")` Example: parallelised bootstrapping &mdash; ctd.
 
 Calling `cor_df2()` a large number of times is time consuming. 
 
@@ -774,18 +921,19 @@ s_ser <- system.time(
 )
 s_ser
 ```
-
 ```{r, echo=F}
 cat('    
   user  system  elapsed 
 64.202  12.516   77.047 
 ')
 ```
+]
 
 ---
-### 4. Parallelisation
+## 4. Parallelisation
 
-**Example: parallelised bootstrapping**
+.blockquote.exercise[
+#### `r icon::fa("desktop")` Example: parallelised bootstrapping &mdash; ctd.
 
 Luckily, it is straightforward to bootstrap in parallel using `mclapply()`.
 
@@ -796,7 +944,6 @@ s_par <- system.time(
 )
 s_par
 ```
-
 ```{r, echo=F}
 cat('    
   user  system  elapsed 
@@ -805,11 +952,14 @@ cat('
 ```
 
 Note that using 8 cores is (only) ~5 times faster than the serial approach due to overhead. 
+]
 
 ---
-### 4. Parallelisation
+## 4. Parallelisation
 
-**Example: too much overhead**
+.smaller[
+.blockquote.exercise[
+#### `r icon::fa("desktop")` Example: too much overhead
 
 Parallelisation is inefficient if the overhead exceeds the time savings. 
 
@@ -836,50 +986,54 @@ cat('
 ```
 
 This is because the cost of the individual computations is low, and additional work is needed to send the computation to the different cores and to collect the results.
+]]
 
 ---
-### 4. The `MonteCarlo` Package
+## 4. The `MonteCarlo` Package
 
-- Running Monte Carlo simulations is an everyday task in econometrics. They are routinely used for approximating quantities which cannot be derived analytically, e.g. finite sample properties of a test statistic.
+- Running MC simulations is an everyday task in econometrics. They are routinely used for approximating quantities which cannot be derived analytically, e.g., finite sample properties of a test statistic.
 
-- Monte Carlo simulation is also an essential tool in statistical programming because we often write functions that expect random input and/or produce random output. 
+- MC simulation is also an essential tool in statistical programming because we often write functions that expect random input and/or produce random output 
 
-    Testing whether the impementation is correct amounts to check if the statistical properties of the output are as expected, using a large number of samples.
+    Testing whether the impementation is correct amounts to checking if the statistical properties of the output are as expected, using a large number of samples
 
-- Often, the effort to write the simulation exceeds the effort to implement the function by a multiple. 
+- Often, the effort to write the simulation exceeds the effort to implement the function by a multiple
 
 ---
-### 4. The `MonteCarlo` Package
+## 4. The `MonteCarlo` Package
 
-The `MonteCarlo` package by Christian Leschinksi streamlines the process of writing Monte Carlo simulations. Useful features are:
+The `MonteCarlo` package streamlines the process of writing MC simulations. Useful features are:
 
 - Simulation over a user-defined parameter grid
 
 - Automatic parallelisation using the `snow` package
 
-- Compilation of results in arrays. Generation of customisable LaTeX tables is possible.
+- Compilation of the results in an array. Generation of customisable LaTeX tables is possible.
 
 The package is available on `CRAN`. 
 
 Development version @ https://github.com/FunWithR/MonteCarlo
 
 ---
-### 4. The `MonteCarlo` Package
+## 4. The `MonteCarlo` Package
 
-**Example: Unit Root test**
-
-Consider the DGP $$y_t = \rho y_{t-1} + \epsilon_t, \ \ \epsilon_t\sim N(0,1)$$ with $y_0 = 0$ and $\rho = 1.$ It is a well known result that the limit of the $t$-ratio $$t = \frac{\hat\rho-1}{s.e.(\hat\rho)}$$ can be written as a functional of Wiener processes,
+.smaller[
+.blockquote.exercise[
+#### `r icon::fa("desktop")` Example: Unit Root test
+Consider the DGP $$y_t = \rho y_{t-1} + \epsilon_t, \ \ \epsilon_t\sim N(0,1)$$ with $y_0 = 0$ and $\rho = 1.$ It is a well known result that the limit of the $t$-ratio $$t = \frac{\hat\rho-1}{SE(\hat\rho)}$$ can be written as a functional of [Wiener processes](https://en.wikipedia.org/wiki/Wiener_process),
 
 $$ t \Rightarrow \frac{[W(1)]^2 -1}{2\sqrt{\int_0^1[W(r)]^2 dr}}.$$
 
 The asymptotic distribution of $t$ is non-normal and its quantiles cannot be derived analytically.
+]]
 
 ---
-### 4. The `MonteCarlo` Package
+## 4. The `MonteCarlo` Package
 
-**Example: Unit Root test &mdash; ctd.**
-
-We now use the `MonteCarlo` package to simulate the limit distribution of $t$.
+.smaller[
+.blockquote.exercise[
+#### `r icon::fa("desktop")` Example: Unit Root test &mdash; ctd.
+We use the `MonteCarlo` package to simulate the limit distribution of $t$.
 
 ```{r, message=F}
 library(MonteCarlo)
@@ -903,12 +1057,14 @@ sim <- function(rho, Time) {
 
 }
 ```
-
+]]
 
 ---
-### 4. The `MonteCarlo` Package
+## 4. The `MonteCarlo` Package
 
-**Example: Unit Root test &mdash; ctd.**
+.smaller[
+.blockquote.exercise[
+#### `r icon::fa("desktop")` Example: Unit Root test &mdash; ctd.
 
 ```{r, cache=T, message=F, results='hide'}
 # setup list of parameters
@@ -923,55 +1079,53 @@ r <- MonteCarlo(
   ncpus = parallel::detectCores()
 )
 ```
-
 We transform the simulated test statistics to a vector.
-
 ```{r}
 t_sim <- apply(r$result$t, 3, c)
 ```
+]]
 
 ---
-### 4. The `MonteCarlo` Package
+## 4. The `MonteCarlo` Package
 
-**Example: Unit Root test &mdash; ctd.**
+.smaller[
+.blockquote.exercise[
+#### `r icon::fa("desktop")` Example: Unit Root test &mdash; ctd.
 
 Estimates of the finite sample quantiles are close to the quantiles of the corresponding asymptotic Dickey-Fuller distribution
 
 ```{r}
 quantile(t_sim, c(0.05, 0.1, 0.5, 0.9, 0.95))
-
 fUnitRoots::qunitroot(c(0.05, 0.1, 0.5, 0.9, 0.95), trend = "nc")
 ```
 
 We compare with the Gaussian distribution.
 
 ```{r, eval=F}
-# plot kernel density estimate of resampled t-statistics
 plot(density(t_sim), main = "Dickey-Fuller Distribution")
-
-# add gaussian density
 curve(dnorm(x), from = -4, to = 4, add = T, lty = 2, col = "red")
 ```
+]]
 
 ---
-### 4. The `MonteCarlo` Package
+## 4. The `MonteCarlo` Package
 
-**Example: Unit Root test &mdash; ctd.**
-
-```{r, fig.retina=T, echo=F, fig.align='center', fig.height=6, fig.}
-# plot kernel density estimate of resampled t-statistics
+.smaller[
+.blockquote.exercise[
+#### `r icon::fa("desktop")` Example: Unit Root test &mdash; ctd.
+```{r, fig.retina=T, echo=F, fig.align='center', fig.height=6.5}
 plot(density(t_sim), main = "Dickey-Fuller Distribution")
-
-# add gaussian density
 curve(dnorm(x), from = -4, to = 4, add = T, lty = 2, col = "red")
 ```
+]]
 
 ---
-### 4. The `MonteCarlo` Package
-
+## 4. The `MonteCarlo` Package
+.smaller[
 It is a great benefit to work with the package if you want to run the simulation for several parameter combinations. 
 
-**Example: Power of DF-Test**
+.blockquote.exercise[
+#### `r icon::fa("desktop")` Example: Power of DF-Test
 
 We write a simple wrapper for `sim()` which returns a logical value for rejection at 5% using the asymptotic critical value.
 
@@ -986,11 +1140,14 @@ sim_pow <- function(rho, Time) {
   )
 }
 ```
+]]
 
 ---
-### 4. The `MonteCarlo` Package
+## 4. The `MonteCarlo` Package
 
-**Example: Power of DF-Test**
+.smaller[
+.blockquote.exercise[
+#### `r icon::fa("desktop")` Example: Power of DF-Test &mdash; ctd.
 
 We consider all combination for a sequence of alternatives and three different sample sizes.
 
@@ -1006,13 +1163,15 @@ r <- MonteCarlo(
   param_list = params, 
   ncpus = parallel::detectCores())
 ```
+]]
 
 ---
-### 4. The `MonteCarlo` Package
+## 4. The `MonteCarlo` Package
 
-**Example: Power of DF-Test**
-
-Results in a `MonteCarlo` object are easily transformed and visualized using `tidyverse` functions.
+.smaller[
+.blockquote.exercise[
+#### `r icon::fa("desktop")` Example: Power of DF-Test &mdash; ctd.
+Content of a `MonteCarlo` object is easily transformed and visualised using `tidyverse` functions.
 
 ```{r, eval = F}
 library(dplyr)
@@ -1024,15 +1183,15 @@ tbl <- r %>% MakeFrame() %>% tbl_df() %>%
 ggplot(tbl) + 
   geom_line(aes(x = rho, y = power, col = factor(Time)))
 ```
+]]
 
 ---
-### 4. The `MonteCarlo` Package
+## 4. The `MonteCarlo` Package
 
-**Example: Power of DF-Test**
-
-Conversion of the results into a LaTeX table is particularly useful.
-
-```{r, echo=F, fig.height=6, fig.align='center'}
+.smaller[
+.blockquote.exercise[
+#### `r icon::fa("desktop")` Example: Power of DF-Test &mdash; ctd.
+```{r, echo=F, out.width='60%', fig.width=10, dpi=200, fig.align='center'}
 library(dplyr)
 library(ggplot2)
 
@@ -1042,102 +1201,102 @@ tbl <- r %>% MakeFrame() %>% tbl_df() %>%
 ggplot(tbl) + 
   geom_line(aes(x = rho, y = power, col = factor(Time)))
 ```
+]]
 
 ---
-### 4. The `MonteCarlo` Package
+## 4. The `MonteCarlo` Package
 
-**Example: Power of DF-Test**
-
+.smaller[
+.blockquote.exercise[
+#### `r icon::fa("desktop")` Example: Power of DF-Test &mdash; ctd.
+Conversion of the results into a $\LaTeX$ table is particularly useful.
 ```{r, eval=F}
 # generate LaTeX table from simulation results
 MakeTable(r, rows = "Time", "rho")
 ```
+![:image 80%](../img/latex_MakeTable.png)
+]]
 
-![:image 100%](../img/latex_MakeTable.png)
+<!-- --- -->
+<!-- ## Asynchronous Programming -->
 
----
-### 4. Parallelisation &mdash; Case Study
+<!-- ![:image 60%](../img/futures.jpg) -->
 
----
-### Asynchronous Programming
+<!-- --- -->
+<!-- ## Futures -->
 
-![:image 85%](../img/futures.jpg)
+<!-- **What are futures?** -->
 
----
-### Futures
+<!-- - A *future* or *promise* is a construct which describes an object that acts as a proxy for some value which will be available at some point in the future. -->
 
-**What are futures?**
+<!-- - A future allows execution of code until the point where its value is actually needed.  -->
 
-- A *future* or *promise* is a construct which describes an object that acts as a proxy for some value which will be available at some point in the future.
+<!-- **Why are they useful?** -->
 
-- A future allows execution of code until the point where its value is actually needed. 
+<!-- - Futures can by evaluated asynchronously in a separate process (possibly on a different core/CPU), i.e. they do not block the 'main' process which is available for further processing so that other computations can run in the meantime -->
 
-**Why are they useful?**
+<!-- - Futures thus allow faster and more efficient code. They are a simple yet powerful construct for parallel computing and distributed processing. -->
 
-- Futures can by evaluated asynchronously in a separate process (possibly on a different core/CPU), i.e. they do not block the 'main' process which is available for further processing so that other computations can run in the meantime
+<!-- **Is it difficult to work with futures?** -->
 
-- Futures thus allow faster and more efficient code. They are a simple yet powerful construct for parallel computing and distributed processing.
+<!-- It depends. We will restrict ourselves to functions which have been *futurised*, i.e. (re)implemented using functions from the `future` package. -->
 
-**Is it difficult to work with futures?**
+<!-- --- -->
+<!-- ## The `future.apply` Package -->
 
-It depends. We will restrict ourselves to functions which have been *futurised*, i.e. (re)implemented using functions from the `future` package.
+<!-- ```{r} -->
+<!-- library(future.apply) -->
+<!-- ``` -->
 
----
-### The `future.apply` Package
+<!-- The `future.apply` package provides a *futurised* version of the base R `*apply()` function family. -->
 
-```{r}
-library(future.apply)
-```
+<!-- <br> -->
 
-The `future.apply` package provides a *futurised* version of the base R `*apply()` function family.
+<!-- Function             | Description -->
+<!-- -------------------- | ------------- -->
+<!-- `future_apply()`     | apply function over array margin -->
+<!-- `future_lapply()`    | apply function over list or vector -->
+<!-- `future_sapply()`    | apply function over list or vector -->
+<!-- `future_replicate()` | apply function over list or vector -->
+<!-- `future_mapply()`    | apply function to multiple list or vector arguments -->
+<!-- `future_Map()`       | apply function to multiple list or vector arguments -->
 
-<br>
+<!-- <br> -->
 
-Function             | Description
--------------------- | -------------
-`future_apply()`     | apply function over array margin
-`future_lapply()`    | apply function over list or vector
-`future_sapply()`    | apply function over list or vector
-`future_replicate()` | apply function over list or vector
-`future_mapply()`    | apply function to multiple list or vector arguments
-`future_Map()`       | apply function to multiple list or vector arguments
+<!-- These functions operate sequentially by default but parallel computation is easily set up...  -->
 
-<br>
+<!-- --- -->
+<!-- ## The `future.apply` Package -->
 
-These functions operate sequentially by default but parallel computation is easily set up... 
+<!-- How to run in parallel: set `plan(multiprocess)` -->
 
----
-### The `future.apply` Package
+<!-- <br> -->
 
-How to run in parallel: set `plan(multiprocess)`
+<!-- ![:image 85%](../img/future_apply.png) -->
 
-<br>
+<!-- --- -->
+<!-- ## The `future.apply()` Package -->
 
-![:image 85%](../img/future_apply.png)
+<!-- **Example: many normal sample means** -->
 
----
-### The `future.apply()` Package
+<!-- ```{r, cache=T} -->
+<!-- tictoc::tic() -->
+<!-- invisible( -->
+<!--   sapply(rep(1e5, 10000), function(x) mean(rnorm(x))) -->
+<!-- ) -->
+<!-- tictoc::toc() -->
+<!-- ``` -->
 
-**Example: many normal sample means**
-
-```{r, cache=T}
-tictoc::tic()
-invisible(
-  sapply(rep(1e5, 10000), function(x) mean(rnorm(x)))
-)
-tictoc::toc()
-```
-
-```{r, cache=T}
-tictoc::tic()
-invisible(
-  future_sapply(rep(1e5, 10000), function(x) mean(rnorm(x)))
-)
-tictoc::toc()
-```
+<!-- ```{r, cache=T} -->
+<!-- tictoc::tic() -->
+<!-- invisible( -->
+<!--   future_sapply(rep(1e5, 10000), function(x) mean(rnorm(x))) -->
+<!-- ) -->
+<!-- tictoc::toc() -->
+<!-- ``` -->
 
 ---
-### References
+## References
 
 Gillespie, C. and Lovelace (2016), *R. Efficient R Programming*. O'Reilly Media.
 

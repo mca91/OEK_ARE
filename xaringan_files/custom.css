@@ -25,10 +25,29 @@
 .exercise {
   overflow:hidden;
   margin-top:35px;
+  color:black;
+}
+
+.exercise > h4 {
+  color:#e64626;
 }
 
 .exercise .remark-code-line, .exercise p {
     color:black;
+}
+
+
+/* for task boxes */
+.content-box-white {
+  background-color: #FFFFFF;
+  border-width: 3px;
+  border-color: #e64626;
+  border-style: solid;
+  box-shadow: 0 0 6px rgba(0,0,0,0.5);
+}
+
+.content-box-white strong {
+ color:#e64626;
 }
 
 /* */
