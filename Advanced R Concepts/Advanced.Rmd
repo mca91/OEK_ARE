@@ -82,7 +82,7 @@ class: segue-red
 #### `r icon::fa("desktop")` Example: operator *precedence*
 
 .pull-left[
-```{r, error=TRUE}
+```{r}
 a <- b <- 1
 a == b
 a = b = 1
@@ -93,7 +93,7 @@ a == b
 ```{r, error=TRUE}
 a = b <- 1
 a == b
-x <- b = 1
+a <- b = 1
 ```
 ]
 
@@ -104,7 +104,11 @@ x <- b = 1
 
 - This really is just a convention and nothing precludes using `=` instead of `<-` for assignment
 
-- Fact: `<-` comes from a time where there actually was a `<-` key on keyboards.
+- When mixed, `<-` has precedence over `=`
+
+- **Fact**: `<-` comes from a time where there actually was a `<-` key on keyboards. `<-` and `->` essentially do the same thing.
+
+- R interprets `a <- b = 1` as `'<-<-'(a, b = 1, value = 1)`
 
 ---
 ## Assignment Operators (?)

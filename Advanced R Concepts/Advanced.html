@@ -4,7 +4,7 @@
     <title>Advanced R for Econometricians</title>
     <meta charset="utf-8" />
     <meta name="author" content="Martin C. Arnold" />
-    <meta name="date" content="2019-12-08" />
+    <meta name="date" content="2019-12-09" />
     <link href="Advanced_files/remark-css/default.css" rel="stylesheet" />
     <link href="Advanced_files/font-awesome/css/fontawesome-all.min.css" rel="stylesheet" />
     <script type="text/x-mathjax-config">
@@ -120,11 +120,11 @@ a == b
 ```
 
 ```r
-x &lt;- b = 1
+a &lt;- b = 1
 ```
 
 ```
-## Error in x &lt;- b = 1: object 'x' not found
+## Error in a &lt;- b = 1: could not find function "&lt;-&lt;-"
 ```
 ]
 
@@ -135,7 +135,11 @@ x &lt;- b = 1
 
 - This really is just a convention and nothing precludes using `=` instead of `&lt;-` for assignment
 
-- Fact: `&lt;-` comes from a time where there actually was a `&lt;-` key on keyboards.
+- When mixed, `&lt;-` has precedence over `=`
+
+- **Fact**: `&lt;-` comes from a time where there actually was a `&lt;-` key on keyboards. `&lt;-` and `-&gt;` essentially do the same thing.
+
+- R interprets `a &lt;- b = 1` as `'&lt;-&lt;-'(a, b = 1, value = 1)`
 
 ---
 ## Assignment Operators (?)
@@ -253,11 +257,11 @@ ref(x, character = TRUE)
 ```
 
 ```
-## █ [1:0x7fea46a37ba8] &lt;chr&gt; 
-## ├─[2:0x7fea43a07370] &lt;string: "a"&gt; 
-## ├─[2:0x7fea43a07370] 
-## ├─[3:0x7fea45fcc7f0] &lt;string: "abc"&gt; 
-## └─[4:0x7fea4511e5e0] &lt;string: "d"&gt;
+## █ [1:0x7fb432633808] &lt;chr&gt; 
+## ├─[2:0x7fb43087f570] &lt;string: "a"&gt; 
+## ├─[2:0x7fb43087f570] 
+## ├─[3:0x7fb433d9cd80] &lt;string: "abc"&gt; 
+## └─[4:0x7fb430a73cd0] &lt;string: "d"&gt;
 ```
 ]]]
 
@@ -300,7 +304,7 @@ obj_addr(x)
 ```
 
 ```
-## [1] "0x7fea48ff2738"
+## [1] "0x7fb4310084f8"
 ```
 
 ```r
@@ -308,7 +312,7 @@ obj_addr(y)
 ```
 
 ```
-## [1] "0x7fea489f7f28"
+## [1] "0x7fb432433e68"
 ```
 ]
 ]]]
@@ -484,15 +488,15 @@ ref(l1, l2)
 ```
 
 ```
-## █ [1:0x7fea4ba39648] &lt;list&gt; 
-## ├─[2:0x7fea495bfd48] &lt;dbl&gt; 
-## ├─[3:0x7fea495bfcd8] &lt;dbl&gt; 
-## └─[4:0x7fea495bfc68] &lt;dbl&gt; 
+## █ [1:0x7fb437268fa8] &lt;list&gt; 
+## ├─[2:0x7fb434bd2740] &lt;dbl&gt; 
+## ├─[3:0x7fb434bd2708] &lt;dbl&gt; 
+## └─[4:0x7fb434bd26d0] &lt;dbl&gt; 
 ##  
-## █ [5:0x7fea4bad9e58] &lt;list&gt; 
-## ├─[2:0x7fea495bfd48] 
-## ├─[3:0x7fea495bfcd8] 
-## └─[6:0x7fea495bfb50] &lt;dbl&gt;
+## █ [5:0x7fb434d1ac48] &lt;list&gt; 
+## ├─[2:0x7fb434bd2740] 
+## ├─[3:0x7fb434bd2708] 
+## └─[6:0x7fb434bd25f0] &lt;dbl&gt;
 ```
 
 ]
@@ -811,15 +815,15 @@ lobstr::ref(x)
 .pull-right[
 
 ```
-## █ [1:0x7fea46bc4548] &lt;list&gt; 
-## └─[2:0x7fea4aca00a0] &lt;int&gt;
+## █ [1:0x7fb43709fc40] &lt;list&gt; 
+## └─[2:0x7fb43705c4d8] &lt;int&gt;
 ```
 
 ```
-## █ [1:0x7fea4ba0c2c8] &lt;list&gt; 
-## ├─[2:0x7fea4aca00a0] &lt;int&gt; 
-## └─█ [3:0x7fea46bc4548] &lt;list&gt; 
-##   └─[2:0x7fea4aca00a0]
+## █ [1:0x7fb43727ea08] &lt;list&gt; 
+## ├─[2:0x7fb43705c4d8] &lt;int&gt; 
+## └─█ [3:0x7fb43709fc40] &lt;list&gt; 
+##   └─[2:0x7fb43705c4d8]
 ```
 ]]]
 
@@ -1037,9 +1041,9 @@ lobstr::ref(funs)
 ```
 
 ```
-## █ [1:0x7fea48f67248] &lt;list&gt; 
-## ├─[2:0x7fea49809d20] &lt;fn&gt; 
-## └─[3:0x7fea49809c78] &lt;fn&gt;
+## █ [1:0x7fb431ce4d08] &lt;list&gt; 
+## ├─[2:0x7fb431215308] &lt;fn&gt; 
+## └─[3:0x7fb4312153b0] &lt;fn&gt;
 ```
 
 ```r
