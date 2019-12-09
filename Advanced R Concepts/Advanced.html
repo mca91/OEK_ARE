@@ -88,8 +88,7 @@ class: segue-red
 .blockquote.exercise[
 #### <i class="fas  fa-desktop "></i> Example: operator *precedence*
 
-.medium[
-
+.pull-left[
 
 ```r
 a &lt;- b &lt;- 1
@@ -108,6 +107,8 @@ a == b
 ```
 ## [1] TRUE
 ```
+]
+.pull-right[
 
 ```r
 a = b &lt;- 1
@@ -125,8 +126,10 @@ x &lt;- b = 1
 ```
 ## Error in x &lt;- b = 1: object 'x' not found
 ```
+]
 
-]]]
+
+]]
 
 ???
 
@@ -188,6 +191,8 @@ var_GE
 
 ???
 
+- Note that functions generate their own environments upon execution. The *execution environment* of `a()` is the parent environment to `b()`.
+
 - If `&lt;&lt;-` does not find a corresponding binding in the enclosing environment, it looks in the parent environment and works it's way up towards to global environment (GE)
 
 - If the binding does not exist in the GE, it will be created there
@@ -244,22 +249,15 @@ A `character` vector is a binding to a vector of strings.
 
 ```r
 x &lt;- c("a", "a", "abc", "d")
-obj_size(x)
+ref(x, character = TRUE)
 ```
 
 ```
-## 248 B
-```
-
-```r
-obj_sizes("a", "a", "abc", "d")
-```
-
-```
-## * 112 B
-## *  56 B
-## * 112 B
-## * 112 B
+## █ [1:0x7fea46a37ba8] &lt;chr&gt; 
+## ├─[2:0x7fea43a07370] &lt;string: "a"&gt; 
+## ├─[2:0x7fea43a07370] 
+## ├─[3:0x7fea45fcc7f0] &lt;string: "abc"&gt; 
+## └─[4:0x7fea4511e5e0] &lt;string: "d"&gt;
 ```
 ]]]
 
@@ -302,7 +300,7 @@ obj_addr(x)
 ```
 
 ```
-## [1] "0x7fd6baeb0858"
+## [1] "0x7fea48ff2738"
 ```
 
 ```r
@@ -310,7 +308,7 @@ obj_addr(y)
 ```
 
 ```
-## [1] "0x7fd6bae9eff8"
+## [1] "0x7fea489f7f28"
 ```
 ]
 ]]]
@@ -329,7 +327,7 @@ obj_addr(y)
 We may use `tracemem()` to obtain info when a copy of an object is generated.
 
 .blockquote.exercise[
-#### <i class="fas  fa-desktop "></i> Example: `tracemem()`
+#### <i class="fas  fa-desktop "></i> Example: keeping track of copies using `tracemem()`
 
 `tracemem()` returns the copied object, the new address (and the **call stack**, if functions are involved).
 
@@ -367,7 +365,7 @@ Simply put, a call stack describes the order of nested function calls.
 The above rules apply to function calls as well.
 
 .blockquote.exercise[
-#### <i class="fas  fa-desktop "></i> Example: `tracemem()`
+#### <i class="fas  fa-desktop "></i> Example: keeping track of copies using `tracemem()` &amp;mdash; ctd.
 
 .pull-left[
   &lt;br&gt;
@@ -380,12 +378,14 @@ The above rules apply to function calls as well.
 ```r
 f &lt;- function(a) a
 x &lt;- c(1, 2, 3)
+```
+```r
 tracemem(x)
 ```
+```
+## [1] "&lt;0x74b050b21318&gt;"
+```
 
-```
-## [1] "&lt;0x7fd6c013edc8&gt;"
-```
 
 ```r
 z &lt;- f(x) # no copy here!
@@ -434,6 +434,9 @@ untracemem(x)
 
 - **`z&lt;-f(x)`**: as above. `z` is a binding the same location as `a` (no additional copy made).
 
+- **Q**: What would happen if we'd super assign to `x` inside of `f()`. 
+    **A**: no additional reference to `x`, so calling `f()` would not trigger a copy.
+
 ---
 ## Copy-on-modify &amp;mdash; Lists
 
@@ -465,7 +468,7 @@ l2 &lt;- l1               # right
 l2[[3]] &lt;- 4           # bottom
 ```
 
-Note that copy-on-modify due to `l2[[3]] &lt;- 4 ` results in a **shallow** copy: the bindings are copied, not the values. =&gt; performance considerations!
+Note that copy-on-modify due to `l2[[3]] &lt;- 4 ` results in a **shallow** copy: the bindings are copied, not the values. &amp;rArr; performance considerations!
 
 ---
 ## Copy-on-modify &amp;mdash; Lists
@@ -481,15 +484,15 @@ ref(l1, l2)
 ```
 
 ```
-## █ [1:0x7fd6c018cbe8] &lt;list&gt; 
-## ├─[2:0x7fd6c0949018] &lt;dbl&gt; 
-## ├─[3:0x7fd6c0948fe0] &lt;dbl&gt; 
-## └─[4:0x7fd6c0948fa8] &lt;dbl&gt; 
+## █ [1:0x7fea4ba39648] &lt;list&gt; 
+## ├─[2:0x7fea495bfd48] &lt;dbl&gt; 
+## ├─[3:0x7fea495bfcd8] &lt;dbl&gt; 
+## └─[4:0x7fea495bfc68] &lt;dbl&gt; 
 ##  
-## █ [5:0x7fd6c01fc8c8] &lt;list&gt; 
-## ├─[2:0x7fd6c0949018] 
-## ├─[3:0x7fd6c0948fe0] 
-## └─[6:0x7fd6c0948ec8] &lt;dbl&gt;
+## █ [5:0x7fea4bad9e58] &lt;list&gt; 
+## ├─[2:0x7fea495bfd48] 
+## ├─[3:0x7fea495bfcd8] 
+## └─[6:0x7fea495bfb50] &lt;dbl&gt;
 ```
 
 ]
@@ -522,7 +525,15 @@ d1 &lt;- data.frame(
 
 ???
 
-**A**: modifying a row implicates modifying *all* columns.
+**A**: modifying a data frame row implicates modifying *all* columns (this cannot be tracked by `tracemem()` but can be seen using `lobstr::ref()`)
+
+```r
+df[1,] &lt;- c(42, 42)
+ref(d1)
+# vs.
+df$x &lt;- c(7, 7, 7)
+ref(d1)
+```
 
 ---
 ## Exercises
@@ -602,6 +613,18 @@ obj_addr(v)
 
 ]]
 
+???
+
+- **Q**: Running this code in RStudio will trigger a copy. Why?
+
+    **A**: An entry in the Environment tab is a binding, i.e., there are more than one (two) references to `v` which triggers a copy!
+
+     You need to run the code in the RGUI for reproducing the results.
+    
+    (using the RGUI for this purpose is generally a good practice!)    
+
+- Note that `tracemem()` does not play well with `knitr`
+    
 ---
 ## Case Study: Copy-On-Modify Inferno
 
@@ -631,7 +654,9 @@ for (i in seq_along(medians)) {
 
 ???
 
-We will come back to this issue in the Chapter *Improving Performance* and benchmark against alternatives that require less copies.
+- Note that `vapply()`'s `FUN.VALUE` requires a template for the return value (which is numeric `\(1\times 1\)` here) 
+
+- We will come back to consequences of this behavior in the Chapter *Improving Performance* and benchmark against alternatives that require less copies.
 
 ---
 ## Case Study: Copy-On-Modify Inferno
@@ -656,6 +681,16 @@ tracemem[0x7fe1acdbda28 -&gt; 0x7fe1acdbe198]: [[&lt;-.data.frame [[&lt;-
 tracemem[0x7fe1acdbe198 -&gt; 0x7fe1acdbe6d8]: [[&lt;-.data.frame [[&lt;- 
 ```
 
+???
+
+Using the `$` operator makes no difference: `$&lt;-` also has a `$&lt;-.data.frame` method. The output of `tracemem()` then looks similar to this:
+
+```
+tracemem[0x7fe515db8d88 -&gt; 0x7fe513bcd788]: 
+tracemem[0x7fe513bcd788 -&gt; 0x7fe513b79a88]: $&lt;-.data.frame $&lt;- 
+tracemem[0x7fe513b79a88 -&gt; 0x7fe513b79c88]: $&lt;-.data.frame $&lt;-
+```
+
 ---
 ## Case Study: Copy-On-Modify Inferno
 
@@ -667,7 +702,7 @@ What's happening here and why?
       - inside of `[[` 
       - inside of `[[&lt;-.data.frame()` 
     
-    &amp;rarr; modifying `x` will result in a copy
+    &amp;rarr; modification will result in a copy
 
 - The following runs inside `[[`:
     ```r
@@ -742,7 +777,7 @@ tracemem[0x7fba72971928 -&gt; 0x7fba72a2e178]:
 
 ???
 
-- A single copy is made since the loop modifies (existing) list entries
+- A single copy is made from internal C code the first time we use `[[&lt;-`
 
 - This a good example where tweaking the code reduces the amount of copies made
 
@@ -770,34 +805,31 @@ lobstr::ref(x)
 # Step 2
 x[[2]] &lt;- x
 lobstr::ref(x)
-
-# Step 3
-x[[1]] &lt;- 11:20
-lobstr::ref(x)
 ```
 ]
 
 .pull-right[
 
 ```
-## █ [1:0x7fd6bf819288] &lt;list&gt; 
-## └─[2:0x7fd6c0c2fd78] &lt;int&gt;
+## █ [1:0x7fea46bc4548] &lt;list&gt; 
+## └─[2:0x7fea4aca00a0] &lt;int&gt;
 ```
 
 ```
-## █ [1:0x7fd6bb62b548] &lt;list&gt; 
-## ├─[2:0x7fd6c0c2fd78] &lt;int&gt; 
-## └─█ [3:0x7fd6bf819288] &lt;list&gt; 
-##   └─[2:0x7fd6c0c2fd78]
-```
-
-```
-## █ [1:0x7fd6c0905bc8] &lt;list&gt; 
-## ├─[2:0x7fd6c0f2d160] &lt;int&gt; 
-## └─█ [3:0x7fd6bf819288] &lt;list&gt; 
-##   └─[4:0x7fd6c0c2fd78] &lt;int&gt;
+## █ [1:0x7fea4ba0c2c8] &lt;list&gt; 
+## ├─[2:0x7fea4aca00a0] &lt;int&gt; 
+## └─█ [3:0x7fea46bc4548] &lt;list&gt; 
+##   └─[2:0x7fea4aca00a0]
 ```
 ]]]
+
+???
+
+- `x` is assigned to itself (an additional reference) so a copy on modification is made
+
+- The the old memory location of `x` has no binding anymore but is referenced within `x`
+
+- Note that lists are always copied on modification. The copy is, however, shallow.
 
 ---
 ## Garbage Collection
@@ -869,8 +901,8 @@ gc()          # just for the side effect
 
 ```
 ##           used (Mb) gc trigger (Mb) limit (Mb) max used (Mb)
-## Ncells  571795 30.6    1188225 63.5         NA  1188225 63.5
-## Vcells 1045303  8.0    8388608 64.0      16384  1919134 14.7
+## Ncells  572216 30.6    1187770 63.5         NA  1187770 63.5
+## Vcells 1046723  8.0    8388608 64.0      16384  2127334 16.3
 ```
 
 ```r
@@ -878,19 +910,19 @@ mem_used()    # total, but more exact
 ```
 
 ```
-## 40,378,816 B
+## 40,408,968 B
 ```
 ]]
 
 ???
 
-- The only reason to call `gc()` is if you need to free-up memory for your operating system &amp;mdash; which will hardly ever happen.
+- The only reason to call `gc()` is if you need to free-up memory for your operating system &amp;mdash; which will hardly ever happen
 
-- vcells = memory used by vectors; ncells = memory used by anything else
+- `vcells` = memory used by vectors; `ncells` = memory used by anything else
 
-- The large numbers report cells used (8 byte each)
+- The 'large numbers' report cells used (8 byte each)
 
-- `lobstr::mem_used()` does not agree with what's reported by you OS: there are other objects (generated by, e.g., the R interpreter) which are not captured.
+- `lobstr::mem_used()` does not agree with what's reported by your OS: there are other objects (generated by, e.g., the R interpreter) which are not captured
 
 ---
 class: segue-red
@@ -911,7 +943,7 @@ Everything that happens is a function call.
 
 .smaller[
 
-- **Regular functions** live in environments and consists of a body along with formals
+- **Regular functions** live in environments and consist of a body along with formals
 
 - **Primitives** are special `base` R functions that call C code
 
@@ -989,7 +1021,7 @@ body(sum)
 
 .smaller[
 
-R functions are **objects**. We may do stuff that seems quite exotic when compared to much more 'restrictive' languages like C and Python.
+R functions are **objects**! We may do stuff that seems quite exotic when compared to much more 'restrictive' languages like C and Python.
 
 .blockquote.exercise[
 #### <i class="fas  fa-desktop "></i> Example: fun with anonymous functions
@@ -1005,9 +1037,9 @@ lobstr::ref(funs)
 ```
 
 ```
-## █ [1:0x7fd6bed1ea88] &lt;list&gt; 
-## ├─[2:0x7fd6ba973f28] &lt;fn&gt; 
-## └─[3:0x7fd6ba973fd0] &lt;fn&gt;
+## █ [1:0x7fea48f67248] &lt;list&gt; 
+## ├─[2:0x7fea49809d20] &lt;fn&gt; 
+## └─[3:0x7fea49809c78] &lt;fn&gt;
 ```
 
 ```r
@@ -1147,11 +1179,11 @@ f(x)                     # 4. dynamic lookup
 
 .smaller[
 
-- A **Promise** consists of an expression along with an environment and a value which is computed an cached the first time the promise is accessed
+Lazy evaluation allows R functions to behave quite differently than, e.g., C functions and it is important to understand what's special about that.
 
-- We implicitly use them when writing functions as they use **lazy evaluation**. Here we refer to **unevaluated arguments** as promises.  
+- A **Promise** consists of an expression along with an environment and a value which is computed and cached the first time the promise is accessed
 
-- Lazy evaluation allows R functions to behave quite differently than, e.g., C functions and it is important to understand what's special about that. 
+- We implicitly use promises in functions via **lazy evaluation**. Here we refer to **unevaluated arguments** as promises.  
 
 .blockquote.exercise[
 #### <i class="fas  fa-desktop "></i> Example: outside evaluation
@@ -1294,7 +1326,9 @@ f(ls())
 
 ???
 
-- The evaluation environment for *default arguments* is the function environment whereas user supplied arguments are evaluated in the parent (i.e. the global) environment.
+- Due to lazy evaluation, the evaluation environment for *default arguments* is the function environment
+
+- User supplied arguments are evaluated in the parent (i.e. the global) environment
 
 ---
 ## Lazy Evaluation
@@ -1329,7 +1363,7 @@ if (!is.null(x) &amp;&amp; x &gt; 0) {
 
 .smaller[
 
-1. Explain why the following does not work. Can you come up with a work-around without changing the definition of `f()`?
+1. Explain why the following code does not work. Can you come up with a work-around without changing the definition of `f()`?
     
     ```r
     f &lt;- function(x, z) {
@@ -1513,22 +1547,19 @@ Replacement functions are handy but there is no free lunch: they *always* trigge
 .blockquote.exercise[
 #### <i class="fas  fa-desktop "></i> Example: replacement of last vector element &amp;mdash; ctd.
 
-
 ```r
 tracemem(x)
 ```
-
 ```
-## [1] "&lt;0x7fd6bf79b7d8&gt;"
+## &lt;0x7feac1eb7598&gt;
 ```
 
 ```r
-## last(x) &lt;- 420
+last(x) &lt;- 420
 ```
-
 ```
-tracemem[0x7feac1eb7598 -&gt; 0x7feaa7ce3908]: 
-tracemem[0x7feaa7ce3908 -&gt; 0x7feaa7ce68c8]: last&lt;- 
+## tracemem[0x7feac1eb7598 -&gt; 0x7feaa7ce3908]: 
+## tracemem[0x7feaa7ce3908 -&gt; 0x7feaa7ce68c8]: last&lt;- 
 ```
 
 
@@ -1537,7 +1568,7 @@ x
 ```
 
 ```
-## [1]  1  2 99
+## [1]   1   2 420
 ```
 
 ]

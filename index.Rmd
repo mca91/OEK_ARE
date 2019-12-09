@@ -35,8 +35,8 @@ output:
 <ol start = "5">
 <li> Advanced R Programming </li>
 <ul>
-  <li> Advanced Concepts </li>
-  <li> Functional Programming </li>
+  <li> <a href="Advanced R Concepts/Advanced.html">Advanced Concepts</a></li>
+  <li> <a href="functional/functional.html">Functional Programming</a></li>
   <li> Object Oriented Programming </li>
 </ul>
 <li>  Performance </li> 

@@ -81,19 +81,24 @@ class: segue-red
 .blockquote.exercise[
 #### `r icon::fa("desktop")` Example: operator *precedence*
 
-.medium[
-
+.pull-left[
 ```{r, error=TRUE}
 a <- b <- 1
 a == b
 a = b = 1
 a == b
+```
+]
+.pull-right[
+```{r, error=TRUE}
 a = b <- 1
 a == b
 x <- b = 1
 ```
+]
 
-]]]
+
+]]
 
 ???
 
@@ -150,6 +155,8 @@ var_GE
 
 ???
 
+- Note that functions generate their own environments upon execution. The *execution environment* of `a()` is the parent environment to `b()`.
+
 - If `<<-` does not find a corresponding binding in the enclosing environment, it looks in the parent environment and works it's way up towards to global environment (GE)
 
 - If the binding does not exist in the GE, it will be created there
@@ -203,8 +210,7 @@ A `character` vector is a binding to a vector of strings.
 .pull-right[
 ```{r}
 x <- c("a", "a", "abc", "d")
-obj_size(x)
-obj_sizes("a", "a", "abc", "d")
+ref(x, character = TRUE)
 ```
 ]]]
 
@@ -257,7 +263,7 @@ obj_addr(y)
 We may use `tracemem()` to obtain info when a copy of an object is generated.
 
 .blockquote.exercise[
-#### `r icon::fa("desktop")` Example: `tracemem()`
+#### `r icon::fa("desktop")` Example: keeping track of copies using `tracemem()`
 
 `tracemem()` returns the copied object, the new address (and the **call stack**, if functions are involved).
 
@@ -295,7 +301,7 @@ Simply put, a call stack describes the order of nested function calls.
 The above rules apply to function calls as well.
 
 .blockquote.exercise[
-#### `r icon::fa("desktop")` Example: `tracemem()`
+#### `r icon::fa("desktop")` Example: keeping track of copies using `tracemem()` &mdash; ctd.
 
 .pull-left[
   <br>
@@ -307,8 +313,15 @@ The above rules apply to function calls as well.
 ```{r}
 f <- function(a) a
 x <- c(1, 2, 3)
+```
+```r
 tracemem(x)
+```
+```
+## [1] "<0x74b050b21318>"
+```
 
+```{r}
 z <- f(x) # no copy here!
 
 untracemem(x)
@@ -355,6 +368,9 @@ untracemem(x)
 
 - **`z<-f(x)`**: as above. `z` is a binding the same location as `a` (no additional copy made).
 
+- **Q**: What would happen if we'd super assign to `x` inside of `f()`. 
+    **A**: no additional reference to `x`, so calling `f()` would not trigger a copy.
+
 ---
 ## Copy-on-modify &mdash; Lists
 
@@ -386,7 +402,7 @@ l2 <- l1               # right
 l2[[3]] <- 4           # bottom
 ```
 
-Note that copy-on-modify due to `l2[[3]] <- 4 ` results in a **shallow** copy: the bindings are copied, not the values. => performance considerations!
+Note that copy-on-modify due to `l2[[3]] <- 4 ` results in a **shallow** copy: the bindings are copied, not the values. &rArr; performance considerations!
 
 ---
 ## Copy-on-modify &mdash; Lists
@@ -433,7 +449,15 @@ d1 <- data.frame(
 
 ???
 
-**A**: modifying a row implicates modifying *all* columns.
+**A**: modifying a data frame row implicates modifying *all* columns (this cannot be tracked by `tracemem()` but can be seen using `lobstr::ref()`)
+
+```r
+df[1,] <- c(42, 42)
+ref(d1)
+# vs.
+df$x <- c(7, 7, 7)
+ref(d1)
+```
 
 ---
 ## Exercises
@@ -501,6 +525,18 @@ obj_addr(v)
 
 ]]
 
+???
+
+- **Q**: Running this code in RStudio will trigger a copy. Why?
+
+    **A**: An entry in the Environment tab is a binding, i.e., there are more than one (two) references to `v` which triggers a copy!
+
+     You need to run the code in the RGUI for reproducing the results.
+    
+    (using the RGUI for this purpose is generally a good practice!)    
+
+- Note that `tracemem()` does not play well with `knitr`
+    
 ---
 ## Case Study: Copy-On-Modify Inferno
 
@@ -529,7 +565,9 @@ for (i in seq_along(medians)) {
 
 ???
 
-We will come back to this issue in the Chapter *Improving Performance* and benchmark against alternatives that require less copies.
+- Note that `vapply()`'s `FUN.VALUE` requires a template for the return value (which is numeric $1\times 1$ here) 
+
+- We will come back to consequences of this behavior in the Chapter *Improving Performance* and benchmark against alternatives that require less copies.
 
 ---
 ## Case Study: Copy-On-Modify Inferno
@@ -554,6 +592,16 @@ tracemem[0x7fe1acdbda28 -> 0x7fe1acdbe198]: [[<-.data.frame [[<-
 tracemem[0x7fe1acdbe198 -> 0x7fe1acdbe6d8]: [[<-.data.frame [[<- 
 ```
 
+???
+
+Using the `$` operator makes no difference: `$<-` also has a `$<-.data.frame` method. The output of `tracemem()` then looks similar to this:
+
+```
+tracemem[0x7fe515db8d88 -> 0x7fe513bcd788]: 
+tracemem[0x7fe513bcd788 -> 0x7fe513b79a88]: $<-.data.frame $<- 
+tracemem[0x7fe513b79a88 -> 0x7fe513b79c88]: $<-.data.frame $<-
+```
+
 ---
 ## Case Study: Copy-On-Modify Inferno
 
@@ -565,7 +613,7 @@ What's happening here and why?
       - inside of `[[` 
       - inside of `[[<-.data.frame()` 
     
-    &rarr; modifying `x` will result in a copy
+    &rarr; modification will result in a copy
 
 - The following runs inside `[[`:
     ```r
@@ -639,7 +687,7 @@ tracemem[0x7fba72971928 -> 0x7fba72a2e178]:
 
 ???
 
-- A single copy is made since the loop modifies (existing) list entries
+- A single copy is made from internal C code the first time we use `[[<-`
 
 - This a good example where tweaking the code reduces the amount of copies made
 
@@ -666,10 +714,6 @@ lobstr::ref(x)
 # Step 2
 x[[2]] <- x
 lobstr::ref(x)
-
-# Step 3
-x[[1]] <- 11:20
-lobstr::ref(x)
 ```
 ]
 
@@ -682,12 +726,16 @@ lobstr::ref(x)
 # Step 2
 x[[2]] <- x
 lobstr::ref(x)
-
-# Step 3
-x[[1]] <- 11:20
-lobstr::ref(x)
 ```
 ]]]
+
+???
+
+- `x` is assigned to itself (an additional reference) so a copy on modification is made
+
+- The the old memory location of `x` has no binding anymore but is referenced within `x`
+
+- Note that lists are always copied on modification. The copy is, however, shallow.
 
 ---
 ## Garbage Collection
@@ -757,13 +805,13 @@ mem_used()    # total, but more exact
 
 ???
 
-- The only reason to call `gc()` is if you need to free-up memory for your operating system &mdash; which will hardly ever happen.
+- The only reason to call `gc()` is if you need to free-up memory for your operating system &mdash; which will hardly ever happen
 
-- vcells = memory used by vectors; ncells = memory used by anything else
+- `vcells` = memory used by vectors; `ncells` = memory used by anything else
 
-- The large numbers report cells used (8 byte each)
+- The 'large numbers' report cells used (8 byte each)
 
-- `lobstr::mem_used()` does not agree with what's reported by you OS: there are other objects (generated by, e.g., the R interpreter) which are not captured.
+- `lobstr::mem_used()` does not agree with what's reported by your OS: there are other objects (generated by, e.g., the R interpreter) which are not captured
 
 ---
 class: segue-red
@@ -784,7 +832,7 @@ Everything that happens is a function call.
 
 .smaller[
 
-- **Regular functions** live in environments and consists of a body along with formals
+- **Regular functions** live in environments and consist of a body along with formals
 
 - **Primitives** are special `base` R functions that call C code
 
@@ -814,7 +862,7 @@ body(sum)
 
 .smaller[
 
-R functions are **objects**. We may do stuff that seems quite exotic when compared to much more 'restrictive' languages like C and Python.
+R functions are **objects**! We may do stuff that seems quite exotic when compared to much more 'restrictive' languages like C and Python.
 
 .blockquote.exercise[
 #### `r icon::fa("desktop")` Example: fun with anonymous functions
@@ -932,11 +980,11 @@ f(x)                     # 4. dynamic lookup
 
 .smaller[
 
-- A **Promise** consists of an expression along with an environment and a value which is computed an cached the first time the promise is accessed
+Lazy evaluation allows R functions to behave quite differently than, e.g., C functions and it is important to understand what's special about that.
 
-- We implicitly use them when writing functions as they use **lazy evaluation**. Here we refer to **unevaluated arguments** as promises.  
+- A **Promise** consists of an expression along with an environment and a value which is computed and cached the first time the promise is accessed
 
-- Lazy evaluation allows R functions to behave quite differently than, e.g., C functions and it is important to understand what's special about that. 
+- We implicitly use promises in functions via **lazy evaluation**. Here we refer to **unevaluated arguments** as promises.  
 
 .blockquote.exercise[
 #### `r icon::fa("desktop")` Example: outside evaluation
@@ -1037,7 +1085,9 @@ f(ls())
 
 ???
 
-- The evaluation environment for *default arguments* is the function environment whereas user supplied arguments are evaluated in the parent (i.e. the global) environment.
+- Due to lazy evaluation, the evaluation environment for *default arguments* is the function environment
+
+- User supplied arguments are evaluated in the parent (i.e. the global) environment
 
 ---
 ## Lazy Evaluation
@@ -1071,7 +1121,7 @@ if (!is.null(x) && x > 0) {
 
 .smaller[
 
-1. Explain why the following does not work. Can you come up with a work-around without changing the definition of `f()`?
+1. Explain why the following code does not work. Can you come up with a work-around without changing the definition of `f()`?
     ```{r, error=T}
     f <- function(x, z) {
       z + x^2
@@ -1205,14 +1255,18 @@ Replacement functions are handy but there is no free lunch: they *always* trigge
 .blockquote.exercise[
 #### `r icon::fa("desktop")` Example: replacement of last vector element &mdash; ctd.
 
-```{r, eval = c(1,3)}
+```r
 tracemem(x)
+```
+```
+## <0x7feac1eb7598>
+```
+```{r}
 last(x) <- 420
 ```
-
 ```
-tracemem[0x7feac1eb7598 -> 0x7feaa7ce3908]: 
-tracemem[0x7feaa7ce3908 -> 0x7feaa7ce68c8]: last<- 
+## tracemem[0x7feac1eb7598 -> 0x7feaa7ce3908]: 
+## tracemem[0x7feaa7ce3908 -> 0x7feaa7ce68c8]: last<- 
 ```
 
 ```{r}
