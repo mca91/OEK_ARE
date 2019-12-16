@@ -5,7 +5,12 @@ author: "Martin C. Arnold"
 date: "`r Sys.Date()`"
 output:
   xaringan::moon_reader:
-    css: ["default", "../assets/sydney-fonts.css", "../assets/sydney.css", "../assets/title_slides.css", "../xaringan_files/custom.css"]
+    css: 
+      - "default" 
+      - "../assets/sydney-fonts.css"
+      - "../assets/sydney.css"
+      - "../assets/title_slides.css"
+      - "../xaringan_files/custom.css"
     self_contained: false # if true, fonts will be stored locally
     seal: false # show a title slide with YAML information
     includes:
@@ -24,7 +29,6 @@ output:
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(warning=FALSE, message=FALSE)
 options(htmltools.dir.version = FALSE)
-# packages needed
 library(dplyr)
 library(purrr)
 library(readr)
@@ -60,6 +64,14 @@ To become significantly more reliable, code must become more transparent. In par
   }
   
 </style>
+
+```{r, eval = FALSE}
+# Packages needed
+library(dplyr)
+library(purrr)
+library(readr)
+# or simply attach the tidyverse
+```
 
 **What is a functional programming language?**
 
@@ -162,7 +174,7 @@ Functionals can also produce other data structures, e.g., data frames as output.
 
 - Others are likely to be puzzled by looking at your code if it uses a lot of loops. Functionals immediately convey which iteration is done and which output is returned.
 
-  'Others' also includes your future self :-)
+    'Others' also includes your future self :-)
 
 ---
 ## Functionals &mdash; `purrr::map()`
@@ -197,7 +209,7 @@ Obviously `map()` returns a list.
 ---
 ## `purrr::map_*()` &mdash; Producing Atomic Vectors
 
-.medium[
+.smaller[
 
 - There are helper functions which are more convenient if simpler data structures are required: `map_lgl()`, `map_int()`, `map_dbl()`, and `map_chr()` return an atomic vector of the specified type
 
@@ -234,9 +246,9 @@ map_int(mtcars, n_unique)
 
 .smaller[
 
-The *twiddle operator* `~` allows to use anonymous functions in a less verbose manner. It conveys that the subsequent expression is a formula.
+- The *twiddle operator* `~` allows to use anonymous functions in a less verbose manner. It conveys that the subsequent expression is a formula.
 
-(A good rule of thumb is that if a function spans lines or uses `{...}`, we should give it a name.)
+- A good rule of thumb is that if a function spans lines or uses `{...}`, we should give it a name.
 
 .blockquote.exercise[
 #### `r icon::fa("desktop")` Example: `map_*()` with inline anonymous function
@@ -337,7 +349,7 @@ Keep in mind that this requires your subsequent code to work with `NA`s.
 
 #### `r icon::fa("desktop")` Example: mapping with additional arguments &mdash; ctd.
 
-Additional arguments to the mapping function may be passed *after* the function name.
+Additional arguments to the mapping function may be passed *after* the function name. But think about evaluation!
 
 <br>
 
@@ -373,7 +385,7 @@ Arguments passed to an anonymous function are evaluated in every iteration. The 
 .blockquote.exercise[
 #### `r icon::fa("desktop")` Example: mapping with additional arguments &mdash; ctd.
 
-Additional arguments are not decomposed: `map_*()` is only vectorised over the data passed as the first argument. Vector arguments are passed along.
+Additional arguments are *not decomposed*: `map_*()` is only vectorised over the data passed as the first argument. Vector arguments are passed along.
 
 <br>
 
@@ -439,7 +451,7 @@ map_dbl(trims, function(trim) mean(x, trim = trim))
     ```
 
 3. Use `map()` to fit linear models to the `mtcars` dataset using the formulas stored in this list:
-    ```{r, eva}
+    ```{r, eval = F}
     formulas <- list(
        mpg ~ disp,
        mpg ~ disp + wt,
@@ -469,7 +481,7 @@ map_dbl(trims, function(trim) mean(x, trim = trim))
   ```
 
 ---
-## `purrr`-style Model Fitting 
+## Case Study: Model Fitting with `purrr`
 
 .smaller[
 
@@ -477,24 +489,40 @@ Tired of `mtcars`? We're too... let's use `cars2018`, a dataset on fuel efficien
 
 We will now take a quick look at how `purrr` functions can be used to fit a regression model to subgroups of data, extract estimates and then compare the approach to base R approaches.
 
-```{r, message=F}
-cars2018 <- readr::read_csv("../data/cars2018.csv")
-by_drive <- split(cars2018, cars2018$Drive)
-```
+**Instructions**
 
-**`purrr` Style:**
+1. Load the `cars2018.csv` dataset and split it by `Drive`, see `?split`
 
-```{r}
-by_drive %>% 
-  map(~ lm(MPG ~ Cylinders, data = .x)) %>% 
-  map(coef) %>% 
-  map_dbl(2)
-```
+2. Use `purrr` (preferably together with `dplyr`) to
+
+      - fit the model `MPG ~ Cylinders` to each subgroup
+      - extract the estimated coefficient of `Cylinders`
+    
+3. Contrast your `purrr` approach to base R alternatives that rely on `*apply()` and `for()`, respectively
 
 ]
 
 ---
-## `purrr`-style Model Fitting 
+exclude: true
+## Case Study: Model Fitting with `purrr`
+
+```{r, message = F}
+cars2018 <- readr::read_csv("../data/cars2018.csv")
+by_drive <- split(cars2018, cars2018$Drive)
+```
+
+**`purrr` style:**
+
+```{r}
+by_drive %>%
+  map(~ lm(MPG ~ Cylinders, data = .x)) %>%
+  map(coef) %>%
+  map_dbl(2)
+```
+
+---
+exclude: true
+## Case Study: Model Fitting with `purrr`
 
 .smaller[
 
@@ -519,17 +547,18 @@ slopes
 ]
 
 ---
-## `purrr`-style Model Fitting 
+exclude: true
+## Case Study: Model Fitting with `purrr`
 
 - `purrr` code is most accessible as each line encapsulates a single step and the `purrr` helpers allow us to concisely describe what to do in each step.
 
 - Moving from `purrr` to base R we see that the number functions which iterate decreases while each iteration becomes increasingly complicated:
 
   - Using `purrr` we iterate 3 times (`map()`, `map()` and `map_dbl()`)
-  
+
   - The `apply()` approach iterates twice (`lapply()` and `vapply()`)
-  
-  - Everything can be done in one `for()` loop 
+
+  - Everything can be done in one `for()` loop
 
 <br>
 .content-box-white[
@@ -684,7 +713,7 @@ map2_dbl(1:6, 1, ~ .x + .y)
 
 - `walk()` ignores the return value of `.f` and returns `.x` invisibly. This is useful for functions that are called for their side-effects.
 
-- There is no base R equivalent but wrapping `lapply()` but `invisible()` comes close
+- There is no base R equivalent but wrapping `lapply()` with `invisible()` comes close
 
 .blockquote.exercise[
 #### `r icon::fa("desktop")` Example: assigning and passing objects
@@ -696,21 +725,13 @@ map2_dbl(1:6, 1, ~ .x + .y)
 
 .pull-right[
 
-Assignment to an environment is a side-effect:
+Assignment to an environment is a side-effect.
 
-```{r, eval=F}
-# ABC(1) => A <- 1, ABC(2) => B <- 2, ...
-ABC <- function(x) { 
-  assign(LETTERS[x], x, envir = globalenv())
-}
+<br>
+<br>
+<br>
 
-# Both return invisibly:
-invisible(lapply(1:3, ABC))
-walk(1:3, ABC)
-
-# walk() in functional-style 'workflow'
-1:26 %>% walk(., ABC) %>% cat(.)
-```
+![:image 50%](../assets/RStudio.png)
 
 ]]]
 
@@ -731,48 +752,38 @@ walk(1:3, ABC)
 
 .pull-right[
 
-A common side-effect which needs two arguments (object and path) is writing to disk:
+A common side-effect which needs two arguments (object and path) is writing to disk.
 
-```{r, cache=T}
-t <- tempfile()
-dir.create(t)
+<br>
+<br>
+<br>
 
-tm <- split(cars2018, cars2018$Transmission)
+![:image 50%](../assets/RStudio.png)
 
-paths <- file.path(t, paste0(names(tm), ".csv"))
-
-walk2(tm, paths, write.csv)
-
-dir(t)
-```
 ]]]
 
 
 ---
 ## `purrr::imap()`
 
-.scroll-output[
 .smaller[
 
-- We've seen that `for(x in xs)` is essentially the analog to `map()`. 
+- `map(.x, .f)` is essentially an analog to `for(x in xs)`
 
 - `for(i in seq_along(xs))` and `for(nm in names(xs))` are analogous to `imap()`: 
 
-    `imap(.x, .f)` applies `.f` to values `.x` *and* indices or names derived from `.x`.
+    `imap(.x, .f)` applies `.f` to values `.x` *and indices or names derived from* `.x`.
 
 .blockquote.exercise[
 #### `r icon::fa("desktop")` Example: named column means
 
 `imap()` is a useful helper if we want to work with values along with variable names.
 
-```{r, eval=F}
-cars2018 %>% select_if(is.numeric) %>% imap_chr(~ paste0("The Mean of ", .y, " is ", mean(.x)))
-```
+<br>
+<br>
+![:image 20%](../assets/RStudio.png)
 
-```{r, echo=F}
-cars2018 %>% select_if(is.numeric) %>% imap_chr(~ paste0("The Mean of ", .y, " is ", mean(.x)))
-```
-]]]
+]]
 
 ???
 
@@ -923,7 +934,7 @@ pmap(params, runif)
 
 3. Compare and contrast the `map2()` approach to this `map()` approach:
     ```{r, eval=F}
-    mtcars[vars] <- map(vars, ~ trans[[.x]](cars2018[[.x]]))
+    mtcars[nm] <- map(nm, ~ trans[[.x]](cars2018[[.x]]))
     ```
 
 ???
@@ -933,6 +944,7 @@ pmap(params, runif)
 2.
     
 ---
+exclude: true
 ## `purrr::reduce()`
 
 Having only two main variants, the `reduce` family of functions is much smaller than the `map` family and implements a less commonly needed yet powerful concept:
@@ -945,6 +957,7 @@ Having only two main variants, the `reduce` family of functions is much smaller 
 ![:source 2019](Wickham)
 
 ---
+exclude: true
 ## `purrr::reduce()`
 
 .smaller[
@@ -965,6 +978,7 @@ Suppose you want to find values which occur in all vectors in `l`. Note that `in
 ]]
 
 ---
+exclude: true
 ## `purrr::reduce()`
 
 .medium[
@@ -990,6 +1004,7 @@ reduce(l, union)
 ]]
 
 ---
+exclude: true
 ## `purrr::accumulate()`
 
 .smaller[
@@ -1015,6 +1030,7 @@ accumulate(x, `+`)
 ]]
 
 ---
+exclude: true
 ## `purrr::accumulate()`
 
 .smaller[
@@ -1061,7 +1077,7 @@ cube_root(8)
 ## Function Factories
 
 .smaller[
-The enclosing environment of the manufactured function is an execution environment of the function factory.
+The enclosing environment of the manufactured function is an **execution environment** of the function factory.
 
 .blockquote.exercise[
 #### `r icon::fa("desktop")` Example: function factory &mdash; ctd.
@@ -1090,9 +1106,9 @@ Remember lazy evaluation!
 #### `r icon::fa("desktop")` Example: function factory &mdash; ctd.
 
 ```{r}
-x <- 2
-sq <- nth_root(x)
-x <- 16
+n <- 2
+sq <- nth_root(n)
+n <- 16
 sq(64)             # should evaluate to 8?!
 ```
 
@@ -1124,9 +1140,9 @@ nth_root <- function(n) {
     }
 }
 
-x <- 2
-sq <- nth_root(x)
-x <- 16
+n <- 2
+sq <- nth_root(n)
+n <- 16
 sq(64)             # better :-)
 ```
 
@@ -1180,12 +1196,10 @@ Should be used with moderation. The S6 system is more suitable if your manufactu
 ---
 ## Case Study: Maximum Likelihood Estimation
 
-.smaller[
-
 Consider the problem of finding the MLE for $\lambda$ when modelling data $\mathbb{x} = (x_1, x_2, \dots, x_n)$ using the Poisson distribution. We have
 
 \begin{align*}
-P(\lambda, \mathbb{x}) =& \, \prod_{i=1}^n\frac{\lambda^{x_i}\exp{\lambda}}{x_i!}\\\Leftrightarrow \log(P(\lambda, \mathbb{x})) =& \, \log(\lambda)\sum_{i=1}^n x_i - n\lambda - \sum_{i=1}^n\log(x_i!).
+P(\lambda, \mathbb{x}) =& \, \prod_{i=1}^n\frac{\lambda^{x_i}\exp{\lambda}}{x_i!} \Leftrightarrow \log(P(\lambda, \mathbb{x})) = \log(\lambda)\sum_{i=1}^n x_i - n\lambda - \sum_{i=1}^n\log(x_i!).
 \end{align*}
 
 The log-likelihood is easily implemented as an R function:
@@ -1197,9 +1211,12 @@ lprob_poisson <- function(lambda, x) {
 }
 ```
 
-]
+- Implement a function factory `ll_poisson()` which manufactures a Poisson log-likelihood for a given data vector `x`
+
+- Use `ll_poisson()` to estimate $\lambda$ based on a sample of 100 pseudorandom numbers from $poiss (\lambda = 30)$
 
 ---
+exclude: true
 ## Case Study: Maximum Likelihood Estimation
 
 .smaller[
@@ -1212,14 +1229,13 @@ ll_poisson <- function(x) {
   n <- length(x)
   sum_x <- sum(x)
   c <- sum(lfactorial(x))
-  
+
   # manufactured function
   function(lambda) {
     log(lambda) * sum_x - n * lambda - c
   }
 }
 ```
-
 
 ???
 
@@ -1232,6 +1248,7 @@ ll_poisson <- function(x) {
 - These advantages get bigger in more complex MLE problems, where you have multiple parameters and multiple data vectors.
 
 ---
+exclude: true
 ## Case Study: Maximum Likelihood Estimation
 
 Let's find the MLE for a Poisson random vector.
@@ -1247,6 +1264,8 @@ optimise(llp, c(0, 40), maximum = T)
 
 ---
 class: segue-red
+
+![:image 20%](../assets/pika_ballons.gif)
 ### Thank You! 
 
 

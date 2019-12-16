@@ -4,7 +4,7 @@
     <title>Advanced R for Econometricians</title>
     <meta charset="utf-8" />
     <meta name="author" content="Martin C. Arnold" />
-    <meta name="date" content="2019-12-09" />
+    <meta name="date" content="2019-12-16" />
     <link href="Advanced_files/remark-css/default.css" rel="stylesheet" />
     <link href="Advanced_files/font-awesome/css/fontawesome-all.min.css" rel="stylesheet" />
     <script type="text/x-mathjax-config">
@@ -257,11 +257,11 @@ ref(x, character = TRUE)
 ```
 
 ```
-## █ [1:0x7fb432633808] &lt;chr&gt; 
-## ├─[2:0x7fb43087f570] &lt;string: "a"&gt; 
-## ├─[2:0x7fb43087f570] 
-## ├─[3:0x7fb433d9cd80] &lt;string: "abc"&gt; 
-## └─[4:0x7fb430a73cd0] &lt;string: "d"&gt;
+## █ [1:0x7fb96b0a4628] &lt;chr&gt; 
+## ├─[2:0x7fb96a093570] &lt;string: "a"&gt; 
+## ├─[2:0x7fb96a093570] 
+## ├─[3:0x7fb96e45c2a8] &lt;string: "abc"&gt; 
+## └─[4:0x7fb96b105ca8] &lt;string: "d"&gt;
 ```
 ]]]
 
@@ -304,7 +304,7 @@ obj_addr(x)
 ```
 
 ```
-## [1] "0x7fb4310084f8"
+## [1] "0x7fb96e08fd48"
 ```
 
 ```r
@@ -312,7 +312,7 @@ obj_addr(y)
 ```
 
 ```
-## [1] "0x7fb432433e68"
+## [1] "0x7fb96a0c0eb8"
 ```
 ]
 ]]]
@@ -488,15 +488,15 @@ ref(l1, l2)
 ```
 
 ```
-## █ [1:0x7fb437268fa8] &lt;list&gt; 
-## ├─[2:0x7fb434bd2740] &lt;dbl&gt; 
-## ├─[3:0x7fb434bd2708] &lt;dbl&gt; 
-## └─[4:0x7fb434bd26d0] &lt;dbl&gt; 
+## █ [1:0x7fb9711aa068] &lt;list&gt; 
+## ├─[2:0x7fb96ee70440] &lt;dbl&gt; 
+## ├─[3:0x7fb96ee70408] &lt;dbl&gt; 
+## └─[4:0x7fb96ee703d0] &lt;dbl&gt; 
 ##  
-## █ [5:0x7fb434d1ac48] &lt;list&gt; 
-## ├─[2:0x7fb434bd2740] 
-## ├─[3:0x7fb434bd2708] 
-## └─[6:0x7fb434bd25f0] &lt;dbl&gt;
+## █ [5:0x7fb971296908] &lt;list&gt; 
+## ├─[2:0x7fb96ee70440] 
+## ├─[3:0x7fb96ee70408] 
+## └─[6:0x7fb96ee702f0] &lt;dbl&gt;
 ```
 
 ]
@@ -815,15 +815,15 @@ lobstr::ref(x)
 .pull-right[
 
 ```
-## █ [1:0x7fb43709fc40] &lt;list&gt; 
-## └─[2:0x7fb43705c4d8] &lt;int&gt;
+## █ [1:0x7fb9703cbb28] &lt;list&gt; 
+## └─[2:0x7fb96f5705c0] &lt;int&gt;
 ```
 
 ```
-## █ [1:0x7fb43727ea08] &lt;list&gt; 
-## ├─[2:0x7fb43705c4d8] &lt;int&gt; 
-## └─█ [3:0x7fb43709fc40] &lt;list&gt; 
-##   └─[2:0x7fb43705c4d8]
+## █ [1:0x7fb9711a8248] &lt;list&gt; 
+## ├─[2:0x7fb96f5705c0] &lt;int&gt; 
+## └─█ [3:0x7fb9703cbb28] &lt;list&gt; 
+##   └─[2:0x7fb96f5705c0]
 ```
 ]]]
 
@@ -1041,9 +1041,9 @@ lobstr::ref(funs)
 ```
 
 ```
-## █ [1:0x7fb431ce4d08] &lt;list&gt; 
-## ├─[2:0x7fb431215308] &lt;fn&gt; 
-## └─[3:0x7fb4312153b0] &lt;fn&gt;
+## █ [1:0x7fb96986d908] &lt;list&gt; 
+## ├─[2:0x7fb969204320] &lt;fn&gt; 
+## └─[3:0x7fb969204438] &lt;fn&gt;
 ```
 
 ```r
@@ -1405,9 +1405,13 @@ if (!is.null(x) &amp;&amp; x &gt; 0) {
     }
     f(2, 2)
     ```
-    Workaround: `with(list(z = 2), f(x = z^2, z))`
+    Workaround using `with`: 
+    
+    `with(list(z = 2), f(x = z^2, z))`
 
 2. `...` enables us to pass arguments (to other functions) which do not have to be prespecified.
+
+    Here, `f()` is a simple wrapper that returns names of list elements as passed to the `...` argument.
 
 ---
 ## Function Forms
@@ -1434,7 +1438,7 @@ if (!is.null(x) &amp;&amp; x &gt; 0) {
 
 ???
 
-@ infix: user defined operators (which begin and end with `%`)
+@ infix forms: user defined operators (which always begin and end with `%`) belong to this class.
 
 ---
 ## Function Forms
@@ -1479,7 +1483,7 @@ x &lt;- `:`(1, 10); x
 ]]
 
 ---
-## Function Forms &amp;mdash; User defined infix
+## Function Forms &amp;mdash; User defined function in infix form
 
 It's straightforward to write your own operators in infix form.
 
@@ -1505,8 +1509,8 @@ Replacement functions have the form shown below.
 
 ```r
 `name&lt;-` &lt;- function(x, value) {
-  &lt;...&gt;
-  x
+  &lt;do something&gt;
+  return(x)
 } 
 ```
 
@@ -1579,6 +1583,8 @@ x
 
 ---
 class: segue-red
+
+![:image 20%](../assets/pica.gif)
 ### Thank You!
     </textarea>
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>

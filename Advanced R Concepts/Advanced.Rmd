@@ -1152,9 +1152,13 @@ if (!is.null(x) && x > 0) {
     }
     f(2, 2)
     ```
-    Workaround: `with(list(z = 2), f(x = z^2, z))`
+    Workaround using `with`: 
+    
+    `with(list(z = 2), f(x = z^2, z))`
 
 2. `...` enables us to pass arguments (to other functions) which do not have to be prespecified.
+
+    Here, `f()` is a simple wrapper that returns names of list elements as passed to the `...` argument.
 
 ---
 ## Function Forms
@@ -1176,7 +1180,7 @@ if (!is.null(x) && x > 0) {
 
 ???
 
-@ infix: user defined operators (which begin and end with `%`)
+@ infix forms: user defined operators (which always begin and end with `%`) belong to this class.
 
 ---
 ## Function Forms
@@ -1197,7 +1201,7 @@ x <- `:`(1, 10); x
 ]]
 
 ---
-## Function Forms &mdash; User defined infix
+## Function Forms &mdash; User defined function in infix form
 
 It's straightforward to write your own operators in infix form.
 
@@ -1218,8 +1222,8 @@ Replacement functions have the form shown below.
 
 ```r
 `name<-` <- function(x, value) {
-  <...>
-  x
+  <do something>
+  return(x)
 } 
 ```
 
@@ -1281,6 +1285,8 @@ x
 
 ---
 class: segue-red
-### Thank You! 
+
+![:image 20%](../assets/pica.gif)
+### Thank You!
 
 
