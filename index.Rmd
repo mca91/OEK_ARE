@@ -41,7 +41,7 @@ output:
 </ul>
 <li>  Performance </li> 
 <ul>
-  <li> Profiling and Benchmarking </li> 
+  <li> <a href="measuring and profiling/MeasuringProfiling.html">Profiling and Benchmarking</a></li> 
   <li> Parallelisation </li>
   <li> Rcpp </li>
 </ul>

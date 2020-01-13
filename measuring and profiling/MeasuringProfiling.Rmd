@@ -47,12 +47,6 @@ class: title-slide title-measuring center middle
 ### `r rmarkdown::metadata$author`
 
 ---
-class: segue-red
-### Part I
-
-Functional Programming Using `purrr`
-
----
 ## What's up next? &mdash; Overview
 
 **Now:**
@@ -68,16 +62,19 @@ Functional Programming Using `purrr`
 - How to speed things up using `Rcpp` (and hopefully `RcppArmadillo`) 
 
 ---
+class: segue-red
+### Profiling
+
+---
 ## Prerequisites
 
 ```{r, echo=T, eval=F}
 # packages needed
 library(profvis)
 library(bench)
-library(tidyverse)
 ```
 
-- **Profiling** means measuring run time of our code line-by-line using realistic inputs in order to identify *bottlenecks*.
+- **Profiling** means measuring run time of our code *line-by-line* using realistic inputs in order to identify *bottlenecks*.
 
 - After identifying bottlenecks we experiment with equivalent alternatives of code and find the fastest using a **microbenchmark**.
 
@@ -86,29 +83,24 @@ library(tidyverse)
 ---
 class: left
 
+<br>
+<br>
 <blockquote style ="margin-top:15%;">
 It’s tempting to think you just know where the bottlenecks in your code are. I mean, after all, you write it! But trust me, I can’t tell you how many times I’ve been surprised at where exactly my code is spending all its time. The reality is that profiling is better than guessing. 
 .right[&mdash; <cite>Roger D. Peng</cite>]
 </blockquote>
 
 ---
-## Profiling - `utils::Rprof()`
+## Profiling &mdash; `utils::Rprof()`
 
-`Rprof()` is a build-in *sampling profiler*. It keeps track of the *function call stack* at regularly sampled intervals.
+.smaller[
 
-- The function call stack is a record of the function currently executing, the function that called the function, and so on (from right to left)
+- `Rprof()` is a build-in *sampling profiler*. It keeps track of the *function call stack* at regularly sampled intervals.
 
-- The default time interval between sampling is 0.02 seconds. If the profiled code executes faster you need to pass an appropriate sampling time to the argument `interval`.
+- Note: results are *stochastic* &mdash; we never run a function under the same conditions twice (memory usage, CPU load etc.) 
 
-- The output of `Rprof()` is a complete listing of the function call stack at every sampling iteration (which, on its own, is often not very informative) which is printed to a binary file in the current working directory
-
-- Note: results are *stochastic* &mdash; we never run a function twice under the same conditions (memory usage, CPU load etc.) 
-
----
-## `utils::Rprof()`
-
-**Example: profiling a call of `replicate()`**
-
+.blockquote.exercise[
+#### `r icon::fa("desktop")` Example: profiling a call of `replicate()`
 ```{r, eval = F, cache=TRUE}
 tmp <- tempfile()
 
@@ -127,55 +119,16 @@ sample.interval=100000
 ')
 ```
 
-So `rnorm()` is six levels deep in the call stack and it seems that R spends most of time evaluating `rnorm(1e6)` and the code takes ~ 0.3 seconds to run.
-
----
-## `utils::Rprof()`
-
-A more useful output is produced by `utils::summaryRprof()`. 
-
-By appending `$by.total` we get the time spend in each function by the total run time. 
-
-**Example: Profiling a call of `replicate()`**
-
-```{r, eval=F}
-summaryRprof(tmp)$by.total
-```
-
-```{r, echo = F}
-cat('
-             total.time total.pct self.time self.pct
-"rnorm"            0.3       100       0.3      100
-"FUN"              0.3       100       0.0        0
-"lapply"           0.3       100       0.0        0
-"mean"             0.3       100       0.0        0
-"replicate"        0.3       100       0.0        0
-"sapply"           0.3       100       0.0        0
-')
-```
-
----
-## `utils::Rprof()`
-
-By appending `$by.self` the results are adjusted for the time to run functions above the current function in the call stack.
-
-**Example: profiling a call of `replicate()`**
-```{r, eval=F}
-summaryRprof(tmp)$by.self
-```
-```{r, echo = F}
-cat('
-       self.time self.pct total.time total.pct
-"rnorm"       0.3      100        0.3       100
-')
-```
-
-As expected, the random number generation takes approx. 100% of the total computation time.
+]]
 
 ---
 ## Visualising profiles: `profvis::profvis()`
 
-**Example: profiling nested functions**
+.smaller[
+.blockquote.exercise[
+#### `r icon::fa("desktop")` Exercise: profiling nested functions
+
+Profile a call of `f()` and visualise the results using `profvis::profvis()`.
 
 ```{r}
 # define some nested example functions
@@ -195,66 +148,26 @@ h <- function() {
 }
 ```
 
-(We use `profvis::pause()` because the time spend in `base::sys.sleep()` is not measured as computing time.)
+]]
+
+<!-- --- -->
+<!-- background-image: url(../img/profiling.png) -->
+<!-- background-position: 50% 85% -->
+<!-- background-size: 600px -->
+
+<!-- ## Visualising profiles: `profvis::profvis()` -->
+
+<!-- --- -->
+<!-- background-image: url(../img/profiling_data_tab.png) -->
+<!-- background-position: 50% 85% -->
+<!-- background-size: 500px -->
 
 ---
 ## Visualising profiles: `profvis::profvis()`
 
-**Example: profiling nested functions**
-
-Visualisation using `profvis()` works best when the code is sourced from an .R-script
-
-```{r, eval=FALSE}
-# source f(), g(), h() form R script
-source("codes/profiling-example.R")
-
-# visualise profiling results
-profvis(f())
-```
-
-After profiling, `profvis()` opens an interactive HTML window will *RStudio* which lets you explore the results.
-
-The interface provided by `profvis()` connects the profiling data back to the source code. This makes it easier to build up a 'mental' model of what you need to change.
-
----
-background-image: url(../img/profiling.png)
-background-position: 50% 85%
-background-size: 600px
-
-## Visualising profiles: `profvis::profvis()`
-
----
-## Visualising profiles: `profvis::profvis()`
-
-The top pane 
-
-- displays bar plots of running times and memory allocations with the latter being no issue here (why?)
-
-- provides a good overall feel for bottlenecks but is quite imprecise about the *cause*
-
-`h()` is not significantly slower than `g()`: `h()` is reported to take 150 ms (twice as long as `g()`) because it is called two times.
-
-
-The bottom pane shows a *flame graph* of the full call stack. The full sequence confirms that
-
- - `h()` is called from two different places (once by `g()` and once by `f()`)
-
- - the execution time of `h()` is roughly the same in each call.
- 
-Mousing over a cell in the function stack indicates the corresponding line in the source code.
-
----
-background-image: url(../img/profiling_data_tab.png)
-background-position: 50% 85%
-background-size: 500px
-
-## Visualising profiles: `profvis::profvis()`
-
-The data tab provides a tree-based representation of the top pane. <br> (useful for analysing more complicated components of the code)
-
----
-## Visualising profiles: `profvis::profvis()`
-**Example: profiling linear regression**
+.smaller[
+.blockquote.exercise[
+#### `r icon::fa("desktop")` Example: profiling linear regression
 
 ```{r, eval=FALSE}
 profvis({
@@ -271,6 +184,8 @@ profvis({
 })
 ```
 
+]]
+
 ---
 background-image: url(../img/profiling_regression_1.png)
 background-position: 50% 80%
@@ -285,13 +200,15 @@ background-size: 650px
 ## Visualising profiles: `profvis::profvis()`
 **Example: profiling linear regression**
 
-
 ---
 ## Memory Profiling
 
-**Example: extensive garbage collection**
+.blockquote.exercise[
+#### `r icon::fa("desktop")` Exercise: extensive garbage collection
 
-The following code generates a large number of short-lived objects by *copy-on-modify*.
+The following code generates a large number of short-lived objects by *copy-on-modification*.
+
+What does `profvis()` reveal?
 
 ```{r, eval=F}
 profvis({
@@ -305,38 +222,24 @@ profvis({
 })
 ```
 
----
-background-image: url(../img/profiling_gc.png)
-background-position: 50% 70%
-background-size: 650px
+]
 
-## Memory Profiling
-
-It looks like R spends most of the time modifying the data in-place, but that’s not actually what’s happening internally.
+<!-- --- -->
+<!-- background-image: url(../img/profiling_gc.png) -->
+<!-- background-position: 50% 70% -->
+<!-- background-size: 650px -->
 
 ---
 ## Memory Profiling
 
-What is going on?
-
-- The memory column indicates that large amounts of memory are being allocated (right bar) and freed (left bar)
-
-  Reasons: 
-  
-  1. A new memory object is generated by modifying a copy of the 'old' `x` which is then reassigned to `x` in each iteration
-  
-  2. Garbage collection (GC) automatically frees memory by deleting no more required objects
-
-- While `c()` runs for a total of 170 ms, a considerable amount of this time is due to garbage collection (`<GC>`)
-
-When you see the garbage collector taking up a lot of time, you can often come up with a more efficient alternative.
-
----
-## Memory Profiling
+.smaller[
 
 Sometimes code statements seem fairly innocent but are very inefficient both when it comes to memory and speed.
 
-**Example: coercion to another type**
+.blockquote.exercise[
+#### `r icon::fa("desktop")` Exercise: coercion to another type
+
+Can you explain why execution of the third line needs 762.9MB memory?
 
 ```{r, eval=F, }
 profvis({
@@ -346,42 +249,14 @@ profvis({
 })
 ```
 
+]]
+
 ---
 background-image: url(../img/profiling_coercion.png)
 background-position: 50% 90%
 background-size: 650px
 ## Memory Profiling
-**Example: coercion to another type**
-
-Can you explain why execution of the third line needs 762.9MB memory?
-
----
-## Memory Profiling
-**Example: coercion to another type**
-```{r, cache=T}
-p <- profmem::profmem({
-  x <- matrix(nrow = 1e4, ncol = 1e4)
-  x[1, 1] <- 0
-  x[1:3, 1:3]  
-})
-
-print(p, expr = F)
-```
-
----
-## Memory Profiling
-
-**Example: coercion to another type**
-
-What is going on?
-
-The code seems fairly innocent, but it turns out that it is very inefficient - both when it comes to memory and speed:
-
-- `x` is initialized with type `logical` (it is filled with `NA`s) and thus cannot contain numeric values.
-
-- `x[1, 1] <- 0` internally coerces `x` to a `numeric` matrix before assigning `0` to the (1,1) element which is quite costly: initializing `x` was more than twice as fast!
-
-Especially if a large number of computations need to be performed, coercion should be avoided wherever possible!
+**Exercise: coercion to another type**
 
 ---
 ## Profiling &mdash; some notes and hints
@@ -392,36 +267,31 @@ Especially if a large number of computations need to be performed, coercion shou
 
   We thus cannot use profiling to see whether the code is slow due because something further down the call stack is slow.
   
-**Example: primitive functions**
-  
-```{r, eval=F}
-profvis({
-  sqrt(sum(abs(rnorm(sum(1e6)))))
-  })
-```
-
 - Profiling is just another reason to **break your code into functions** so that the profiler can give useful information about where time is being spent
 
 ---
-class: inverse, left, top
-background-image: url(../img/road.jpg)
-background-size: cover
-## Microbenchmarking
+class: segue-red
+### Microbenchmarking
 
 ---
 ## What is a Microbenchmark?
+
+<br>
+<br>
 
 *A microbenchmark is a program designed to test a very small snippets of code for a specific task. Microbenchmarks are always artificial and they are not intended to represent normal use.*
 
 - We usually speak of milliseconds (ms), microseconds (µs), or nanoseconds (ns) here. 
 
-- Important: microbenchmarks can rarely be generalised to 'real' code: the observed differences in microbenchmarks will typically be dominated by **higher-order effects** in real code.
+- **Important**: 
+
+    microbenchmarks can rarely be generalised to 'real' code: the observed differences in microbenchmarks will typically be dominated by **higher-order effects** in real code.
 
   Think of it this way:
   
   A deep understanding of quantum physics is not very helpful when baking cookies.
   
-- There are several R packages for microbenchmarking. We will rely on the `bench` package by Hester (2018) which currently has the most accurate timer function.
+- There are several R packages for microbenchmarking. We will rely on the `bench` package by Hester (2019) which has the most accurate timer function currently available in R.
 
 ---
 ## Microbenchmarking &mdash; the `bench` package
@@ -439,46 +309,55 @@ background-size: cover
 ---
 ## Microbenchmarking &mdash; `bench::mark()`
 
-**Example: "the fastest square root"**
+.blockquote.exercise[
+#### `r icon::fa("desktop")` Example: "the fastest square root"
 
-```{r, eval=1:5}
+```{r, eval=T}
 x <- runif(100)
+
 (lb <- bench::mark(
   sqrt(x),
-  x ^ 0.5
+  x^0.5
 ))
-
 ```
 
 ```{r, eval=F, warning=F, message=F}
 plot(lb)
 ```
+]
 
 ---
 ## Microbenchmarking &mdash; `bench::mark()`
 
-**Example: "the fastest square root"**
+.blockquote.exercise[
+#### `r icon::fa("desktop")` Example: "the fastest square root"
 
-```{r, echo=F, fig.width=14, fig.height=8.5}
+```{r, echo=F, fig.width=14, fig.height=5.5, fig.align='center'}
 plot(lb)
 ```
 
+]
+
 ---
 ## Microbenchmarking &mdash; `bench::mark()`
 
-**Example: non-equivalent code**
+.smaller[
+.blockquote.exercise[
+#### `r icon::fa("desktop")` Example: non-equivalent code
 
 ```{r, eval=F}
 set.seed(42)
 
 dat <- data.frame(
   x = runif(10000, 1, 1000),
-  y = runif(10000, 1, 1000))
+  y = runif(10000, 1, 1000)
+  )
 
 bench::mark(
   dat[dat$x > 500, ],
   dat[which(dat$x > 499), ],
-  subset(dat, x > 500))
+  subset(dat, x > 500)
+  )
 ```
 
 ```{r, echo=FALSE}
@@ -492,85 +371,35 @@ Error: Each result must equal the first result:
 
 Use `check = FALSE` to disable checking of consistent results.
 
----
-## Microbenchmarking &mdash; `bench::mark()`
-
-**Example: benchmark against parameter grid**
-
-```{r, results='hide', cache=T}
-set.seed(42)
-
-create_df <- function(rows, cols) {
-  as.data.frame(setNames(
-    replicate(cols, runif(rows, 1, 1000), simplify = FALSE),
-    rep_len(c("x", letters), cols)))
-}
-
-results <- bench::press(
-  rows = c(10000, 100000),
-  cols = c(10, 100),
-  {
-    dat <- create_df(rows, cols)
-    bench::mark(
-      min_iterations = 100,
-      bracket = dat[dat$x > 500, ],
-      which = dat[which(dat$x > 500), ],
-      subset = subset(dat, x > 500)
-    )
-  }
-)
-```
+]]
 
 ---
-## Microbenchmarking &mdash; `bench::mark()`
+## Microbenchmarking &mdash; `bench::press()`
 
-**Example: benchmark against parameter grid**
+Sometimes it is useful to benchmark against a grid of parameters. This can be done using `bench::press()`.
 
-.small[
+.smaller[
+.blockquote.exercise[
+#### `r icon::fa("desktop")` **Exercise: benchmark against parameter grid**
 
-```{r, echo=F}
-cat('
-#> # A tibble: 12 x 12
-#>    expression   rows  cols      min     mean   median      max `itr/sec` mem_alloc  n_gc n_itr total_time
-#>    <chr>       <dbl> <dbl> <bch:tm> <bch:tm> <bch:tm> <bch:tm>     <dbl> <bch:byt> <dbl> <int>   <bch:tm>
-#>  1 bracket     10000    10    830µs   1.06ms 987.08µs   2.29ms    940.      1.17MB    18   304   323.47ms
-#>  2 which       10000    10 447.96µs 652.94µs 564.73µs    1.6ms   1532.    827.04KB    21   551   359.77ms
-#>  3 subset      10000    10 906.91µs   1.15ms   1.04ms   2.27ms    866.      1.28MB    21   320   369.44ms
-#>  4 bracket    100000    10  14.96ms  17.34ms  17.39ms  19.95ms     57.7    11.54MB    46    54   936.47ms
-#>  5 which      100000    10   9.09ms  11.24ms  11.04ms  15.25ms     89.0     7.91MB    32    68   764.24ms
-#>  6 subset     100000    10  14.76ms  16.86ms  16.07ms  20.74ms     59.3    12.68MB    46    54   910.46ms
-#>  7 bracket     10000   100   7.19ms   9.16ms   8.76ms     13ms    109.      9.71MB    34    66   604.84ms
-#>  8 which       10000   100   2.74ms   4.17ms   3.98ms   8.17ms    240.      5.91MB    19    81   338.03ms
-#>  9 subset      10000   100   7.19ms   9.63ms   9.46ms  12.54ms    104.      9.84MB    35    65   626.03ms
-#> 10 bracket    100000   100 100.19ms  111.1ms 111.08ms 121.63ms      9.00   97.47MB    83    21      2.33s
-#> 11 which      100000   100  54.19ms  59.62ms  59.36ms  65.77ms     16.8    59.51MB    36    64      3.82s
-#> 12 subset     100000   100 103.36ms 113.58ms 111.83ms    134ms      8.80   98.62MB    84    16      1.82s
-')
-```
-
-]
-
-`ggplot2::autoplot()` automatically generates a facet plot for `results`.
+Benchmark `create_df()` for combination of `rows = c(10000, 100000)` and `cols = c(10, 100)`.
 
 ```{r, eval=F}
-plot(results)
+create_df <- function(rows, cols) {
+  as.data.frame(matrix(
+      unlist(replicate(cols, runif(rows, 1, 1000), simplify = FALSE)),
+      nrow = rows, ncol = cols))
+}
 ```
 
----
-## Microbenchmarking &mdash; `bench::mark()`
-
-**Example: benchmark against parameter grid**
-
-```{r, echo=F, fig.width = 13, fig.height=8.5}
-plot(results)
-```
+]]
 
 ---
 ## Microbenchmarking &mdash; Exercises
 
 1. Instead of using `bench::mark()`, you could use the built-in function `system.time()` which is, however, much less precise, so you’ll need to repeat each operation many times with a loop, and then divide to find the average time of each operation, as in the code below.
-    
-    ```
+    ```{r, eval=F}
+    x <- runif(100)
     n <- 1e6
     system.time(for (i in 1:n) sqrt(x)) / n
     system.time(for (i in 1:n) x ^ 0.5) / n
@@ -578,17 +407,15 @@ plot(results)
 
   How do the estimates from `system.time()` compare to those from `bench::mark()`? Why are they different?
 
-2. Here are two other ways to compute the square root of a vector. Which do you think will be fastest? Which will be slowest? Use microbenchmarking to test your answers.
+2. Here are two other ways to compute the square root of a vector. Which do you think will be fastest? Use microbenchmarking to test your answers.
+    ```{r, eval=F}
+    x^(1/2)
+    exp(log(x)/2)
+    ```
 
-    ```
-    x ^ (1 / 2)
-    exp(log(x) / 2)
-    ```
 ---
-class: inverse, left, top
-background-image: url(img/road.jpg)
-background-size: cover
-## (Why) is R slow?
+class: segue-red
+### (Why) is R slow?
 
 ---
 ## (Why) is R slow?
@@ -608,11 +435,13 @@ Think of R as both the definition of a language and its implementation.
 ---
 ## (Why) is R slow? &mdash; Slow Code Interpretation
 
-... but:
+But:
 
 `R` is an interpreted language. Its dynamism causes code interpretation to be relatively time consuming.
 
-**Example**
+.smaller[
+.blockquote.exercise[
+#### `r icon::fa("desktop")` Example: extreme dynamism
 
 ```{r, echo=TRUE, rx =T}
 x <- 0L
@@ -621,7 +450,7 @@ for (i in 1:1e6) {
 }
 ```
 
-In the above example, the interpreter cannot predict that the loop always adds `1` to an integer `x`. `R` needs to look for the right `+` method (the method for adding two doubles) in *every* iteration of the loop!
+]]
 
 ---
 ## (Why) is R slow?
@@ -630,7 +459,7 @@ In the above example, the interpreter cannot predict that the loop always adds `
 
 - Processes R code and computes results; commonly base R (*GNU-R*) from [cran.r-project.org](https://cran.r-project.org/src/base/R-3/)
 
-- R (written in *FORTRAN*, *R*, and *C*) is more than 20 years old was not indented for super fast computations
+- R (written in *FORTRAN*, *R*, and *C*) is more than 20 years old was not intended for super fast computations
 
 - `r emo::ji('bolt')` tweaking for speed improvements is easier (done by R-core team) but not feasible for end users like us. <br><br> Some alternatives address specific issues:
 
@@ -642,7 +471,7 @@ In the above example, the interpreter cannot predict that the loop always adds `
 ---
 ## (Why) is R slow? &mdash; Name Look-up with Mutable Environments
 
-**Lexical Scoping in a Nutshell:**
+**Remember Lexical Scoping:**
 
 *"Values of variables are searched for in the environment the function belongs to."*
 
@@ -655,9 +484,11 @@ In the above example, the interpreter cannot predict that the loop always adds `
 ---
 ## (Why) is R slow? &mdash; Name Look-up with Mutable Environments
 
-**Example: have you seen z?**
+.smaller[
+.blockquote.exercise[
+#### `r icon::fa("desktop")` Example: have you seen z?
 
-Interpreter asks: which environment does the value of `z` come from?
+The interpreter asks: which environment does the value of `z` come from?
 
 ```{r, eval=FALSE}
 f <- function(x, y) {
@@ -670,10 +501,14 @@ f <- function(x, y) {
 search()
 ```
 
+]]
+
 ---
 ## (Why) is R slow? &mdash; Name Look-up with Mutable Environments
 
-**Example: have you seen z?**
+.smaller[
+.blockquote.exercise[
+#### `r icon::fa("desktop")` Example: have you seen z? &mdash; ctd.
 
 Interpreter asks: which environment does the value of `z` come from?
 
@@ -695,14 +530,19 @@ f()
 
 Name look-up is done every time we call `print(z)`!
 
+]]
+
 ---
 ## (Why) is R slow? &mdash; Look-up with Mutable Environments
 
+.smaller[
+
 Even more problematic: most operations are lexically scoped function calls. This includes `+` and `-` but also (sometimes "recklessly" used) *operators* like `(` and `{`.
 
-**Example: excessive usage of parenthesis.**
+.blockquote.exercise[
+#### `r icon::fa("desktop")` Example: excessive usage of parenthesis
 
-(a first example of poorly written code)
+(or: a good example of poorly written code)
 
 ```{r, cache=T}
 g <- function(x) x = (1/(1 + x))
@@ -714,10 +554,14 @@ x <- sample(1:100, 100, replace = TRUE)
 bench::mark(g(x), h(x), i(x))
 ```
 
+]]
+
 ---
 ## (Why) is R slow? &mdash; Look-up with Mutable Environments
 
-**Example: function calls in nested environments**
+.smaller[
+.blockquote.exercise[
+#### `r icon::fa("desktop")` Example: function calls in nested environments
 
 ```{r, cache=T}
 f <- function(x, y) {
@@ -737,13 +581,16 @@ set_env <- function(f, e) {
 f2 <- set_env(f, random_env())
 f3 <- set_env(f, random_env(environment(f2)))
 f4 <- set_env(f, random_env(environment(f3)))
-
 ```
+
+]]
 
 ---
 ## (Why) is R slow? &mdash; Look-up with Mutable Environments
 
-**Example: function calls in nested environments &mdash; ctd.**
+.smaller[
+.blockquote.exercise[
+#### `r icon::fa("desktop")` Example: function calls in nested environments &mdash; ctd.
 
 ```{r, warning=F, message=F, cache=T}
 bench::mark(f(1, 2), f2(1, 2), f3(1, 2), f4(1, 2))
@@ -751,21 +598,22 @@ bench::mark(f(1, 2), f2(1, 2), f3(1, 2), f4(1, 2))
 
 Each additional environment between `f()` and the global environment where `+` and `^` are defined increases computation time.
 
+]]
+
 ---
 ## (Why) is R slow? &mdash; Lazy Evaluation Overhead
 
-R function arguments are lazy --- they are only evaluated when actually needed. An unevaluated argument is called *promise* and consists of
+Remember that function arguments are lazy &mdash; they are only evaluated when actually needed. 
 
-  1. an expression
-    
-  2. a corresponding environment
-    
-  3. a value (if the expression was evaluated)
-
-**Example: lazy evaluation**
+.blockquote.exercise[
+#### `r icon::fa("desktop")` Example: lazy evaluation
 
 ```{r, eval=F}
-f1 <- function(a) {force(a); NULL} # why not simply write 'a'?
+f1 <- function(a) {
+  force(a) # why not simply write 'a'?
+  NULL
+  }
+
 f1(stop("My dog speaks Chinese"))
 ```
 
@@ -773,15 +621,19 @@ vs.
 
 ```{r, eval=F}
 f1 <- function(a) NULL
+
 f1(stop("My dog speaks Chinese"))
 ```
+
+]
 
 ---
 ## (Why) is R slow? &mdash; Lazy Evaluation Overhead
 
 Promises are very convenient but should be avoided if speed is crucial.
 
-**Example: lazy evaluation**
+.blockquote.exercise[
+#### `r icon::fa("desktop")` Example: lazy evaluation &mdash; ctd.
 
 ```{r}
 f1 <- function(a) NULL
@@ -790,6 +642,8 @@ bench::mark(f1(), f2())
 ```
 
 Arguments trigger promises each time the function is *called*. Superfluous arguments thus lead to avoidable overhead.
+
+]
 
 ---
 ## (Why) is R slow? &mdash; Summary
@@ -805,3 +659,9 @@ Arguments trigger promises each time the function is *called*. Superfluous argum
     (meanwhile there are `r nrow(available.packages(repos = "http://cran.us.r-project.org"))` packages available on [CRAN](https://cran.r-project.org/) with many useful functions waiting to be discovered by you!)
 
 - We cannot overcome the circumstances described in this section. However, there are a few things to keep in mind when you want to write high performance code. We'll discuss these in the next chapter.
+
+---
+class: segue-red
+
+![:image 30%](pikaball.gif)
+### Thank You! 

@@ -10,12 +10,12 @@ library(purrr)
 
 ## Slide 10: `purrr::map()` 
 
-`map()` returns a list, obviously (always).
+Note that `map()` always returns a list.
 
 There is a ton of variations of `map()`, see `?map`.
 
 ```{r}
-# another example
+# another example of the map_*() family
 map_if(ggplot2::economics, is.numeric, mean)
 ```
 
@@ -38,18 +38,18 @@ sapply(x, "[[", 1)
 
 ## Slide 15: `purrr::map_*()` — Producing Atomic Vectors
 
-Note that `.default = NA` requires the subsequent code to be compatible with `NA` values. 
+Note that `.default = NA` requires your subsequent code to be compatible with `NA` values. 
 
 ## Slide 19: `purrr::map_*()` — Exercises
 
-1. `map(1:3, ~ runif(2))` evaluates `runif()` with `n = 2` in every iteration since `~` converts to an anonymous function. `map(1:3, runif(2))` evaluates `runif(2)` only once and cannot do mapping because `runif(2)` is not treated as a function. `NULL` is returned in every iteration.
+1. Note that
+
+    - `map(1:3, ~ runif(2))` evaluates `runif()` with argument `n = 2` in *every* iteration since `~` converts the formula to an anonymous function `function(x) runif(2)`. 
+    
+    - `map(1:3, runif(2))` evaluates `runif(2)` only once and cannot do the mapping because `runif(2)` cannot be transformed to a function, see `?purrr::as_mapper()`. Thus `NULL` is returned in every iteration.
 
 2.  
     ```{r}
-    # from exercise
-    trials <- map(1:100, ~ t.test(rpois(10, 10), rpois(10, 7)))
-    
-    # solution
     library(ggplot2)
     
     trials_df <- tibble(p_value = map_dbl(trials, "p.value"))
@@ -62,13 +62,6 @@ Note that `.default = NA` requires the subsequent code to be compatible with `NA
 
 3.
   ```{r}
-  # from exercise
-  formulas <- list(
-    mpg ~ disp,
-    mpg ~ disp + wt,
-    mpg ~ I(1 / disp) + wt
-  )
-  
   # solution
   models <- map(formulas, lm, data = mtcars)
   ```
@@ -82,36 +75,36 @@ cars2018 <- readr::read_csv("../data/cars2018.csv")
 by_drive <- split(cars2018, cars2018$Drive)
 ```
 
-**`purrr` style approach:**
+- **`purrr` style approach:**
 
-```{r}
-by_drive %>%
-  map(~ lm(MPG ~ Cylinders, data = .x)) %>%
-  map(coef) %>%
-  map_dbl(2)
-```
+    ```{r}
+    by_drive %>%
+      map(~ lm(MPG ~ Cylinders, data = .x)) %>%
+      map(coef) %>%
+      map_dbl(2)
+    ```
 
-**`apply()` style R:**
+- **`apply()` style R:**
 
-```{r}
-models <- lapply(by_drive, function(data) lm(MPG ~ Cylinders, data = data))
-vapply(models, function(x) coef(x)[[2]], double(1))
-```
+    ```{r}
+    models <- lapply(by_drive, function(data) lm(MPG ~ Cylinders, data = data))
+    vapply(models, function(x) coef(x)[[2]], double(1))
+    ```
 
-**`for()` loop:**
+- **`for()` loop:**
 
-```{r}
-slopes <- double(length(by_drive))
-for (i in seq_along(by_drive)) {
-  model <- lm(MPG ~ Cylinders, data = by_drive[[i]])
-  slopes[[i]] <- coef(model)[[2]]
-}
-slopes
-```
+    ```{r}
+    slopes <- double(length(by_drive))
+    for (i in seq_along(by_drive)) {
+      model <- lm(MPG ~ Cylinders, data = by_drive[[i]])
+      slopes[[i]] <- coef(model)[[2]]
+    }
+    slopes
+    ```
 
 **Additional notes:**
 
-  - `purrr` code is most accessible as each line encapsulates a single step and the `purrr` helpers allow us to concisely describe what to do in each step.
+  - `purrr` code is most accessible since each line encapsulates a single step and `map_*` allow to concisely convey what is done in each step.
 
   - Moving from `purrr` to base R we see that the number functions which iterate decreases while each iteration becomes increasingly complicated:
 
@@ -119,11 +112,11 @@ slopes
 
   - The `apply()` approach iterates twice (`lapply()` and `vapply()`)
 
-  - Everything can be done in one `for()` loop
+  - Everything may be done in a single (but messy) `for()` loop
 
 ## Slide 26: `purrr::walk()`
 
-Assignment (to an environment) is a side-effect:
+Assignment to an environment is a common side-effect:
 
 ```{r, eval=F}
 # ABC(1) => A <- 1, ABC(2) => B <- 2, ...
@@ -141,55 +134,46 @@ walk(1:3, ABC)
 
 ## Slide 27: `purrr::walk2()`
 
-Writing to disc needs two arguments
+Writing to disc is a side effect. We need a mapping over two arguments: an object and a path.
 
 ```{r, cache=T}
 cars2018 <- readr::read_csv("../data/cars2018.csv")
 
-t <- tempfile()
-dir.create(t)
+t <- tempfile()    # temporary path
+dir.create(t)      # create folder at t
 
+# list of splits
 tm <- split(cars2018, cars2018$Transmission)
 
+# generate paths
 paths <- file.path(t, paste0(names(tm), ".csv"))
 
+# walk over two arguments.
 walk2(tm, paths, write.csv)
 
+# inspect temporary folder
 dir(t)
 ```
 
 ## Slide 28: `purrr:imap()`
 
 ```{r}
-cars2018 %>% select_if(is.numeric) %>% imap_chr(~ paste0("The Mean of ", .y, " is ", mean(.x)))
+cars2018 %>% 
+  select_if(is.numeric) %>% 
+  imap_chr(~ paste0("The Mean of ", .y, " is ", mean(.x)))
 ```
 
 ## Slide 33: `purrr::pmap()` — Exercises
 
-1. 
+1. `modify()` is a shortcut for `x[[i]] <- f(x[[i]]); return(x)`. So every row is filled with its first value.
 
+2. This a a good example of a quite complex operation which is relatively easy to comprehend, even from only looking at the code.
     ```{r}
-    # from exercise
-    modify(cars2018, 1)
-    ```
-    
-    **Solution:**
-    
-    `modify()` is a shortcut for `x[[i]] <- f(x[[i]]); return(x)`. So every row is filled with it's first value.
-
-2. Good example of a quite complex operation which is relatively easy to comprehend, even from only looking at the code.
-    ```{r}
-    # from exercise
-    trans <- list(
-      Displacement = function(x) x * 0.0163871,
-      Transmission = function(x) factor(x, labels = c("Automatic", "Manual", "CVT"))
-    )
-    
     nm <- names(trans)
     mtcars[nm] <- map2(trans, cars2018[nm], function(f, var) f(var))
     ```
 
-    - The functions in `trans` are to modify certain variables in `cars2018`
+    - The functions in `trans` are intended to modify certain columns in `cars2018`
     
     - `map2()` runs over a named list of functions, `trans`, and a set of columns in `cars2018` which is obtained by subsetting using the function names
     
@@ -199,16 +183,11 @@ cars2018 %>% select_if(is.numeric) %>% imap_chr(~ paste0("The Mean of ", .y, " i
 
 3. 
 
-    ```{r}
-    # from exercise
-    mtcars[nm] <- map(nm, ~ trans[[.x]](cars2018[[.x]]))
-    ```
-
-    - Both lead to the same result. 
+    - Note that both approaches yield the same result
     
-    - `map()` iterates over the variable names and calls the corresponding functions. Usage of `[[` and `.x` in the formula interface is pretty compact and convey that columns of `cars2018` are modified.
+    - `map()` iterates over the variable names and calls the corresponding functions. Usage of `[[` and `.x` in the formula interface is pretty compact and conveys that columns of `cars2018` are modified.
     
-    - Using the iteration over functions and variables in `map2()` allows us to use expressive variable names (`f`, `var`) which is not possible for the `map()` which iterates over names.
+    - Using the iteration over functions and variables in `map2()` allows us to use expressive variable names (`f`, `var`) which is not possible for the `map()` approach which iterates over names.
     
     - We could've also used the formula interface with `map2()` (which is even more compact) but the result looks rather cryptic:
       ```{r}
@@ -237,19 +216,25 @@ ll_poisson <- function(x) {
 
 - The advantage of using a function factory here is fairly small, but there are two niceties:
 
-    - We can precompute some values in the factory, saving computation time in each iteration.
+    - We can precompute some values (quantities that dependent on the data only) in the factory, saving computation time in each iteration when running a maximisation algorithms on the manufactured function.
 
     - The two-level design better reflects the mathematical structure of the underlying problem.
 
-- These advantages get bigger in more complex MLE problems, where you have multiple parameters and multiple data vectors.
+- Of course, these advantages get bigger in more complex MLE problems, where we have multiple parameters and multiple data vectors.
 
 **Let's find the MLE for a Poisson random vector.**
 
 ```{r, cache=T}
+# random poisson sample
 x1 <- rpois(100, 30)
+# produce log-likelihood function using factory
 llp <- ll_poisson(x1)
 
+#### compute MLE ####
+
 optimise(lprob_poisson, x = x1, c(0, 40), maximum = T)
-# better:
+# see slides for def. of lprob_poisson()
+
+# more efficient to use the manufactured function:
 optimise(llp, c(0, 40), maximum = T)
 ```
