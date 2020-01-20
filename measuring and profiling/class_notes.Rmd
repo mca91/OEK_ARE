@@ -5,7 +5,6 @@ output: pdf_document
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE, eval = FALSE)
-library(purrr)
 ```
 
 ## Slide 6: Profiling - `utils::Rprof()`
@@ -14,7 +13,12 @@ library(purrr)
 
 - The default time interval between sampling is 0.02 seconds. If the profiled code executes faster you need to pass an appropriate sampling time to the argument `interval`.
 
-- The output of `Rprof()` is a complete listing of the function call stack at every sampling iteration (which, on its own, is often not very informative) which is printed to a binary file in the current working directory
+- The output of `Rprof()` is a complete listing of the function call stack *at every sampling iteration* (which, on its own, is often not very informative) and is printed to a binary file in the current working directory (in the example we save it in a temporary file)
+
+- The number of lines printed to the console therefore depends on the number of stops were the profiler records the current call stack, set using `interval`:
+
+    In the example, the sampling interval is 0.1 and total execution time is 0.3 seconds. The full call stack is displayed 3 times since random number generation using `rnorm()` takes almost 100% of the time.
+
 
 **Example: profiling a call of `replicate()` &mdash; ctd.**
 
@@ -243,5 +247,5 @@ plot(results)
 
 ## Slide 25: (Why) is R slow? &mdash; Slow Code Interpretation
 
-In the example, the interpreter cannot predict that the loop always adds `1` to an integer `x`. `R` needs to look for the right `+` method (the method for adding two doubles) in *every* iteration of the loop!
+In the example, the interpreter cannot predict that the loop always adds `1` to an integer `x`. `R` needs to look for the right `+` method (the method for adding two integers) in *every* iteration of the loop!
 

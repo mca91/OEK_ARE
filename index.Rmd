@@ -42,7 +42,7 @@ output:
 <li>  Performance </li> 
 <ul>
   <li> <a href="measuring and profiling/MeasuringProfiling.html">Profiling and Benchmarking</a></li> 
-  <li> Parallelisation </li>
+  <li> <a href="improving performance/improving-performance.html">Improving Performance</a></li>
   <li> Rcpp </li>
 </ul>
 <li> <a href = Webscraping/webscraping.html>Web Scraping</a>   </li>

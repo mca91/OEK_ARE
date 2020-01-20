@@ -3,8 +3,8 @@
   <head>
     <title>Advanced R for Econometricians</title>
     <meta charset="utf-8" />
-    <meta name="author" content="Martin Arnold" />
-    <meta name="date" content="2019-12-03" />
+    <meta name="author" content="Martin C. Arnold" />
+    <meta name="date" content="2020-01-20" />
     <link href="improving-performance_files/remark-css/default.css" rel="stylesheet" />
     <link href="improving-performance_files/font-awesome/css/fontawesome-all.min.css" rel="stylesheet" />
     <script type="text/x-mathjax-config">
@@ -40,11 +40,19 @@ class: title-slide title-performance center middle
 
 # Advanced R for Econometricians
 ## Improving Performance
-### Martin Arnold
+### Martin C. Arnold
 
 ---
 class: left
 ## Improving Performance
+
+
+```r
+# packages needed
+library(tidyverse) # for bench package
+library(parallel)
+library(MonteCarlo)
+```
 
 &lt;style&gt;
   strong {
@@ -53,7 +61,7 @@ class: left
   
 &lt;/style&gt;
 
-&lt;blockquote style ="margin-top:15%;"&gt;
+&lt;blockquote style ="margin-top:10%;"&gt;
 We should forget about small efficiencies, say about 97% of the time: premature optimisation is the root of all evil. Yet we should not pass up our opportunities in that critical 3%. A good programmer will not be lulled into complacency by such reasoning, he will be wise to look carefully at the critical code; but only after that code has been identified.
 .right[&amp;mdash; &lt;cite&gt;Donald Knuth&lt;/cite&gt;]
 &lt;/blockquote&gt;
@@ -86,7 +94,7 @@ There's a good chance that someone has already tackled the same problem.
 
 - Find out if there is a [Cran Task View](https://cran.rstudio.com/web/views/) related to your problem and search the packages listed there
 
-- Limit your search to packages that depend on the Rcpp package (and thus likely implement high-performant C++ code). This is easily done by checking reverse dependencies of [Rcpp](https://cran.r-project.org/web/packages/Rcpp/).
+- Limit your search to packages that depend on the `Rcpp` package (and thus likely implement high-performant C++ code). This is easily done by checking reverse dependencies of [Rcpp](https://cran.r-project.org/web/packages/Rcpp/).
 
 - Check if a question related to your problem has been asked on [stackoverflow](https://stackoverflow.com/). Narrow the search by using suitable tags, e.g., `[r]`, `[performance]`.
 
@@ -114,107 +122,70 @@ The techniques discussed next follow this paradigm. If this is not enough, we st
 ---
 ## 2. Do as Little as Possible
 
+.smaller[
+
 If you cannot find existing solutions, start by reducing your code to the bare essentials.
 
 .blockquote.exercise[
-#### <i class="fas  fa-desktop "></i> Example: coercion of inputs / robustness checks
-
-`apply()` accepts various inputs and outputs which requires coercion (which is slow).
+#### <i class="fas  fa-desktop "></i> Exercise: coercion of inputs / robustness checks
 
 
 ```r
 X &lt;- matrix(1:1000, ncol = 10)
 Y &lt;- as.data.frame(X)
-
-bench::mark(
-  apply(X, 1, sum),
-  apply(Y, 1, sum)
-)
 ```
 
-```
-## # A tibble: 2 x 6
-##   expression            min   median `itr/sec` mem_alloc `gc/sec`
-##   &lt;bch:expr&gt;       &lt;bch:tm&gt; &lt;bch:tm&gt;     &lt;dbl&gt; &lt;bch:byt&gt;    &lt;dbl&gt;
-## 1 apply(X, 1, sum)   93.4µs    107µs     8728.    6.09KB     23.2
-## 2 apply(Y, 1, sum)  178.5µs    216µs     4306.   80.58KB     21.6
-```
-
-]
-
-???
-
-Apply coerces `Y` to matrix which triggers a copy. You can check this using `lobstr::tracemem()`.
-
----
-## 2. Do as Little as Possible
-.smaller[
-A function is faster if it has less to do &amp;mdash; obvious but often neglected! Use functions tailored to specific input and output types / specific problems.
-.blockquote.exercise[
-#### <i class="fas  fa-desktop "></i> Example: row sums &amp;mdash; `rowSums()` vs. `apply()`
-
-Using `apply()` yields a much longer call stack than `rowSums()` which is much more specific. 
+Which approach is faster and why?
 
 
 ```r
-bench::mark(
-  rowSums(X),
-  apply(X, 1, sum)
-)
-```
-
-```
-## # A tibble: 2 x 6
-##   expression            min   median `itr/sec` mem_alloc `gc/sec`
-##   &lt;bch:expr&gt;       &lt;bch:tm&gt; &lt;bch:tm&gt;     &lt;dbl&gt; &lt;bch:byt&gt;    &lt;dbl&gt;
-## 1 rowSums(X)         6.84µs   7.71µs   115205.      848B     11.5
-## 2 apply(X, 1, sum)  97.38µs 109.62µs     8564.    6.09KB     28.2
+apply(X, 1, sum)
+apply(Y, 1, sum)
 ```
 
 ]]
 
-???
-
-Note that `any()` calls the primitive `any`.
-
 ---
 ## 2. Do as Little as Possible
 
-.blockquote.exercise[
-#### <i class="fas  fa-desktop "></i> Example: searching a vector
+.smaller[
 
-Testing equality is faster than testing inclusion in a set.
+A function is faster if it has less to do &amp;mdash; obvious but often neglected! 
+
+**Use functions tailored to specific input and output types / specific problems!**
+
+.blockquote.exercise[
+#### <i class="fas  fa-desktop "></i> Exercise: coercion of inputs / robustness checks &amp;mdash; ctd.
+
+Which approach is faster and why?
 
 
 ```r
-x &lt;- 1:100
-
-bench::mark(
-  any(x == 10),
-  10 %in% x
-)
+rowSums(X)
+apply(X, 1, sum)
 ```
 
-```
-## # A tibble: 2 x 6
-##   expression        min   median `itr/sec` mem_alloc `gc/sec`
-##   &lt;bch:expr&gt;   &lt;bch:tm&gt; &lt;bch:tm&gt;     &lt;dbl&gt; &lt;bch:byt&gt;    &lt;dbl&gt;
-## 1 any(x == 10)    496ns  687.5ns  1148287.      896B        0
-## 2 10 %in% x       854ns   1.48µs   462424.    1.27KB        0
-```
-
-]
+]]
 
 ---
 ## 2. Do as Little as Possible
 
 .smaller[
 .blockquote.exercise[
-#### <i class="fas  fa-desktop "></i> Example: Linear Regression &amp;mdash; computation of `\(SE(\widehat\beta)\)`
+#### <i class="fas  fa-desktop "></i> Exercise: searching a vector
 
-- `a()` is what we teach undergraduates which is totally fine &amp;mdash; except if you want (only) `\(SE(\widehat\beta)\)` and fast.
+What is the fastest way to check if `10` is an element of `1:100`?
 
-- `b()` is rather focused on the essentials.
+]]
+
+---
+## 2. Do as Little as Possible
+
+.smaller[
+.blockquote.exercise[
+#### <i class="fas  fa-desktop "></i> Exercise: Linear Regression &amp;mdash; computation of `\(SE(\widehat\beta)\)`
+
+Which approach is faster and why? Name disadvantages of the fastest one.
 
 
 ```r
@@ -240,38 +211,11 @@ b &lt;- function() {
 ## 2. Do as Little as Possible
 
 .smaller[
-.blockquote.exercise[
-#### <i class="fas  fa-desktop "></i> Example: Linear Regression &amp;mdash; computation of `\(SE(\widehat\beta)\)` &amp;mdash; ctd.
-
-Let's compare both approaches in a microbenchmark.
-
-
-```r
-bench::mark(
-  a(),
-  b()
-)
-```
-
-```
-## # A tibble: 2 x 6
-##   expression      min   median `itr/sec` mem_alloc `gc/sec`
-##   &lt;bch:expr&gt; &lt;bch:tm&gt; &lt;bch:tm&gt;     &lt;dbl&gt; &lt;bch:byt&gt;    &lt;dbl&gt;
-## 1 a()         553.4µs  606.3µs     1485.   651.8KB     14.9
-## 2 b()          48.8µs   54.9µs    15924.    53.5KB     17.7
-```
-
-The difference is indeed huge.
-
-]]
-
----
-## 2. Do as Little as Possible
 
 Be as explicit as possible.
 
 .blockquote.exercise[
-#### <i class="fas  fa-desktop "></i> Example:  method dispatch takes time
+#### <i class="fas  fa-desktop "></i> Example: method dispatch takes time
 
 
 ```r
@@ -287,17 +231,16 @@ bench::mark(
 ## # A tibble: 2 x 6
 ##   expression           min   median `itr/sec` mem_alloc `gc/sec`
 ##   &lt;bch:expr&gt;      &lt;bch:tm&gt; &lt;bch:tm&gt;     &lt;dbl&gt; &lt;bch:byt&gt;    &lt;dbl&gt;
-## 1 mean(x)           2.94µs   5.94µs   148164.    22.7KB     14.8
-## 2 mean.default(x)   1.11µs   1.44µs   497624.        0B      0
+## 1 mean(x)           2.36µs   2.83µs   318031.    22.7KB      0  
+## 2 mean.default(x)   1.04µs   1.23µs   692006.        0B     69.2
 ```
-]
-
+]]
 
 ---
 ## 2. Do as Little as Possible
 
+.smaller[
 Benchmark against alternatives that rely on primitive functions.
-
 .blockquote.exercise[
 #### <i class="fas  fa-desktop "></i> Example: primitives are faster
 
@@ -312,103 +255,9 @@ bench::mark(
 ## # A tibble: 2 x 6
 ##   expression            min   median `itr/sec` mem_alloc `gc/sec`
 ##   &lt;bch:expr&gt;       &lt;bch:tm&gt; &lt;bch:tm&gt;     &lt;dbl&gt; &lt;bch:byt&gt;    &lt;dbl&gt;
-## 1 mean.default(x)    1.19µs   1.76µs   422080.        0B     42.2
-## 2 sum(x)/length(x)    430ns    629ns  1028754.        0B      0
+## 1 mean.default(x)    1.06µs   1.34µs   646262.        0B        0
+## 2 sum(x)/length(x)    410ns    492ns  1769119.        0B        0
 ```
-]
-
----
-## 2. Do as Little as Possible &amp;mdash; Byte Compiler
-
-R's interpreter performs a number of costly operations. The `compiler` package reduces the resulting slowdown by providing a translator which generates a byte compiled version of an R function.
-
-
-```r
-library(compiler)
-```
-
-The `compiler` package comes with the base distribution of R (base R functions are byte compiled).
-
-
-```r
-mean
-```
-
-```
-## function (x, ...) 
-## UseMethod("mean")
-## &lt;bytecode: 0x7fb64e932ca0&gt;
-## &lt;environment: namespace:base&gt;
-```
-
-Recent R versions perform just-in-time (JIT) compilation by default so there is no reason to compile explicitly. The following example demonstrates the usefulness of this approach.
-
-???
-
-`bytecode: &lt;...&gt;` points to the memory location of the *compiled* function
-
----
-## 2. Do as Little as Possible &amp;mdash; Byte Compiler
-.smaller[
-.blockquote.exercise[
-#### <i class="fas  fa-desktop "></i> Example: compiled correlation matrix
-Interpreting the code is more demanding than the actual 'computation'.
-
-
-```r
-corr &lt;- my.correlation &lt;- function(X) {
-  Y &lt;- as.matrix(X); TY &lt;- t(Y)
-  n &lt;- nrow(X)
-  p &lt;- ncol(X)
-  M &lt;- matrix(0, p, p)
-  for (i in 1:p) {
-    for (j in 1:p) {
-      for (k in 1:n) {
-        M[i, j] &lt;- M[i, j] + TY[i, k] * Y[k, j]
-      }
-    }
-  }
-  M &lt;- M/n
-  return(M)
-}
-```
-]]
-
----
-## 2. Do as Little as Possible &amp;mdash; Byte Compiler
-
-.smaller[
-.blockquote.exercise[
-#### <i class="fas  fa-desktop "></i> Example: compiled correlation matrix &amp;mdash; ctd.
-
-Let's generate a compiled version of `corr()`.
-
-```r
-corr_cmp &lt;- cmpfun(corr)  # compiled version of corr()
-enableJIT(0)              # disable JIT compilation
-```
-
-```
-## [1] 3
-```
-
-```r
-x &lt;- matrix(rnorm(1e4), nrow = 100)
-
-bench::mark(
-  corr(x),
-  corr_cmp(x),
-  relative = T)[, 1:4]
-```
-
-```
-## # A tibble: 2 x 4
-##   expression    min median `itr/sec`
-##   &lt;bch:expr&gt;  &lt;dbl&gt;  &lt;dbl&gt;     &lt;dbl&gt;
-## 1 corr(x)      14.4   14.0       1  
-## 2 corr_cmp(x)   1      1        14.0
-```
-
 ]]
 
 ---
@@ -417,7 +266,10 @@ bench::mark(
 .smaller[
 1. Can you come up with an even faster implementation of `b()` in the linear regression example?
 
-2. `rowSums2()` is an alternative implementation of `rowSums()`. Is it faster for the input `df`? Why?
+
+2. What’s the difference between `rowSums()` and `.rowSums()`?
+
+3. `rowSums2()` is an alternative implementation of `rowSums()`. Is it faster for the input `df`? Why?
     
     ```r
     rowSums2 &lt;- function(df) {
@@ -434,15 +286,16 @@ bench::mark(
     )
     ```
 
-3. What’s the difference between `rowSums()` and `.rowSums()`?
-
-4. Write a faster version of `chisq.test()` that only computes the chi-square test statistic when the input is two numeric vectors with no missing values. Start by coding from the [definition](https://en.wikipedia.org/wiki/Pearson%27s_chi-squared_test).
 ]
 
 ---
 ## 2. Do as Little as Possible &amp;mdash; Case Study
 
-Imagine you want to compute the bootstrap distribution of a sample correlation using `cor_df()` and the data in the example below. Given that you want to run this many times, how can you make this code faster? 
+.smaller[
+
+Imagine you want to compute the bootstrap distribution of a sample correlation coefficient using `cor_df()` and the data in the example below. 
+
+Given that you want to run this many times, how can you make this code faster? 
 
 
 ```r
@@ -455,21 +308,12 @@ cor_df &lt;- function(df, n) {
 }
 ```
 
-???
-
-- `:` is a primitive and is faster than `seq()`. We circument generating the sequence and use `sample.int(n, n)`.
-- Passing vectors using `$` is faster than looking up the correct method of `\([\)`
-- `cor()` runs faster on vectors
-
-```
-cor_df2 &lt;- function(x, n) {
-  i &lt;- sample(1:n, n, replace = T)
-  cor(df$a[i], df$b[i])
-}
-```
+]
 
 ---
 ## 3. Vectorise your code
+
+.smaller[
 
 **What is vectorisation?** 
 
@@ -483,22 +327,28 @@ cor_df2 &lt;- function(x, n) {
 
 - Your computer is designed to run vectorised operations: a vectorised function may run multiple operations from a single instruction which is faster than sending individual instructions for each operation.  
 
----
-## 3. Vectorise your code
-
-**Why is vectorisation efficient? &amp;mdash; ctd.** 
-
-Many languages (including R) work on arrays that are stored in [column-major order](https://en.m.wikipedia.org/wiki/Row-_and_column-major_order) in the memory.
-
-![:image 60%](../img/rowcolumnarrays.jpg)
-
-Disregarding these patterns by writing code which operates on `\(1\times1\)` vectors thus means 'fighting the language'.
+]
 
 ---
 ## 3. Vectorise your code
 
 .smaller[
-**Why is vectorisation more efficient? &amp;mdash; ctd. **
+
+**Why is vectorisation efficient? &amp;mdash; ctd.** 
+
+Many languages (including R) work on arrays that are stored in the memory in [column-major order](https://en.m.wikipedia.org/wiki/Row-_and_column-major_order).
+
+![:image 60%](../img/rowcolumnarrays.jpg)
+
+Disregarding these patterns by writing code which operates on `\(1\times1\)` vectors thus means 'fighting the language'.
+
+]
+
+---
+## 3. Vectorise your code
+
+.smaller[
+**Why is vectorisation efficient? &amp;mdash; ctd. **
 
 .blockquote.exercise[
 #### <i class="fas  fa-desktop "></i> Example: vector addition
@@ -519,6 +369,7 @@ Disregarding these patterns by writing code which operates on `\(1\times1\)` vec
 ]]
 
 ???
+
 Aagain, less related to R itself but to what the CPU does.
 
 
@@ -534,18 +385,20 @@ Remember that there are no 'real' scalars in R. Everything that looks like a sca
 
 
 ```r
-# Otherwise this shouldn't work:
+# otherwise this shouldn't work:
 1[1]
 ```
 
 ```
 ## [1] 1
 ```
-Scalar operations thus work on vector *elements* which (often) is needlessly cumbersome.
+Thus 'scalar' operations work on vector *elements* which is (often) needlessly cumbersome.
 ]
 
 ---
 ## 3. Vectorise your code
+
+.smaller[
 
 **What does it mean to write 'vectorised' code in R?**
 
@@ -580,10 +433,16 @@ L2_vec &lt;- function(x) {
 ```
 ]]
 
+]
+
 ---
 ## 3. Vectorise your code
 
+.smaller[
+
 **What does it mean to write 'vectorised' code in R?**
+
+By 'vectorised' we mean that the function works on vectors, i.e., performs vector arithmetic and calls functions which work on vectors.
 
 .blockquote.exercise[
 #### <i class="fas  fa-desktop "></i> Example: scalar vs. vectorised computation of euclidean norm
@@ -599,13 +458,15 @@ bench::mark(
 ## # A tibble: 2 x 6
 ##   expression              min   median `itr/sec` mem_alloc `gc/sec`
 ##   &lt;bch:expr&gt;         &lt;bch:tm&gt; &lt;bch:tm&gt;     &lt;dbl&gt; &lt;bch:byt&gt;    &lt;dbl&gt;
-## 1 L2_scalar(1:10000)    346µs  376.7µs     2529.    91.5KB      0  
-## 2 L2_vec(1:10000)        34µs   87.5µs    10394.   117.3KB     21.5
+## 1 L2_scalar(1:10000)  713.1µs  775.8µs     1236.    4.11MB      0  
+## 2 L2_vec(1:10000)      40.3µs   73.1µs    12708.   78.22KB     16.9
 ```
-]
+]]
 
 ---
 ## 3. Vectorise your code &amp;mdash; Some Principles
+
+.smaller[
 
 - **Do not torture the interpreter**
 
@@ -623,48 +484,30 @@ bench::mark(
 
     Most matrix operations that involve loops are executed by highly optimized external Fortran and C libraries. See, e.g., [BLAS](https://en.wikipedia.org/wiki/Basic_Linear_Algebra_Subprograms).
 
+]
+
 ---
 ## 3. Vectorise your code
 
-**Are `for()` loops slower than `apply()`?**
+.smaller[
 
-`for()` loops have the reputation of being slow(er than `apply()`). This is widespread wisdom and not generally true:
+**Are `for()` loops slower than `*apply()`?**
 
-- `for()` is *not* slow if we iterate over data and apply a (non-vectorised) function. Execution time is comparable to `apply()`.
+`for()` loops have the reputation of being slow(er than `*apply()`). This is widespread wisdom and not generally true:
+
+- `for()` is *not* slow if we iterate over data and apply a (non-vectorised) function. Execution time is comparable to `*apply()`.
 
 - Loops are often used in an *inefficient* manner: 
 
-    growing an object with improper initialisation means overhead due to **growing and copying** in every iteration.
+    Growing an object and improper initialisation means overhead due to **growing / copying** in every iteration. 
+    
+    Getting used to `*apply()` is a good practice as it prevents us from doing silly stuff like the above.
+    
+**What if I need to use `for` / how to properly write a `for` loop?**
 
-**What if I need to use `for()`?**
+Allocate the required storage before the loop and *fill* the object!
 
-Allocate required storage before the loop and *fill* the allocated object!
-
-(BTW, this is what `apply()` does under the hood.)
-
----
-## 3. Vectorise your code
-
-.blockquote.exercise[
-#### <i class="fas  fa-desktop "></i> Example: avoid growing objects
-
-```r
-# grow
-vec &lt;- numeric(0)
-for(i in 1:n) vec &lt;- c(vec, i)
-
-# fill
-vec &lt;- numeric(n)
-for(i in 1:n) vec[i] &lt;- i
-
-# primitive
-vec &lt;- 1:n
-```
 ]
-
-???
-
-Technically this does not directly relate to vectorisation but it demonstrates that growing objects using loops is a bad idea. A vectorised approach is often faster.
 
 ---
 ## 3. Vectorise your code
@@ -690,10 +533,12 @@ Technically this does not directly relate to vectorisation but it demonstrates t
 rw_bad &lt;- function(N) {
   set.seed(1)
   out &lt;- rnorm(1)
+  
   for(i in 2:N) {
    out &lt;- c(out, 
             out[i-1] + rnorm(1))
   }
+  
   return(out)
 }
 ```
@@ -714,10 +559,12 @@ rw_bad &lt;- function(N) {
 rw_good &lt;- function(N) {
   set.seed(1)
   out &lt;- vector("double", N)
+  
   out[1] &lt;- rnorm(1)
   for(i in 2:N) {
    out[i] &lt;- rnorm(1) + out[i-1]
   }
+  
   return(out)
 }
 ```
@@ -743,8 +590,8 @@ bench::mark(rw_good(1e4),
 ## # A tibble: 2 x 6
 ##   expression          min   median `itr/sec` mem_alloc `gc/sec`
 ##   &lt;bch:expr&gt;     &lt;bch:tm&gt; &lt;bch:tm&gt;     &lt;dbl&gt; &lt;bch:byt&gt;    &lt;dbl&gt;
-## 1 rw_good(10000)   16.7ms   27.9ms     35.9     24.6MB     20.0
-## 2 rw_bad(10000)   437.2ms  475.6ms      2.10   406.3MB     21.0
+## 1 rw_good(10000)   15.2ms   22.6ms     39.3     24.8MB     21.6
+## 2 rw_bad(10000)     346ms  351.5ms      2.85   406.3MB     27.0
 ```
 ]
 
@@ -761,9 +608,11 @@ X &lt;- matrix(rnorm(1e4), ncol = 1e4)
 
 colmax &lt;- function(x) {
   out &lt;- numeric(ncol(x))
+  
   for(j in 1:ncol(x)) {
     out[j] &lt;- max(x[,j])
   }
+  
   return(out)
 }
 ```
@@ -788,32 +637,25 @@ bench::mark(
 ## # A tibble: 2 x 6
 ##   expression            min   median `itr/sec` mem_alloc `gc/sec`
 ##   &lt;bch:expr&gt;       &lt;bch:tm&gt; &lt;bch:tm&gt;     &lt;dbl&gt; &lt;bch:byt&gt;    &lt;dbl&gt;
-## 1 colmax(X)          5.52ms   6.49ms     128.      176KB     44.7
-## 2 apply(X, 2, max)   9.62ms  18.25ms      56.3     313KB     28.1
+## 1 colmax(X)          5.71ms   6.42ms     154.     4.34MB     55.4
+## 2 apply(X, 2, max)   8.95ms  10.48ms      97.3  312.73KB     55.6
 ```
 ]
 
 ---
 ## 3. Vectorise your code &amp;mdash; Exercises
 
-1. Which approach is faster `if()` or `ifelse()`?
+1. Compare the speed of `apply(X, 1, sum)` with the vectorised `rowSums(X)` for varying sizes of the square matrix `X` using `bench::mark()`. Consider the dimensions `1`, `1e1`, `1e2`, `1e3`, `0.5e4` and `1e5`. Visualize the results using a violin plot.
 
-2. Compare the speed of `apply(X, 1, sum)` with the vectorised `rowSums(X)` for varying sizes of the square matrix `X` using `bench::mark()`. Consider the dimensions `1`, `1e1`, `1e2`, `1e3`, `0.5e4` and `1e5`. Visualize the results using a violin plot.
-
-3. 
+2. 
 
     (a) How can you vectorise the computation of a weighted sum?
 
     (b) How can you use `crossprod()` to compute that same sum? 
 
-    (c) How much faster are the approaches in (a) and (b) compared to the 'naive' approach `sum(x * w)`?
+    (c) Compare performance of the approaches in (a) and (b)
 
-4.  Find an approach to compute column maxima of a numeric matrix `X` using a `*apply()`-function which outperforms `apply(X, 2, max)`.
-    
-
-???
-
-1. `ifelse()` is vectorized, `if()` is not. However `ifelse()` evaluates both the condition and the `else` statement whereas `if()` is lazy. `if()` is only faster when the condition is of length one.
+3.  Find an approach to compute column maxima of a numeric matrix `X` using a `*apply()`-function which outperforms `apply(X, 2, max)`.
 
 ---
 ## 3. Vectorise your code &amp;mdash; Case Study
@@ -883,7 +725,7 @@ No. The 'stock' R version on CRAN is a single-threaded program, i.e., R does not
 
 - Parallel computing is often used in MC simulations which require computation of a large number of homogeneous and independent tasks.
 
-**Is parallelisation always faster than serial computation?**
+**Is parallelisation always faster than 'serial' computation?**
 
 No. The cost of managing the computations (the *overhead*) may offset or even surpass time savings gained by parallel computation. This occurs, e.g., when a small number of simple tasks is solved in parallel. We will discuss an example.
 
@@ -903,7 +745,7 @@ detectCores()
 ## [1] 8
 ```
 
-The notebook used to run this script has a 2,3 GHz Intel Core i5 processor with 4 physical CPUs and supports hyper-threading, i.e., each CPU as 2 logical cores.
+The notebook used to run this script has a 2,3 GHz Intel Core i5 processor with 4 physical CPUs and supports hyper-threading, i.e., each CPU has 2 logical cores.
 
 
 ```r
@@ -970,9 +812,8 @@ n &lt;- 1e4
 df &lt;- data.frame(a = rnorm(n), b = rnorm(n))
 
 cor_df2 &lt;- function(x, n) {
-  i &lt;- sample(1:n, n, replace = T)
-  m &lt;- cbind(df$a[i], df$b[i])
-  cor(m)[2, 1]
+  i &lt;- sample.int(n, n, replace = T)
+  cor(df$a[i], df$b[i])
 }
 ```
 ]
@@ -1001,7 +842,7 @@ Calling `cor_df2()` a large number of times is time consuming.
 ```r
 # serial computation
 s_ser &lt;- system.time(
-  r_ser &lt;- lapply(1:1e5, cor_df2)
+  r_ser &lt;- lapply(1:1e5, function(x) cor_df2(df, n))
 )
 s_ser
 ```
@@ -1009,7 +850,7 @@ s_ser
 ```
 ##     
 ##   user  system  elapsed 
-## 64.202  12.516   77.047
+## 41.258   7.497  48.835
 ```
 ]
 
@@ -1025,7 +866,7 @@ Luckily, it is straightforward to bootstrap in parallel using `mclapply()`.
 ```r
 # parallel computation
 s_par &lt;- system.time(
-  r_par &lt;- mclapply(1:1e5, cor_df2, mc.cores = 8)
+  r_par &lt;- mclapply(1:1e5, function(x) cor_df2(df, n), mc.cores = 8)
 )
 s_par
 ```
@@ -1036,7 +877,7 @@ s_par
 ## 38.343   7.995   16.343
 ```
 
-Note that using 8 cores is (only) ~5 times faster than the serial approach due to overhead. 
+Note that using 8 cores in my case is (only) ~5 times faster than the serial approach due to overhead. 
 ]
 
 ---
@@ -1046,7 +887,7 @@ Note that using 8 cores is (only) ~5 times faster than the serial approach due t
 .blockquote.exercise[
 #### <i class="fas  fa-desktop "></i> Example: too much overhead
 
-Parallelisation is inefficient if the overhead exceeds the time savings. 
+Parallelisation may be inefficient:
 
 
 ```r
@@ -1074,24 +915,28 @@ system.time(lapply(1:1e5, sqrt))
 ## 
 ```
 
-This is because the cost of the individual computations is low, and additional work is needed to send the computation to the different cores and to collect the results.
+This is because the cost of the individual computations is low, and additional work is needed to send the computation to the different cores and to collect the results: The overhead exceeds the time savings. 
 ]]
 
 ---
 ## 4. The `MonteCarlo` Package
 
-- Running MC simulations is an everyday task in econometrics. They are routinely used for approximating quantities which cannot be derived analytically, e.g., finite sample properties of a test statistic.
+**Why is worthwhile to get used to such packages? **
+
+- Running MC simulations is an everyday task in econometrics: simulations are routinely used for approximating quantities which cannot be derived analytically, e.g., finite sample properties of a test statistic.
 
 - MC simulation is also an essential tool in statistical programming because we often write functions that expect random input and/or produce random output 
 
-    Testing whether the impementation is correct amounts to checking if the statistical properties of the output are as expected, using a large number of samples
+    *Testing whether the impementation is correct amounts to checking if the statistical properties of the output are as expected, using a large number of samples*
 
 - Often, the effort to write the simulation exceeds the effort to implement the function by a multiple
 
 ---
 ## 4. The `MonteCarlo` Package
 
-The `MonteCarlo` package streamlines the process of writing MC simulations. Useful features are:
+The `MonteCarlo` package streamlines the process of writing MC simulations. 
+
+Useful features are:
 
 - Simulation over a user-defined parameter grid
 
@@ -1220,7 +1065,7 @@ curve(dnorm(x), from = -4, to = 4, add = T, lty = 2, col = "red")
 .smaller[
 .blockquote.exercise[
 #### <i class="fas  fa-desktop "></i> Example: Unit Root test &amp;mdash; ctd.
-&lt;img src="improving-performance_files/figure-html/unnamed-chunk-46-1.png" style="display: block; margin: auto;" /&gt;
+&lt;img src="improving-performance_files/figure-html/unnamed-chunk-40-1.png" style="display: block; margin: auto;" /&gt;
 ]]
 
 ---
@@ -1298,7 +1143,7 @@ ggplot(tbl) +
 .smaller[
 .blockquote.exercise[
 #### <i class="fas  fa-desktop "></i> Example: Power of DF-Test &amp;mdash; ctd.
-&lt;img src="improving-performance_files/figure-html/unnamed-chunk-50-1.png" width="60%" style="display: block; margin: auto;" /&gt;
+&lt;img src="improving-performance_files/figure-html/unnamed-chunk-44-1.png" width="60%" style="display: block; margin: auto;" /&gt;
 ]]
 
 ---
@@ -1402,6 +1247,12 @@ Gillespie, C. and Lovelace (2016), *R. Efficient R Programming*. O'Reilly Media.
 Peng, Roger D. (2016). *R Programming for Data Science*. The bookdown Archive.
 
 Wickham, H. (2019). *Advanced R*. 2nd Edition. Taylor &amp; Francis, CRC Press.
+
+---
+class: segue-red
+
+![:image 20%](pikabye.gif)
+### Thank You!
     </textarea>
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
 <script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
