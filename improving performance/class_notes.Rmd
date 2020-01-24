@@ -289,7 +289,8 @@ Technically this does not directly relate to vectorisation but it yet again demo
     
     bench::mark(
     sapply(X_list, max),
-    apply(X, 2, max), check =F
+    apply(X, 2, max), 
+    check = F
     )
     ```
     
@@ -363,5 +364,15 @@ Technically this does not directly relate to vectorisation but it yet again demo
     plot(res)
     ```
 
-The difference in speed between both approaches does not seem to depend much on `N` (for large `N`).
+    The difference in speed between both approaches does not seem to depend too much on `N`. Furthermore, `A_loop()` turns out to be very inefficient regarding memory usage for large `N`.
+    
+    Note that a more general approach (in terms of interval limits $a$,$b$, $b>a$) for estimating $A=\int_a^b x^2 dx$ is as follows:
+    ```{r}
+    A_vec_2 <- function(N, a, b) {
+      U <- runif(N, min = a, max = b)
+      sum(U^2 * (b-a))/N
+    }
+    
+    A_vec_2(5e4, 0, 3)
+    ```
 

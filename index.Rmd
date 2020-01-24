@@ -11,7 +11,7 @@ output:
       in_header: "assets/meta.html"
     self_contained: false # if true, fonts will be stored locally
     lib_dir: libs
-    css: ["default", "assets/sydney-fonts.css", "assets/sydney.css", "assets/custom.css", "assets/title_slides.css"]
+    css: ["default", "assets/sydney-fonts.css", "assets/sydney.css", "assets/custom.css", "assets/title_slides.css", "../xaringan_files/custom.css"]
     nature:
       highlightStyle: github
       highlightLines: true
@@ -19,6 +19,8 @@ output:
       ratio: "16:9"
 ---
 ## Outline
+
+.small[
 .pull-left[
 1. [Introduction](Introduction/Introduction.html)
 2. Prerequisites
@@ -39,15 +41,15 @@ output:
   <li> <a href="functional/functional.html">Functional Programming</a></li>
   <li> Object Oriented Programming </li>
 </ul>
-<li>  Performance </li> 
+<li> Performance </li> 
 <ul>
   <li> <a href="measuring and profiling/MeasuringProfiling.html">Profiling and Benchmarking</a></li> 
   <li> <a href="improving performance/improving-performance.html">Improving Performance</a></li>
-  <li> Rcpp </li>
+  <li> <a href="Rcpp/SpeedRcpp.html">Rcpp</a></li>
 </ul>
 <li> <a href = Webscraping/webscraping.html>Web Scraping</a>   </li>
 <li> <a href = Shiny/Shiny.html>Shiny</a> </li>
 <li> Writing Packages </li>
 <!-- <li>Text Mining  </li> -->
 </ol>
-]
+]]

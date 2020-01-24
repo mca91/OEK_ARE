@@ -731,9 +731,9 @@ Note that the behavior of `detectCores()` is platform specific and not always re
 
 .smaller[
 .blockquote.exercise[
-#### `r icon::fa("desktop")` Example: send them cores to sleep
+#### `r icon::fa("desktop")` Example: send them cores to sleep (on MacOS)
 ```{r, eval=F}
-r <- mclapply(1:8, function(i) Sys.sleep(20), mc.cores = 8)
+r <- mclapply(1:8, function(i) Sys.sleep(20), mc.cores = 7)
 ```
 
 ![:image 50%](../img/cpumonitor.png)
@@ -744,7 +744,7 @@ r <- mclapply(1:8, function(i) Sys.sleep(20), mc.cores = 8)
 
 .smaller[
 .blockquote.exercise[
-#### `r icon::fa("desktop")` Example: send them cores to sleep &mdash; ctd.
+#### `r icon::fa("desktop")` Example: send them cores to sleep (on MacOS) &mdash; ctd.
 What happened?
 
 - The R session (the main Process) opened 8 sub-processes, so-called *forks* (labeled `rsession` in the activity monitor)
@@ -754,6 +754,28 @@ What happened?
 - `mclapply()` passes a call of `function(i) Sys.sleep(20)` to each fork. Computation (or rather doing nothing for 20 seconds) now proceeds in parallel.
 
 - After 20 seconds the results are gathered in `r` and all forks are killed. Note that `r` is just a list with `NULL` entries.
+]]
+  
+---
+## 4. Parallelisation - `parallel::mclapply()`
+
+.smaller[
+.blockquote.exercise[
+#### `r icon::fa("desktop")` Example: send them cores to sleep (Windows)  
+
+An alternative on Windows is to use `parallel::parLapply()`. The setup is somewhat more complex.
+
+```{r, eval = F}
+# set number of cores to be used
+cores <- detectCores(logical = TRUE) - 1
+# initialize cluster
+cl <- makeCluster(cores)
+# run lapply in parallel
+parLapply(cl, 1:8, function(i) Sys.sleep(20))
+# stop cluster
+stopCluster(cl)
+```
+
 ]]
               
 ---

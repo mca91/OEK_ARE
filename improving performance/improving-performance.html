@@ -4,7 +4,7 @@
     <title>Advanced R for Econometricians</title>
     <meta charset="utf-8" />
     <meta name="author" content="Martin C. Arnold" />
-    <meta name="date" content="2020-01-20" />
+    <meta name="date" content="2020-01-21" />
     <link href="improving-performance_files/remark-css/default.css" rel="stylesheet" />
     <link href="improving-performance_files/font-awesome/css/fontawesome-all.min.css" rel="stylesheet" />
     <script type="text/x-mathjax-config">
@@ -231,8 +231,8 @@ bench::mark(
 ## # A tibble: 2 x 6
 ##   expression           min   median `itr/sec` mem_alloc `gc/sec`
 ##   &lt;bch:expr&gt;      &lt;bch:tm&gt; &lt;bch:tm&gt;     &lt;dbl&gt; &lt;bch:byt&gt;    &lt;dbl&gt;
-## 1 mean(x)           2.36µs   2.83µs   318031.    22.7KB      0  
-## 2 mean.default(x)   1.04µs   1.23µs   692006.        0B     69.2
+## 1 mean(x)           2.64µs   3.07µs   297320.    22.7KB      0  
+## 2 mean.default(x)   1.13µs   1.35µs   659992.        0B     66.0
 ```
 ]]
 
@@ -255,8 +255,8 @@ bench::mark(
 ## # A tibble: 2 x 6
 ##   expression            min   median `itr/sec` mem_alloc `gc/sec`
 ##   &lt;bch:expr&gt;       &lt;bch:tm&gt; &lt;bch:tm&gt;     &lt;dbl&gt; &lt;bch:byt&gt;    &lt;dbl&gt;
-## 1 mean.default(x)    1.06µs   1.34µs   646262.        0B        0
-## 2 sum(x)/length(x)    410ns    492ns  1769119.        0B        0
+## 1 mean.default(x)    1.15µs   1.38µs   658724.        0B        0
+## 2 sum(x)/length(x)    432ns    526ns  1637111.        0B        0
 ```
 ]]
 
@@ -637,8 +637,8 @@ bench::mark(
 ## # A tibble: 2 x 6
 ##   expression            min   median `itr/sec` mem_alloc `gc/sec`
 ##   &lt;bch:expr&gt;       &lt;bch:tm&gt; &lt;bch:tm&gt;     &lt;dbl&gt; &lt;bch:byt&gt;    &lt;dbl&gt;
-## 1 colmax(X)          5.71ms   6.42ms     154.     4.34MB     55.4
-## 2 apply(X, 2, max)   8.95ms  10.48ms      97.3  312.73KB     55.6
+## 1 colmax(X)          5.75ms   6.37ms     156.     4.34MB     55.0
+## 2 apply(X, 2, max)   9.05ms  10.27ms      96.6  312.73KB     55.2
 ```
 ]
 
@@ -764,7 +764,7 @@ Note that the behavior of `detectCores()` is platform specific and not always re
 
 .smaller[
 .blockquote.exercise[
-#### <i class="fas  fa-desktop "></i> Example: send them cores to sleep
+#### <i class="fas  fa-desktop "></i> Example: send them cores to sleep (on MacOS)
 
 ```r
 r &lt;- mclapply(1:8, function(i) Sys.sleep(20), mc.cores = 8)
@@ -778,7 +778,7 @@ r &lt;- mclapply(1:8, function(i) Sys.sleep(20), mc.cores = 8)
 
 .smaller[
 .blockquote.exercise[
-#### <i class="fas  fa-desktop "></i> Example: send them cores to sleep &amp;mdash; ctd.
+#### <i class="fas  fa-desktop "></i> Example: send them cores to sleep (on MacOS) &amp;mdash; ctd.
 What happened?
 
 - The R session (the main Process) opened 8 sub-processes, so-called *forks* (labeled `rsession` in the activity monitor)
@@ -788,6 +788,29 @@ What happened?
 - `mclapply()` passes a call of `function(i) Sys.sleep(20)` to each fork. Computation (or rather doing nothing for 20 seconds) now proceeds in parallel.
 
 - After 20 seconds the results are gathered in `r` and all forks are killed. Note that `r` is just a list with `NULL` entries.
+]]
+  
+---
+## 4. Parallelisation - `parallel::mclapply()`
+
+.smaller[
+.blockquote.exercise[
+#### <i class="fas  fa-desktop "></i> Example: send them cores to sleep (Windows)  
+
+An alternative on Windows is to use `parallel::parLapply()`. The setup is somewhat more complex.
+
+
+```r
+# set number of cores to be used
+cores &lt;- detectCores(logical = TRUE) - 1
+# initialize cluster
+cl &lt;- makeCluster(cores)
+# run lapply in parallel
+parLapply(cl, 1:8, function(i) Sys.sleep(20))
+# stop cluster
+stopCluster(cl)
+```
+
 ]]
               
 ---
@@ -1065,7 +1088,7 @@ curve(dnorm(x), from = -4, to = 4, add = T, lty = 2, col = "red")
 .smaller[
 .blockquote.exercise[
 #### <i class="fas  fa-desktop "></i> Example: Unit Root test &amp;mdash; ctd.
-&lt;img src="improving-performance_files/figure-html/unnamed-chunk-40-1.png" style="display: block; margin: auto;" /&gt;
+&lt;img src="improving-performance_files/figure-html/unnamed-chunk-41-1.png" style="display: block; margin: auto;" /&gt;
 ]]
 
 ---
@@ -1143,7 +1166,7 @@ ggplot(tbl) +
 .smaller[
 .blockquote.exercise[
 #### <i class="fas  fa-desktop "></i> Example: Power of DF-Test &amp;mdash; ctd.
-&lt;img src="improving-performance_files/figure-html/unnamed-chunk-44-1.png" width="60%" style="display: block; margin: auto;" /&gt;
+&lt;img src="improving-performance_files/figure-html/unnamed-chunk-45-1.png" width="60%" style="display: block; margin: auto;" /&gt;
 ]]
 
 ---
