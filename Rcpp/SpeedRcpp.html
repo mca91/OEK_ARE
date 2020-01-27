@@ -4,7 +4,7 @@
     <title>Advanced R for Econometricians</title>
     <meta charset="utf-8" />
     <meta name="author" content="Martin C. Arnold" />
-    <meta name="date" content="2020-01-25" />
+    <meta name="date" content="2020-01-27" />
     <link href="SpeedRcpp_files/remark-css/default.css" rel="stylesheet" />
     <script type="text/x-mathjax-config">
       MathJax.Hub.Config({
@@ -262,11 +262,11 @@ isOdd_cpp(42L)
 
 **Example: cppFunction() **
 
-What happens?
+What happened?
 
 - Our function `isOdd_cpp()` is sourced by `Rcpp`.
 
-- `Rcpp` generates a wrapper function in R. It then compiles and links the C++ function to the wrapper. The function now is available in R under its C++ name.
+- `Rcpp` generates a wrapper function in R. It then compiles and links the C++ function to the wrapper. The function is now available in R under its C++ name.
 
 
 ```r
@@ -275,7 +275,7 @@ isOdd_cpp
 
 ```
 ## function (num = 10L) 
-## .Call(&lt;pointer: 0x116dc0770&gt;, num)
+## .Call(&lt;pointer: 0x112e1b770&gt;, num)
 ```
 
 We see that `isOdd_cpp()` uses `.call()` to invoke the C++ version of the function which is stored in the specified pointer.
@@ -758,16 +758,6 @@ print(x) # check that x was not modified
 ---
 ## `Rcpp` &amp;mdash; Exercises Part 1
 
-- Set `x&lt;-1:3` and inspect `x` after running `test_reference(x)`. Explain the result and write an alternate version of `test_reference()` which behaves as as desired, i.e., passes `x` by reference.
-
-- Change the input type of the parameter `A` to `test_reference()` as follows:
-
-    (a) `const NumericVector A`
-    
-    (b) `const NumericVector&amp; A`
-    
-    How does the function work on `x &lt;- 1:3/10` in each case?
-
 - Find out why the following code gives a compile error:
     
     ```cpp
@@ -782,7 +772,7 @@ print(x) # check that x was not modified
 
 ---
 ## `Rcpp` &amp;mdash; Exercises Part 1
-  
+
 - Benchmark the functions below against each other for `x&lt;-rnorm(1e2)`, `x&lt;-rnorm(1e4)` and `x&lt;-rnorm(1e6)`. Comment on the results.
     
     ```cpp

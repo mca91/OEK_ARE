@@ -255,11 +255,11 @@ isOdd_cpp(42L)
 
 **Example: cppFunction() **
 
-What happens?
+What happened?
 
 - Our function `isOdd_cpp()` is sourced by `Rcpp`.
 
-- `Rcpp` generates a wrapper function in R. It then compiles and links the C++ function to the wrapper. The function now is available in R under its C++ name.
+- `Rcpp` generates a wrapper function in R. It then compiles and links the C++ function to the wrapper. The function is now available in R under its C++ name.
 
 ```{r}
 isOdd_cpp
@@ -720,16 +720,6 @@ print(x) # check that x was not modified
 ---
 ## `Rcpp` &mdash; Exercises Part 1
 
-- Set `x<-1:3` and inspect `x` after running `test_reference(x)`. Explain the result and write an alternate version of `test_reference()` which behaves as as desired, i.e., passes `x` by reference.
-
-- Change the input type of the parameter `A` to `test_reference()` as follows:
-
-    (a) `const NumericVector A`
-    
-    (b) `const NumericVector& A`
-    
-    How does the function work on `x <- 1:3/10` in each case?
-
 - Find out why the following code gives a compile error:
     ```{Rcpp, eval=F}
     #include<Rcpp.h>
@@ -743,7 +733,7 @@ print(x) # check that x was not modified
 
 ---
 ## `Rcpp` &mdash; Exercises Part 1
-  
+
 - Benchmark the functions below against each other for `x<-rnorm(1e2)`, `x<-rnorm(1e4)` and `x<-rnorm(1e6)`. Comment on the results.
     ```{Rcpp, eval=F}
     NumericVector test_clone_return(NumericVector A) {
