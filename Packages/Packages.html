@@ -1,37 +1,43 @@
----
-title: "Advanced R for Econometricians"
-subtitle: "Writing R packages"
-author: 
-  - "Martin C. Arnold"
-  - "Alexander Gerber"
-date: "`r Sys.Date()`"
-output:
-  xaringan::moon_reader:
-    css: ["default", "../assets/sydney-fonts.css", "../assets/sydney.css", "../assets/title_slides.css", "../xaringan_files/custom.css"]
-    self_contained: false # if true, fonts will be stored locally
-    seal: false # show a title slide with YAML information
-    includes:
-      in_header: "../assets/mathjax-equation-numbers.html"
-      after_body: "../assets/copybutton.html"
-    nature:
-      beforeInit: ["../assets/remark-zoom.js", "../xaringan_files/macros.js", "https://platform.twitter.com/widgets.js"]
-      highlightStyle: github
-      highlightLines: true
-      countIncrementalSlides: false
-      ratio: '16:9' # alternatives '16:9' or '4:3' or others e.g. 13:9
-      navigation:
-        scroll: false # disable slide transitions by scrolling
----
-```{r, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE, eval = FALSE, warning=FALSE, message=FALSE)
-# http://www.math.ncu.edu.tw/~chenwc/R_note/reference/package/R-exts.pdf
-```
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+  <head>
+    <title>Advanced R for Econometricians</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Martin C. Arnold" />
+    <meta name="author" content="Alexander Gerber" />
+    <meta name="date" content="2020-01-29" />
+    <link href="Packages_files/remark-css-0.0.1/default.css" rel="stylesheet" />
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        TeX: { equationNumbers: { autoNumber: "AMS" } },
+      });
+    </script>
+    <style>
+    .mjx-mrow a {
+      color: black;
+      pointer-events: none;
+      cursor: default;
+    }
+    </style>
+    
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"
+      integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
+      crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="../assets/sydney-fonts.css" type="text/css" />
+    <link rel="stylesheet" href="../assets/sydney.css" type="text/css" />
+    <link rel="stylesheet" href="../assets/title_slides.css" type="text/css" />
+    <link rel="stylesheet" href="../xaringan_files/custom.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+
+
 
 class: title-slide title-packages center middle
 
-# `r rmarkdown::metadata$title`
-## `r rmarkdown::metadata$subtitle`
-### `r rmarkdown::metadata$author`
+# Advanced R for Econometricians
+## Writing R packages
+### Martin C. Arnold, Alexander Gerber
 
 ---
 ## Minimal Package
@@ -45,7 +51,8 @@ The smallest usable R package consists of
 - a `NAMESPACE` file which defines which functions are imported and exported. 
 
 - By running
-    ```{r, echo = TRUE, eval = FALSE}
+    
+    ```r
     usethis::create_package("path/to/package/pkgname")
     ```
     a minimal package gets automatically created. It will also create and open an R project for your package. 
@@ -53,14 +60,16 @@ The smallest usable R package consists of
 - We learnt how to work with Git and we want you to use it for package development, too. 
 
     Git is easily initialized with: 
-    ```{r, eval = FALSE, echo = TRUE}
+    
+    ```r
     usethis::use_git()
     ```
 
 ]
 
 ???
-```{r, eval = FALSE, echo = TRUE}
+
+```r
 usethis::create_package(here::here("Packages", "example"))
 ```
 
@@ -77,10 +86,19 @@ Before we start we should think about what our package should do:
 
 --
 - Have you ever tried to combine 2 factors?
-    ```{r, eval = TRUE, echo = FALSE}
-    (a <- factor(c("character", "hits", "your", "eyeballs")))
-    (b <- factor(c("but", "integer", "where it", "counts")))
-    c(a, b)
+    
+    ```
+    ## [1] character hits      your      eyeballs 
+    ## Levels: character eyeballs hits your
+    ```
+    
+    ```
+    ## [1] but      integer  where it counts  
+    ## Levels: but counts integer where it
+    ```
+    
+    ```
+    ## [1] 1 3 4 2 1 3 4 2
     ```
 --
     Lets write a function called `fbind()` that does what one would expect.
@@ -92,12 +110,18 @@ Taken from https://github.com/hadley/pkg-dev/tree/master/fordogs/R
 ---
 ## Write your first own package
 
-```{r, eval=T}
-fbind <- function(a, b) {
+
+```r
+fbind &lt;- function(a, b) {
   factor(c(as.character(a), as.character(b)))
 }
 
 fbind(a, b)
+```
+
+```
+## [1] character hits      your      eyeballs  but       integer   where it  counts   
+## Levels: but character counts eyeballs hits integer where it your
 ```
 
 ---
@@ -106,7 +130,8 @@ fbind(a, b)
 - All R code of the package should be in `.R` files in the `R/` directory. Put the function you have just written into the file `R/fbind.R`. 
 
 - By calling
-    ```{r, eval = FALSE}
+    
+    ```r
     usethis::use_r("fbind.R")
     ```
     a file gets automatically created in the correct folder.  
@@ -163,7 +188,8 @@ our function `fbind()` we need a file `man/fbind.Rd`. However, we don't need to 
 `roxygen2` is a package that helps us with the documentation. We basically comment our function definitions with something like the following:  
 
 .code70[
-```{r}
+
+```r
 #' Bind two factors
 #'
 #' Create a new factor from two existing factors, where the new factor's levels
@@ -183,7 +209,7 @@ our function `fbind()` we need a file `man/fbind.Rd`. However, we don't need to 
 ## Documentation
 
 - A very basic template for package documentation gets created by *RStudio*
-if you navigate the courser into a function call and click ***Code > Insert roxygen skeleton*** or by pressing `Ctr + Alt + Shift + R`.
+if you navigate the courser into a function call and click ***Code &gt; Insert roxygen skeleton*** or by pressing `Ctr + Alt + Shift + R`.
 
 - After this is done run `devtools::document()`. Now, there should be a `man/` directory with a file in it.
 
@@ -195,13 +221,15 @@ if you navigate the courser into a function call and click ***Code > Insert roxy
 - The export directive in `NAMESPACE` is what makes `fbind()` available to a user after attaching `foofactors` via `library(foofactors)`. 
 
     We actually told `roxygen` to export `fbind()` by putting 
-    ```{r}
+    
+    ```r
     #' @export
     ```
     in front of the function call. 
 
 - Your `NAMESPACE` file should now look like this:
-    ```{r}
+    
+    ```r
     # Generated by roxygen2: do not edit by hand
     export(fbind)
     ```
@@ -212,7 +240,8 @@ if you navigate the courser into a function call and click ***Code > Insert roxy
 - Use `check()` again again to see if the warnings are gone and everything runs fine. Then run `install()` to put your package into your library. 
 
 - We may now attach the package using `library()`
-  ```{r}
+  
+  ```r
   library(foofactors)
   ```
 
@@ -229,7 +258,8 @@ if you navigate the courser into a function call and click ***Code > Insert roxy
 - Even functions from the (always available) `stats` or `utils` packages should be imported. This important for being able to publish a package on `CRAN`. 
 
     You must declare your intent to use functions from the `stats` namespace with
-    ```{r}
+    
+    ```r
     usethis::use_package("stats")
     ```
 
@@ -243,7 +273,8 @@ if you navigate the courser into a function call and click ***Code > Insert roxy
 **Exercise:**
 
 What output do you expect for this code?
-```{r}
+
+```r
 library(dplyr)
 library(MASS)
 
@@ -261,9 +292,166 @@ mtcars %*% select(mpg)
 - We already know that we need to put packages which we are using need to be specified in the import field of the `DESCRIPTION` file. It ensures that these packages are installed if our package is installed and `dplyr::select()` will work within the package. 
 
 - We use `NAMESPACE` to define which functions from other packages we want to use without having to use`::` 
-    ```{r}
+    
+    ```r
     import(dplyr) # import all functions from one package
     importFrom(dplyr, select) # import selected functions 
     ```
 
     We think it is better too use `::` to make it explicit where a function comes from.
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script src="../assets/remark-zoom.js"></script>
+<script src="../xaringan_files/macros.js"></script>
+<script src="https://platform.twitter.com/widgets.js"></script>
+<script>var slideshow = remark.create({
+"highlightStyle": "github",
+"highlightLines": true,
+"countIncrementalSlides": false,
+"ratio": "16:9",
+"navigation": {
+"scroll": false
+}
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+<script type="text/x-mathjax-config">
+  
+  function addCopyButtonToCode(){
+    // get all code elements
+    var allCodeBlocksElements = $( ".r" );
+    // For each element, do the following steps
+    allCodeBlocksElements.each(function(ii) {
+      // define a unique id for this element and add it
+      var currentId = "codeblock" + (ii + 1);
+      $(this).attr('id', currentId);
+      
+
+      // add the button just after the text in the code block w/ jquery
+      var clipButton = '<img src="https://image.flaticon.com/icons/svg/54/54662.svg" width="16" alt="Copy to clipboard" onclick=copyToClipboard("#' + currentId + '") style="float:right;cursor:pointer;">';
+      $(this).prepend(clipButton);
+    });
+    
+  }
+
+$(document).ready(function () {
+  // Once the DOM is loaded for the page, attach clipboard buttons
+  addCopyButtonToCode();
+});
+
+
+function copyToClipboard(element) {
+  var $temp = $("<textarea>");
+  $("body").append($temp);
+  
+  let vars = '';
+  
+  $(element).children().each((i, v) => {
+      vars += $(v).text() + '\n'
+    })
+  
+  $temp.val(vars).select();
+  document.execCommand("copy");
+  $temp.remove();
+}
+
+</script>
+
+<script>
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>

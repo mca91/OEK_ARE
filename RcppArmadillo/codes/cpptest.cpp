@@ -20,6 +20,12 @@ std::vector<int> zeros(int N) {
 }
 
 // [[Rcpp::export]]
+std::vector<int> zeros_STL(int N) {
+  std::vector<int> X(N);
+  return X;
+}
+
+// [[Rcpp::export]]
 NumericVector rep_len_sugar(NumericVector a, int b) {
   NumericVector out = rep_len(a, b);
   return out;  

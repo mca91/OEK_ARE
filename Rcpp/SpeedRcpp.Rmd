@@ -816,7 +816,7 @@ seq_len(10)
 ```
 
 ---
-### `Rcpp` &mdash; Syntactic Sugar
+## `Rcpp` &mdash; Syntactic Sugar
 
 **Mathematics and statistics**
 
