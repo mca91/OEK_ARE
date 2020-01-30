@@ -1,12 +1,30 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
   <head>
-    <title>RcppArmadillo</title>
+    <title>Advanced R for Econometricians</title>
     <meta charset="utf-8" />
-    <meta name="author" content="Martin Arnold" />
-    <meta name="author" content="Alexander Gerber" />
-    <meta name="date" content="2020-01-26" />
-    <link rel="stylesheet" href="../xaringan_files/xaringan-themer.css" type="text/css" />
+    <meta name="author" content="Martin C. Arnold" />
+    <meta name="date" content="2020-01-30" />
+    <link href="RcppArmadillo_files/remark-css/default.css" rel="stylesheet" />
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        TeX: { equationNumbers: { autoNumber: "AMS" } },
+      });
+    </script>
+    <style>
+    .mjx-mrow a {
+      color: black;
+      pointer-events: none;
+      cursor: default;
+    }
+    </style>
+    
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"
+      integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
+      crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="../assets/sydney-fonts.css" type="text/css" />
+    <link rel="stylesheet" href="../assets/sydney.css" type="text/css" />
+    <link rel="stylesheet" href="../assets/title_slides.css" type="text/css" />
     <link rel="stylesheet" href="../xaringan_files/custom.css" type="text/css" />
   </head>
   <body>
@@ -17,26 +35,31 @@
 
 
 
+class: title-slide title-rcpparmadillo center middle
 
-
-class: center, middle
-
-![:image 100%](../img/armadillo.png)
+# Advanced R for Econometricians
+## First Steps with `RcppArmadillo`
+### Martin C. Arnold
 
 ---
-### Armadillo &amp;mdash; FAQs
+class: center, middle
+
+![:image 50%](../img/armadillo.png)
+
+---
+## Armadillo &amp;mdash; FAQs
 
 **What is Armadillo?**
 
-Armadillo is a templated high quality linear algebra library for C++ with good balance between speed and ease of use
+Armadillo is a templated high-quality linear algebra library for C++ with good balance between speed and ease of use
 
 **Why use it?**
 
 - Matrix multiplication, inversion and decomposition are indispensible in econometrics and statistics
 
-- C++ (and Rcpp) do not provide suitable classes and methods (in fact, there isn't a method for even matrix multiplication in Rcpp). Coding these by hand is tedious and error prone.
+- C++ (and Rcpp) do not provide suitable classes and methods. In fact, there isn't even a method for matrix multiplication in Rcpp! Coding such algorithms by hand is tedious and error prone.
 
-    Armadillo provides well tested matrix classes for integer, floating point and complex numbers and fast methods
+- Armadillo provides well tested matrix classes for integer, floating point and complex numbers and fast methods
 
 **Do I need advanced C++ skills?**
 
@@ -45,28 +68,30 @@ Armadillo is a templated high quality linear algebra library for C++ with good b
 - The Armadillo library has a very good documentation at [sourceforge](http://arma.sourceforge.net/docs.html).
 
 ---
-### `RcppArmadillo` &amp;mdash; Prerequisites
+## `RcppArmadillo` &amp;mdash; Prerequisites
 
-- `RcppArmadillo` provides an interface from and to Armadillo which is based on the C++/R interface impemented in Rcpp
+- `RcppArmadillo` provides an interface from and to Armadillo which is based on the C++/R interface impemented in `Rcpp`
 
-- The package requires a development toolchain to use which should be already setup if C++ integration with Rcpp works without issues. Setting up `RcppArmadillo` then boils down to installing the package from CRAN
-
-    ```nohighlights
+- The package requires a development toolchain which should be already setup if C++ integration with `Rcpp` works fine. Setting up `RcppArmadillo` then boils down to installing the package from `CRAN`
+    
+    ```r
     install.packages('RcppArmadillo')
     library(RcppArmadillo)
     ```
-- It is straighfowrd to verify if it works by setting `"RcppArmadillo"` as a dependency in `Rcpp::cppFunction()` or `Rcpp::evalCpp()`.
 
-    ```nohighlights
-    Rcpp::evalCpp("1 + 1", depends = "RcppArmadillo")
+- It is straighfowrd to verify if it works by setting `'RcppArmadillo'` as a dependency in `Rcpp::cppFunction()` or `Rcpp::evalCpp()`.
+    
+    ```r
+    Rcpp::evalCpp("1 + 1", depends = 'RcppArmadillo')
     #&gt; [1] 2
     ```
+
 ---
-### `RcppArmadillo` &amp;mdash; `sourceCpp()`
+## `RcppArmadillo` &amp;mdash; `sourceCpp()`
 
 - Again the preferred method for compiling Armadillo code is to use a `C++` file with a modified header. The following lines replace the default header:
-
-    ```nohighlights
+    
+    ```cpp
     #include &lt;RcppArmadillo.h&gt;
     // [[Rcpp::depends(RcppArmadillo)]]
     ```
@@ -75,42 +100,43 @@ Armadillo is a templated high quality linear algebra library for C++ with good b
 
 - In what follows we refer explicitly to Armadillo functions by prefixing the namespace. This avoids overlapping of function names. 
 
-    We may specify that the Armadillo package namespace is used by default.
-
-    ```nohighlights
+    We may, however, specify that the Armadillo package namespace is used by default.
+    
+    ```cpp
     using namespace arma;
     ```
 
 - `sourceCpp()` then can be used for sourcing the script (on save) just as for `Rcpp` code.
 
 ---
-### `RcppArmadillo` &amp;mdash; Classes
+## `RcppArmadillo` &amp;mdash; Classes
 
 - The most important Armadillo classes store elements as &lt;tt&gt;double&lt;/tt&gt;:
-
-    ```nohighlights
+    
+    ```cpp
     arma::mat, arma::vec (arma::colvec, arma::rowvec)
     ```
     Other types are available, e.g. `arma::uvec` and `arma::umat` which store unsigned integers.
     
 - There are other classes, e.g. for sparse matrices and higher-dimensional arrays
 
-- All classes have attributes and associated methods which can be accessed using *dot syntax* just as for the STL.
+- All classes have attributes and associated methods which can be accessed using *dot syntax* just as for the C++ `STL`.
 
     **Example: Attributes and Methods**
-
-    ```nohighlights
-    arma::mat I(10, 10);   //define 10x10 matrix
+    
+    ```cpp
+    arma::mat I(10, 10);   //initialize 10x10 matrix
     int n = I.n_rows();    //get number of rows
     I.eye();               //transform to identity matrix
     ```
     
 ---
-### `RcppArmadillo` 
+## `RcppArmadillo` 
 
 **Example: inner vector product**
 
-```nohighlights
+
+```cpp
 // using Rcpp
 double inner_prod_rcpp(NumericVector x, NumericVector y) {
   int K = x.length();
@@ -122,7 +148,8 @@ double inner_prod_rcpp(NumericVector x, NumericVector y) {
 }
 ```
 Note that matrix multiplication requires two loops which looks even more bulky.
-```nohighlights
+
+```cpp
 // using RcppArmadillo
 double inner_prod_rcpparma(arma::vec x, arma::vec y) {
   arma::mat out = x.t() * y;
@@ -131,11 +158,11 @@ double inner_prod_rcpparma(arma::vec x, arma::vec y) {
 ```
 
 ---
-### `RcppArmadillo` 
+## `RcppArmadillo` 
 
-**Example: inner vector product**
+**Example: inner vector product &amp;mdash; ctd.**
 
-It's faster.
+The `RcppArmadillo` version is faster:
 
 
 
@@ -155,19 +182,20 @@ bench::mark(
 ## # A tibble: 3 x 5
 ##   expression                  min median `itr/sec` mem_alloc
 ##   &lt;bch:expr&gt;                &lt;dbl&gt;  &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;
-## 1 t(x) %*% y                 1.86   2.98      1         32.9
-## 2 inner_prod_rcpp(x, y)      2.01   1.98      1.64       1  
-## 3 inner_prod_rcpparma(x, y)  1      1         3.25       1
+## 1 t(x) %*% y                 2.01   3.13      1         32.9
+## 2 inner_prod_rcpp(x, y)      2.01   2.08      1.47       1  
+## 3 inner_prod_rcpparma(x, y)  1      1         3.14       1
 ```
 
 ---
-### `RcppArmadillo` 
+## `RcppArmadillo` 
 
 **Example: eigenvalues of real symmetric matrix**
 
 
 
-```nohighlights
+
+```cpp
 arma::vec Eigenvals_Armadillo(arma::mat A) {
   return arma::eig_sym(A);
 }
@@ -187,29 +215,34 @@ bench::mark(
 ## # A tibble: 2 x 4
 ##   expression                  min   median `itr/sec`
 ##   &lt;bch:expr&gt;             &lt;bch:tm&gt; &lt;bch:tm&gt;     &lt;dbl&gt;
-## 1 eigen(X)$values           1.39s    1.39s     0.718
-## 2 Eigenvals_Armadillo(X) 349.41ms 351.98ms     2.84
+## 1 eigen(X)$values           1.43s    1.43s     0.701
+## 2 Eigenvals_Armadillo(X) 361.64ms 364.84ms     2.74
 ```
 
 ---
-### `RcppArmadillo` &amp;mdash; Programming Strategy
+## `RcppArmadillo` &amp;mdash; Programming Strategy
 
-We recommend a similar procedure as for Rcpp: 
+We recommend a similar procedure as for programming with `Rcpp`: 
 
-- Write the code in R and divide it into functions if possible so that bottlenecks can be easily identified
+- Start by writing your code in R and divide it into functions such that bottlenecks are easier to identify
 
-- Replace slow components with C++ Armadillo functions that have the same call signature.
+- Profile your code, identify bottlenecks, benchmark and finally replace slow parts (writing entire functions) using Armadillo/C++ for performance improvement. 
 
-- New: Try to keep the number of casts between RcppArmadillo, Rcpp and R data types to a minimum. 
+- The replacements should have the same call signature as their slow R equivalents
+
+- **New**: Try to keep the number of casts between `RcppArmadillo`, `Rcpp` and R data types to a minimum
+
+    Remember: type casting will require deep copies and copies are generally bad if we opt for performance
 
 ---
-### `RcppArmadillo` 
+## `RcppArmadillo` 
 
 **Example: fast regression**
 
-Rcpp input *by reference* / Rcpp return
+`Rcpp` input *by reference* / `Rcpp` return
 
-```nohighlights
+
+```cpp
 #include &lt;RcppArmadillo.h&gt;
 using namespace Rcpp;
 
@@ -228,13 +261,14 @@ List fastReg_TwoCasts(NumericMatrix Xr,  NumericVector yr) {
 ```
 
 ---
-### `RcppArmadillo` 
+## `RcppArmadillo` 
 
-**Example: fast regression**
+**Example: fast regression &amp;mdash ctd.**
 
-Armadillo input *by value* / Rcpp return
+`Armadillo` input *by value* / `Rcpp` return
 
-```nohighlights
+
+```cpp
 #include &lt;RcppArmadillo.h&gt;
 using namespace Rcpp;
 
@@ -249,13 +283,14 @@ List fastReg_OneCast(arma::mat X, arma::colvec y) {
 }
 ```
 ---
-### `RcppArmadillo` 
+## `RcppArmadillo` 
 
-**Example: fast regression**
+**Example: fast regression &amp;mdash; ctd.**
 
-Armadillo input *by constant reference* / Rcpp return
+`Armadillo` input *by constant reference* / `Rcpp` return
 
-```nohighlights
+
+```cpp
 #include &lt;RcppArmadillo.h&gt;
 using namespace Rcpp;
 
@@ -271,13 +306,14 @@ List fastReg_ConstRef(const arma::mat&amp; X, const arma::colvec&amp; y) {
 ```
 
 ---
-### `RcppArmadillo` 
+## `RcppArmadillo` 
 
-**Example: fast regression**
+**Example: fast regression &amp;mdash; ctd.**
 
-Armadillo input *by constant reference* / RcppArmadillo return
+`Armadillo` input *by constant reference* / `Armadillo` return
 
-```nohighlights
+
+```cpp
 #include &lt;RcppArmadillo.h&gt;
 using namespace Rcpp;
 
@@ -292,9 +328,9 @@ arma::mat fastReg_NoCast(const arma::mat&amp; X, const arma::vec&amp; y) {
 ```
 
 ---
-### `RcppArmadillo` 
+## `RcppArmadillo` 
 
-**Example: fast regression**
+**Example: fast regression &amp;mdash; ctd.**
 
 
 
@@ -315,17 +351,17 @@ bench::mark(
 ## # A tibble: 7 x 4
 ##   expression                         min median `itr/sec`
 ##   &lt;bch:expr&gt;                       &lt;dbl&gt;  &lt;dbl&gt;     &lt;dbl&gt;
-## 1 lm(Y ~ X - 1)                    15.0   18.7       1   
-## 2 solve(t(X) %*% X) %*% t(X) %*% Y  3.38   5.28      3.63
-## 3 lm.fit(X, Y)                      4.20   5.30      3.61
-## 4 fastReg_TwoCasts(X, Y)            1.98   2.04      9.16
-## 5 fastReg_OneCast(X, Y)             2.08   2.16      8.55
-## 6 fastReg_ConstRef(X, Y)            2.03   2.04      9.26
-## 7 fastReg_NoCast(X, Y)              1      1        18.3
+## 1 lm(Y ~ X - 1)                    15.4   19.6       1   
+## 2 solve(t(X) %*% X) %*% t(X) %*% Y  3.69   5.26      3.64
+## 3 lm.fit(X, Y)                      4.11   5.01      3.81
+## 4 fastReg_TwoCasts(X, Y)            1.99   1.98      9.45
+## 5 fastReg_OneCast(X, Y)             2.09   2.15      8.73
+## 6 fastReg_ConstRef(X, Y)            2.04   2.04      9.53
+## 7 fastReg_NoCast(X, Y)              1      1        18.7
 ```
 
 ---
-### `RcppArmadillo` 
+## `RcppArmadillo` &amp;mdash; Case Study: Var(1) Process
 
 **Example: simulating a VAR(1) process**
 
@@ -336,7 +372,7 @@ bench::mark(
 - We consider a DGP for `\(K=2\)` variables where `\(\boldsymbol{\varepsilon}_t\)` is bivariate standard normal and `$$\mathbf{A} = \begin{pmatrix}0.8 &amp; 0.15\\ 0.15 &amp; 0.8\end{pmatrix}$$` 
 
 ---
-### `RcppArmadillo` 
+## `RcppArmadillo` &amp;mdash; Case Study: Var(1) Process
 
 **Example: simulating a VAR(1) process**
 
@@ -366,13 +402,14 @@ VARSim_R &lt;- function(A, epsilon) {
 ```
 
 ---
-### `RcppArmadillo` 
+## `RcppArmadillo` &amp;mdash; Case Study: Var(1) Process
 
-**Example: simulating a VAR(1) process**
+**Example: simulating a VAR(1) process &amp;mdash; ctd.**
 
 An Armadillo version is readily implemented
 
-```nohighlights
+
+```cpp
 #include &lt;RcppArmadillo.h&gt;
 // [[Rcpp::depends(RcppArmadillo)]]
 
@@ -390,9 +427,9 @@ arma::mat VARSim_Rcpp(arma::mat coef, arma::mat epsilon) {
 
 
 ---
-### `RcppArmadillo` 
+## `RcppArmadillo` &amp;mdash; Case Study: Var(1) Process
 
-**Example: simulating a VAR(1) process**
+**Example: simulating a VAR(1) process &amp;mdash; ctd.**
 
 .smaller[
 
@@ -404,13 +441,13 @@ df &lt;- data.frame(VARSim_Rcpp(A, epsilon)) %&gt;%
 ggplot(df) + geom_line(aes(x=time, y=y, color = var))
 ```
 
-&lt;img src="RcppArmadillo_files/figure-html/unnamed-chunk-11-1.png" style="display: block; margin: auto;" /&gt;
+&lt;img src="RcppArmadillo_files/figure-html/unnamed-chunk-25-1.png" style="display: block; margin: auto;" /&gt;
 ]
 
 ---
-### `RcppArmadillo` 
+## `RcppArmadillo` &amp;mdash; Case Study: Var(1) Process
 
-**Example: simulating a VAR(1) process**
+**Example: simulating a VAR(1) process &amp;mdash; ctd.**
 
 
 ```r
@@ -424,13 +461,13 @@ bench::mark(
 ## # A tibble: 2 x 4
 ##   expression                min median `itr/sec`
 ##   &lt;bch:expr&gt;              &lt;dbl&gt;  &lt;dbl&gt;     &lt;dbl&gt;
-## 1 VARSim_R(A, epsilon)     48.9   44.6       1  
-## 2 VARSim_Rcpp(A, epsilon)   1      1        42.9
+## 1 VARSim_R(A, epsilon)     48.2   36.0       1  
+## 2 VARSim_Rcpp(A, epsilon)   1      1        35.9
 ```
 
-
 ---
-### `RcppArmadillo` &amp;mdash; Case Study: EM Algorithm
+exclude: true
+## `RcppArmadillo` &amp;mdash; Case Study: EM Algorithm
 
 .smaller[
 
@@ -451,7 +488,8 @@ The unknown parameters `\(\pi, \mu_1,\mu_2,\sigma_1,\sigma_2\)` are estimated as
 ]
 
 ---
-### `RcppArmadillo` &amp;mdash; Case Study: EM Algorithm
+exclude: true
+## `RcppArmadillo` &amp;mdash; Case Study: EM Algorithm
 
 .smaller[
 
@@ -472,7 +510,8 @@ This suggests an iterative procedure where we compute compute `\(\gamma_{1i}\)` 
 ]
 
 ---
-### `RcppArmadillo` &amp;mdash; Case Study: EM Algorithm
+exclude: true
+## `RcppArmadillo` &amp;mdash; Case Study: EM Algorithm
 
 **EM for two-component univariate Gaussian mixture model**
 
@@ -485,23 +524,36 @@ This suggests an iterative procedure where we compute compute `\(\gamma_{1i}\)` 
 4. Evaluate the likelihood and check for convergence using the likelihood (check if difference in log-likelihood between iterations is smaller than some prespecified `\(\epsilon&gt;0\)`. Return to 2. if the convergence criterion is not met.
 
 ---
-### `RcppArmadillo` &amp;mdash; Case Study: EM Algorithm
+## `RcppArmadillo` &amp;mdash; Case Study: EM Algorithm
 
 **Complete the following tasks:**
 
-1. Implement an R function which estimates the paramesters of a two-component univariate Gaussian mixture model. The function should allow the user to specify the maximum number of iteration and a tolerance for checking convergence of the log-likelihood.
+1. Implement an R function which estimates the paramesters of a two-component univariate Gaussian mixture model. The function should allow the user to specify the maximum number of iterations and a tolerance for checking convergence of the log-likelihood.
 
 2. Identify bottlenecks of your function and rewrite it using `Rcpp`/`RcppArmadillo`. Benchmark against the R implementation.
 
-3. Use the function for estimating a two-component mixture model of XXX. Visualise the the results.
+3. Use the function for estimating a two-component mixture model of your choice. Visualise the the results.
+
+---
+class: segue-red
+
+![:image 18%](../assets/pica_roll.gif)
+
+### Thank You!
     </textarea>
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
 <script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script src="../assets/remark-zoom.js"></script>
 <script src="../xaringan_files/macros.js"></script>
+<script src="https://platform.twitter.com/widgets.js"></script>
 <script>var slideshow = remark.create({
-"highlightStyle": "solarized-dark",
+"highlightStyle": "github",
 "highlightLines": true,
-"countIncrementalSlides": false
+"countIncrementalSlides": false,
+"ratio": "16:9",
+"navigation": {
+"scroll": false
+}
 });
 if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
   window.dispatchEvent(new Event('resize'));
@@ -559,34 +611,47 @@ if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
   }
   preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
 })(document);</script>
-<script type="text/javascript">
-    var hljs = remark.highlighter.engine;
-</script>
-<script src="terminal.language.js" type="text/javascript"></script>
-<script type="text/javascript">
-    var slideshow = remark.create({});
-    // extract the embedded styling from ansi spans
-    var highlighted = document.querySelectorAll("code.terminal span.hljs-ansi");
-    Array.prototype.forEach.call(highlighted, function(next) {
-    next.insertAdjacentHTML("beforebegin", next.textContent);
-    next.parentNode.removeChild(next);
+<script type="text/x-mathjax-config">
+  
+  function addCopyButtonToCode(){
+    // get all code elements
+    var allCodeBlocksElements = $( ".r" );
+    // For each element, do the following steps
+    allCodeBlocksElements.each(function(ii) {
+      // define a unique id for this element and add it
+      var currentId = "codeblock" + (ii + 1);
+      $(this).attr('id', currentId);
+      
+
+      // add the button just after the text in the code block w/ jquery
+      var clipButton = '<img src="https://image.flaticon.com/icons/svg/54/54662.svg" width="16" alt="Copy to clipboard" onclick=copyToClipboard("#' + currentId + '") style="float:right;cursor:pointer;">';
+      $(this).prepend(clipButton);
     });
     
-    $("code.nohighlights").find("*").removeClass(
-"hljs-title hljs-name hljs-number hljs-type hljs-class hljs-keyword hljs-literal hljs-selector-pseudo hljs-built_in hljs-default hljs-symbol")
+  }
 
-/*    $("code.r").find("*").removeClass(
-"hljs-title hljs-number hljs-type hljs-class hljs-keyword hljs-literal") */
+$(document).ready(function () {
+  // Once the DOM is loaded for the page, attach clipboard buttons
+  addCopyButtonToCode();
+});
+
+
+function copyToClipboard(element) {
+  var $temp = $("<textarea>");
+  $("body").append($temp);
+  
+  let vars = '';
+  
+  $(element).children().each((i, v) => {
+      vars += $(v).text() + '\n'
+    })
+  
+  $temp.val(vars).select();
+  document.execCommand("copy");
+  $temp.remove();
+}
+
 </script>
-
-<style>
-   code.terminal.hljs.remark-code {
-    background: #272822; color: #ddd;
-}
-   .hljs-default .hljs-string {
- color: #FFC300;
-}
-</style>
 
 <script>
 (function() {

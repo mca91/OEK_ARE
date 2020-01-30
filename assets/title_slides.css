@@ -82,6 +82,12 @@
     background-size: 264px, 216px;
 }
 
+.title-rcpparmadillo {
+    background-image: url(../assets/ude_logo.png), url(../assets/armadillologo.png);
+    background-position: 7% 10%, 90% 90%;
+    background-size: 180px, 180px;
+}
+
 .title-packages{
     background-image: url(../assets/ude_logo.png), url(../assets/roxygen2.png);
     background-position: 7% 10%, 90% 90%;

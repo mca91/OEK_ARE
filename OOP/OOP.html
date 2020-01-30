@@ -4,7 +4,7 @@
     <title>Advanced R for Econometricians</title>
     <meta charset="utf-8" />
     <meta name="author" content="Martin Arnold" />
-    <meta name="date" content="2019-11-06" />
+    <meta name="date" content="2020-01-30" />
     <link href="OOP_files/remark-css/default.css" rel="stylesheet" />
     <link href="OOP_files/font-awesome/css/fontawesome-all.min.css" rel="stylesheet" />
     <script type="text/x-mathjax-config">
@@ -524,7 +524,7 @@ s3_get_method(print.lm)
 ##     cat("\n")
 ##     invisible(x)
 ## }
-## &lt;bytecode: 0x7ff06a2e3268&gt;
+## &lt;bytecode: 0x7fbefa268660&gt;
 ## &lt;environment: namespace:stats&gt;
 ```
 ]]
@@ -689,7 +689,7 @@ class: left, top
   ```
   ## function (x, ...) 
   ## UseMethod("mean")
-  ## &lt;bytecode: 0x7ff0649a1738&gt;
+  ## &lt;bytecode: 0x7fbef74f1720&gt;
   ## &lt;environment: namespace:base&gt;
   ```
   
@@ -1215,7 +1215,24 @@ if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
     }
     deleted = true;
   });
-})();</script>
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
 <script type="text/x-mathjax-config">
   
   function addCopyButtonToCode(){

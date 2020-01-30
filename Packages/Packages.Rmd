@@ -267,3 +267,10 @@ mtcars %*% select(mpg)
     ```
 
     We think it is better too use `::` to make it explicit where a function comes from.
+
+---
+class: segue-red
+
+![:image 18%](../assets/pica_roll.gif)
+
+### Thank You!

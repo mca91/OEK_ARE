@@ -39,17 +39,18 @@ output:
 <ul>
   <li> <a href="Advanced R Concepts/Advanced.html">Advanced Concepts</a></li>
   <li> <a href="functional/functional.html">Functional Programming</a></li>
-  <li> Object Oriented Programming </li>
+  <li> <a href="OOP/OOP.html">Object Oriented Programming</a></li>
 </ul>
 <li> Performance </li> 
 <ul>
   <li> <a href="measuring and profiling/MeasuringProfiling.html">Profiling and Benchmarking</a></li> 
   <li> <a href="improving performance/improving-performance.html">Improving Performance</a></li>
   <li> <a href="Rcpp/SpeedRcpp.html">Rcpp</a></li>
+  <li> <a href="RcppArmadillo/RcppArmadillo.html">RcppArmadillo</a></li>
 </ul>
-<li> <a href = Webscraping/webscraping.html>Web Scraping</a>   </li>
+<li> <a href = Webscraping/webscraping.html>Web Scraping</a></li>
 <li> <a href = Shiny/Shiny.html>Shiny</a> </li>
-<li> Writing Packages </li>
+<li> <a href = Packages/Packages.html>Writing Packages </a></li>
 <!-- <li>Text Mining  </li> -->
 </ol>
 ]]
