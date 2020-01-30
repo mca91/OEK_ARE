@@ -20,7 +20,7 @@ output:
 ---
 ## Outline
 
-.small[
+.smaller[
 .pull-left[
 1. [Introduction](Introduction/Introduction.html)
 2. Prerequisites
