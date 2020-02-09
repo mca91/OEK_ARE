@@ -854,13 +854,13 @@ NumericVector x = rnorm(100);
 ---
 ## `Rcpp` &mdash; Case Study: Simulating $\pi$
 
-Since the area of the unit circle is $\pi$ we use that $$\frac{1}{N}\sum_{i=1}^N \mathcal{I}_{\left\{\sqrt{x_i^2+y_i^2}\leq1\right\}} \xrightarrow{p} \pi/4$$ for $x_i, y_i \overset{i.i.d.}{\sim} \mathcal{U}[0,1].$
+Since the area of the unit circle is $\pi$ we use that $$\frac{1}{N}\sum_{i=1}^N \mathcal{I}_{\left\{x_i^2+y_i^2\leq1\right\}} \xrightarrow{p} \pi/4$$ for $x_i, y_i \overset{i.i.d.}{\sim} \mathcal{U}[0,1].$
 
 ```{r}
 pi_R <- function(N) {
   x <- runif(N)
   y <- runif(N)
-  d <- sqrt(x*x + y*y)
+  d <- x*x + y*y
   return(4 * sum(d <= 1.0) / N)
 }
 ```
@@ -884,7 +884,7 @@ double pi_Sugar(const int N) {
   RNGScope scope; // ensure RNG gets set/reset
   NumericVector x = runif(N);
   NumericVector y = runif(N);
-  NumericVector d = sqrt(x*x + y*y);
+  NumericVector d = x*x + y*y;
   return 4.0 * sum(d <= 1.0) / N;
 }
 ```
@@ -895,7 +895,7 @@ double pi_sugar(const int N) {
   RNGScope scope; // ensure RNG gets set/reset
   NumericVector x = runif(N);
   NumericVector y = runif(N);
-  NumericVector d = sqrt(x*x + y*y);
+  NumericVector d = x*x + y*y;
   return 4.0 * sum(d <= 1.0) / N;
 }')
 ```

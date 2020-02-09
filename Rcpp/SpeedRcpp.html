@@ -4,7 +4,7 @@
     <title>Advanced R for Econometricians</title>
     <meta charset="utf-8" />
     <meta name="author" content="Martin C. Arnold" />
-    <meta name="date" content="2020-01-27" />
+    <meta name="date" content="2020-02-09" />
     <link href="SpeedRcpp_files/remark-css/default.css" rel="stylesheet" />
     <script type="text/x-mathjax-config">
       MathJax.Hub.Config({
@@ -275,7 +275,7 @@ isOdd_cpp
 
 ```
 ## function (num = 10L) 
-## .Call(&lt;pointer: 0x112e1b770&gt;, num)
+## .Call(&lt;pointer: 0x116b4b770&gt;, num)
 ```
 
 We see that `isOdd_cpp()` uses `.call()` to invoke the C++ version of the function which is stored in the specified pointer.
@@ -860,7 +860,7 @@ seq_len(10)
 ```
 
 ---
-### `Rcpp` &amp;mdash; Syntactic Sugar
+## `Rcpp` &amp;mdash; Syntactic Sugar
 
 **Mathematics and statistics**
 
@@ -902,14 +902,14 @@ NumericVector x = rnorm(100);
 ---
 ## `Rcpp` &amp;mdash; Case Study: Simulating `\(\pi\)`
 
-Since the area of the unit circle is `\(\pi\)` we use that `$$\frac{1}{N}\sum_{i=1}^N \mathcal{I}_{\left\{\sqrt{x_i^2+y_i^2}\leq1\right\}} \xrightarrow{p} \pi/4$$` for `\(x_i, y_i \overset{i.i.d.}{\sim} \mathcal{U}[0,1].\)`
+Since the area of the unit circle is `\(\pi\)` we use that `$$\frac{1}{N}\sum_{i=1}^N \mathcal{I}_{\left\{x_i^2+y_i^2\leq1\right\}} \xrightarrow{p} \pi/4$$` for `\(x_i, y_i \overset{i.i.d.}{\sim} \mathcal{U}[0,1].\)`
 
 
 ```r
 pi_R &lt;- function(N) {
   x &lt;- runif(N)
   y &lt;- runif(N)
-  d &lt;- sqrt(x*x + y*y)
+  d &lt;- x*x + y*y
   return(4 * sum(d &lt;= 1.0) / N)
 }
 ```
@@ -939,7 +939,7 @@ double pi_Sugar(const int N) {
   RNGScope scope; // ensure RNG gets set/reset
   NumericVector x = runif(N);
   NumericVector y = runif(N);
-  NumericVector d = sqrt(x*x + y*y);
+  NumericVector d = x*x + y*y;
   return 4.0 * sum(d &lt;= 1.0) / N;
 }
 ```
