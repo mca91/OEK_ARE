@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+  <head>
+    <title>Advanced R for Econometricians</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Alexander Gerber" />
+    <meta name="date" content="2018-11-05" />
+    <link href="webscraping_files/remark-css/default.css" rel="stylesheet" />
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        TeX: { equationNumbers: { autoNumber: "AMS" } },
+      });
+    </script>
+    <style>
+    .mjx-mrow a {
+      color: black;
+      pointer-events: none;
+      cursor: default;
+    }
+    </style>
+    
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"
+      integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
+      crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="..\assets\sydney-fonts.css" type="text/css" />
+    <link rel="stylesheet" href="..\assets\sydney.css" type="text/css" />
+    <link rel="stylesheet" href="..\assets\title_slides.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+
+
+
+
+class: title-slide title-rvest center middle
+
+# Advanced R for Econometricians
+## Web Scraping with rvest
+
+---
+class: left, top
+## What is Web Scraping?
+
+Web scraping is the process of extracting data from websites. It can be used if the desired data 
+are not readily available via e.g. a download link or an API.
+
+### Example
+
+Consider the website https://www.trustpilot.com/ which is a platform for customer reviews.
+
+Each review consists of different parts such as
+- a short text
+- a date
+- a rating from 1 to 5 stars. 
+
+Let's say we are interested whether the ratings of a shop change over time. For this we would need 
+to gather the date and the star rating which are, however, not downloadable. 
+
+We will learn how we can access these data nontheless to perform the analysis. 
+
+---
+class: left, top
+## Legal Issues
+
+Web scraping is generally legal. However, depending on the jurisdiction it can be considerd illegal in some cases.
+
+You should be careful if...
+
+- you have to sign in into e.g. a social network since you agree to their rules
+- you circumvent web security measures
+- you scrape personal information such as email addresses, etc. 
+- you scrape a substantial amount of a website's content
+- you want to republish the scraped content, e.g. an article from a newspage. 
+- webscraping is prohibited by the Terms of Service, even if this doesn't make it illegal per se.  
+
+**Important**: avoid troubles by limiting the number of requests to a reasonable amount (e.g. 1 request every 10 seconds). Otherwise it could be considered as a denial of service attack. 
+
+
+---
+## The Structure of a Website
+
+To extract data from a website it is necessary to understand the basics of how a website is built. 
+
+Here is a very simple website bulid only with HTML: 
+.code60[
+```{}
+&lt;!DOCTYPE html&gt;
+  &lt;html&gt;
+  &lt;head&gt;
+  &lt;title&gt;Page Title&lt;/title&gt;
+  &lt;/head&gt;
+  &lt;body&gt;
+
+  &lt;h1&gt;This is a Heading&lt;/h1&gt;
+  &lt;p&gt;This is a paragraph.&lt;/p&gt;
+  
+  &lt;div&gt;
+  &lt;h1&gt;This is another Heading&lt;/h1&gt;
+  &lt;p&gt;This is another paragraph.&lt;/p&gt;
+  &lt;/div&gt;
+  
+  &lt;/body&gt;
+  &lt;/html&gt;
+```
+]
+
+- The `&lt;html&gt;...&lt;/html&gt;` tags are the container for all other HTML elements.
+- The `&lt;head&gt;...&lt;/head&gt;` tags contain meta data which are not directly visible on the web page.
+- `&lt;body&gt;...&lt;/body&gt;` contains everything we can see such as text, links, images, tables, lists, etc. This is the most relevant part. 
+
+---
+## The Body
+
+.code70[
+```{}
+  &lt;body&gt;
+  
+  &lt;h1&gt;This is a Heading&lt;/h1&gt;
+  &lt;p&gt;This is a paragraph.&lt;/p&gt;
+  
+  &lt;div&gt;
+  &lt;h1&gt;This is another Heading&lt;/h1&gt;
+  &lt;p&gt;This is another paragraph.&lt;/p&gt;
+  &lt;/div&gt;
+  
+  &lt;/body&gt;
+```
+]
+
+- In the body part tags are used to give the displayed information a structure. In our example we use: 
+    - `&lt;h1&gt;...&lt;/h1&gt;`   to define a heading
+    - `&lt;p&gt;...&lt;/p&gt;`     to define text
+    - `&lt;div&gt;...&lt;/div&gt;` to define different sections.
+
+- Look at the [w3schools tag list](https://www.w3schools.com/tags/default.asp) for other tags you might encounter. 
+
+We will start by scraping the simple HTML page from before. 
+Create a new HTML document and copy the code form the last slide into it.
+
+---
+## `read_html()`
+
+The package `rvest` makes use of the structure of an HTML document to extract the relevant information. 
+
+The first step is to load the website into R using `xml2::read_html()` ( `rvest` depends on `xml2` whereby `xml2`  automatically loads when `rvest` gets loaded). 
+
+
+```r
+library(rvest)
+URL &lt;- here::here("webscraping/examples/simple_html_page.html") # path of my html file
+(page &lt;- read_html(URL))
+```
+
+```
+## {html_document}
+## &lt;html&gt;
+## [1] &lt;head&gt;\n&lt;meta http-equiv="Content-Type" content="text/html; charset= ...
+## [2] &lt;body&gt;\r\n  \r\n  &lt;h1&gt;This is a Heading&lt;/h1&gt;\r\n  &lt;p&gt;This is a parag ...
+```
+
+
+---
+## XML Structure
+
+Our page is now stored as an xml document which has a hierarchical data structure. For our page it looks like this. 
+
+&lt;img src="xml_structure1.png" width="650px" style="display: block; margin: auto;" /&gt;
+
+- We call everything sourrounded by a rectangle or a circle a node. 
+- We call everything sourrounded by a rectangle with rounded corners data. 
+
+---
+## `html_node()`
+
+We can navigate through the xml object using `rvest::html_node()`.
+
+-  Get all `p` node
+
+
+```r
+page %&gt;% rvest::html_nodes("p")
+```
+
+```
+## {xml_nodeset (2)}
+## [1] &lt;p&gt;This is a paragraph.&lt;/p&gt;
+## [2] &lt;p&gt;This is another paragraph.&lt;/p&gt;
+```
+
+-  Get only `p` nodes which are children of `div` nodes
+
+```r
+page %&gt;% 
+  rvest::html_nodes("div") %&gt;% 
+  rvest::html_nodes("p")
+```
+
+```
+## {xml_nodeset (1)}
+## [1] &lt;p&gt;This is another paragraph.&lt;/p&gt;
+```
+
+---
+## `html_text()`
+
+If we got the nodes which contain the data we want to scrape, we can use `rvest::html_text()` to 
+extract the data (i.e. the text between the tags) as a normal character vector. 
+
+
+```r
+page %&gt;% 
+  html_nodes("div") %&gt;% 
+  html_nodes("p") %&gt;%  
+  html_text()
+```
+
+```
+## [1] "This is another paragraph."
+```
+
+---
+## CSS 
+
+Websites are not only built with HTML. CSS is the language which is used to style a website.
+Let's add a bit more to our simple page: 
+
+- add a link to a `css` file (which doesn't exist now) in the head section of your html file 
+
+```{}
+&lt;link rel="stylesheet" href="stylesheet.css"&gt;
+```
+
+- add another `div` with a heading and a paragraph
+
+- create a new file `stylesheet.css` in the same folder as your HTML file 
+
+- copy the following code into that file and see what happens
+
+```{}
+div h1 {
+  color: green;
+  text-align: center;
+};
+```
+
+---
+## CSS Selectors
+
+What if we want different `div` sections to look differently?
+
+For this classes and ids can be specified. For web scraping we usually only need 
+to know about classes, but ids work quite similar. 
+
+- change the code of one `div` section to  
+
+```{}
+&lt;div class = "blue"&gt; ... &lt;/div&gt; 
+```
+and the other to 
+
+```{}
+&lt;div class = "red"&gt; ... &lt;/div&gt; 
+```
+
+---
+## CSS Selectors
+
+Having added a class attribute to our `div` sections, we can now use this class in the CSS file as 
+follows
+
+.code90[
+```{}
+.blue h1 {
+  color: blue;
+  text-align: center;
+}
+
+.red h1 {
+  color: green;
+  text-align: center;
+}
+```
+]
+
+What is before the `{}` is called a CSS selector. It can consist of classes, ids, tags and of 
+any combination of those elements. E.g. `.blue h1` reads as: select all `h1` headings inside an element with class `blue`. 
+Note: you need to put a `.` before the class name. 
+
+
+For more on selectors look at [w3chools CSS Selector Reference](https://www.w3schools.com/cssref/css_selectors.asp).
+
+
+The web developer uses selectors to style similar content in the same way (e.g. on trustpilot.com 
+each user review looks the same). We can use those to scrape the content we desire more specifically.   
+
+
+---
+## Use the Selectors 
+
+Let's say we want to select all paragraphs (`p`) which are a decendent of an element with class `.red`. We can achieve this with
+
+
+```r
+url &lt;- here::here("webscraping/examples/simple_html_page_with_css.html")
+page &lt;- url %&gt;% read_html()
+page %&gt;%  
+  html_nodes(".red") %&gt;% 
+  html_nodes("p") %&gt;%
+  html_text()
+```
+
+```
+## [1] "But this isn't red."
+```
+
+or in short
+
+
+```r
+page %&gt;%  
+  html_nodes(".red p") %&gt;% 
+  html_text()
+```
+
+```
+## [1] "But this isn't red."
+```
+
+---
+## Extract attributes
+
+Sometimes we are not interested in the text between element tags but the relevant information is hidden 
+in the tag attributes. Attributes are everything that is defined in the opening tag, e.g in 
+
+```{}
+&lt;div class = "blue"&gt; ... &lt;/div&gt; 
+```
+`class = "blue"` is an attribute. With `html_attrs()` and `html_attr()`  we can extract these information.
+.code70[
+
+```r
+# Get all attributes
+page %&gt;%  
+  html_nodes(".red") %&gt;% 
+  html_attrs()
+```
+
+```
+## [[1]]
+## class 
+## "red"
+```
+
+```r
+# Get a specific attribute
+page %&gt;%  
+  html_nodes(".red") %&gt;% 
+  html_attr("class")
+```
+
+```
+## [1] "red"
+```
+]
+
+---
+## HTML tables 
+
+Since data are often stored in tables, `rvest` provides the function `html_table()` which parses a HTML table into a data frame. Tables in HTML look like this: 
+.code70[
+```{}
+&lt;table style="width:100%"&gt;
+  &lt;tr&gt;
+    &lt;th&gt;Firstname&lt;/th&gt;
+    &lt;th&gt;Lastname&lt;/th&gt;
+    &lt;th&gt;Age&lt;/th&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+    &lt;td&gt;Jill&lt;/td&gt;
+    &lt;td&gt;Smith&lt;/td&gt;
+    &lt;td&gt;50&lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+    &lt;td&gt;Eve&lt;/td&gt;
+    &lt;td&gt;Jackson&lt;/td&gt;
+    &lt;td&gt;94&lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/table&gt;
+```
+]
+
+Add this table to your HTML file and try to scrape the data using `html_table()`.
+
+
+---
+## CSS Selector Gadget
+
+How do we find the CSS selectors
+
+1. Looking into the source code (depending on your web browser you can right click on the webpage and click e.g. source code, inspect, ...)
+
+2. Digging through the source code is often not necessary. If you use Chrome install 
+   the [Selector Gadget](https://cran.r-project.org/web/packages/rvest/vignettes/selectorgadget.html).
+
+
+---
+## A real example: trustpilot.com
+
+We want to write a function that for each review extracts
+
+- the name of the reviewer
+- the number of stars
+- the date
+- the review title
+- the review text
+
+The final function to extract data from one URL might look like this: 
+
+.code70[
+
+```r
+get_reviews &lt;- function(url){
+  page &lt;- read_html(url)
+  tibble(
+  name   = get_name(page),
+  rating = get_rating(page), 
+  date   = get_date(page), 
+  title  = get_title(page),
+  text   = get_text(page)
+  )
+}
+```
+]
+
+---
+## A real example: trustpilot.com
+
+Not only do we want to scrape all reviews from one URL but all reviews for a company which 
+are distributed over many URLs. Can you write a function which can do this?
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script src="../assets/remark-zoom.js"></script>
+<script src="https://platform.twitter.com/widgets.js"></script>
+<script>var slideshow = remark.create({
+"highlightStyle": "github",
+"highlightLines": true,
+"countIncrementalSlides": false,
+"ratio": "16:9",
+"navigation": {
+"scroll": false
+}
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>

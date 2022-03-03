@@ -1,0 +1,151 @@
+---
+title: "Exercise Solutions `ggplot2`"
+output: html_document
+---
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
+```
+
+1. Experiment with `geom_point()` using the `mtcars` data set. Try out different aesthetics with different variables. What do you note?
+
+     - When mapping color to a numeric variable, a color gradiant is used. A color gradient interpolates linearly from one color to another.
+    ```{r}
+    library(ggplot2)
+    ggplot(mtcars, aes(x = hp, y = wt, color = gear)) +
+      geom_point()
+    ```
+     - Mapping color to a factor (or character) variable we get the following :
+    ```{r}
+    ggplot(mtcars, aes(x = hp, y = wt, color = factor(gear))) +
+      geom_point()
+    ```
+
+Hence, we note that there is a difference whether we map color to a numeric or a (discrete) factor variable. 
+
+
+2. Use the mtcars data set and plot mpg vs. hp. Add a smoothing line to the plot.
+    
+    ```{r}
+    ggplot(mtcars, aes(hp, mpg)) +
+      geom_point() +
+      geom_smooth()
+    ```
+    
+3. Add a smoothing function to the plot for each number of cylinders.
+
+    ```{r}
+    ggplot(mtcars, aes(hp, mpg, color = factor(cyl))) +
+      geom_point() +
+      geom_smooth()
+    ```
+    
+4. Find out how to remove the confidence interval.
+
+    ```{r}
+    ggplot(mtcars, aes(hp, mpg, color = as.factor(cyl))) +
+      geom_point() +
+      geom_smooth(se = FALSE)
+    ```
+    
+5. Use a simple linear regression model and a quadratic regression model for smoothing.
+
+    - Simple linear regression model
+    ```{r}
+    ggplot(mtcars, aes(hp, mpg, color = as.factor(cyl))) +
+      geom_point() +
+      geom_smooth(method = lm)
+    ```
+    - Quadratic regression model
+    ```{r}
+    ggplot(mtcars, aes(hp, mpg, color = as.factor(cyl))) +
+      geom_point() +
+      geom_smooth(method = lm, formula = y ~ I(x + x^2))
+    ```
+    
+7. Download the Titanic data set from Moodle and
+
+    - use a bar plot to show how many people survived the Titanic compared to those who didn't.
+
+    ```{r}
+    titanic <- read.csv("titanic.csv")
+    ggplot(titanic, aes(x = survived)) +
+      geom_bar()
+    ```
+    - Add a color coding to the previous plot to visualize the differences between the passengers' gender.
+    ```{r}
+    ggplot(titanic, aes(x = survived, fill = sex)) +
+      geom_bar()
+    ```
+   - Split the previous plot into three plots based on the passengers' class.
+    ```{r}
+    ggplot(titanic, aes(x = survived, fill = sex)) +
+      geom_bar() +
+      facet_grid(.~pclass)
+    ```
+    - Compare the age distribution between survivors and non-survivors.
+    ```{r}
+    ggplot(titanic, aes(x = age, colour = survived, fill = survived)) +
+      geom_density(alpha = 0.5)
+    ```
+
+8. Try to answer the following questions about the `mpg` dataset (comes with ggplot2) using ggplot.
+
+    - How are engine size and fuel economy related?
+    ```{r}
+    ggplot(mpg, aes(x = displ, y = hwy)) +
+      geom_point()
+    ```
+    - Do certain manufacturers care more about economy than others?
+    ```{r}
+    ggplot(mpg, aes(x = hwy, fill = manufacturer)) +
+      geom_density(alpha = 0.75)
+    ```
+    - Has fuel economy improved in the last ten years?
+    ```{r}
+    ggplot(mpg, aes(x = hwy, fill = factor(year))) +
+       geom_density(alpha = 0.5)
+    ```
+    
+9. Compare the two data sets economics and economics_long (both come with ggplot) with respect to the ease of use when working with ggplot.
+    
+    ```{r}
+    ggplot(economics_long, aes(x = date, y = value, color = variable)) + geom_line()
+    ```
+
+    ```{r}
+    ggplot(economics, aes(x = date)) + 
+      geom_line(aes(y = pop), col = "darkgrey") + 
+      geom_line(aes(y = uempmed), col = "blue") + 
+      geom_line(aes(y = pce), col = "orange") + 
+      geom_line(aes(y = psavert), col = "red") + 
+      geom_line(aes(y = unemploy), col = "green")
+    ```
+
+`ggplot2` likes long data. If you want to plot multiple variables with color coding and legend, then you should transform your data set 
+into a format similar to `economics_long`. See `tidyr` for switching between long and wide data formats.  
+
+
+10. Reproduce the plot created by the following code with ggplot.
+
+    ```{r}
+    plot(mtcars$mpg ~ mtcars$wt, xlab = "wt", ylab = "mpg", pch = 19, ylim = c(5, 35))
+    mod <- lm(mpg ~ wt, data = mtcars)
+    abline(mod, col = "red")
+    wt_new <- seq(min(mtcars$wt), max(mtcars$wt), by = 0.05)
+    conf_interval <- predict(mod, newdata = data.frame(wt = wt_new), 
+                             interval = "confidence", level = 0.95)
+    # setup vertrices of polygon (for shading the CI):
+    p <- cbind(c(wt_new, rev(wt_new)), c(conf_interval[, 3], rev(conf_interval[, 2])))
+    polygon(p, col = adjustcolor("steelblue", alpha.f = 0.5), )
+    lines(wt_new, conf_interval[, 2], col = "steelblue", lty = 2)
+    lines(wt_new, conf_interval[, 3], col = "steelblue", lty = 2)
+    ```
+    
+    
+    ```{r}
+    ggplot(mtcars, aes(wt, mpg)) +
+      geom_point(size = 2) +
+      geom_smooth(method = lm, col = 'red', fill = 'steelblue') 
+    ```
+    
+    

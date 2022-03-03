@@ -1,0 +1,276 @@
+---
+title: "Advanced R for Econometricians"
+subtitle: "Writing R packages"
+author: 
+  - "Martin C. Arnold"
+  - "Alexander Gerber"
+date: "`r Sys.Date()`"
+output:
+  xaringan::moon_reader:
+    css: ["default", "../assets/sydney-fonts.css", "../assets/sydney.css", "../assets/title_slides.css", "../xaringan_files/custom.css"]
+    self_contained: false # if true, fonts will be stored locally
+    seal: false # show a title slide with YAML information
+    includes:
+      in_header: "../assets/mathjax-equation-numbers.html"
+      after_body: "../assets/copybutton.html"
+    nature:
+      beforeInit: ["../assets/remark-zoom.js", "../xaringan_files/macros.js", "https://platform.twitter.com/widgets.js"]
+      highlightStyle: github
+      highlightLines: true
+      countIncrementalSlides: false
+      ratio: '16:9' # alternatives '16:9' or '4:3' or others e.g. 13:9
+      navigation:
+        scroll: false # disable slide transitions by scrolling
+---
+```{r, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, eval = FALSE, warning=FALSE, message=FALSE)
+# http://www.math.ncu.edu.tw/~chenwc/R_note/reference/package/R-exts.pdf
+```
+
+class: title-slide title-packages center middle
+
+# `r rmarkdown::metadata$title`
+## `r rmarkdown::metadata$subtitle`
+### `r rmarkdown::metadata$author`
+
+---
+## Minimal Package
+
+.smaller[
+
+The smallest usable R package consists of 
+
+- an `R/` directory, containing the R Code.
+- a `DESCRIPTION` file containing meta data about the package.
+- a `NAMESPACE` file which defines which functions are imported and exported. 
+
+- By running
+    ```{r, echo = TRUE, eval = FALSE}
+    usethis::create_package("path/to/package/pkgname")
+    ```
+    a minimal package gets automatically created. It will also create and open an R project for your package. 
+
+- We learnt how to work with Git and we want you to use it for package development, too. 
+
+    Git is easily initialized with: 
+    ```{r, eval = FALSE, echo = TRUE}
+    usethis::use_git()
+    ```
+
+]
+
+???
+```{r, eval = FALSE, echo = TRUE}
+usethis::create_package(here::here("Packages", "example"))
+```
+
+---
+## Write your first own package
+
+We start by writing a first little package together. The steps are 
+based on [R packages: The whole game](https://r-pkgs.org/whole-game.html). 
+
+Before we start we should think about what our package should do:
+
+- Since `factors` in R are often frustrating to work with we could write a package which makes working with `factors` easier. 
+
+
+--
+- Have you ever tried to combine 2 factors?
+    ```{r, eval = TRUE, echo = FALSE}
+    (a <- factor(c("character", "hits", "your", "eyeballs")))
+    (b <- factor(c("but", "integer", "where it", "counts")))
+    c(a, b)
+    ```
+--
+    Lets write a function called `fbind()` that does what one would expect.
+
+???
+
+Taken from https://github.com/hadley/pkg-dev/tree/master/fordogs/R
+
+---
+## Write your first own package
+
+```{r, eval=T}
+fbind <- function(a, b) {
+  factor(c(as.character(a), as.character(b)))
+}
+
+fbind(a, b)
+```
+
+---
+## Where to save your function? 
+
+- All R code of the package should be in `.R` files in the `R/` directory. Put the function you have just written into the file `R/fbind.R`. 
+
+- By calling
+    ```{r, eval = FALSE}
+    usethis::use_r("fbind.R")
+    ```
+    a file gets automatically created in the correct folder.  
+
+    If you call this function using an existing file in `R\` it will open the corresponding script. 
+---
+## Does the function work in the package environment?
+
+- Right now this might seem a bit of an overkill, however, if the package becomes more complicated you should use `load_all()` to make all functions in the `R\` directory available. 
+
+- `load_all()` simulates the process of building, installing, and attaching the package which makes it easy to test if the function works as expected within the package. The RStudio shortcut for this is `Ctrl + Shift + L`.
+
+---
+## Check
+
+After we have checked that the function is working, we also want to check if the package as a whole is working.
+
+Run `check()` to do so. 
+
+**Read the output of the check!** Deal with problems early and often. It’s just like incremental development of .R and .Rmd files. The longer you go between full checks that everything works, the harder it becomes to pinpoint and solve issues.
+
+You should see 2 warnings: 
+- Non-standard license specification
+- Undocumented code objects: 'fbind'
+
+---
+## Description File
+
+- The description file holds the meta data of the package. 
+
+    You can change the name and title of the package. There is also room for a little description. Most parts of this file are only relevant when you think about distribute your package e.g. via `CRAN`. 
+
+- To get rid of the licence warning use `licence: CC0`. This puts your package in the public domain.
+  
+- More information about licenses can be found here: 
+[License: Who can use your package?](http://r-pkgs.had.co.nz/description.html#license)
+
+- Another important field is `Imports:` where you have declare which other packages
+you use within your package. More about this later. 
+
+
+---
+## Documentation
+
+The second warning told us that a documentation for our function is missing. Again, 
+if it is only for private usage this might not be too important. But if the package should be published 
+on CRAN a documentation is required. 
+
+The documentation is created when a package is build based on the  files in the folder `man/`. For 
+our function `fbind()` we need a file `man/fbind.Rd`. However, we don't need to edit this file yourself.
+
+**roxygen2**
+
+`roxygen2` is a package that helps us with the documentation. We basically comment our function definitions with something like the following:  
+
+.code70[
+```{r}
+#' Bind two factors
+#'
+#' Create a new factor from two existing factors, where the new factor's levels
+#' are the union of the levels of the input factors.
+#'
+#' @param a factor
+#' @param b factor
+#'
+#' @return factor
+#' @export
+#' @examples
+#' fbind(iris$Species[c(1, 51, 101)], PlantGrowth$group[c(1, 11, 21)])
+```
+]
+
+---
+## Documentation
+
+- A very basic template for package documentation gets created by *RStudio*
+if you navigate the courser into a function call and click ***Code > Insert roxygen skeleton*** or by pressing `Ctr + Alt + Shift + R`.
+
+- After this is done run `devtools::document()`. Now, there should be a `man/` directory with a file in it.
+
+---
+## `NAMESPACE`
+
+- The call to `devtools::document()` not only creates the documentation but also keeps the `NAMESPACE` file up-to-date. 
+
+- The export directive in `NAMESPACE` is what makes `fbind()` available to a user after attaching `foofactors` via `library(foofactors)`. 
+
+    We actually told `roxygen` to export `fbind()` by putting 
+    ```{r}
+    #' @export
+    ```
+    in front of the function call. 
+
+- Your `NAMESPACE` file should now look like this:
+    ```{r}
+    # Generated by roxygen2: do not edit by hand
+    export(fbind)
+    ```
+
+---
+## Install the package
+
+- Use `check()` again again to see if the warnings are gone and everything runs fine. Then run `install()` to put your package into your library. 
+
+- We may now attach the package using `library()`
+  ```{r}
+  library(foofactors)
+  ```
+
+---
+## Import Packages
+
+- Often we want to use functions from other packages. For this to work we first need to import functions from the namespace of other packages. 
+
+    **Exercise:**
+    
+    Add a function that combines `lm()` and `summary()` to your package. Then run `check`(). What do you notice?  
+
+--
+- Even functions from the (always available) `stats` or `utils` packages should be imported. This important for being able to publish a package on `CRAN`. 
+
+    You must declare your intent to use functions from the `stats` namespace with
+    ```{r}
+    usethis::use_package("stats")
+    ```
+
+    This will add the stats package to the import field of the `DESCRIPTION` file 
+
+- If you want to call a function from that package later use `packagname::function()` 
+
+---
+## More about Namespaces
+
+**Exercise:**
+
+What output do you expect for this code?
+```{r}
+library(dplyr)
+library(MASS)
+
+mtcars %*% select(mpg)
+```
+
+--
+- The problem here is that both the `dplyr` and the `MASS` package export a function `select()`. The one in the package which was loaded last is used. 
+
+- Use of Namespaces disambiguates which function we want to use. We can tell R to look for the function with the name `select()` exported by the `dplyr` package by calling `dplyr::select()`. 
+
+---
+## Imports
+
+- We already know that we need to put packages which we are using need to be specified in the import field of the `DESCRIPTION` file. It ensures that these packages are installed if our package is installed and `dplyr::select()` will work within the package. 
+
+- We use `NAMESPACE` to define which functions from other packages we want to use without having to use`::` 
+    ```{r}
+    import(dplyr) # import all functions from one package
+    importFrom(dplyr, select) # import selected functions 
+    ```
+
+    We think it is better too use `::` to make it explicit where a function comes from.
+
+---
+class: segue-red
+
+![:image 18%](../assets/pica_roll.gif)
+
+### Thank You!

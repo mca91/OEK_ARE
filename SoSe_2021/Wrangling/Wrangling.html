@@ -1,0 +1,1574 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>Advanced R for Econometricians</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Martin C. Arnold" />
+    <meta name="author" content="Jens Klenke" />
+    <meta name="date" content="2022-02-16" />
+    <script src="Wrangling_files/header-attrs/header-attrs.js"></script>
+    <link href="Wrangling_files/remark-css/default.css" rel="stylesheet" />
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        TeX: { equationNumbers: { autoNumber: "AMS" } },
+      });
+    </script>
+    <style>
+    .mjx-mrow a {
+      color: black;
+      pointer-events: none;
+      cursor: default;
+    }
+    </style>
+    <link rel="stylesheet" href="C:/Users/Jens-/Documents/GitHub/OEK_ARE/2021/assets/ude_fonts.css" type="text/css" />
+    <link rel="stylesheet" href="C:/Users/Jens-/Documents/GitHub/OEK_ARE/2021/assets/ude.css" type="text/css" />
+    <link rel="stylesheet" href="C:/Users/Jens-/Documents/GitHub/OEK_ARE/2021/assets/title_slides.css" type="text/css" />
+    <link rel="stylesheet" href="C:/Users/Jens-/Documents/GitHub/OEK_ARE/2021/assets/custom.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+
+
+
+
+
+class: title-slide title-wrangling center middle
+
+# Advanced R for Econometricians
+## Data Wrangling
+### Martin C. Arnold, Jens Klenke
+
+---
+class: top, left
+## Tibble
+
+.font90[
+Tibbles are the main data structure used in the `tidyverse` and can be viewed as a modern version of the data frame. 
+
+- `tibble()` creates a new tibble from scratch.
+]
+
+
+.blockquote.exercise.font90[
+
+```r
+    library(tidyverse)
+    new_tibble &lt;- tibble(x = 1:3, y = letters[1:3])
+```
+]
+
+--
+
+.font90[
+- `as_tibble()` creates a tibble from an existing object (e.g. a data frame or a matrix).
+]
+
+.blockquote.exercise.font90[
+
+```r
+    a_data.frame &lt;- data.frame(x = 1:3, y = letters[1:3])
+    a_tibble     &lt;- as_tibble(a_data.frame)
+```
+]
+
+--
+
+
+.font90[
+- Everything that works for data frames also works with tibbles because
+]
+.blockquote.exercise.font90[
+
+```r
+    class(a_tibble)
+```
+
+```
+## [1] "tbl_df"     "tbl"        "data.frame"
+```
+]
+
+---
+class: top, left
+
+## Tibble vs. data.frame
+- Why should we use tibbles instead of data frames? See the following comparison.  
+
+.blockquote.exercise.font90[
+
+```r
+data(mtcars) 
+mtcars_tibble &lt;- as_tibble(mtcars)
+```
+]
+
+--
+
+- different print method
+
+.blockquote.exercise.font90[
+
+```r
+print(mtcars)
+print(mtcars_tibble)
+```
+]
+
+--
+
+- more consistent subsetting behavior
+
+.blockquote.exercise.font90[
+
+```r
+mtcars[ ,1:2] # returns a data.frame
+mtcars[ ,1]   # returns a vector 
+mtcars_tibble[ ,1:2] # returns a tibble
+mtcars_tibble[ ,1]   # returns a tibble
+```
+]
+---
+## Tibble vs. data.frame
+
+
+- lazy and sequential evaluation 
+
+.blockquote.exercise[
+
+```r
+data.frame(x = 1:3, y = x^2) # not working
+tibble(x = 1:3, y = x^2)
+```
+]
+
+--
+
+- higher flexibility with nested data
+
+.blockquote.exercise[
+
+```r
+data_df  &lt;- data.frame(days = 1:3,
+                       data = list(mtcars)) # not working
+
+data_tib  &lt;- tibble(days = 1:3, 
+                    data = list(mtcars))
+```
+]
+
+- For more see `vignette("tibble")`.
+
+
+---
+class: top, left
+background-image: url(../assets/dplyr.svg)
+background-size: 150px
+background-position: 97.5% 8%
+
+## dplyr 
+
+&lt;br&gt;
+
+The `dplyr` package is the most important package of the `tidyverse` when it comes to data manipulation and transformation. 
+
+The core characteristics of the package:
+
+- focus on data frames (data frame in &amp;rarr; data frame out)
+- verbose compared to base R which leads to longer but easier to read code
+- consistent syntax. 
+
+You can compare the functionality to that of a  relational database which provides methods to work with
+single tables and multiple tables. 
+
+---
+class: top, left
+## Single Table Functions
+
+First, we look at functions that work on a single table. 
+ 
+- `filter()` to select rows based on their values.
+
+.blockquote.exercise[
+
+```r
+filter(mtcars_tibble, hp &gt;= 100 &amp; mpg &gt;= 20)
+```
+]
+
+--
+
+- `slice()` to select rows by position. 
+
+.blockquote.exercise[
+
+```r
+slice(mtcars_tibble, 10:15)
+```
+]
+
+--
+
+- `select()`/`rename()` to select/rename variables based on their names.
+
+.blockquote.exercise[
+
+```r
+select(mtcars_tibble, cyl, hp)
+```
+]
+
+---
+class: top, left
+## Single Table Functions
+
+- `arrange()` to reorder rows.
+
+.blockquote.exercise[
+
+```r
+arrange(mtcars_tibble, cyl)
+arrange(mtcars_tibble, desc(cyl))
+```
+]
+
+--
+
+- `relocate()` to reorder columns (variables).
+
+.blockquote.exercise[
+
+```r
+relocate(mtcars_tibble, gear)
+relocate(mtcars_tibble, gear, .after = last_col())
+relocate(mtcars_tibble, gear, .before = mpg)
+```
+]
+
+
+---
+class: top, left
+## Single Table Functions
+
+- `mutate()` and `transmute()` to add new variables that are functions of existing variables. 
+
+.blockquote.exercise[
+
+
+```r
+mutate(mtcars_tibble, gpm = 1/mpg)
+transmute(mtcars_tibble, gpm = 1/mpg) 
+```
+]
+
+--
+
+- `summarise()` to condense multiple values to a single value.
+
+.blockquote.exercise[
+
+```r
+summarise(mtcars_tibble, mean_hp = mean(hp), max_mpg = max(mpg))
+```
+]
+
+---
+class: top, left
+## Single Table Functions
+
+- `sample_n()` and `sample_frac()` to take random samples.
+
+.blockquote.exercise[
+
+```r
+sample_n(mtcars_tibble, 10)
+sample_frac(mtcars_tibble, 0.1)
+```
+]
+
+--
+
+- `distinct()` removes duplicate rows.
+
+.blockquote.exercise[
+
+```r
+tibble_with_duplicates    &lt;- tibble(x = c(1,1,2,3), 
+                                    y = c(4,4,5,6))
+tibble_without_duplicates &lt;- distinct(tibble_with_duplicates)
+```
+]
+
+--
+
+- `count()` and `tally()` count rows.  
+
+.blockquote.exercise[
+
+```r
+count(mtcars_tibble); count(mtcars_tibble, cyl)
+tally(mtcars_tibble); tally(mtcars_tibble, cyl)
+```
+]
+
+---
+class: top, left
+
+## Filter 
+
+.font80[
+The function `filter()` selects rows based on their values. 
+
+- Use comparison operators `==`, `&gt;`, `&gt;=`, `&lt;`, `&lt;=`, and `!=` to filter rows based on a condition. 
+
+.blockquote.exercise[
+
+```r
+filter(mtcars_tibble, hp == 100)
+```
+]]
+
+--
+
+.font80[
+- Use logical operators such as  `&amp;` and `|` to combine multiple conditions. 
+
+.blockquote.exercise[
+
+```r
+filter(mtcars_tibble, hp &gt; 100 &amp; cyl == 4)
+filter(mtcars_tibble, hp &gt; 100 | cyl == 4)
+```
+]]
+
+--
+
+.font80[
+- Additional arguments to `filter()` are combined with `&amp;` which is the same as the above. 
+
+.blockquote.exercise[
+
+```r
+filter(mtcars_tibble, hp &gt; 100, cyl == 4)
+```
+]]
+
+--
+
+.font80[
+- For the common operation `x &gt;= left &amp; x &lt;= right` there is the shorthand `between(x, left, right)`.
+
+.blockquote.exercise[
+
+```r
+filter(mtcars_tibble, x &gt;= 90 &amp; x &lt;= 110)
+filter(mtcars_tibble, between(hp, 90, 110))
+```
+]]
+
+---
+## Select
+
+.font90[
+The function `select()` selects columns based on their name. 
+
+- The function can handle standard and non-standard evaluation (more about this later). 
+
+.blockquote.exercise[
+
+```r
+select(mtcars_tibble, disp, vs) 
+select(mtcars_tibble, "disp", "vs") 
+```
+]]
+
+--
+
+.font90[
+- You can also work with character vectors. 
+
+.blockquote.exercise[
+
+```r
+select(mtcars_tibble, c("disp", "vs"))
+```
+]]
+
+--
+
+.font90[
+- Use `-` to select all except the provided columns.
+
+.blockquote.exercise[
+
+```r
+select(mtcars_tibble, -disp, -vs) 
+select(mtcars_tibble, -c("disp", "vs")) 
+```
+]
+
+- There is a whole bunch of helper functions for `select()` on the next slides. 
+]
+
+---
+class: top, left
+
+## Helper Functions for `select()`
+
+.font90[
+- Select columns whose name contains a character string.
+
+.blockquote.exercise[
+
+```r
+select(iris, contains("."))
+```
+]]
+
+--
+
+.font90[
+- Select columns whose name ends with a character string.
+
+.blockquote.exercise[
+
+```r
+select(iris, ends_with("Length"))
+```
+]]
+
+--
+
+.font90[
+- Select columns whose name matches a regular expression.
+
+.blockquote.exercise[
+
+```r
+select(iris, matches(".t."))
+```
+]]
+
+--
+
+.font90[
+- Select columns named `x1`, `x2`, `x3`, `x4`, `x5`.
+
+.blockquote.exercise[
+
+```r
+select(iris, num_range("x", 1:5))
+```
+]]
+
+---
+class: top, left
+## Helper Functions for `select()`
+
+.font90[
+- Select all columns from `Sepal.Width` to `Petal.Width`.
+
+.blockquote.exercise[
+
+```r
+select(iris, Sepal.Width:Petal.Width)
+```
+]]
+
+--
+
+.font90[
+- Select columns whose names are in a group of names.
+
+.blockquote.exercise[
+
+```r
+select(iris, one_of(c("Species", "Genus")))
+```
+]]
+
+--
+
+.font90[
+- Select columns whose name starts with a character string.
+
+.blockquote.exercise[
+
+```r
+select(iris, starts_with("Sepal"))
+```
+]]
+---
+## Mutate
+
+.font90[
+The function `mutate()` adds new columns or replaces old columns based on existing columns. 
+
+.blockquote.exercise[
+
+```r
+mutate(mtcars_tibble,
+       gpm = 1/mpg,
+       disp =  disp - mean(disp) # replaces disp 
+       )
+```
+]]
+
+--
+
+.font90[
+- Use `lag()` and `lead()` to access values that are not in the same row (e.g. for time series data).
+
+.blockquote.exercise[
+
+```r
+rw &lt;- tibble(t = 1:10, y = cumsum(rnorm(10)))
+mutate(rw, increments =  y - lag(y, k = 1))
+```
+]]
+
+--
+
+.font90[
+- Use `min_rank()` to add a column with the rank (`?min_rank()` gives you an overview of further ranking functions).
+
+.blockquote.exercise[
+
+```r
+mutate(mtcars_tibble,
+       hp_rank_smallest_first = min_rank(hp),
+       hp_rank_largest_first  = min_rank(desc(hp))
+  )
+```
+]]
+
+---
+## Summarise
+
+.font90[
+
+`summarise()` can be used to collapse columns to a single row used with e.g.: 
+- base R functions such as `mean()`, `sd()`, `max()`
+- dplyr specific functions for
+  - position `first()`, `nth()`, `last()`
+  - counts `n()`, `n_disticnt()`
+
+]
+
+--
+
+.blockquote.exercise[.font90[
+
+
+```r
+summarise(mtcars_tibble,
+          mean_hp    = mean(hp),
+          max_wt     = max(wt), 
+          n          = n(),            
+          third_cyl  = nth(cyl, 3) 
+          )
+```
+]]
+
+--
+
+.font90[
+
+- functions you have written yourself 
+
+.blockquote.exercise[
+
+```r
+my_variance &lt;- function(x) 1/(n()-1) * sum((x - mean(x))^2)
+summarise(by_cyl, my_variance(mpg))
+```
+
+]]
+
+---
+## Summarise
+
+- You cannot use `summarise()` with functions that return more than one value per group. 
+
+.blockquote.exercise[
+
+```r
+two_return_vaules &lt;- function(x) c(mean(x), sd(x))
+summarise(by_cyl, two_return_vaules(mpg))
+```
+]
+
+--
+
+- The function can take multiple variable or fixed inputs.
+
+.blockquote.exercise[
+    
+    ```r
+    two_input_values &lt;- function(x, y) sum(x + y)
+    summarise(by_cyl, two_input_values(hp, qsec)) # variable inputs
+    summarise(by_cyl, two_input_values(hp, 1))    # fixed input
+    ```
+]
+
+---
+class: exercise_slide
+## Exercises
+
+&lt;ol start="1"&gt; 
+&lt;li&gt;  Load the &lt;code&gt;nycflights13::flights&lt;/code&gt; data set. Does it come formatted as a tibble? &lt;/li&gt;
+&lt;li&gt;  Find all flights that &lt;/li&gt;
+  &lt;ul&gt;
+      &lt;li&gt; Had an arrival delay of two or more hours.&lt;/li&gt;
+      &lt;li&gt; Flew to Houston (IAH or HOU).&lt;/li&gt;
+      &lt;li&gt; Were delayed by at least an hour, but made up over 30 minutes in flight.&lt;/li&gt;
+      &lt;li&gt; Departed between midnight and 6am.&lt;/li&gt;
+    &lt;/ul&gt;
+&lt;li&gt; Which flights took the longest and which the shortest? &lt;/li&gt;
+&lt;li&gt;  Brainstorm as many ways as possible to select &lt;code&gt;dep_time&lt;/code&gt;, &lt;code&gt;dep_delay&lt;/code&gt;, &lt;code&gt;arr_time&lt;/code&gt;, and &lt;code&gt;arr_delay&lt;/code&gt;. &lt;/li&gt;
+&lt;li&gt;  Create a new variable &lt;code&gt;first_flight&lt;/code&gt; which takes the value &lt;code&gt;TRUE&lt;/code&gt; if it is the first flight of the day. &lt;/li&gt;
+&lt;/ol&gt;
+
+
+
+
+
+---
+class: top, left
+## Grouping
+
+To exploit the full potential of `summarise()` we pair it with `group_by()`. 
+
+--
+
+.blockquote.exercise[
+
+```r
+by_cyl &lt;- group_by(mtcars_tibble, cyl)
+print(summarise(by_cyl, mean(mpg)))
+```
+
+```
+## # A tibble: 3 x 2
+##     cyl `mean(mpg)`
+##   &lt;dbl&gt;       &lt;dbl&gt;
+## 1     4        26.7
+## 2     6        19.7
+## 3     8        15.1
+```
+]
+
+--
+
+&lt;br&gt;
+
+Use `ungroup()` to remove the grouping, when you want to work on the whole data set again. 
+
+---
+class: top, left
+## Grouping
+
+It is also possible to use `group_by()` together with a lot of other single table operations.
+
+--
+ 
+.blockquote.exercise[
+#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example
+
+
+```r
+by_cyl &lt;- group_by(mtcars_tibble, cyl)
+
+# group mean is used for centering
+mutate(by_cyl, centered_mpg = mpg - mean(mpg))   
+transmute(by_cyl, centered_mpg = mpg - mean(mpg))
+
+# return only first 3 rows for each group
+slice(by_cyl, 1:3)  
+
+# counts the number of rows for each group
+count(by_cyl)   
+
+# returns all groups with more than 10 rows
+filter(by_cyl, n() &gt; 10)  
+
+# sorts one group after the other
+arrange(by_cyl, disp, .by_group = TRUE)                        
+```
+]
+
+---
+class: top, left
+## The Pipe
+
+Usually, we combine multiple operations, e.g. first we filter, then we mutate, group and finally summarise. 
+
+--
+
+We could do it like this: 
+
+.blockquote.exercise[ 
+
+#### &lt;svg viewBox="0 0 352 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:red;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M242.72 256l100.07-100.07c12.28-12.28 12.28-32.19 0-44.48l-22.24-22.24c-12.28-12.28-32.19-12.28-44.48 0L176 189.28 75.93 89.21c-12.28-12.28-32.19-12.28-44.48 0L9.21 111.45c-12.28 12.28-12.28 32.19 0 44.48L109.28 256 9.21 356.07c-12.28 12.28-12.28 32.19 0 44.48l22.24 22.24c12.28 12.28 32.2 12.28 44.48 0L176 322.72l100.07 100.07c12.28 12.28 32.2 12.28 44.48 0l22.24-22.24c12.28-12.28 12.28-32.19 0-44.48L242.72 256z"&gt;&lt;/path&gt;&lt;/svg&gt; Bad
+
+```r
+filtered   &lt;- filter(mtcars_tibble, cyl &lt;= 8)
+mutated    &lt;- mutate(filtered, gpm = 1/mpg)
+grouped    &lt;- group_by(mutated, gear)
+summarized &lt;- summarise(grouped, count = n(), 
+                        mean_hp = mean(hp),
+                        mean_gpm = mean(gpm)) 
+```
+]
+
+--
+
+&lt;br&gt;
+
+This code has the disadvantage that we need to save intermediate results that we do not care about. 
+
+---
+class: top, left
+## The Pipe
+
+We could nest all those functions to get rid of the intermediate result.
+
+.blockquote.exercise[ 
+
+```r
+summarise(group_by(mutate(filter(mtcars_tibble, cyl &lt;= 8), gpm = 1/mpg)), 
+          count = n(), 
+          mean_hp = mean(hp),
+          mean_gpm = mean(gpm))
+```
+
+```
+## # A tibble: 1 x 3
+##   count mean_hp mean_gpm
+##   &lt;int&gt;   &lt;dbl&gt;    &lt;dbl&gt;
+## 1    32    147.   0.0542
+```
+]
+
+--
+
+&lt;br&gt;
+However, readability gets worse and debugging will become much harder. 
+---
+class: top, left
+## The Pipe
+
+.font90[
+That is where the pipe operator `%&gt;%` from the `magrittr` package comes in handy.
+The value on the left side of the operator becomes the input to the function on the right side. ]
+
+--
+
+.blockquote.exercise.font90[ 
+
+
+```r
+mtcars_tibble %&gt;% 
+  mutate(gpm = 1/mpg) %&gt;%
+  group_by(gear) %&gt;% 
+  summarise(count = n(), 
+            mean_hp = mean(hp),
+            mean_gpm = mean(gpm)) 
+```
+]
+
+--
+
+.font90[
+The pipe operator is not limited to `dplyr` or the `tidyverse`
+
+.blockquote.exercise[ 
+
+```r
+1:6 %&gt;% mean
+```
+]]
+
+--
+
+.font90[
+Different pipe operator for more flexbility. 
+
+- `%&lt;&gt;%` combines the pipe and `&lt;-`
+- `%T&gt;%` to do something on the side, i.g. generating a plot
+- `%$%` collapse the `data.frame` class
+]
+
+???
+
+Examnples:
+
+#### overvwriting object
+cars %&lt;&gt;%
+  dplyr::summarise(mean(hp))
+
+
+
+#### by side plotting
+cars_1 &lt;- cars %&gt;%
+  dplyr::select(hp, mpg) %T&gt;%
+  plot %&gt;%
+  dplyr::summarise(mean(hp))
+
+
+#### select from data.frame
+cars %&gt;%
+  dplyr::select(hp, mpg) %$%
+  cor(hp, mpg)
+
+  
+
+
+
+
+
+
+
+---
+class: top, left
+## Scoped Functions 
+
+We often perform operations on all or several columns at once. Most helpful are the selection auxiliary functions of the `dplyr` package.
+
+- Use `across()` to determine the variable(s) and summarise function(s)  on specific columns.
+
+.blockquote.exercise[ 
+
+```r
+iris %&gt;% summarise(across(c(Sepal.Length, Sepal.Width), mean))
+iris %&gt;% summarise(across(c(Sepal.Length, Sepal.Width), ~ mean(.x, na.rm = TRUE)))
+# summarise with multipe values 
+iris %&gt;% summarise(across(c(Sepal.Length, Sepal.Width), list(mean = mean, sd = sd)))
+```
+]
+
+--
+
+- Inside the `across()` function we can use the helper function for select which we already saw on the previous slides. 
+
+.blockquote.exercise[ 
+
+```r
+iris %&gt;% summarise(across(ends_with('Width'), mean))
+```
+]
+
+
+
+
+???
+
+purrr-style formula? 
+
+We often perform operations on all or several columns at once. In this case the standard 
+functions are pedestrian. Most helpful are the scoped versions of  `summarise()`, `mutate()` and `select()`.
+
+- Use `summarise_all()`to summarise every column.
+    
+    ```r
+    mtcars_tibble %&gt;% summarise_all(mean)
+    ```
+
+- Use `summarise_if()` to logically subset the columns to be summarised. 
+    
+    ```r
+    iris %&gt;% summarise_if(is.numeric, mean)
+    ```
+
+-  Use `summarise_at()` to summarise selected columns.
+    
+    ```r
+    iris %&gt;% summarise_at(c("Sepal.Length", "Sepal.Width"), mean)
+    ```
+
+
+---
+class: top, left
+## Advanced Topics 
+
+.font90[
+If `summarise()` is too limited, because it can only handle functions that have a single 
+return value, use 
+  - `group_modify(.tbl, .f, ...)` to return a grouped tibble. In that case `.f` must return a data frame.
+  - `group_map(.tbl, .f, ...)` to returns a list of results from calling `.f` on each group.
+  - `group_walk(.tbl, .f, ...)` to call `.f` for side effects and returns the input `.tbl`, invisibly.
+
+]
+
+--
+
+.font90[
+Those functions are closely related to the functions in the `purrr` package which we 
+will talk about later. Here we only give a short example of how they can be used. 
+
+.code80[.blockquote.exercise[ 
+
+```r
+mtcars %&gt;%
+  group_by(cyl) %&gt;% 
+  group_map(~ lm(mpg  ~ hp, data = . ))
+
+mtcars %&gt;%
+  group_by(cyl) %&gt;% 
+  group_modify(~ broom::tidy(lm(mpg  ~ hp, data = . )))
+
+par(mfrow = c(2,2))
+mtcars %&gt;%
+  group_by(cyl) %&gt;% 
+  group_walk(~ plot(mpg  ~ hp, data = . ))
+```
+]]]
+
+---
+class: exercise_slide
+
+## Exercises
+
+Use `dplyr` on the Boston crime data to:
+
+&lt;ol start="6"&gt; 
+&lt;li&gt;  Find out in which district the most incident where reported.  &lt;/li&gt;
+&lt;li&gt;  Create an ordered list of the top ten districts according to the number of drug violations. Start with the district with most drug violations. &lt;/li&gt;
+&lt;li&gt;  What was the most dangerous hour of the week according to the number of homicides (&lt;code&gt;OFFENSE_CODE_GROUP == 'Homicide'&lt;/code&gt;)?  &lt;/li&gt;
+&lt;li&gt;  Calculate for each district the proportion of motor vehicle accidents to all reported incidents (&lt;code&gt;OFFENSE_CODE_GROUP == 'Motor Vehicle Accident Response'&lt;/code&gt;).   &lt;/li&gt;
+&lt;li&gt;  Sort the data set chronologically by year and month. Then take the first 10.000 observations and compute the proportion of incidents where a 
+shooting was involved for each district. Now take a random sample of size 10.000. Is there a noteworthy difference? &lt;i&gt;Hint:&lt;/i&gt; There is a variable called &lt;code&gt;SHOOTING&lt;/code&gt;.
+  &lt;/li&gt;
+&lt;/ol&gt;
+
+
+???
+
+
+dataset:
+https://www.kaggle.com/AnalyzeBoston/crimes-in-boston?select=crime.csv
+
+---
+class: top, left
+## Functions for 2 Tables
+
+- Two data frames
+
+.blockquote.exercise[ 
+
+```r
+band_members   
+```
+
+```
+## # A tibble: 3 x 2
+##   name  band   
+##   &lt;chr&gt; &lt;chr&gt;  
+## 1 Mick  Stones 
+## 2 John  Beatles
+## 3 Paul  Beatles
+```
+
+```r
+band_instruments
+```
+
+```
+## # A tibble: 3 x 2
+##   name  plays 
+##   &lt;chr&gt; &lt;chr&gt; 
+## 1 John  guitar
+## 2 Paul  bass  
+## 3 Keith guitar
+```
+]
+
+---
+class: top, left
+## Left Join
+
+A left join keeps all observations from the left table, and matches records from the right table based on one (or multiple) columns (`by`).
+.blockquote.exercise[ 
+
+```r
+band_members %&gt;% left_join(band_instruments, by = 'name')
+```
+
+```
+## # A tibble: 3 x 3
+##   name  band    plays 
+##   &lt;chr&gt; &lt;chr&gt;   &lt;chr&gt; 
+## 1 Mick  Stones  &lt;NA&gt;  
+## 2 John  Beatles guitar
+## 3 Paul  Beatles bass
+```
+]
+
+--
+
+- Sometimes you may wish to keep all entrances of the right `data.fame`. You can do so with `right_join()`
+
+---
+class: top, left
+## Inner Join
+
+An inner join matches rows from the left and the right table but only keeps the rows where both tables have matching rows in the `by` column.
+.blockquote.exercise[ 
+
+```r
+band_members %&gt;% inner_join(band_instruments, by = 'name')
+```
+
+```
+## # A tibble: 2 x 3
+##   name  band    plays 
+##   &lt;chr&gt; &lt;chr&gt;   &lt;chr&gt; 
+## 1 John  Beatles guitar
+## 2 Paul  Beatles bass
+```
+ ]
+---
+class: top, left
+## Full Join
+
+A full (outer) join matches rows from the left and the right table and keeps all observation
+
+.blockquote.exercise[ 
+
+```r
+band_members %&gt;% full_join(band_instruments, by = 'name')
+```
+
+```
+## # A tibble: 4 x 3
+##   name  band    plays 
+##   &lt;chr&gt; &lt;chr&gt;   &lt;chr&gt; 
+## 1 Mick  Stones  &lt;NA&gt;  
+## 2 John  Beatles guitar
+## 3 Paul  Beatles bass  
+## 4 Keith &lt;NA&gt;    guitar
+```
+]
+---
+class: top, left
+## Semi Join
+
+A semi join keeps all observations of the left table where there are matching values in the right table.
+It keeps only columns from the left. 
+
+.blockquote.exercise[ 
+
+```r
+band_members %&gt;% semi_join(band_instruments, by = 'name')
+```
+
+```
+## # A tibble: 2 x 2
+##   name  band   
+##   &lt;chr&gt; &lt;chr&gt;  
+## 1 John  Beatles
+## 2 Paul  Beatles
+```
+]
+
+---
+class: top, left
+## Anti Join
+An anti join returns all rows from the first table where no matches are found in the second table.
+
+.blockquote.exercise[  
+
+```r
+band_members %&gt;% anti_join(band_instruments, by = 'name')
+```
+
+```
+## # A tibble: 1 x 2
+##   name  band  
+##   &lt;chr&gt; &lt;chr&gt; 
+## 1 Mick  Stones
+```
+]
+
+---
+class: top, left
+## Reshaping Data with tidy R
+
+The goal of `tidyr` is to help you create tidy data. Tidy data is data where:
+
+- each variable is a column
+- each observation is a row
+- each value is a cell.
+
+We will talk about 
+
+- `pivot_longer()` takes multiple columns, and gathers them into _key-value_ pairs: it makes “wide” data longer.
+- `pivot_wider()` takes multiple _value_ columns and one _key_ column, and spreads them across multiple columns: it makes “long” data wider.
+- `separate()` takes a single column and turns it into multiple columns based on a separator.  
+- `unite()` takes multiple columns and pastes them together into one column.  
+
+---
+class: top, left
+## Tidy Data
+
+.blockquote.exercise[
+
+```r
+tidyr::table1
+```
+
+```
+## # A tibble: 6 x 4
+##   country      year  cases population
+##   &lt;chr&gt;       &lt;int&gt;  &lt;int&gt;      &lt;int&gt;
+## 1 Afghanistan  1999    745   19987071
+## 2 Afghanistan  2000   2666   20595360
+## 3 Brazil       1999  37737  172006362
+## 4 Brazil       2000  80488  174504898
+## 5 China        1999 212258 1272915272
+## 6 China        2000 213766 1280428583
+```
+]
+
+--
+
+Each observation is in one row and each variable is one column. 
+
+---
+class: top, left
+## Untidy data
+
+.blockquote.exercise[
+
+```r
+tidyr::table2
+```
+
+```
+## # A tibble: 12 x 4
+##    country      year type            count
+##    &lt;chr&gt;       &lt;int&gt; &lt;chr&gt;           &lt;int&gt;
+##  1 Afghanistan  1999 cases             745
+##  2 Afghanistan  1999 population   19987071
+##  3 Afghanistan  2000 cases            2666
+##  4 Afghanistan  2000 population   20595360
+##  5 Brazil       1999 cases           37737
+##  6 Brazil       1999 population  172006362
+##  7 Brazil       2000 cases           80488
+##  8 Brazil       2000 population  174504898
+##  9 China        1999 cases          212258
+## 10 China        1999 population 1272915272
+## 11 China        2000 cases          213766
+## 12 China        2000 population 1280428583
+```
+]
+
+--
+
+Observations are scattered across multiple rows
+
+
+---
+class: top, left
+## Spreading (Widening)
+
+The function `tidyr::pivot_wider()` main arguments are
+
+- `names_from`, containing the variable names
+- `values_from`, containing the values for the variables in the `names_from` column. 
+
+.blockquote.exercise[
+
+```r
+table2 %&gt;%
+    pivot_wider(names_from = type, values_from = count)
+```
+
+```
+## # A tibble: 6 x 4
+##   country      year  cases population
+##   &lt;chr&gt;       &lt;int&gt;  &lt;int&gt;      &lt;int&gt;
+## 1 Afghanistan  1999    745   19987071
+## 2 Afghanistan  2000   2666   20595360
+## 3 Brazil       1999  37737  172006362
+## 4 Brazil       2000  80488  174504898
+## 5 China        1999 212258 1272915272
+## 6 China        2000 213766 1280428583
+```
+]
+
+--
+
+See the help file for more information
+
+---
+## Untidy Data
+
+.blockquote.exercise[
+
+```r
+tidyr::table4b
+```
+
+```
+## # A tibble: 3 x 3
+##   country         `1999`     `2000`
+## * &lt;chr&gt;            &lt;int&gt;      &lt;int&gt;
+## 1 Afghanistan   19987071   20595360
+## 2 Brazil       172006362  174504898
+## 3 China       1272915272 1280428583
+```
+]
+
+--
+
+- Columns do not contain variables and column names are values. 
+
+---
+## Gathering (Lengthening)
+
+.font90[
+The function `pivot_longer()` main arguments are
+
+- `cols` the column names which are actual values
+- `names_to`, the name of the newly created variable resulting from the column name
+- `values_to`, the name of the newly created variable.
+]
+
+--
+
+.font90.blockquote.exercise[
+
+```r
+table4a %&gt;% 
+  pivot_longer(cols = c('1999', '2000'), names_to = 'year', values_to = 'value')
+```
+
+```
+## # A tibble: 6 x 3
+##   country     year   value
+##   &lt;chr&gt;       &lt;chr&gt;  &lt;int&gt;
+## 1 Afghanistan 1999     745
+## 2 Afghanistan 2000    2666
+## 3 Brazil      1999   37737
+## 4 Brazil      2000   80488
+## 5 China       1999  212258
+## 6 China       2000  213766
+```
+]
+
+--
+
+.font90
+See the help file for more information
+]
+
+???
+
+notice that year is a character variable 
+---
+## Untidy Data
+
+.blockquote.exercise[
+
+```r
+tidyr::table3 
+```
+
+```
+## # A tibble: 6 x 3
+##   country      year rate             
+## * &lt;chr&gt;       &lt;int&gt; &lt;chr&gt;            
+## 1 Afghanistan  1999 745/19987071     
+## 2 Afghanistan  2000 2666/20595360    
+## 3 Brazil       1999 37737/172006362  
+## 4 Brazil       2000 80488/174504898  
+## 5 China        1999 212258/1272915272
+## 6 China        2000 213766/1280428583
+```
+]
+
+- One column contains two variables. 
+
+---
+## Separating 
+
+.font80[
+The function `separate()` splits one column into multiple columns. 
+As input it takes: 
+- `col`, the column to be separated
+- `into`, the names of the newly created columns
+- `sep`, a regular expression which tells the function where to split (by default any non-alphanumeric character)
+- `convert`, a logical value which controls whether or not to run `run type.convert()` on the new columns.
+]
+
+--
+
+.code70[.blockquote.exercise[
+
+```r
+table3 %&gt;% 
+  separate(rate, into = c("cases", "population"), convert = TRUE)
+```
+
+```
+## # A tibble: 6 x 4
+##   country      year  cases population
+##   &lt;chr&gt;       &lt;int&gt;  &lt;int&gt;      &lt;int&gt;
+## 1 Afghanistan  1999    745   19987071
+## 2 Afghanistan  2000   2666   20595360
+## 3 Brazil       1999  37737  172006362
+## 4 Brazil       2000  80488  174504898
+## 5 China        1999 212258 1272915272
+## 6 China        2000 213766 1280428583
+```
+]]
+
+???
+
+why is sep not specified? 
+
+---
+## Untidy Data
+
+.blockquote.exercise[
+
+```r
+tidyr::table5 
+```
+
+```
+## # A tibble: 6 x 4
+##   country     century year  rate             
+## * &lt;chr&gt;       &lt;chr&gt;   &lt;chr&gt; &lt;chr&gt;            
+## 1 Afghanistan 19      99    745/19987071     
+## 2 Afghanistan 20      00    2666/20595360    
+## 3 Brazil      19      99    37737/172006362  
+## 4 Brazil      20      00    80488/174504898  
+## 5 China       19      99    212258/1272915272
+## 6 China       20      00    213766/1280428583
+```
+]
+
+- One variable is spread over multiple columns.  
+
+---
+## Unite
+
+The function `unite()` pastes multiple columns together. 
+As input it takes: 
+- `col`, the name of the new column
+- `...`, the columns to be pasted together
+- `sep`, the separator between values.
+
+.blockquote.exercise[
+
+```r
+table5 %&gt;% 
+  unite(year, century, year, sep = "")
+```
+
+```
+## # A tibble: 6 x 3
+##   country     year  rate             
+##   &lt;chr&gt;       &lt;chr&gt; &lt;chr&gt;            
+## 1 Afghanistan 1999  745/19987071     
+## 2 Afghanistan 2000  2666/20595360    
+## 3 Brazil      1999  37737/172006362  
+## 4 Brazil      2000  80488/174504898  
+## 5 China       1999  212258/1272915272
+## 6 China       2000  213766/1280428583
+```
+]
+
+---
+class: exercise_slide
+
+## Exercises
+
+&lt;ol start="11"&gt; 
+&lt;li&gt;  Compute the rate for `table2`, and `table4a` + `table4b`.  &lt;/li&gt;
+&lt;li&gt;  Recreate the plot given by the code below using `table2` instead of `table1`.  &lt;/li&gt;
+&lt;/ol&gt;
+
+
+```r
+library(ggplot2)
+ggplot(table1, aes(year, cases)) + 
+  geom_line(aes(group = country), colour = "grey50") + 
+  geom_point(aes(colour = country))
+```
+
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script src="../assets/remark-zoom.js"></script>
+<script src="../xaringan_files/macros.js"></script>
+<script src="https://platform.twitter.com/widgets.js"></script>
+<script>var slideshow = remark.create({
+"highlightStyle": "github",
+"highlightLines": true,
+"countIncrementalSlides": false,
+"ratio": "16:9",
+"navigation": {
+"scroll": false
+}
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+<script type="text/x-mathjax-config">
+  
+  function addCopyButtonToCode(){
+    // get all code elements
+    var allCodeBlocksElements = $( ".r" );
+    // For each element, do the following steps
+    allCodeBlocksElements.each(function(ii) {
+      // define a unique id for this element and add it
+      var currentId = "codeblock" + (ii + 1);
+      $(this).attr('id', currentId);
+      
+
+      // add the button just after the text in the code block w/ jquery
+      var clipButton = '<img src="../assets/clipboard-svgrepo-com.svg" width="20" alt="Copy to clipboard" onclick=copyToClipboard("#' + currentId + '") style="float:right;cursor:pointer;">';
+      $(this).prepend(clipButton);
+    });
+    
+  }
+
+$(document).ready(function () {
+  // Once the DOM is loaded for the page, attach clipboard buttons
+  addCopyButtonToCode();
+});
+
+
+function copyToClipboard(element) {
+  var $temp = $("<textarea>");
+  $("body").append($temp);
+  
+  let vars = '';
+  
+  $(element).children().each((i, v) => {
+      vars += $(v).text() + '\n'
+    })
+  
+  $temp.val(vars).select();
+  document.execCommand("copy");
+  $temp.remove();
+}
+
+</script>
+
+
+
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>

@@ -1,0 +1,1781 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>Advanced R for Econometricians</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Martin C. Arnold" />
+    <meta name="date" content="2022-02-01" />
+    <script src="Advanced_files/header-attrs/header-attrs.js"></script>
+    <link href="Advanced_files/remark-css/default.css" rel="stylesheet" />
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        TeX: { equationNumbers: { autoNumber: "AMS" } },
+      });
+    </script>
+    <style>
+    .mjx-mrow a {
+      color: black;
+      pointer-events: none;
+      cursor: default;
+    }
+    </style>
+
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"
+      integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
+      crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="C:/Users/Jens-/Documents/GitHub/OEK_ARE/2021/assets/ude_fonts.css" type="text/css" />
+    <link rel="stylesheet" href="C:/Users/Jens-/Documents/GitHub/OEK_ARE/2021/assets/ude.css" type="text/css" />
+    <link rel="stylesheet" href="C:/Users/Jens-/Documents/GitHub/OEK_ARE/2021/assets/title_slides.css" type="text/css" />
+    <link rel="stylesheet" href="C:/Users/Jens-/Documents/GitHub/OEK_ARE/2021/assets/custom.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+
+
+
+
+
+
+class: title-slide title-rintro center middle
+
+# Advanced R for Econometricians
+## Advanced R Concepts
+### Martin C. Arnold
+
+---
+## Overview
+
+&lt;style&gt;
+  strong {
+    color:#e64626;
+  }
+  
+&lt;/style&gt;
+
+Make sure the `lobstr` package is attached!
+
+
+```r
+install.packages('lobstr')
+library(lobstr)
+```
+
+**Outline**
+
+- Names and values
+
+    - Bindings and references
+
+    - Copy-on-modify / in-place modification
+
+    - Unbinding and Garbage Collection
+    
+- Functions
+    
+    - Fundamentals, scoping and Lazy Evaluation
+    
+    - Function forms
+
+---
+class: segue-red
+### Names and Values
+
+---
+## Assignment Operators (?)
+
+.smaller[
+
+`&lt;-` is often used for assignment but some people use `=` instead. There is, however, a subtle difference in how they are evaluated when mixed in the same expression. 
+
+.blockquote.exercise[
+#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example: operator *precedence*
+
+.pull-left[
+
+```r
+a &lt;- b &lt;- 1
+a == b
+```
+
+```
+## [1] TRUE
+```
+
+```r
+a = b = 1
+a == b
+```
+
+```
+## [1] TRUE
+```
+]
+.pull-right[
+
+```r
+a = b &lt;- 1
+a == b
+```
+
+```
+## [1] TRUE
+```
+
+```r
+a &lt;- b = 1
+```
+
+```
+## Error in a &lt;- b = 1: konnte Funktion "&lt;-&lt;-" nicht finden
+```
+]
+
+
+]]
+
+???
+
+- This really is just a convention and nothing precludes using `=` instead of `&lt;-` for assignment
+
+- When mixed, `&lt;-` has precedence over `=`
+
+- **Fact**: `&lt;-` comes from a time where there actually was a `&lt;-` key on keyboards. `&lt;-` and `-&gt;` essentially do the same thing.
+
+- R interprets `a &lt;- b = 1` as `'&lt;-&lt;-'(a, b = 1, value = 1)`
+
+---
+## Assignment Operators (?)
+
+.smaller[
+
+- For consistency we use `&lt;-` for binding and `=` for assigning function arguments.
+
+- Note, however, that there are reasonable [proposals](http://www.win-vector.com/blog/2016/12/the-case-for-using-in-r/comment-page-1/) for using other conventions.
+
+&lt;br&gt;
+.content-box-white[
+**Task:** 
+
+Find out what `-&gt;` does and think of an application where it might be useful.
+
+*Hint:* Experiment to find out about the precedence relation between `&lt;-`, `-&gt;` and `=`.
+]]
+
+???
+
+- `-&gt;` is the right-assignment operator
+
+- The precedence relation is `-&gt;` &gt;&gt; `&lt;-` &gt;&gt; `=` so `x &lt;- 1 -&gt; b` is another working alternative to the last line on the previous slide
+
+---
+## Assignment Operators (?)
+
+.smaller[
+Assignment operators work in the environment they are invoked in. The super assignment operator `&lt;&lt;-` assigns in the enclosing environment, provided the binding exists there.
+
+.blockquote.exercise[
+#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example: super assignment
+
+
+```r
+var_GE &lt;- 1
+
+a &lt;- function(x) {
+  b &lt;- function(x) var_GE &lt;&lt;- x
+  b(x)
+}
+
+a(3)
+var_GE
+```
+
+```
+## [1] 3
+```
+
+]]
+
+???
+
+- Note that functions generate their own environments upon execution. The *execution environment* of `a()` is the parent environment to `b()`.
+
+- If `&lt;&lt;-` does not find a corresponding binding in the enclosing environment, it looks in the parent environment and works it's way up towards to global environment (GE)
+
+- If the binding does not exist in the GE, it will be created there
+
+---
+## Bindings
+
+.smaller[
+
+Knowing what assignment does internally is crucial for understanding performance and memory usage of your code and R's functional programming tools.
+
+So what happens if we define a vector `x`? The idiom *'the object `x` stores the vector'* is not quite right... 
+
+.blockquote.exercise[
+#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example: binding a vector
+
+**Binding** means that the name has a value: `x` is a **reference** to a value living in the computer's memory.
+
+.pull-left[
+  ![:image 40%](img/binding-1.png)
+  &lt;br&gt;
+  ![:image 40%](img/binding-2.png)
+  ![:source 2019](Wickham)
+]
+.pull-right[.code60[
+  
+  ```r
+  x &lt;- c(1, 2, 3)
+  ```
+  &lt;br&gt;
+  
+  ```r
+  y &lt;- x
+  ```
+]]]]
+
+---
+## Bindings &amp;mdash; Character Vectors
+
+A `character` vector is a binding to a vector of strings.
+
+.blockquote.exercise[
+#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example: binding a `character` vector
+
+.smaller[
+
+.pull-left[
+  &lt;br&gt;
+  ![:image 55%](img/character.png)
+  ![:image 55%](img/character-2.png)
+  ![:source 2019](Wickham)
+]
+.pull-right[
+
+```r
+x &lt;- c("a", "a", "abc", "d")
+ref(x, character = TRUE)
+```
+
+```
+## o [1:0x22b06f90] &lt;chr&gt; 
+## +-[2:0x13f99cb0] &lt;string: "a"&gt; 
+## +-[2:0x13f99cb0] 
+## +-[3:0x1db48e98] &lt;string: "abc"&gt; 
+## \-[4:0x14191ae8] &lt;string: "d"&gt;
+```
+]]]
+
+---
+## Copy-on-modify
+
+.font90[
+
+R's copy-on-modify behavior is blessing and curse: we may use references without the risk of breaking existing code but modifying a reference may trigger a copy of the value.
+
+.blockquote.exercise[
+#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example: copy-on-modify
+
+.pull-left[
+  &lt;br&gt;
+  &lt;br&gt;
+  &lt;br&gt;
+  &lt;br&gt;
+  ![:image 40%](img/binding-3.png)
+  ![:source 2019](Wickham)
+]
+.pull-right[
+.code90[.font90[
+
+```r
+x &lt;- c(1, 2, 3)
+y &lt;- x
+
+y[[3]] &lt;- 4
+x
+```
+
+```
+## [1] 1 2 3
+```
+
+
+```r
+obj_addr(x)
+```
+
+```
+## [1] "0x22ab3240"
+```
+
+```r
+obj_addr(y)
+```
+
+```
+## [1] "0x22adfeb8"
+```
+]]
+]]]
+
+???
+
+- This is very different for many other languages, including c++ which we will see later during the course.
+
+- Question: object addresses (like `0x7f9ef3059d38`) will be different (unpredictable) if the code is re-run. Why?
+
+---
+## Copy-on-modify
+
+.code90[.font90[
+
+We may use `tracemem()` to obtain info when a copy of an object is generated.
+
+.blockquote.exercise[
+#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example: keeping track of copies using `tracemem()`
+
+`tracemem()` returns the copied object, the new address (and the **call stack**, if functions are involved).
+
+```r
+x &lt;- c(1, 2, 3)
+tracemem(x)
+```
+
+`[1] "&lt;0x7fba7740ebb8&gt;"`
+
+```r
+y &lt;- x
+y[[3]] &lt;- 4
+```
+
+`tracemem[0x7fba7740ebb8 -&gt; 0x7fba76883958]:`
+
+```r
+y[[3]] &lt;- 5
+# stop tracking
+untracemem(x)
+```
+
+]]]
+
+???
+
+Simply put, a call stack describes the order of nested function calls.
+
+---
+## Copy-on-modify &amp;mdash; Function Calls
+
+
+
+The above rules apply to function calls as well.
+
+.blockquote.exercise[
+#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example: keeping track of copies using `tracemem()` &amp;mdash; ctd.
+
+.pull-left[
+  &lt;br&gt;
+  &lt;br&gt;
+  ![:image 70%](img/binding-f1.png)
+  ![:source 2019](Wickham)
+]
+.pull-right[
+
+```r
+f &lt;- function(a) a
+x &lt;- c(1, 2, 3)
+```
+```r
+tracemem(x)
+```
+```
+## [1] "&lt;0x74b050b21318&gt;"
+```
+
+
+```r
+z &lt;- f(x) # no copy here!
+
+untracemem(x)
+```
+]]
+
+???
+
+No copy because `z` is just a reference to the value of `x`.
+
+---
+## Copy-on-modify &amp;mdash; Function Calls
+
+
+
+&lt;br&gt;
+&lt;br&gt;
+
+.content-box-white[
+**Task:** 
+
+Predict what `tracemem()` returns if the highlighted lines get executed, respectively.
+
+```r
+f &lt;- function(a) {
+  a[[1]] &lt;- 0
+  a
+}
+
+x &lt;- c(1, 2, 3)
+tracemem(x)
+
+*f(x)
+
+*z &lt;- f(x)
+
+untracemem(x)
+```
+]
+
+???
+
+- **`f(x)`**: `f()` binds `a` to the same memory location `x` points to *during execution*. In Contrast to the previous slide, a copy is made since `f()` modifies `a`.
+
+- **`z&lt;-f(x)`**: as above. `z` is a binding the same location as `a` (no additional copy made).
+
+- **Q**: What would happen if we'd super assign to `x` inside of `f()`. 
+    **A**: no additional reference to `x`, so calling `f()` would not trigger a copy.
+
+---
+## Copy-on-modify &amp;mdash; Lists
+
+.font90[.code90[
+
+Lists are special: list *elements are references* to values.
+
+&lt;br&gt;
+.content-box-white[
+**Task:** 
+
+Which code statement generates the result shown in each diagram? What is special about the bottom one?
+
+.pull-left[
+  ![:image 35%](img/list.png)
+]
+.pull-right[
+  ![:image 35%](img/l-modify-1.png)
+]
+![:image 20%](img/l-modify-2.png)
+![:source 2019](Wickham)
+]]]
+
+???
+
+```r
+l1 &lt;- list(1, 2, 3)    # left
+l2 &lt;- l1               # right
+l2[[3]] &lt;- 4           # bottom
+```
+
+Note that copy-on-modify due to `l2[[3]] &lt;- 4 ` results in a **shallow** copy: the bindings are copied, not the values. &amp;rArr; performance considerations!
+
+---
+## Copy-on-modify &amp;mdash; Lists
+
+&lt;br&gt;
+.content-box-white[
+
+You may check your predictions using `lobstr::ref()`.
+
+
+```r
+ref(l1, l2)
+```
+
+```
+## o [1:0x22a3e368] &lt;list&gt; 
+## +-[2:0x1d5f5b68] &lt;dbl&gt; 
+## +-[3:0x1d5f5b30] &lt;dbl&gt; 
+## \-[4:0x1d5f5af8] &lt;dbl&gt; 
+##  
+## o [5:0x12a5b900] &lt;list&gt; 
+## +-[2:0x1d5f5b68] 
+## +-[3:0x1d5f5b30] 
+## \-[6:0x1d5f5a18] &lt;dbl&gt;
+```
+
+]
+
+---
+## Copy-on-modify &amp;mdash; Data frames
+
+
+
+Data frames are list objects whose elements point to column vectors. 
+
+.blockquote.exercise[
+#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example: `data.frame()`
+
+.pull-left[
+![:image 40%](img/dataframe.png)
+]
+.pull-right[
+```r
+d1 &lt;- data.frame(
+  x = c(1, 5, 6), 
+  y = c(2, 4, 3)
+)
+```
+]]
+&lt;br&gt;
+.content-box-white[
+**Task**: 
+
+Explain why modifying a row of a data frame generally is more costly than changing a column.
+]
+
+???
+
+**A**: modifying a data frame row implicates modifying *all* columns (this cannot be tracked by `tracemem()` but can be seen using `lobstr::ref()`)
+
+```r
+df[1,] &lt;- c(42, 42)
+ref(d1)
+# vs.
+df$x &lt;- c(7, 7, 7)
+ref(d1)
+```
+
+---
+## Exercises
+
+.font90[.code90[
+
+1. Why is `tracemem(1:10)` not useful?
+
+2. Explain why `tracemem()` shows two copies when you run this code. *Hint:* carefully look at the difference between this code and the code on Slide 11.
+    ```r
+    x &lt;- c(1L, 2L, 3L)
+    tracemem(x)
+    
+    x[[3]] &lt;- 4
+    ```
+
+3. Explain the below results.
+    
+    ```r
+    obj_size(1:10)
+    ```
+    
+    ```
+    ## 680 B
+    ```
+    
+    ```r
+    obj_size(1:1e6)
+    ```
+    
+    ```
+    ## 680 B
+    ```
+
+]]
+
+???
+
+1. `1:10` is no binding so there's no point in asking for its value.
+
+2. Here `x` is an integer vector (`x` has `double` type as defined on Slide 11). Replacing `3L` with `4`, i.e. integer with double, triggers coercion of `x` to `double`. This always results in a copy.
+
+3. `:` is special in the sense that it generates integer sequences using only the first and the last element. The number of elements thus doesn't affect the required memory.
+
+
+---
+## Modify-in-place
+
+.font90[.code90[
+
+R modifies in-place in two cases:
+
+1. The object has **only one** binding
+
+2. The object is an **environment**
+
+.blockquote.exercise[
+#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example: optimised modification
+
+```r
+v &lt;- c(1, 2, 3)
+obj_addr(v)
+```
+
+```
+## [1] "0x7fcce1ca03d8"
+```
+
+```r
+v[[2]] &lt;- 4
+# check that v still points to the same memory location
+obj_addr(v)
+```
+
+```
+## [1] "0x7fcce1ca03d8"
+```
+
+]]]
+
+???
+
+- **Q**: Running this code in RStudio will trigger a copy. Why?
+
+    **A**: An entry in the Environment tab is a binding, i.e., there are more than one (two) references to `v` which triggers a copy!
+
+     You need to run the code in the RGUI for reproducing the results.
+    
+    (using the RGUI for this purpose is generally a good practice!)    
+
+- Note that `tracemem()` does not play well with `knitr`
+
+    
+---
+## Case Study: Copy-On-Modify Inferno
+
+.smaller[
+
+- Whether or not R copies an object &amp;mdash; and if so, how many times &amp;mdash; is often very hard to predict.
+
+- You should **never** modify a data frame in a loop.
+
+
+```r
+x &lt;- data.frame(
+  matrix(runif(5 * 1e4), 
+         ncol = 5)
+  )
+
+medians &lt;- vapply(x, median, numeric(1))
+
+tracemem(x)
+
+for (i in seq_along(medians)) {
+  x[[i]] &lt;- x[[i]] - medians[[i]]
+}
+```
+
+]
+
+???
+
+- Note that `vapply()`'s `FUN.VALUE` requires a template for the return value (which is numeric `\(1\times 1\)` here) 
+
+- We will come back to consequences of this behavior in the Chapter *Improving Performance* and benchmark against alternatives that require less copies.
+
+---
+## Case Study: Copy-On-Modify Inferno
+
+`[[&lt;-.data.frame` is revealed to be quite expensive.
+
+```r
+tracemem[0x7fe1aed76628 -&gt; 0x7fe1ad4dc428]: 
+tracemem[0x7fe1ad4dc428 -&gt; 0x7fe1ad4dc578]: [[&lt;-.data.frame [[&lt;- 
+tracemem[0x7fe1ad4dc578 -&gt; 0x7fe1ad4dc658]: [[&lt;-.data.frame [[&lt;- 
+tracemem[0x7fe1ad4dc658 -&gt; 0x7fe1ad4dc7a8]: 
+tracemem[0x7fe1ad4dc7a8 -&gt; 0x7fe1ad4dc8f8]: [[&lt;-.data.frame [[&lt;- 
+tracemem[0x7fe1ad4dc8f8 -&gt; 0x7fe1ad4dcb98]: [[&lt;-.data.frame [[&lt;- 
+tracemem[0x7fe1ad4dcb98 -&gt; 0x7fe1ad4dcdc8]: 
+tracemem[0x7fe1ad4dcdc8 -&gt; 0x7fe1ad4dd068]: [[&lt;-.data.frame [[&lt;- 
+tracemem[0x7fe1ad4dd068 -&gt; 0x7fe1ad4dd308]: [[&lt;-.data.frame [[&lt;- 
+tracemem[0x7fe1ad4dd308 -&gt; 0x7fe1ad4dd4c8]: 
+tracemem[0x7fe1ad4dd4c8 -&gt; 0x7fe1ad4dd618]: [[&lt;-.data.frame [[&lt;- 
+tracemem[0x7fe1ad4dd618 -&gt; 0x7fe1ad4ddae8]: [[&lt;-.data.frame [[&lt;- 
+tracemem[0x7fe1ad4ddae8 -&gt; 0x7fe1acdbda28]: 
+tracemem[0x7fe1acdbda28 -&gt; 0x7fe1acdbe198]: [[&lt;-.data.frame [[&lt;- 
+tracemem[0x7fe1acdbe198 -&gt; 0x7fe1acdbe6d8]: [[&lt;-.data.frame [[&lt;- 
+```
+
+???
+
+Using the `$` operator makes no difference: `$&lt;-` also has a `$&lt;-.data.frame` method. The output of `tracemem()` then looks similar to this:
+
+```
+tracemem[0x7fe515db8d88 -&gt; 0x7fe513bcd788]: 
+tracemem[0x7fe513bcd788 -&gt; 0x7fe513b79a88]: $&lt;-.data.frame $&lt;- 
+tracemem[0x7fe513b79a88 -&gt; 0x7fe513b79c88]: $&lt;-.data.frame $&lt;-
+```
+
+
+---
+## Case Study: Copy-On-Modify Inferno
+
+What's happening here and why?
+
+- `x` is referenced more than once: 
+
+      - global environment 
+      - inside of `[[` 
+      - inside of `[[&lt;-.data.frame()` 
+    
+    &amp;rarr; modification will result in a copy
+
+- The following runs inside `[[`:
+    ```r
+    `*tmp*` &lt;- df
+    df &lt;- `[[&lt;-.data.frame`(`*tmp*`, &lt;additional arguments&gt;)
+    rm(`*tmp*`)
+    ```
+    
+    - The additional binding to `*tmp*` results in a copy
+    
+    - `[[&lt;-.data.frame` changes the class and a component of `x` (two additional copies)
+
+???
+
+- The two copies made by `[[&lt;-.data.frame` are **shallow copies** (only column references are copied)
+
+- **Q to students**: What kind of function is `[[&lt;-.data.frame`?
+
+    **A**: A regular function. It is a method of  `[[&lt;-` which is a primitive (a fast C function)
+
+- **Q to students**: How can you view the source? 
+
+    **A**: &lt;code&gt;\`[[&lt;-.data.frame\`&lt;/code&gt;
+
+- More on primitives on the next slides. More on methods, dispatch etc. in the 'OOP' Chapter.
+
+- More on how to write efficient code (and especially efficient `for()` loops) in Chapter 'Improving Performance' 
+
+
+---
+## Case Study: Copy-On-Modify Inferno
+
+.smaller[
+
+It's better to use a list.
+
+
+```r
+y &lt;- as.list(x)
+tracemem(y)
+
+for (i in 1:5) {
+  y[[i]] &lt;- y[[i]] - medians[[i]]
+}
+```
+
+```r
+tracemem[0x7fba72971928 -&gt; 0x7fba72a2e178]:
+```
+
+.pull-left[
+*Before loop:*
+```
+█ [1:0x7fba72971928] &lt;named list&gt; 
+├─X1 = [2:0x10f1ec000] &lt;dbl&gt; 
+├─X2 = [3:0x115c56000] &lt;dbl&gt; 
+├─X3 = [4:0x115c6a000] &lt;dbl&gt; 
+├─X4 = [5:0x115c7e000] &lt;dbl&gt; 
+└─X5 = [6:0x115c92000] &lt;dbl&gt; 
+```
+]
+.pull-right[
+*After loop:*
+```
+█ [1:0x7fba72a2e178] &lt;named list&gt; 
+├─X1 = [2:0x115cc7000] &lt;dbl&gt; 
+├─X2 = [3:0x115ca6000] &lt;dbl&gt; 
+├─X3 = [4:0x10f07e000] &lt;dbl&gt; 
+├─X4 = [5:0x10ef83000] &lt;dbl&gt; 
+└─X5 = [6:0x10f056000] &lt;dbl&gt; 
+```
+]]
+
+???
+
+- A single copy is made from internal C code the first time we use `[[&lt;-`
+
+- This a good example where tweaking the code reduces the amount of copies made
+
+- If such a solution is not readily at hand we may resort to C++ code. More on this in the `Rcpp` chapter.
+
+---
+## Modifying Lists
+
+.smaller[
+
+What happens if we modify list entries is better understood using the following example.
+
+.blockquote.exercise[
+#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example: modifying a list
+
+Can you explain what's going on?
+
+.pull-left[
+
+```r
+# Step 1
+x &lt;- list(1:10)
+lobstr::ref(x)
+
+# Step 2
+x[[2]] &lt;- x
+lobstr::ref(x)
+```
+]
+
+.pull-right[
+
+```
+## o [1:0x22ce5be8] &lt;list&gt; 
+## \-[2:0x1da65c30] &lt;int&gt;
+```
+
+```
+## o [1:0x22d2b050] &lt;list&gt; 
+## +-[2:0x1da65c30] &lt;int&gt; 
+## \-o [3:0x22ce5be8] &lt;list&gt; 
+##   \-[2:0x1da65c30]
+```
+]]]
+
+???
+
+- `x` is assigned to itself (an additional reference) so a copy on modification is made
+
+- The the old memory location of `x` has no binding anymore but is referenced within `x`
+
+- Note that lists are always copied on modification. The copy is, however, shallow.
+
+---
+## Garbage Collection
+
+.smaller[
+
+Everyday operations that are reflected in the RStudio's 'Environment' tab are unbinding and deletion. What does actually happen if we alter a name or even 'remove' the object from the (global) environment?
+
+.blockquote.exercise[
+#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example: unbinding an object
+
+.row[
+.pull-left[
+**(a) binding**
+  ![:image 32%](../img/unbinding-1.png)
+]
+
+.pull-right[
+
+```r
+x &lt;- 1:3
+```
+]]
+
+.row[
+.pull-left[
+**(b) implicit unbinding**
+  ![:image 32%](../img/unbinding-2.png)
+]
+
+.pull-right[
+
+```r
+x &lt;- 2:4
+```
+]]
+
+.row[
+.pull-left[
+**(c) explicit unbinding**
+  ![:image 32%](../img/unbinding-3.png)
+]
+
+.pull-right[
+
+```r
+rm(x)
+```
+]]]]
+
+
+---
+## Garbage Collection &amp;mdash; Quick Facts
+
+.smaller[
+
+- R uses a tracing **Garbage Collector** (GC): it keeps track of objects in the global environment and references therein.
+
+- The GC runs automatically if space is needed for creating new objects. There is *no need to actively force garbage collection*. You can, however, do so by calling `gc()` with the side effect of info on memory occupation.
+
+- You may run `gcinfo(TRUE)` if you wish to be informed when the GC runs
+
+.blockquote.exercise[
+#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example: garbage collection
+
+
+```r
+gc()          # just for the side effect
+```
+
+```
+##           used (Mb) gc trigger (Mb) max used (Mb)
+## Ncells  692221 37.0    1366844   73  1366844 73.0
+## Vcells 1244101  9.5    8388608   64  2120088 16.2
+```
+
+```r
+mem_used()    # total, but more exact
+```
+
+```
+## 48,720,872 B
+```
+]]
+
+???
+
+- The only reason to call `gc()` is if you need to free-up memory for your operating system &amp;mdash; which will hardly ever happen
+
+- `vcells` = memory used by vectors; `ncells` = memory used by anything else
+
+- The 'large numbers' report cells used (8 byte each)
+
+- `lobstr::mem_used()` does not agree with what's reported by your OS: there are other objects (generated by, e.g., the R interpreter) which are not captured
+
+
+---
+class: segue-red
+### Functions
+
+---
+## Functions
+
+&lt;blockquote style ="margin-top:15%;"&gt;
+To understand computations in R, two slogans are helpful:&lt;br&gt;&lt;br&gt;
+Everything that exists is an object.
+Everything that happens is a function call.
+.right[&amp;mdash; &lt;cite&gt;John Chambers&lt;/cite&gt;]
+&lt;/blockquote&gt;
+
+---
+## Regular Functions vs. Primitives
+
+.smaller[
+
+- **Regular functions** live in environments and consist of a body along with formals
+
+- **Primitives** are special `base` R functions that call C code
+
+.blockquote.exercise[
+#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example: primitives vs. regular functions
+
+.medium[
+.pull-left[
+
+```r
+typeof(lm)
+```
+
+```
+## [1] "closure"
+```
+
+```r
+environment(lm)
+```
+
+```
+## &lt;environment: namespace:stats&gt;
+```
+
+```r
+names(formals(lm))[1:4]
+```
+
+```
+## [1] "formula" "data"    "subset"  "weights"
+```
+
+```r
+# body(lm)
+```
+]
+.pull-right[
+
+```r
+typeof(sum)
+```
+
+```
+## [1] "builtin"
+```
+
+```r
+environment(sum)
+```
+
+```
+## NULL
+```
+
+```r
+names(formals(sum))
+```
+
+```
+## NULL
+```
+
+```r
+body(sum)
+```
+
+```
+## NULL
+```
+]]]]
+
+---
+## First-Class Functions
+
+.smaller[
+
+R functions are **objects**! We may do stuff that seems quite exotic when compared to much more 'restrictive' languages like C and Python.
+
+.blockquote.exercise[
+#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example: fun with anonymous functions
+
+.pull-left[
+
+```r
+funs &lt;- list(
+  function(x) x^2,
+  function(x) x^3
+)
+lobstr::ref(funs)
+```
+
+```
+## o [1:0x1ddfa870] &lt;list&gt; 
+## +-[2:0x12e4e640] &lt;fn&gt; 
+## \-[3:0x12e4e598] &lt;fn&gt;
+```
+
+```r
+sapply(funs, function(z) z(5))
+```
+
+```
+## [1]  25 125
+```
+]
+
+.pull-right[
+
+```r
+(function(x) x^2)(5)
+```
+
+```
+## [1] 25
+```
+
+```r
+(function(x) x^3)(5)
+```
+
+```
+## [1] 125
+```
+]]]
+
+???
+
+Obviously, R functions are objects on their own right &amp;mdash; they need not be bound to a name!
+
+---
+## First-Class Functions
+
+.smaller[
+
+&lt;br&gt;
+&lt;br&gt;
+.content-box-white[
+**Task:** 
+
+Explore what kind of function `(` is, what it does and explain why the statements
+```r
+(function(x) x^2)(5)
+```
+and
+
+
+```r
+(x&lt;-5)
+```
+
+```
+## [1] 5
+```
+
+make sense.
+
+]]
+
+???
+
+- `(` is a primitive:
+    
+    ```r
+    `(`
+    ```
+    
+    ```
+    ## .Primitive("(")
+    ```
+
+-  The R-help hints that `(` is semantically equivalent to `function(x) x`. 
+
+    E.g., `(x&lt;-5)` is valid (and useful) R code!
+
+---
+## Lexical Scoping
+
+.smaller[
+
+**Scoping** refers to the routine of finding the value associated with a name. R's scoping mechanism follows four concepts you should already be familiar with. We summarise them briefly here.
+
+1. **Name Masking**: 
+
+    names defined inside a function mask names defined outside of it.
+
+2. **Functions before variables**: 
+
+    functions and objects in *different* environments may share the same name. R ignores non-function objects in function calls. 
+
+3. **Execution Environments**:
+
+    functions generate ephemeral environments.
+    
+4. **Dynamic Look-up**: 
+
+    R searches for values when the function is run (and not when it's created).
+
+.content-box-white[
+**Task:**
+
+Write a code snippet which is useful for demonstrating all of the above concepts.
+]]
+
+???
+
+
+```r
+rm(x)
+z &lt;- function(x) x^2
+
+# 3. everything in f() happens in an ephemeral environment
+f &lt;- function(g) {       
+    if(!exists("x")) {   
+        x &lt;- 1
+    } else {
+        x &lt;- x + 1
+    }
+    z &lt;- 2               # 1. name masking
+    
+    z(x + y)             # 2. functions before variables
+}
+
+y &lt;- 20
+f(x)                     # 4. dynamic lookup
+```
+
+```
+## [1] 441
+```
+
+
+---
+## Lazy Evaluation &amp;mdash; Promises
+
+.smaller[
+
+Lazy evaluation allows R functions to behave quite differently than, e.g., C functions and it is important to understand what's special about that.
+
+- A **Promise** consists of an expression along with an environment and a value which is computed and cached the first time the promise is accessed
+
+- We implicitly use promises in functions via **lazy evaluation**. Here we refer to **unevaluated arguments** as promises.  
+
+.blockquote.exercise[
+#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example: outside evaluation
+
+
+```r
+f1 &lt;- function(x) { y &lt;- 5; x + 1 }
+f1(y &lt;- 6)
+```
+
+```
+## [1] 7
+```
+
+```r
+y
+```
+
+```
+## [1] 6
+```
+
+]]
+
+???
+
+- Loading a data set using `data()` uses a promise. See, e.g., `data(AirPassengers)`.
+
+- The style shown in the example used by many base R function but it's not recommended since it's hard to understand what's going on.
+
+---
+## Lazy Evaluation
+
+.smaller[
+.blockquote.exercise[
+#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example: laziness
+
+
+```r
+double &lt;- function(x) { 
+  message("Calculating...")
+  x * 2
+}
+
+clone &lt;- function(x) {
+  c(x, x)
+}
+
+clone(double(20))
+```
+
+```
+## Calculating...
+```
+
+```
+## [1] 40 40
+```
+
+]]
+
+???
+
+We see that `double(20)` is evaluated only once when `c()` inside of `clone()` looks for `x` for the first time.
+
+
+---
+## Lazy Evaluation
+
+.smaller[
+
+.blockquote.exercise[
+#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example: lazy evaluation of (default) function arguments
+
+
+```r
+f &lt;- function(x) {
+  cat("f: 'x doesn't matter to me.'")
+}
+f(x = stop("I don't matter."))
+```
+
+```
+## f: 'x doesn't matter to me.'
+```
+
+
+```r
+# (default arguments)
+f &lt;- function(x = 1, y = x * 2, z = a + b) {
+  a &lt;- 10
+  b &lt;- 100
+  c(x, y, z)
+}
+f()
+```
+
+```
+## [1]   1   2 110
+```
+
+]]
+
+???
+
+- Although we do not recommend this style, it reflects great flexibility due to lazy evaluation
+
+- Note that this is very useful when a default argument is computationally expensive to evaluate and not needed in every call to `f()`
+
+---
+## Lazy Evaluation
+
+.smaller[
+.content-box-white[
+**Task:** 
+
+`ls()` lists objects in the environment where it's called. Explain the results below. 
+
+
+```r
+f &lt;- function(x = ls()) {
+  a &lt;- 1
+  x
+}
+f()
+```
+
+```
+## [1] "a" "x"
+```
+
+```r
+f(ls())
+```
+
+```
+## [1] "desktop" "f"
+```
+
+]]
+
+???
+
+- Due to lazy evaluation, the evaluation environment for *default arguments* is the function environment
+
+- User supplied arguments are evaluated in the parent (i.e. the global) environment
+
+---
+## Lazy Evaluation
+
+Lazy evaluation also applies to other situations, e.g., in control flow.
+
+
+```r
+x &lt;- NULL
+if (!is.null(x) &amp;&amp; x &gt; 0) {
+ # do something
+}
+```
+
+.content-box-white[
+**Task:** 
+
+1. Which part of the code seems problematic at first sight? 
+
+2. Give an explanation why the statement above does not produce an error.
+]
+
+???
+
+1. Without lazy evaluation this statement would throw an error because `x &gt; 0` evaluates to a logical value of length zero (you cannot compare `NULL` to `double`)
+
+2. The second statement would be evaluated only if the first is true (but is is false)
+
+
+---
+## Exercises
+
+.smaller[
+
+1. Explain why the following code does not work. Can you come up with a work-around without changing the definition of `f()`?
+    
+    ```r
+    f &lt;- function(x, z) {
+      z + x^2
+    }
+    f(x = z^2, z = 2)
+    ```
+    
+    ```
+    ## Error in f(x = z^2, z = 2): Objekt 'z' nicht gefunden
+    ```
+
+2. Explain what the `...` argument does by means of the following example:
+    
+    ```r
+    f &lt;- function(...) {
+      names(list(...))
+    }
+    f(a = 1, b = 2)
+    ```
+    
+    ```
+    ## [1] "a" "b"
+    ```
+
+]
+
+???
+
+1. Lazy evaluation applies only at function definition, not invocation: R looks for `z` in the global environment because `x` is not `z^2` by default, like below.
+    
+    ```r
+    f &lt;- function(x = z^2, z) {
+      z + x^2
+    }
+    f(2, 2)
+    ```
+    Workaround using `with`: 
+    
+    `with(list(z = 2), f(x = z^2, z))`
+
+2. `...` enables us to pass arguments (to other functions) which do not have to be prespecified.
+
+    Here, `f()` is a simple wrapper that returns names of list elements as passed to the `...` argument.
+
+---
+## Function Forms
+
+- Not all function calls look the same:
+
+    - **prefix**: `f(a, b)`
+
+    - **infix**: `a + b`. Also `==`, `&lt;-`, `::`, ...
+
+    - **replacement**: `names(c) &lt;- c("x", "y")`
+
+    - **special**: `for`, `[[`, `if`, ...
+
+- Every function call can be written in prefix form!
+    
+    ```r
+    `[`(1:3, 3)
+    ```
+    
+    ```
+    ## [1] 3
+    ```
+
+???
+
+@ infix forms: user defined operators (which always begin and end with `%`) belong to this class.
+
+---
+## Function Forms
+
+.smaller[
+.blockquote.exercise[
+#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example: rewrite special and infix as prefix
+
+
+```r
+1 + 2
+```
+
+```
+## [1] 3
+```
+
+```r
+`+`(1, 2)
+```
+
+```
+## [1] 3
+```
+
+```r
+x &lt;- `:`(1, 10); x
+```
+
+```
+##  [1]  1  2  3  4  5  6  7  8  9 10
+```
+
+```r
+`(`(x)
+```
+
+```
+##  [1]  1  2  3  4  5  6  7  8  9 10
+```
+
+]]
+
+---
+## Function Forms &amp;mdash; User defined function in infix form
+
+It's straightforward to write your own operators in infix form.
+
+.blockquote.exercise[
+#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example: `paste0` as infix
+
+
+```r
+`%+%` &lt;- function(a, b) paste0(a, b)
+"new " %+% "string"
+```
+
+```
+## [1] "new string"
+```
+
+]
+
+---
+## Function Forms &amp;mdash; Replacement Functions
+
+Replacement functions have the form shown below.
+
+```r
+`name&lt;-` &lt;- function(x, value) {
+  &lt;do something&gt;
+  return(x)
+} 
+```
+
+.blockquote.exercise[
+#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example: replacement of last vector element
+
+
+```r
+`last&lt;-` &lt;- function(x, value) {
+  x[length(x)] &lt;- value
+  x
+}
+
+x &lt;- c(1, 2, 3)
+last(x) &lt;- 99; x
+```
+
+```
+## [1]  1  2 99
+```
+
+]
+
+???
+
+- Note that replacement functions **must** have `x` and `value` as arguments and return the modified object `x`
+
+- Additional arguments may be passed between `x` and `value`
+
+
+- `tracemem()` reports two copies. This is because `x` is copied inside of `last&lt;-` and R runs
+    ```r
+    x &lt;- `last&lt;-`(x, 420)
+    ```
+    under the hood.
+
+
+---
+## Function Forms &amp;mdash; Replacement Functions
+
+Replacement functions are handy but there is no free lunch: they *always* trigger a copy.
+
+.blockquote.exercise[
+#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example: replacement of last vector element &amp;mdash; ctd.
+
+```r
+tracemem(x)
+```
+```
+## &lt;0x7feac1eb7598&gt;
+```
+
+```r
+last(x) &lt;- 420
+```
+```
+## tracemem[0x7feac1eb7598 -&gt; 0x7feaa7ce3908]: 
+## tracemem[0x7feaa7ce3908 -&gt; 0x7feaa7ce68c8]: last&lt;- 
+```
+
+
+```r
+x
+```
+
+```
+## [1]   1   2 420
+```
+
+]
+
+---
+class: segue-red
+
+![:image 20%](../assets/pica.gif)
+### Thank You!
+
+
+
+
+
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script src="../assets/remark-zoom.js"></script>
+<script src="../xaringan_files/macros.js"></script>
+<script src="https://platform.twitter.com/widgets.js"></script>
+<script>var slideshow = remark.create({
+"highlightStyle": "github",
+"highlightLines": true,
+"countIncrementalSlides": false,
+"ratio": "16:9",
+"navigation": {
+"scroll": false
+}
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+<script type="text/x-mathjax-config">
+  
+  function addCopyButtonToCode(){
+    // get all code elements
+    var allCodeBlocksElements = $( ".r" );
+    // For each element, do the following steps
+    allCodeBlocksElements.each(function(ii) {
+      // define a unique id for this element and add it
+      var currentId = "codeblock" + (ii + 1);
+      $(this).attr('id', currentId);
+      
+
+      // add the button just after the text in the code block w/ jquery
+      var clipButton = '<img src="../assets/clipboard-svgrepo-com.svg" width="20" alt="Copy to clipboard" onclick=copyToClipboard("#' + currentId + '") style="float:right;cursor:pointer;">';
+      $(this).prepend(clipButton);
+    });
+    
+  }
+
+$(document).ready(function () {
+  // Once the DOM is loaded for the page, attach clipboard buttons
+  addCopyButtonToCode();
+});
+
+
+function copyToClipboard(element) {
+  var $temp = $("<textarea>");
+  $("body").append($temp);
+  
+  let vars = '';
+  
+  $(element).children().each((i, v) => {
+      vars += $(v).text() + '\n'
+    })
+  
+  $temp.val(vars).select();
+  document.execCommand("copy");
+  $temp.remove();
+}
+
+</script>
+
+
+
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>

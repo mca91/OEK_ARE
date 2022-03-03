@@ -1,0 +1,970 @@
+---
+title: "Advanced R for Econometricians"
+subtitle: "Introduction"
+author: 
+  - "Martin C. Arnold"
+  - "Jens Klenke"
+date: "`r Sys.Date()`"
+output:
+  xaringan::moon_reader:
+    css: ["default", "../assets/ude_fonts.css", "../assets/ude.css", "../assets/title_slides.css", "../assets/custom.css"]
+    self_contained: false # if true, fonts will be stored locally
+    seal: false # show a title slide with YAML information
+    includes:
+      in_header: "../assets/mathjax-equation-numbers.html"
+      after_body: "../assets/copybutton.html"
+    nature:
+      beforeInit: ["../assets/remark-zoom.js", "../xaringan_files/macros.js", "https://platform.twitter.com/widgets.js"]
+      highlightStyle: github
+      highlightLines: true
+      countIncrementalSlides: false
+      ratio: '16:9' # alternatives '16:9' or '4:3' or others e.g. 13:9
+      navigation:
+        scroll: false # disable slide transitions by scrolling
+---
+
+```{r moon_reader, include=FALSE, eval = FALSE}
+# setup for moon reader
+# copy it to console
+options(servr.interval = 0.5)
+xaringan::inf_mr()
+```
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, eval = FALSE)
+library(icons)
+
+# pre-define icons
+desktop <- icon_style(icons::fontawesome$solid$desktop, fill = "#004c93")
+checker_green <- icons::icon_style(fontawesome$solid$check, fill = "green")
+times_red <- icons::icon_style(fontawesome$solid$times, fill = "red")
+```
+
+class: class: title-slide title-rintro center middle
+
+#  `r rmarkdown::metadata$title`
+## `r rmarkdown::metadata$subtitle`
+### `r rmarkdown::metadata$author`
+---
+
+## Preliminaries
+
+.pull-left-1[**Contact Information:**  ]
+
+.pull-right-2[
+<p> <span style="margin-bottom: -7px;">Jens Klenke </span><span><a href = "mailto: Jens.Klenke@vwl.uni-due.de">Jens.Klenke@vwl.uni-due.de</a></span></p> 
+
+<p style="margin: 25px;"></p>
+
+<p> <span style="margin-bottom: -7px;">Martin Arnold </span><span><a href = "mailto: Martin Arnold@vwl.uni-due.de">Martin.Arnold@vwl.uni-due.de</a>]</span></p> 
+ 
+
+
+.pull-down[
+<br>
+Slides, exercises and announcements will be provided on: 
+.center[
+  https://moodle.uni-due.de/course/view.php?id=17174  
+]
+<br>
+The password for the course is **"Hadley"**.  
+<br>
+On Moodle you will find a link to [Datacamp](https://www.datacamp.com) which will give you free access to all their content. 
+]
+???
+Background? 
+R and Rstudio installed? 
+What do you know about R? 
+
+---
+## Grading
+
+- There will be three graded assignments.  
+
+- You will have to work on a final group project which focuses on one or more of the topics discussed in the course. 
+
+- The final grade is a weighted average of the grades for the group project (60%), its presentation (20%) and
+the assignments (20%).
+
+- You have to pass each part (assignments, project and presentation) separately to pass the course. 
+---
+## Outline
+.pull-left[
+1. Introduction 
+2. Prerequisites
+   - Rmarkdown
+   - Git and Github
+3. Data Visualisation with ggplot 
+3. Data Wrangling and Transformation
+   - dplyr
+   - databases
+4. Advanced R Programming 
+  - Functional Programming
+  - Object Oriented Programming 
+]
+.pull-right[
+<ol start = "6">
+<li>  Performance </li> 
+<ul>
+  <li> Profiling and Benchmarking </li> 
+  <li> Parallelisation </li>
+  <li> Rcpp </li>
+</ul>
+<li> Web Scraping  </li>
+<li> <i>Shiny</i> </li>
+<li><i> Writing Packages</i> </li>
+<li><i> Text Mining</i>  </li>
+</ol>
+]
+---
+
+class: top, left
+## About R
+- **Advantages:**
+  - R is a language and environment for statistical computing and graphics.
+  - R is highly extensible. There is a massive set of packages for statistical modelling, machine learning, visualisation, as well as importing and manipulating data. Researchers in statistics and machine learning often publish an R package to accompany their articles.
+  - R is free and open source. 
+  - R provides tools for communicating your results. R packages make it easy to produce html or pdf reports, or create interactive websites.
+  - R is designed to connect to high-performance programming languages like C, Fortran, and C++.
+
+--
+
+- **Disadavantages:**
+  - It is not very fast.
+  - It has an inconsistent syntax.
+
+---
+class: top, left
+## Sources
+
+- [Advanced R](https://adv-r.hadley.nz/) by Hadley Wickham
+- [R for Data Science](https://r4ds.had.co.nz) by Hadley Wickham and Garrett Grolemund
+- The Art of R Programming by Norman Matloff
+- The [Use R!](https://www.springer.com/series/6991) Series by Springer
+- The [R Series](https://www.crcpress.com/go/the-r-series) by CRC Press
+
+---
+class: top, left
+## Packages
+
+- In R the fundamental unit of shareable code is the package.
+- Chances are that someone has already solved a problem that you’re working on, and you can benefit from their work by downloading their package.
+
+#### The main sources for packages are:
+  - CRAN (Comprehensive R Archive Network) with as of now ca. 15.000 available packages
+  - GitHub (that is the place where packages are developed before getting published on CRAN) 
+  - Bioconductor
+
+---
+class: top, left
+## Installing Packages
+.font80[
+**How to install packages from CRAN?**
+
+- Use `install.packages("MASS")` to install the package `MASS` from CRAN.
+- Or using RStudio: Tools &rarr; Install Packages &rarr; `MASS`
+]
+
+--
+
+.font80[
+**How to install packages from Github?**
+
+- Install the package `devtools` from CRAN.
+- E.g., use `devtools::install_github("tidymodels/broom")` to install the `broom` package from Github.
+
+- If you want to find out how a package works, search for
+
+  - a vignette by the package authors 
+  - a blog post about the package, e.g. on [R Bloggers](https://www.r-bloggers.com)
+]
+
+--
+
+.font80[
+.blockquote.exercise[
+
+#### `r desktop` Example
+
+```{r, echo = TRUE, eval = FALSE}
+    library(broom)
+    vignette("broom")
+```
+
+]]
+---
+class: top, left
+
+## Getting Help
+
+If you have specific questions about your code or an error message look on
+  - [StackOverflow](https://stackoverflow.com/)  
+  - [RStudio Community](https://community.rstudio.com/) (if it is about RStudio or packages developed by RStudio)
+  - the [GitHub](https://github.com/) repository of the package maintainer
+
+The chances are high that somebody else has already asked the same question and it has already been solved. 
+
+--
+
+If you don't find an answer you can ask a question yourself. What sounds easy is harder then one would think. Most importantly you have to provide a [reproducible example](https://stackoverflow.com/questions/5963269/how-to-make-a-great-r-reproducible-example).
+
+???
+Bad questions: 
+https://stackoverflow.com/questions/58302656/how-can-i-set-equals-function-in-objective-of-solver-in-r-python
+https://stackoverflow.com/questions/58121493/update-a-coordinate-dataframe-in-shiny 
+
+Good questions:  
+https://stackoverflow.com/questions/38777337/ggplot-ribbon-cut-off-at-y-limits/38777929#38777929 
+https://stackoverflow.com/questions/53241120/how-to-use-openblas-lapacke-together-with-rcpp
+
+---
+## Rstudio
+
+- RStudio is an integrated development environment (IDE) for R. 
+- It provides some convenient functionality compared to the IDE shipping with R.
+
+--
+
+#### Rstudio Projects 
+
+- To work in a specific directory the base R way would be to use `setwd()`. This is problematic if you want to 
+  share your code or work from different machines on the same project. 
+- Use projects instead.
+
+--
+
+#### Workflow
+
+- Instead of opening a new R session and use `setwd()` you open the project. The working path is 
+automatically set to the folder where the `.Rproj` file lives in. 
+
+---
+#### Some Shortcuts
+<p></p>
+
+```{r echo = FALSE, eval = TRUE}
+knitr::kable(data.frame(Shortcut = c("Alt + Shift + k", "Cmd/Ctrl + Shift + F10", "Cmd/Ctrl + Shift + S", "F1", "Ctrl + l"),
+                        Action   = c("list all shortcuts", "restart R", "rerun current script", "help page", "clears the console"))
+             , format = "html")
+```
+
+--
+
+#### Rstudio supports: 
+- package development
+- version control via git and svm 
+- creation and compilation of dynamic documents 
+- connections to external data bases 
+- ... 
+
+We will use some of this later on.  
+
+---
+class: top, left
+
+## R Basics
+
+- We start by recapitulating some basics you should be familiar with when working with R. 
+- An in-depth treatment of this material can be found in the first chapter of
+[Advanced R](https://adv-r.hadley.nz/vectors-chap.html#introduction) by Hadley Wickham. 
+
+
+---
+class: top, left
+
+## R Basics: Data Types and Data Structures
+.font90[
+We assume that you know about the basic data structures in R. 
+  
+```{r, echo = FALSE, eval = TRUE}
+knitr::kable(
+data.frame(c("1d", "2d", "nd"), Homogeneous = c("Atomic Vector", "Matrix", "Array"), Heterogeneous = c("List", "Data Frame", "")),
+col.names = c("", "Homogeneous", "Heterogeneous"), format = "html")
+```
+<br>
+] 
+
+--
+
+.font90[
+You should also be familiar with the basic data types (character, double, integer, logical).
+
+]
+
+--
+<br>
+
+.font90[ .content-box-white[
+
+**Task**
+
+1. How is a list different from an atomic vector? 
+2. How is a matrix different from a data frame?
+3. How do you find out the type of an object?
+4. How can you check if an object is of type character?
+
+]]
+
+???
+```{r}
+object.size(1:1000)
+object.size(as.numeric(1:1000))
+
+char_vector <- c("Hi", "there")
+typeof(char_vector)
+class(char_vector)
+
+num_matrix <- matrix(rnorm(4), ncol = 2)
+typeof(num_matrix)
+class(num_matrix)
+is.numeric(num_matrix)
+
+
+plus <- function(a, b){
+  if(!is.numeric(a)) stop("a is not numeric")
+  if(!is.numeric(b)) stop("b is not numeric")
+  a + b
+}
+
+plus(1, "a")
+```
+
+
+---
+class: top, left
+## R Basics: Subsetting
+
+You should know how to use the common subsetting operators  `[`, `[[` and `$`. 
+
+Have you ever encountered `@`? 
+
+--
+
+<br>
+
+<div class = "content-box-white">
+
+  <strong> Task </strong>
+
+  <ol>
+    <li> What is the result of subsetting a vector with positive integers, negative integers, a logical vector, or a character vector? </li> 
+    <li> What is the difference between <code> [ </code>,  <code> [[ </code>, and <code> $ </code> when applied to a list?  </li>
+    <li>  When should you use <code> drop = FALSE </code> ? </li>
+  </ol>
+
+</div>
+
+
+???
+```{r}
+
+## Drop
+m1 <- matrix(1:4, nrow = 2)
+m2 <- matrix(1:4, nrow = 2)
+
+matrix_prod <- function(A, B){
+  B %*% t(A)
+}
+
+matrix_prod(m1[1, ], m2)
+matrix_prod(m1[1, , drop = FALSE], m2)
+
+## Example for S4 class
+N <- 200
+x.vec <- as.vector(fGarch::garchSim(fGarch::garchSpec(rseed = 1985), n = N)[,1])
+garch11 <- fGarch::garchFit(~ garch(1,1), data = x.vec, trace = FALSE)
+
+isS4(garch11)
+
+```
+
+
+---
+## R Basics: Control Flows
+
+The basic control flows are conditionals (choices) and loops.
+
+.content-box-white[
+**Task**
+
+1. What is the difference between `if` and `ifelse()`?
+2. What will be the value of `y` in the following code if `x` is `TRUE`? What if `x` is `FALSE`? What if `x` is `NA`?
+    ```{r, eval = FALSE}
+y <- if(x) 3
+    ```
+3. What is returned by the following code? 
+    ```{r, eval = FALSE}
+switch("x", x = , y = 2, z = 3)
+    ```
+4. Name three kind of loops that can be implemented in R! How do they differ?
+]
+
+???
+
+```{r}
+if("2") 3
+if(2) 3
+
+for(i in 1:3){
+  print(i)
+}
+
+i <- 1
+while(i < 4){
+  print(i)
+  i <- i + 1
+}
+
+i <- 1
+repeat{
+  print(i)
+  i <- i + 1 
+  if(i > 3) break
+  
+}
+```
+
+---
+class: top, left
+
+## R Basics: Functions
+
+.font90[
+- Write a function that takes a number `x` and returns the square of `x`.  
+]
+
+#### Scoping
+
+.font90[
+- An important concept and also a source of trouble is scoping, the act of finding the value associated with a name. 
+- R uses lexical scoping:  it looks up the values of names based on how a function is defined, not how it is called.
+]
+
+--
+
+.blockquote.exercise[
+
+#### `r desktop` Example: lexical scoping
+
+.code90[
+```{r}
+f1 <- function() x
+x  <- "global"
+f2 <- function(){
+  x <- "local_f2"
+  f1()
+}
+f2()
+```
+]]
+---
+## Scoping Rules
+
+R’s lexical scoping follows four primary rules:
+- Name masking
+- Functions versus variables
+- A fresh start
+- Dynamic lookup
+
+---
+## Scoping Rules: Name Masking
+
+.small[
+.blockquote.exercise[ 
+
+#### `r desktop` Example: What happens here?
+```{r, eval = FALSE}
+x <- 3
+square_1 <- function() x^2
+square_1()
+```
+]]
+
+--
+.small[
+.blockquote.exercise[ 
+
+#### `r desktop` Example: And here?
+
+```{r}
+x <- 3
+square_2 <- function(){ 
+  x   <- 2
+  foo <- function() x^2
+  foo()
+}
+square_2()
+```
+]]
+--
+.small[
+- Names defined inside a function mask names defined outside a function.
+]
+---
+## Scoping Rules: Functions versus Variables
+
+.small[
+.blockquote.exercise[ 
+
+#### `r desktop` Example: Let's make things more confusing. Can you predict the result?   
+
+```{r}
+x <- 3
+
+square_2 <- function(){ 
+  x   <- 2
+  foo <- function() x^2
+  foo()
+}
+
+square_3 <- function(x){
+  square_2 <- 5
+  square_2()
+}
+
+square_3()
+```
+]]
+
+--
+
+- When a function and a non-function share the same name, R ignores non-function objects in a function call.
+
+---
+## Scoping Rules: A Fresh Start
+
+.blockquote.exercise[ 
+
+#### `r desktop` Example: What is the result of the first call to `square_4()`? What will happen the second time?
+
+```{r}
+x <- 2
+square_4 <- function(){
+  (x <- x^2)
+}
+
+square_4()
+square_4()
+```
+]
+
+--
+
+- Every time a function is called a new ***environment*** is created to host its execution. 
+- A function has no way to tell what happened the last time it was run; each invocation is completely independent.
+
+---
+## Scoping Rules: Dynamic Lookup
+
+.blockquote.exercise[ 
+
+#### `r desktop` Example: Predict the result of the two calls to `f1()`. Compare it to the main rule of lexical scoping. 
+
+```{r}
+x  <- 1
+f1 <- function() x
+f1()
+
+x <- 2 
+f1()
+```
+]
+
+--
+
+- R looks for values when the function is run, not when the function is created. 
+
+---
+## Lazy Evaluation
+
+.blockquote.exercise[ .font90[ .code90[
+
+#### `r desktop` What could cause an error here?
+```{r}
+lazy_function <- function(x){
+  10
+}
+
+lazy_function()
+```
+]]]
+
+--
+
+.font90[
+
+Why does not it cause an error?
+]
+
+--
+
+.blockquote.exercise[ .font90[.code90[
+
+
+#### `r desktop` Function arguments are lazily evaluated; they’re only evaluated if accessed.
+
+```{r, eval = FALSE}
+lazy_function <- function(x){
+  x
+}
+
+lazy_function()
+```
+
+]]]
+
+---
+## Style Guide
+
+#### Object names
+
+.font70[
+- Variable and function names should be lowercase.
+- Use an underscore (_) to separate words within a name (as an alternative you can use camel case, but be consistent).
+- Variable names should be nouns.
+- Function names should be verbs.
+- Strive for names that are concise and meaningful (this is not easy!).
+- Where possible, avoid using names of existing functions and variables. 
+]
+
+--
+
+.pull-left[ .code80[ .blockquote.exercise[ 
+
+#### `r checker_green` Good
+
+```{r, eval = FALSE}
+day_one
+day_1
+```
+]]]
+
+--
+
+.pull-right[
+.code80[
+.blockquote.exercise[ 
+
+#### `r times_red` Bad
+
+```{r, eval = FALSE}
+# Bad
+first_day_of_the_month
+dayone
+djm1
+T <- FALSE
+c <- 10
+mean <- function(x) sum(x)
+```
+]]]
+
+---
+#### Spacing
+
+.font80[
+- Place spaces around all infix operators (`=`, `+`, `-`, `<-`, etc.) and `=` in a function call.
+- Always put a space after a comma, and never before.
+
+]
+
+.pull-left[ .code80[ .blockquote.exercise[ 
+
+#### `r checker_green` Good
+```{r}
+
+average <- mean(feet / 12 + inches, na.rm = TRUE)
+```
+]]]
+
+.pull-right[ .code80[ .blockquote.exercise[ 
+
+#### `r times_red` Bad
+
+```{r}
+
+average<-mean(feet/12+inches,na.rm=TRUE)
+```
+<br>
+]]]
+
+--
+
+.font80[
+- An exception to this rule are  `:`, `::` and `:::`.
+]
+
+.pull-left[ .code80[ .blockquote.exercise[ 
+
+#### `r checker_green` Good
+```{r}
+x <- 1:10
+base::get
+```
+]]]
+
+.pull-right[ .code80[ .blockquote.exercise[ 
+
+#### `r times_red` Bad
+
+```{r}
+x <- 1 : 10
+base :: get
+```
+]]]
+
+---
+#### Spacing
+
+.font80[
+- Extra spacing (i.e. more than one space in a row) is ok if it improves alignment of equal signs or assignments (`<-`).
+]
+
+.code70[ .blockquote.exercise[ 
+
+#### `r desktop` Example
+
+```{r}
+list(
+  total = a + b + c, 
+  mean  = (a + b + c) / n
+)
+```
+]]
+
+--
+
+.font80[
+- Do not place spaces around code in parentheses or square brackets (unless there’s a comma, in which case see above).
+]
+
+.pull-left[ .code70[ .blockquote.exercise[ 
+
+#### `r checker_green` Good
+```{r}
+if (debug) do(x)
+diamonds[5, ]
+```
+]]]
+
+.pull-right[ .code70[ .blockquote.exercise[ 
+
+#### `r times_red` Bad
+```{r}
+if ( debug ) do(x)  # No spaces around debug
+x[1,]   # Needs a space after the comma
+x[1 ,]  # Space goes after comma not before
+    ```
+]]]
+
+---
+#### Spacing
+
+- An opening curly brace should never go on its own line and should always be followed by a new line. A closing curly brace should always go on its own line, unless it’s followed by else. Always indent the code inside curly braces.
+
+
+
+.pull-left[ .blockquote.exercise[ 
+
+#### `r checker_green`  Good
+
+```{r}
+if (y < 0 && debug) {
+  message("Y is negative")
+}
+
+if (y == 0) {
+  log(x)
+} else {
+  y ^ x
+}
+```
+]]
+
+--
+
+.pull-right[ .blockquote.exercise[
+
+#### `r times_red`  Bad
+```{r}
+
+if (y < 0 && debug) {
+message("Y is negative") }
+
+if (y == 0) {
+  log(x)
+} else {
+  y ^ x
+}
+    ```
+]]
+---
+#### Spacing
+
+.font70[
+- It’s okay to leave very short statements on the same line:
+]
+
+.code70[ .blockquote.exercise[
+
+#### `r desktop` Example
+
+```{r}
+if (y < 0 && debug) message("Y is negative")
+```
+]]
+
+.font70[
+- Strive to limit your code to 80 characters per line. 
+- If you find yourself running out of room, this is a good indication that you should encapsulate some of the work in a separate function.
+]
+
+--
+
+#### Assignment
+
+.font70[
+- Use `<-`, not `=`, for assignment.]
+
+.pull-left[.code70[ .blockquote.exercise[
+#### `r checker_green` Good
+
+```{r}
+x <- 5
+```
+]]]
+
+.pull-right[.code70[ .blockquote.exercise[
+#### `r desktop` Bad
+
+```{r}
+x = 5
+```
+]]]
+
+---
+#### Commenting guidelines
+
+- Comment your code. 
+- Each line of a comment should begin with the comment symbol and a single space: `#`. 
+- Comments should explain the why, not the what.
+- Use commented lines of `-` and `=` to break up your file into easily readable chunks.
+
+--
+
+.blockquote.exercise[
+
+#### `r desktop` Example
+
+```{r}
+# Load data ---------------------------
+
+# Plot data ---------------------------
+```
+]
+
+---
+class: exercise_slide
+
+## `r desktop` Exercises
+
+<ol start = "1" >
+<li> Combine all elements of <TT>df_list</TT> to one data frame. The result should be only a single line of code. </li>
+</ol>
+```{r}
+df_list <- lapply(0:4, function(j) data.frame(c1 = (1:5) + 5 * j,
+                                              c2 = letters[(1:5) + 5 * j]
+                                              )
+                  )
+```
+
+<ol start = "2" >
+<li> Fix each of the following common data frame subsetting errors: </li>
+</ol>
+```{r}
+mtcars[mtcars$cyl = 4, ]
+mtcars[-1:4, ]
+mtcars[mtcars$cyl <= 5]
+mtcars[mtcars$cyl == 4 | 6, ]
+```
+
+<ol start = "3" >
+<li>  What does <TT>df[is.na(df)] <- 0</TT> do? </li>
+</ol>
+
+<ol start = "4" >
+<li>How would you randomly permute the columns of a data frame?</li>
+</ol>
+
+---
+class: exercise_slide
+
+## `r desktop` Exercises
+
+<ol start = "5" >
+<li>Write a <TT>while</TT> and a <TT>repeat</TT> loop doing the same as </li> 
+</ol>
+```{r}
+for(i in LETTERS[1:10]){
+  print(i)
+}
+```
+<ol start = "6" >
+<li> Write a <TT>for</TT> loop doing the same as</li>
+</ol>
+
+```{r}
+count <- 0
+repeat{
+  x     <- sample(1:6, 1)
+  count <- count + 1 
+  if(x == 6) break
+}
+print(count)
+```
+
+---
+class: exercise_slide
+
+## `r desktop` Exercises
+
+
+<ol start = "7" >
+<li> .font90[What is the problem here? ] </li>
+</ol>
+
+.code80[
+```{r}
+# Number of apples
+i <- 100
+for (i in 1:3) {} 
+paste("The number of apples is", i)
+```
+]
+<ol start = "8" >
+<li> .font90[What is the problem here? Can you debug it?] </li>
+</ol>
+.code80[
+```{r}
+df <- mtcars
+
+lin_mod <- function(){
+  lm(y ~ . ,data = df)
+}
+
+simple_lin_mod <- function(data, y, x){
+  df <- data[ ,c(y, x)]
+  names(df) <- c("y", "x")
+  fast_lm()
+}
+
+simple_lin_mod(df, "mpg", "cyl")
+
+```
+]
+
+
+
+
+
+
+
