@@ -44,8 +44,9 @@
 /* use to position text at the bottom */
 .pull-down {
   position: absolute;
-  bottom: 100px;
+  bottom: 10px;
 }
+
 
 .columns-2 {
   -webkit-columns: 2;

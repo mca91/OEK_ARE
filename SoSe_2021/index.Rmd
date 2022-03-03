@@ -18,9 +18,9 @@ output:
       countIncrementalSlides: false
       ratio: "16:9"
 ---
-## Outline
+### Outline
 
-.smaller[
+.font90[
 .pull-left[
 1. [Introduction](Introduction/Introduction.html)
 2. Prerequisites
@@ -48,8 +48,16 @@ output:
   <li> <a href="RcppArmadillo/RcppArmadillo.html">RcppArmadillo</a></li>
 </ul>
 <li> <a href = Webscraping/webscraping.html>Web Scraping</a></li>
-<li> <a href = Shiny/Shiny.html>Shiny</a> </li>
-<li> <a href = Packages/Packages.html>Writing Packages </a></li>
 <!-- <li>Text Mining  </li> -->
 </ol>
 ]]
+
+
+.pull-down.font90[
+#### Additional Topics for self-study
+
+<ol start = "8">
+  <li> <a href = Shiny/Shiny.html>Shiny</a> </li>
+  <li> <a href = Packages/Packages.html>Writing Packages </a></li>
+</ol>
+]
