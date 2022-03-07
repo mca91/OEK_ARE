@@ -44,8 +44,14 @@
 /* use to position text at the bottom */
 .pull-down {
   position: absolute;
-  bottom: 10px;
+  bottom: 100px;
 }
+
+.pull-down-small_margin {
+  position: absolute;
+  bottom: 25px;
+}
+
 
 
 .columns-2 {

@@ -61,7 +61,6 @@ class: class: title-slide title-rintro center middle
 
 
 .pull-down[
-<br>
 Slides, exercises and announcements will be provided on: 
 .center[
   https://moodle.uni-due.de/course/view.php?id=17174  
@@ -70,6 +69,8 @@ Slides, exercises and announcements will be provided on:
 The password for the course is **"Hadley"**.  
 <br>
 On Moodle you will find a link to [Datacamp](https://www.datacamp.com) which will give you free access to all their content. 
+<br>
+<br>
 ]
 ???
 Background? 

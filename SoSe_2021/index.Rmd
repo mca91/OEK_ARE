@@ -53,7 +53,7 @@ output:
 ]]
 
 
-.pull-down.font90[
+.pull-down-small_margin.font90[
 #### Additional Topics for self-study
 
 <ol start = "8">
