@@ -48,7 +48,6 @@ output:
   <li> <a href="RcppArmadillo/RcppArmadillo.html">RcppArmadillo</a></li>
 </ul>
 <li> <a href = Webscraping/webscraping.html>Web Scraping</a></li>
-<!-- <li>Text Mining  </li> -->
 </ol>
 ]]
 

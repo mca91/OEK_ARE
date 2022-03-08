@@ -5,7 +5,7 @@
     <meta charset="utf-8" />
     <meta name="author" content="Martin C. Arnold" />
     <meta name="author" content="Jens Klenke" />
-    <meta name="date" content="2022-03-07" />
+    <meta name="date" content="2022-03-08" />
     <script src="Introduction_files/header-attrs-2.11/header-attrs.js"></script>
     <link href="Introduction_files/remark-css-0.0.1/default.css" rel="stylesheet" />
     <script type="text/x-mathjax-config">
@@ -20,6 +20,10 @@
       cursor: default;
     }
     </style>
+
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"
+      integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
+      crossorigin="anonymous"></script>
     <link rel="stylesheet" href="../assets/ude_fonts.css" type="text/css" />
     <link rel="stylesheet" href="../assets/ude.css" type="text/css" />
     <link rel="stylesheet" href="../assets/title_slides.css" type="text/css" />
@@ -82,32 +86,46 @@ the assignments (20%).
 
 - You have to pass each part (assignments, project and presentation) separately to pass the course. 
 ---
-## Outline
+### Outline
+
+.font90[
 .pull-left[
-1. Introduction 
+1. Introduction
 2. Prerequisites
    - Rmarkdown
    - Git and Github
-3. Data Visualisation with ggplot 
-3. Data Wrangling and Transformation
+3. Data Visualisation with ggplot
+4. Data Wrangling and Transformation
    - dplyr
-   - databases
-4. Advanced R Programming 
-  - Functional Programming
-  - Object Oriented Programming 
+   - Databases
 ]
+
 .pull-right[
-&lt;ol start = "6"&gt;
-&lt;li&gt;  Performance &lt;/li&gt; 
+&lt;ol start = "5"&gt;
+&lt;li&gt; Advanced R Programming &lt;/li&gt;
 &lt;ul&gt;
-  &lt;li&gt; Profiling and Benchmarking &lt;/li&gt; 
-  &lt;li&gt; Parallelisation &lt;/li&gt;
-  &lt;li&gt; Rcpp &lt;/li&gt;
+  &lt;li&gt; Advanced Concepts&lt;/li&gt;
+  &lt;li&gt; Functional Programming&lt;/li&gt;
+  &lt;li&gt; Object Oriented Programming&lt;/li&gt;
 &lt;/ul&gt;
-&lt;li&gt; Web Scraping  &lt;/li&gt;
-&lt;li&gt; &lt;i&gt;Shiny&lt;/i&gt; &lt;/li&gt;
-&lt;li&gt;&lt;i&gt; Writing Packages&lt;/i&gt; &lt;/li&gt;
-&lt;li&gt;&lt;i&gt; Text Mining&lt;/i&gt;  &lt;/li&gt;
+&lt;li&gt; Performance &lt;/li&gt; 
+&lt;ul&gt;
+  &lt;li&gt; Profiling and Benchmarking&lt;/li&gt; 
+  &lt;li&gt; Improving Performance&lt;/li&gt;
+  &lt;li&gt; Rcpp&lt;/li&gt;
+  &lt;li&gt; RcppArmadillo&lt;/li&gt;
+&lt;/ul&gt;
+&lt;li&gt; Web Scraping&lt;/li&gt;
+&lt;/ol&gt;
+]]
+
+
+.pull-down-small_margin.font90[
+#### Additional Topics for self-study
+
+&lt;ol start = "8"&gt;
+  &lt;li&gt; Shiny&lt;/li&gt;
+  &lt;li&gt; Writing Packages &lt;/li&gt;
 &lt;/ol&gt;
 ]
 ---
@@ -133,7 +151,7 @@ class: top, left
 
 - [Advanced R](https://adv-r.hadley.nz/) by Hadley Wickham
 - [R for Data Science](https://r4ds.had.co.nz) by Hadley Wickham and Garrett Grolemund
-- The Art of R Programming by Norman Matloff
+- [The Art of R Programming](https://www.oreilly.com/library/view/the-art-of/9781593273842/) by Norman Matloff
 - The [Use R!](https://www.springer.com/series/6991) Series by Springer
 - The [R Series](https://www.crcpress.com/go/the-r-series) by CRC Press
 
@@ -216,7 +234,7 @@ https://stackoverflow.com/questions/53241120/how-to-use-openblas-lapacke-togethe
 ## Rstudio
 
 - RStudio is an integrated development environment (IDE) for R. 
-- It provides some convenient functionality compared to the IDE shipping with R.
+- It provides some convenient functionality compared to the IDE that comes with R.
 
 --
 
@@ -299,24 +317,24 @@ We assume that you know about the basic data structures in R.
 &lt;table&gt;
  &lt;thead&gt;
   &lt;tr&gt;
-   &lt;th style="text-align:left;"&gt;  &lt;/th&gt;
+   &lt;th style="text-align:left;"&gt; Dimensions &lt;/th&gt;
    &lt;th style="text-align:left;"&gt; Homogeneous &lt;/th&gt;
    &lt;th style="text-align:left;"&gt; Heterogeneous &lt;/th&gt;
   &lt;/tr&gt;
  &lt;/thead&gt;
 &lt;tbody&gt;
   &lt;tr&gt;
-   &lt;td style="text-align:left;"&gt; 1d &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 1 &lt;/td&gt;
    &lt;td style="text-align:left;"&gt; Atomic Vector &lt;/td&gt;
    &lt;td style="text-align:left;"&gt; List &lt;/td&gt;
   &lt;/tr&gt;
   &lt;tr&gt;
-   &lt;td style="text-align:left;"&gt; 2d &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 2 &lt;/td&gt;
    &lt;td style="text-align:left;"&gt; Matrix &lt;/td&gt;
    &lt;td style="text-align:left;"&gt; Data Frame &lt;/td&gt;
   &lt;/tr&gt;
   &lt;tr&gt;
-   &lt;td style="text-align:left;"&gt; nd &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; n &lt;/td&gt;
    &lt;td style="text-align:left;"&gt; Array &lt;/td&gt;
    &lt;td style="text-align:left;"&gt;  &lt;/td&gt;
   &lt;/tr&gt;
@@ -473,7 +491,10 @@ class: top, left
 
 ## R Basics: Functions
 
-.font90[
+.font90.content-box-white[
+
+**Task**
+
 - Write a function that takes a number `x` and returns the square of `x`.  
 ]
 
@@ -644,7 +665,7 @@ lazy_function()
 
 .font90[
 
-Why does not it cause an error?
+Why does this not induce am error?
 ]
 
 --
@@ -738,8 +759,9 @@ average &lt;- mean(feet / 12 + inches, na.rm = TRUE)
 ```r
 average&lt;-mean(feet/12+inches,na.rm=TRUE)
 ```
-&lt;br&gt;
 ]]]
+
+&lt;br&gt;
 
 --
 
@@ -932,7 +954,7 @@ class: exercise_slide
 ## &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Exercises
 
 &lt;ol start = "1" &gt;
-&lt;li&gt; Combine all elements of &lt;TT&gt;df_list&lt;/TT&gt; to one data frame. The result should be only a single line of code. &lt;/li&gt;
+&lt;li&gt; Combine all elements of &lt;code&gt;df_list&lt;/code&gt; to one data frame. The result should be only a single line of code. &lt;/li&gt;
 &lt;/ol&gt;
 
 ```r
@@ -954,7 +976,7 @@ mtcars[mtcars$cyl == 4 | 6, ]
 ```
 
 &lt;ol start = "3" &gt;
-&lt;li&gt;  What does &lt;TT&gt;df[is.na(df)] &lt;- 0&lt;/TT&gt; do? &lt;/li&gt;
+&lt;li&gt;  What does &lt;code&gt;df[is.na(df)] &lt;- 0&lt;/code&gt; do? &lt;/li&gt;
 &lt;/ol&gt;
 
 &lt;ol start = "4" &gt;
@@ -967,7 +989,7 @@ class: exercise_slide
 ## &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Exercises
 
 &lt;ol start = "5" &gt;
-&lt;li&gt;Write a &lt;TT&gt;while&lt;/TT&gt; and a &lt;TT&gt;repeat&lt;/TT&gt; loop doing the same as &lt;/li&gt; 
+&lt;li&gt;Write a &lt;code&gt;while&lt;/code&gt; and a &lt;code&gt;repeat&lt;/code&gt; loop doing the same as &lt;/li&gt; 
 &lt;/ol&gt;
 
 ```r
@@ -976,7 +998,7 @@ for(i in LETTERS[1:10]){
 }
 ```
 &lt;ol start = "6" &gt;
-&lt;li&gt; Write a &lt;TT&gt;for&lt;/TT&gt; loop doing the same as&lt;/li&gt;
+&lt;li&gt; Write a &lt;code&gt;for&lt;/code&gt; loop doing the same as&lt;/li&gt;
 &lt;/ol&gt;
 
 
@@ -1030,13 +1052,6 @@ simple_lin_mod &lt;- function(data, y, x){
 simple_lin_mod(df, "mpg", "cyl")
 ```
 ]
-
-
-
-
-
-
-
     </textarea>
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
 <script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
