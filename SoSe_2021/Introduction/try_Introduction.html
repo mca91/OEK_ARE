@@ -6,8 +6,8 @@
     <meta name="author" content="Martin C. Arnold" />
     <meta name="author" content="Jens Klenke" />
     <meta name="date" content="2022-03-09" />
-    <script src="Introduction_files/header-attrs-2.8/header-attrs.js"></script>
-    <link href="Introduction_files/remark-css-0.0.1/default.css" rel="stylesheet" />
+    <script src="try_Introduction_files/header-attrs-2.8/header-attrs.js"></script>
+    <link href="try_Introduction_files/remark-css-0.0.1/default.css" rel="stylesheet" />
     <script type="text/x-mathjax-config">
       MathJax.Hub.Config({
         TeX: { equationNumbers: { autoNumber: "AMS" } },
@@ -24,6 +24,7 @@
     <script src="https://code.jquery.com/jquery-3.4.1.min.js"
       integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
       crossorigin="anonymous"></script>
+    <meta name="robots" content="noindex">
     <link rel="stylesheet" href="C:/Users/Jens-/Documents/GitHub/OEK_ARE/SoSe_2021/assets/ude_fonts.css" type="text/css" />
     <link rel="stylesheet" href="C:/Users/Jens-/Documents/GitHub/OEK_ARE/SoSe_2021/assets/ude.css" type="text/css" />
     <link rel="stylesheet" href="C:/Users/Jens-/Documents/GitHub/OEK_ARE/SoSe_2021/assets/title_slides.css" type="text/css" />
@@ -1190,7 +1191,7 @@ if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
   
   function addCopyButtonToCode(){
     // get all code elements
-    var allCodeBlocksElements = $( ".r");
+    var allCodeBlocksElements = $( ".r" );
     // For each element, do the following steps
     allCodeBlocksElements.each(function(ii) {
       // define a unique id for this element and add it
@@ -1199,7 +1200,7 @@ if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
       
 
       // add the button just after the text in the code block w/ jquery
-      var clipButton = '<img src="../assets/clipboard-svgrepo-com.svg" width="20" alt="Copy to clipboard" onclick=copyToClipboard("#' + currentId + '") style="float:right;cursor:pointer;margin-right: 5px; margin-top: 2px;">';
+      var clipButton = '<img src="../assets/clipboard-svgrepo-com.svg" width="20" alt="Copy to clipboard" onclick=copyToClipboard("#' + currentId + '") style="float:right;cursor:pointer;">';
       $(this).prepend(clipButton);
     });
     

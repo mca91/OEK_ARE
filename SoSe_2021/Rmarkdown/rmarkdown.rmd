@@ -11,8 +11,8 @@ output:
     self_contained: false # if true, fonts will be stored locally
     seal: false # show a title slide with YAML information
     includes:
-      in_header: ["../assets/mathjax-equation-numbers.html", "../assets/meta.html"]
-      after_body: "../assets/copybutton.html"
+      in_header: ["../assets/mathjax-equation-numbers_2.html", "../assets/meta.html"]
+      after_body: ["../assets/copybutton_markdown.html"]
     nature:
       beforeInit: ["../assets/remark-zoom.js", "../xaringan_files/macros.js", "https://platform.twitter.com/widgets.js"]
       highlightStyle: github
@@ -360,9 +360,9 @@ This is an inline equation $f(x)=\frac{1}{\sqrt{2\pi}}\exp{\left(-\frac{1}{2}x^2
 --
   
 - Display style $\LaTeX{}$ equations can be written within double dollar signs.  
-    ```{r, comment = ""}
+```{r, comment = ""}
 cat("This is display style $$f(x)=\\frac{1}{\\sqrt{2\\pi}}\\exp{\\left(-\\frac{1}{2}x^2\\right)}$$.")
-    ```
+```
 This is display style $$f(x)=\frac{1}{\sqrt{2\pi}}\exp{\left(-\frac{1}{2}x^2\right)}$$
 
 ---
@@ -371,15 +371,14 @@ class: left, top
 
 - Even more complex math environments such as `align` can be used 
 
-    ```{r echo=FALSE, comment = ""}
-cat("
-\\begin{align}
+```{r echo=FALSE, comment = ""}
+cat(" \\begin{align}
 (a+b)^{3} &=(a+b)(a+b)^{2} \\\\
           &=(a+b)\\left(a^{2}+2 a b+b^{2}\\right) \\\\
           &=a^{3}+3 a^{2} b+3 a b^{2}+b^{3} 
 \\end{align}
 ")
-    ```
+```
 
 <br>   
 
@@ -853,6 +852,7 @@ hist(rnorm)
 class: left, top
 ## Output Hooks
 
+.font80[
 - Output hooks are (render) functions that define how source code and its output is presented.
 - There are 8 output hooks to deal with differnt types of output: 
   - `source`: the source code
@@ -865,14 +865,15 @@ class: left, top
   - `chunk`: all the output of a chunk
   - `document`: the output of the whole document 
 
-```{r, eval = FALSE}
+
+```{r, eval = FALSE, echo = TRUE}
 knitr::knit_hooks$set(small.mar = function(before) {
     if (before) par(mar = c(1, 1, 1, 1))  
 })
-
 ```
 
 - There is for each of the above a default which you can adjust to your needs. 
+]
 
 ---
 class: left, top
