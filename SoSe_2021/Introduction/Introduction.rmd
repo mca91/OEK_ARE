@@ -30,7 +30,8 @@ xaringan::inf_mr()
 ```
 
 ```{r xaringanExtra-clipboard_2, echo=FALSE}
-# copy button styles mainly in ude.css
+# copy button styles mainly in ude.css 
+# https://github.com/gadenbuie/xaringanExtra
 htmltools::tagList(
   xaringanExtra::use_clipboard(
     button_text = "<i class=\"fa fa-clipboard\"></i>",
