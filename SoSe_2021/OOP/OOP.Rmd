@@ -5,22 +5,13 @@ author: "Martin Arnold"
 date: "`r Sys.Date()`"
 output:
   xaringan::moon_reader:
-    css: 
-      - "default"
-      - "../assets/sydney-fonts.css"
-      - "../assets/sydney.css"
-      - "../assets/title_slides.css"
-      - "../xaringan_files/custom.css"
+    css: ["default", "../assets/ude_fonts.css", "../assets/ude.css", "../assets/title_slides.css", "../assets/custom.css"]
     self_contained: false # if true, fonts will be stored locally
     seal: false # show a title slide with YAML information
     includes:
       in_header: "../assets/mathjax-equation-numbers.html"
-      after_body: "../assets/copybutton.html"
     nature:
-      beforeInit: 
-        - "../assets/remark-zoom.js"
-        - "../xaringan_files/macros.js"
-        - "https://platform.twitter.com/widgets.js"
+      beforeInit: ["../assets/remark-zoom.js", "../xaringan_files/macros.js", "https://platform.twitter.com/widgets.js"]
       highlightStyle: github
       highlightLines: true
       countIncrementalSlides: false
@@ -28,6 +19,17 @@ output:
       navigation:
         scroll: false # disable slide transitions by scrolling
 ---
+```{r xaringanExtra-clipboard_2, echo=FALSE}
+# copy button styles mainly in ude.css
+htmltools::tagList(
+  xaringanExtra::use_clipboard(
+    button_text = "<i class=\"fa fa-clipboard\"></i>",
+    success_text = "<i class=\"fa fa-check\" style=\"color: #00ff00\"></i>",
+    error_text = "<i class=\"fa fa-times-circle\" style=\"color: #F94144\"></i>"
+  ),
+  rmarkdown::html_dependency_font_awesome()
+)
+```
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = FALSE, warning=FALSE, message=FALSE)

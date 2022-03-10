@@ -4,9 +4,15 @@
     <title>Advanced R for Econometricians</title>
     <meta charset="utf-8" />
     <meta name="author" content="Martin C. Arnold" />
-    <meta name="date" content="2022-02-01" />
+    <meta name="date" content="2022-03-10" />
     <script src="Advanced_files/header-attrs/header-attrs.js"></script>
     <link href="Advanced_files/remark-css/default.css" rel="stylesheet" />
+    <script src="Advanced_files/clipboard/clipboard.min.js"></script>
+    <link href="Advanced_files/xaringanExtra-clipboard/xaringanExtra-clipboard.css" rel="stylesheet" />
+    <script src="Advanced_files/xaringanExtra-clipboard/xaringanExtra-clipboard.js"></script>
+    <script>window.xaringanExtraClipboard(null, {"button":"<i class=\"fa fa-clipboard\"><\/i>","success":"<i class=\"fa fa-check\" style=\"color: #00ff00\"><\/i>","error":"<i class=\"fa fa-times-circle\" style=\"color: #F94144\"><\/i>"})</script>
+    <link href="Advanced_files/font-awesome/css/all.css" rel="stylesheet" />
+    <link href="Advanced_files/font-awesome/css/v4-shims.css" rel="stylesheet" />
     <script type="text/x-mathjax-config">
       MathJax.Hub.Config({
         TeX: { equationNumbers: { autoNumber: "AMS" } },
@@ -23,13 +29,15 @@
     <script src="https://code.jquery.com/jquery-3.4.1.min.js"
       integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
       crossorigin="anonymous"></script>
-    <link rel="stylesheet" href="C:/Users/Jens-/Documents/GitHub/OEK_ARE/2021/assets/ude_fonts.css" type="text/css" />
-    <link rel="stylesheet" href="C:/Users/Jens-/Documents/GitHub/OEK_ARE/2021/assets/ude.css" type="text/css" />
-    <link rel="stylesheet" href="C:/Users/Jens-/Documents/GitHub/OEK_ARE/2021/assets/title_slides.css" type="text/css" />
-    <link rel="stylesheet" href="C:/Users/Jens-/Documents/GitHub/OEK_ARE/2021/assets/custom.css" type="text/css" />
+    <link rel="stylesheet" href="../assets/ude_fonts.css" type="text/css" />
+    <link rel="stylesheet" href="../assets/ude.css" type="text/css" />
+    <link rel="stylesheet" href="../assets/title_slides.css" type="text/css" />
+    <link rel="stylesheet" href="../assets/custom.css" type="text/css" />
   </head>
   <body>
     <textarea id="source">
+
+
 
 
 
@@ -44,13 +52,6 @@ class: title-slide title-rintro center middle
 
 ---
 ## Overview
-
-&lt;style&gt;
-  strong {
-    color:#e64626;
-  }
-  
-&lt;/style&gt;
 
 Make sure the `lobstr` package is attached!
 
@@ -126,7 +127,7 @@ a &lt;- b = 1
 ```
 
 ```
-## Error in a &lt;- b = 1: konnte Funktion "&lt;-&lt;-" nicht finden
+## Error in a &lt;- b = 1: could not find function "&lt;-&lt;-"
 ```
 ]
 
@@ -259,11 +260,11 @@ ref(x, character = TRUE)
 ```
 
 ```
-## o [1:0x22b06f90] &lt;chr&gt; 
-## +-[2:0x13f99cb0] &lt;string: "a"&gt; 
-## +-[2:0x13f99cb0] 
-## +-[3:0x1db48e98] &lt;string: "abc"&gt; 
-## \-[4:0x14191ae8] &lt;string: "d"&gt;
+## o [1:0x229efcb0] &lt;chr&gt; 
+## +-[2:0x14159d70] &lt;string: "a"&gt; 
+## +-[2:0x14159d70] 
+## +-[3:0x22258ab0] &lt;string: "abc"&gt; 
+## \-[4:0x1434d5a0] &lt;string: "d"&gt;
 ```
 ]]]
 
@@ -306,7 +307,7 @@ obj_addr(x)
 ```
 
 ```
-## [1] "0x22ab3240"
+## [1] "0x229fd820"
 ```
 
 ```r
@@ -314,7 +315,7 @@ obj_addr(y)
 ```
 
 ```
-## [1] "0x22adfeb8"
+## [1] "0x229ff060"
 ```
 ]]
 ]]]
@@ -490,15 +491,15 @@ ref(l1, l2)
 ```
 
 ```
-## o [1:0x22a3e368] &lt;list&gt; 
-## +-[2:0x1d5f5b68] &lt;dbl&gt; 
-## +-[3:0x1d5f5b30] &lt;dbl&gt; 
-## \-[4:0x1d5f5af8] &lt;dbl&gt; 
+## o [1:0x13771668] &lt;list&gt; 
+## +-[2:0x12d7ca78] &lt;dbl&gt; 
+## +-[3:0x12d7ca40] &lt;dbl&gt; 
+## \-[4:0x12d7ca08] &lt;dbl&gt; 
 ##  
-## o [5:0x12a5b900] &lt;list&gt; 
-## +-[2:0x1d5f5b68] 
-## +-[3:0x1d5f5b30] 
-## \-[6:0x1d5f5a18] &lt;dbl&gt;
+## o [5:0x1380e468] &lt;list&gt; 
+## +-[2:0x12d7ca78] 
+## +-[3:0x12d7ca40] 
+## \-[6:0x12d7c928] &lt;dbl&gt;
 ```
 
 ]
@@ -823,15 +824,15 @@ lobstr::ref(x)
 .pull-right[
 
 ```
-## o [1:0x22ce5be8] &lt;list&gt; 
-## \-[2:0x1da65c30] &lt;int&gt;
+## o [1:0x21791530] &lt;list&gt; 
+## \-[2:0x21562778] &lt;int&gt;
 ```
 
 ```
-## o [1:0x22d2b050] &lt;list&gt; 
-## +-[2:0x1da65c30] &lt;int&gt; 
-## \-o [3:0x22ce5be8] &lt;list&gt; 
-##   \-[2:0x1da65c30]
+## o [1:0x1358e748] &lt;list&gt; 
+## +-[2:0x21562778] &lt;int&gt; 
+## \-o [3:0x21791530] &lt;list&gt; 
+##   \-[2:0x21562778]
 ```
 ]]]
 
@@ -914,8 +915,8 @@ gc()          # just for the side effect
 
 ```
 ##           used (Mb) gc trigger (Mb) max used (Mb)
-## Ncells  692221 37.0    1366844   73  1366844 73.0
-## Vcells 1244101  9.5    8388608   64  2120088 16.2
+## Ncells  732178 39.2    1316374 70.4  1316374 70.4
+## Vcells 1292056  9.9    8388608 64.0  2018906 15.5
 ```
 
 ```r
@@ -923,7 +924,7 @@ mem_used()    # total, but more exact
 ```
 
 ```
-## 48,720,872 B
+## 51,339,400 B
 ```
 ]]
 
@@ -1051,9 +1052,9 @@ lobstr::ref(funs)
 ```
 
 ```
-## o [1:0x1ddfa870] &lt;list&gt; 
-## +-[2:0x12e4e640] &lt;fn&gt; 
-## \-[3:0x12e4e598] &lt;fn&gt;
+## o [1:0x1336e350] &lt;list&gt; 
+## +-[2:0x227e55a0] &lt;fn&gt; 
+## \-[3:0x227e54f8] &lt;fn&gt;
 ```
 
 ```r
@@ -1390,7 +1391,7 @@ if (!is.null(x) &amp;&amp; x &gt; 0) {
     ```
     
     ```
-    ## Error in f(x = z^2, z = 2): Objekt 'z' nicht gefunden
+    ## Error in f(x = z^2, z = 2): object 'z' not found
     ```
 
 2. Explain what the `...` argument does by means of the following example:
@@ -1702,50 +1703,6 @@ if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
   }
   preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
 })(document);</script>
-<script type="text/x-mathjax-config">
-  
-  function addCopyButtonToCode(){
-    // get all code elements
-    var allCodeBlocksElements = $( ".r" );
-    // For each element, do the following steps
-    allCodeBlocksElements.each(function(ii) {
-      // define a unique id for this element and add it
-      var currentId = "codeblock" + (ii + 1);
-      $(this).attr('id', currentId);
-      
-
-      // add the button just after the text in the code block w/ jquery
-      var clipButton = '<img src="../assets/clipboard-svgrepo-com.svg" width="20" alt="Copy to clipboard" onclick=copyToClipboard("#' + currentId + '") style="float:right;cursor:pointer;">';
-      $(this).prepend(clipButton);
-    });
-    
-  }
-
-$(document).ready(function () {
-  // Once the DOM is loaded for the page, attach clipboard buttons
-  addCopyButtonToCode();
-});
-
-
-function copyToClipboard(element) {
-  var $temp = $("<textarea>");
-  $("body").append($temp);
-  
-  let vars = '';
-  
-  $(element).children().each((i, v) => {
-      vars += $(v).text() + '\n'
-    })
-  
-  $temp.val(vars).select();
-  document.execCommand("copy");
-  $temp.remove();
-}
-
-</script>
-
-
-
 
 <script>
 slideshow._releaseMath = function(el) {

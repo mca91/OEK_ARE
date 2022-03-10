@@ -5,9 +5,15 @@
     <meta charset="utf-8" />
     <meta name="author" content="Martin C. Arnold" />
     <meta name="author" content="Jens Klenke" />
-    <meta name="date" content="2022-03-09" />
+    <meta name="date" content="2022-03-10" />
     <script src="ggplot2_files/header-attrs/header-attrs.js"></script>
     <link href="ggplot2_files/remark-css/default.css" rel="stylesheet" />
+    <script src="ggplot2_files/clipboard/clipboard.min.js"></script>
+    <link href="ggplot2_files/xaringanExtra-clipboard/xaringanExtra-clipboard.css" rel="stylesheet" />
+    <script src="ggplot2_files/xaringanExtra-clipboard/xaringanExtra-clipboard.js"></script>
+    <script>window.xaringanExtraClipboard(null, {"button":"<i class=\"fa fa-clipboard\"><\/i>","success":"<i class=\"fa fa-check\" style=\"color: #00ff00\"><\/i>","error":"<i class=\"fa fa-times-circle\" style=\"color: #F94144\"><\/i>"})</script>
+    <link href="ggplot2_files/font-awesome/css/all.css" rel="stylesheet" />
+    <link href="ggplot2_files/font-awesome/css/v4-shims.css" rel="stylesheet" />
     <script type="text/x-mathjax-config">
       MathJax.Hub.Config({
         TeX: { equationNumbers: { autoNumber: "AMS" } },
@@ -21,16 +27,18 @@
     }
     </style>
 
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"
       integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
       crossorigin="anonymous"></script>
-    <link rel="stylesheet" href="C:/Users/Jens-/Documents/GitHub/OEK_ARE/SoSe_2021/assets/ude_fonts.css" type="text/css" />
-    <link rel="stylesheet" href="C:/Users/Jens-/Documents/GitHub/OEK_ARE/SoSe_2021/assets/ude.css" type="text/css" />
-    <link rel="stylesheet" href="C:/Users/Jens-/Documents/GitHub/OEK_ARE/SoSe_2021/assets/title_slides.css" type="text/css" />
-    <link rel="stylesheet" href="C:/Users/Jens-/Documents/GitHub/OEK_ARE/SoSe_2021/assets/custom.css" type="text/css" />
+    <link rel="stylesheet" href="../assets/ude_fonts.css" type="text/css" />
+    <link rel="stylesheet" href="../assets/ude.css" type="text/css" />
+    <link rel="stylesheet" href="../assets/title_slides.css" type="text/css" />
+    <link rel="stylesheet" href="../assets/custom.css" type="text/css" />
   </head>
   <body>
     <textarea id="source">
+
+
 
 
 
@@ -725,50 +733,6 @@ if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
   }
   preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
 })(document);</script>
-<script type="text/x-mathjax-config">
-  
-  function addCopyButtonToCode(){
-    // get all code elements
-    var allCodeBlocksElements = $( ".r" );
-    // For each element, do the following steps
-    allCodeBlocksElements.each(function(ii) {
-      // define a unique id for this element and add it
-      var currentId = "codeblock" + (ii + 1);
-      $(this).attr('id', currentId);
-      
-
-      // add the button just after the text in the code block w/ jquery
-      var clipButton = '<img src="../assets/clipboard-svgrepo-com.svg" width="20" alt="Copy to clipboard" onclick=copyToClipboard("#' + currentId + '") style="float:right;cursor:pointer;">';
-      $(this).prepend(clipButton);
-    });
-    
-  }
-
-$(document).ready(function () {
-  // Once the DOM is loaded for the page, attach clipboard buttons
-  addCopyButtonToCode();
-});
-
-
-function copyToClipboard(element) {
-  var $temp = $("<textarea>");
-  $("body").append($temp);
-  
-  let vars = '';
-  
-  $(element).children().each((i, v) => {
-      vars += $(v).text() + '\n'
-    })
-  
-  $temp.val(vars).select();
-  document.execCommand("copy");
-  $temp.remove();
-}
-
-</script>
-
-
-
 
 <script>
 slideshow._releaseMath = function(el) {

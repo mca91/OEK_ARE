@@ -169,7 +169,20 @@ it from other content slides */
     background: #FFFFFF !important;
 }
 
+/*code copy button */
 
+.xaringanextra-clipboard-button {
+    font-size: 0.8em;
+    padding: 5px;
+}
+
+.xaringanextra-clipboard-button:hover {
+  background-color: black;
+  color:  white !important;
+  border-radius: 50%;
+  opacity: 0.25;
+  font-weight: 400 !important;
+}
 
 /*************************
           other stuff  

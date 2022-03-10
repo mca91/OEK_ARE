@@ -12,7 +12,6 @@ output:
     seal: false # show a title slide with YAML information
     includes:
       in_header: "../assets/mathjax-equation-numbers.html"
-      after_body: "../assets/copybutton.html"
     nature:
       beforeInit: ["../assets/remark-zoom.js", "../xaringan_files/macros.js", "https://platform.twitter.com/widgets.js"]
       highlightStyle: github
@@ -27,6 +26,18 @@ output:
 # copy it to console
 options(servr.interval = 0.5)
 xaringan::inf_mr()
+```
+
+```{r xaringanExtra-clipboard_2, echo=FALSE}
+# copy button styles mainly in ude.css
+htmltools::tagList(
+  xaringanExtra::use_clipboard(
+    button_text = "<i class=\"fa fa-clipboard\"></i>",
+    success_text = "<i class=\"fa fa-check\" style=\"color: #00ff00\"></i>",
+    error_text = "<i class=\"fa fa-times-circle\" style=\"color: #F94144\"></i>"
+  ),
+  rmarkdown::html_dependency_font_awesome()
+)
 ```
 
 ```{r setup, include=FALSE}
