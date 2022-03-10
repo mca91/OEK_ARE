@@ -46,9 +46,9 @@ knitr::opts_chunk$set(echo = TRUE, eval = FALSE)
 library(icons)
 
 # pre-define icons
-desktop <- icon_style(icons::fontawesome$solid$desktop, fill = "#004c93")
-checker_green <- icons::icon_style(fontawesome$solid$check, fill = "green")
-times_red <- icons::icon_style(fontawesome$solid$times, fill = "red")
+desktop <- icons::icon_style(icons::fontawesome$solid$desktop, fill = "#004c93")
+checker_green <- icons::icon_style(icons::fontawesome$solid$check, fill = "green")
+times_red <- icons::icon_style(icons::fontawesome$solid$times, fill = "red")
 ```
 
 class: class: title-slide title-rintro center middle
@@ -821,7 +821,7 @@ diamonds[5, ]
 if ( debug ) do(x)  # No spaces around debug
 x[1,]   # Needs a space after the comma
 x[1 ,]  # Space goes after comma not before
-    ```
+```
 ]]]
 
 ---
@@ -863,7 +863,7 @@ if (y == 0) {
 } else {
   y ^ x
 }
-    ```
+```
 ]]
 ---
 #### Spacing

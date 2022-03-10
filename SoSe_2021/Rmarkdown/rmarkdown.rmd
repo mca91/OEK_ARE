@@ -44,6 +44,11 @@ htmltools::tagList(
 knitr::opts_chunk$set(echo=FALSE, warning=FALSE, message=FALSE)
 options(htmltools.raw.version = FALSE)
 def.chunk.hook  <- knitr::knit_hooks$get("chunk")
+
+# pre-define icons
+desktop <- icons::icon_style(icons::fontawesome$solid$desktop, fill = "#004c93")
+checker_green <- icons::icon_style(icons::fontawesome$solid$check, fill = "green")
+times_red <- icons::icon_style(icons::fontawesome$solid$times, fill = "red")
 ```
 
 class: title-slide title-rmarkdown center middle
@@ -90,8 +95,9 @@ class: left, top
 
 ## Basic example
 
-.code70[
+.font80.blockquote.exercise.pull-left-2[
 
+#### `r desktop` Example
 ```{r echo=FALSE, comment = "", size="tiny"}
 cat(htmltools::includeText("diamond-sizes.Rmd"))
 ```
@@ -100,7 +106,7 @@ cat(htmltools::includeText("diamond-sizes.Rmd"))
 
 --
 
-.font70[
+.pull-right-1.font80[
 - If this is stored as `example.rmd` in your working directory run `knitr::render(example.rmd)` to create an output document. 
 - Alternatively, hit the `r knitr::include_graphics("../img/knit.PNG")` button in Rstudio.
 - Or you can use the short key combination `Ctrl + Shift + K`
@@ -154,7 +160,8 @@ Here you can:
 
 --
 
-**Basic YAML header using mostly defaults**
+.blockquote.exercise[
+#### `r desktop` Example: Basic YAML header using mostly defaults
 
 ```yaml
 ---
@@ -164,12 +171,18 @@ date: March 22, 2005
 output: html_document
 ---
 ```
+]
+???
 
+YAML Ain't Markup Language, a recursive acronym, to distinguish its purpose as data-oriented, rather than document markup.
 ---
 class: left, top
 
 ## The YAML header
-Example of a bit more complicated YAML header.
+
+.blockquote.exercise[
+#### `r desktop` Example:  A more complicated YAML header
+
 ```nohighlights
 ---
 title: Habits
@@ -186,7 +199,7 @@ params:
   pi: 3.141593
 ---
 ```
-
+]
 ---
 class: left, top
 
@@ -214,17 +227,19 @@ class: left, top
 class: left, top
 ## Text Formatting
 
-Some examples:  
+
 
 .pull-left[
+.blockquote.exercise[
 
-- Headers
-
-    ```markdown
+#### `r desktop` Example: Headers
+```markdown
      #   Header 1     
      ##  Header 2   
      ### Header 3 
-    ```
+```
+]
+<br>
 
   .scaled[
   #   Header 1 
@@ -237,15 +252,17 @@ Some examples:
 --
 
 .pull-right[ 
+.blockquote.exercise[
 
-- Inline formatting  
+#### `r desktop` Inline formatting
 
-    ```markdown
+```markdown
      *italics* 
      **bold**
      This ~~is deleted text.~~
      Some code: `lm(y ~ x)`.
-    ```
+```
+]
     
     *italics*  
     **bold**  
@@ -259,9 +276,9 @@ class: left, top
 
 ## Text Formatting
 
-.pull-left[
+.pull-left[.blockquote.exercise[
 
-- Unordered Lists
+#### `r desktop`  Unordered Lists
 
 ```markdown
   * Item
@@ -270,6 +287,7 @@ class: left, top
   * Item
   * Item
 ```
+]
 
 * Item
   - Item belonging to item
@@ -281,9 +299,9 @@ class: left, top
 
 --
 
-.pull-right[ 
+.pull-right[.blockquote.exercise[
 
-- Ordered Lists
+#### `r desktop` Ordered Lists
 
 ```markdown
   1. First item
@@ -292,6 +310,7 @@ class: left, top
   2. Second item
   3. Third item
 ```
+]
 
 1. First item  
     - First subitem
@@ -312,13 +331,15 @@ class: left, top
 
 <br>
 
-.pull-left[ 
+.pull-left[.blockquote.exercise[
 
-- Linebreaks  
-    ```markdown
+#### `r desktop` Linebreaks  
+```markdown
 First line  
 Second line
-    ```
+```
+]
+
   First line  
   Second line
 
@@ -330,14 +351,17 @@ A new line is started by two whitespaces at the end of the previous line (which 
 
 --
 
-.pull-right[ 
+.pull-right[.blockquote.exercise[
 
-- Paragraphs
-    ```markdown
+#### `r desktop` Paragraphs
+
+```markdown
   First paragraph
   
   Second paragraph
-    ```
+```
+]
+
   First paragraph
 
   Second paragraph
@@ -347,8 +371,6 @@ A new line is started by two whitespaces at the end of the previous line (which 
 A new paragraph is started by a blank line.
 
 ]
-
-
 
 
 ---
@@ -361,18 +383,25 @@ Through `MathJax` the $\LaTeX{}$ math mode can also be used for HTML output as f
 --
 
 - Inline $\LaTeX{}$ equations can be written within dollar signs.  
+
+.blockquote.exercise[
 ```{r, comment = ""}
 cat("This is an inline equation $f(x)=\\frac{1}{\\sqrt{2\\pi}}\\exp{\\left(-\\frac{1}{2}x^2\\right)}$.")
 ```
-  
+]
+
 This is an inline equation $f(x)=\frac{1}{\sqrt{2\pi}}\exp{\left(-\frac{1}{2}x^2\right)}$.
 
 --
   
 - Display style $\LaTeX{}$ equations can be written within double dollar signs.  
+
+.blockquote.exercise[
 ```{r, comment = ""}
 cat("This is display style $$f(x)=\\frac{1}{\\sqrt{2\\pi}}\\exp{\\left(-\\frac{1}{2}x^2\\right)}$$.")
 ```
+]
+
 This is display style $$f(x)=\frac{1}{\sqrt{2\pi}}\exp{\left(-\frac{1}{2}x^2\right)}$$
 
 ---
@@ -380,6 +409,10 @@ class: left, top
 ## Math Expressions
 
 - Even more complex math environments such as `align` can be used 
+
+.blockquote.exercise[
+
+#### `r desktop` Example
 
 ```{r echo=FALSE, comment = ""}
 cat("\\begin{align}
@@ -389,6 +422,7 @@ cat("\\begin{align}
 \\end{align}
 ")
 ```
+]
 
 <br>   
 
@@ -434,9 +468,14 @@ For a complete list, we refer to the `knitr` documentation: [Chunk options](http
 - Press `Ctrl + Alt + I` to insert a new R code chunk.
 
 ]
+
 ---
 class: left, top
 ## Code Chunks
+
+.blockquote.exercise[
+
+#### `r desktop` Example
 
 ````markdown
 `r ''````{r lin_reg, echo=TRUE, cache = TRUE}
@@ -445,20 +484,33 @@ y <- 0.4 * x + rnorm(100)
 lm(y ~ x)
 ```
 ````
+]
+
+--
+
+<br>
 
 If you mainly use chunk options which are not the default, then it saves time to change the default for the document with `knitr::opts_chunk$set()`.  
+
+.blockquote.exercise[
+
+#### `r desktop` Example: chunk setup 
 
 ````markdown
 `r ''````{r setup, include=FALSE}
 knitr::opts_chunk$set(echo=FALSE, warning=FALSE, message=FALSE)
 ```
 ````
-
+]
 ---
 class: left, top
 ## Inline R Code
 
 You can also use R in your running text. When something changes (e.g. the input data) the numbers in the text adjust accordingly as well. 
+
+.blockquote.exercise[
+
+#### `r desktop` Example
 
 ````markdown
 `r ''````{r, echo=FALSE}
@@ -468,6 +520,7 @@ answer <- x + y
 ```
 The answer is `r '\x60r answer\x60'`
 ````
+]
 
 ```{r}
 x <- 4
@@ -475,6 +528,7 @@ y <- 38
 answer <- x + y
 ```
 
+--
 
 The answer is `r answer`.
 
@@ -482,11 +536,14 @@ The answer is `r answer`.
 class: left, top
 ## Tables 
 
-<br> <br>
-
+.font90[
 Tables can be created as follows:
-<br> <br>
-.pull-left[ 
+<br>
+.blockquote.exercise[
+
+#### `r desktop` Example
+
+
 ```markdown
 | Right | Left | Default | Center |
 |------:|:-----|---------|:------:|
@@ -494,23 +551,24 @@ Tables can be created as follows:
 |  123  |  123 |  123    |  123   | 
 |    1  |    1 |    1    |    1   | 
 ```
-]
+]]
 
 --
 
-.pull-right[ 
+.font70[
 
+<br><br>
 
 | Right | Left | Default | Center |
 |------:|:-----|---------|:------:|
 |   12  |   12 |   12    |   12   | 
 |  123  |  123 |  123    |  123   | 
 |   1   |   1  |   1     |   1    | 
-
 ]
-<br>
 
 --
+
+<br>
 
 In general, however, tables should be produced by your code.
 The following slides show some examples. 
@@ -523,6 +581,9 @@ class: left, top
 
 - `knitr::kable()` is probably the easiest way to transform a matrix or a data frame into a table.
 
+.blockquote.exercise[
+#### `r desktop` Example
+
 ````markdown
 `r ''````{r}
 result        <- data.frame(rbind(rep(12,4), rep(123, 4), rep(1,4)))
@@ -530,8 +591,12 @@ names(result) <- c("Right", "Left", "Default", "Center")
 knitr::kable(result, align = c("r", "l", "l", "c"), format = "html")
 ```
 ````
+]
+
 
 --
+
+<br>
 
 ```{r}
 result        <- data.frame(rbind(rep(12,4), rep(123, 4), rep(1,4)))
@@ -548,6 +613,9 @@ class: left, top
 
 --
 
+.blockquote.exercise[
+#### `r desktop` Example
+
 ````markdown
 `r ''````{r}
 library(magrittr)
@@ -558,6 +626,7 @@ knitr::kable(result,
   kableExtra::kable_styling(bootstrap_options = "bordered")
 ```
 ````
+]
 
 --
 

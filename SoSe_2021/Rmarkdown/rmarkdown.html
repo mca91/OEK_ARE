@@ -109,8 +109,9 @@ class: left, top
 
 ## Basic example
 
-.code70[
+.font80.blockquote.exercise.pull-left-2[
 
+#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example
 
 ````
 ---
@@ -144,7 +145,7 @@ If $\frac{\alpha}{\beta} = \gamma$ then $\alpha = \gamma\beta$.
 
 --
 
-.font70[
+.pull-right-1.font80[
 - If this is stored as `example.rmd` in your working directory run `knitr::render(example.rmd)` to create an output document. 
 - Alternatively, hit the &lt;img src="../img/knit.PNG" width="79" /&gt; button in Rstudio.
 - Or you can use the short key combination `Ctrl + Shift + K`
@@ -198,7 +199,8 @@ Here you can:
 
 --
 
-**Basic YAML header using mostly defaults**
+.blockquote.exercise[
+#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example: Basic YAML header using mostly defaults
 
 ```yaml
 ---
@@ -208,12 +210,18 @@ date: March 22, 2005
 output: html_document
 ---
 ```
+]
+???
 
+YAML Ain't Markup Language, a recursive acronym, to distinguish its purpose as data-oriented, rather than document markup.
 ---
 class: left, top
 
 ## The YAML header
-Example of a bit more complicated YAML header.
+
+.blockquote.exercise[
+#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example:  A more complicated YAML header
+
 ```nohighlights
 ---
 title: Habits
@@ -230,7 +238,7 @@ params:
   pi: 3.141593
 ---
 ```
-
+]
 ---
 class: left, top
 
@@ -258,17 +266,19 @@ class: left, top
 class: left, top
 ## Text Formatting
 
-Some examples:  
+
 
 .pull-left[
+.blockquote.exercise[
 
-- Headers
-
-    ```markdown
+#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example: Headers
+```markdown
      #   Header 1     
      ##  Header 2   
      ### Header 3 
-    ```
+```
+]
+&lt;br&gt;
 
   .scaled[
   #   Header 1 
@@ -281,15 +291,17 @@ Some examples:
 --
 
 .pull-right[ 
+.blockquote.exercise[
 
-- Inline formatting  
+#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Inline formatting
 
-    ```markdown
+```markdown
      *italics* 
      **bold**
      This ~~is deleted text.~~
      Some code: `lm(y ~ x)`.
-    ```
+```
+]
     
     *italics*  
     **bold**  
@@ -303,9 +315,9 @@ class: left, top
 
 ## Text Formatting
 
-.pull-left[
+.pull-left[.blockquote.exercise[
 
-- Unordered Lists
+#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt;  Unordered Lists
 
 ```markdown
   * Item
@@ -314,6 +326,7 @@ class: left, top
   * Item
   * Item
 ```
+]
 
 * Item
   - Item belonging to item
@@ -325,9 +338,9 @@ class: left, top
 
 --
 
-.pull-right[ 
+.pull-right[.blockquote.exercise[
 
-- Ordered Lists
+#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Ordered Lists
 
 ```markdown
   1. First item
@@ -336,6 +349,7 @@ class: left, top
   2. Second item
   3. Third item
 ```
+]
 
 1. First item  
     - First subitem
@@ -356,13 +370,15 @@ class: left, top
 
 &lt;br&gt;
 
-.pull-left[ 
+.pull-left[.blockquote.exercise[
 
-- Linebreaks  
-    ```markdown
+#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Linebreaks  
+```markdown
 First line  
 Second line
-    ```
+```
+]
+
   First line  
   Second line
 
@@ -374,14 +390,17 @@ A new line is started by two whitespaces at the end of the previous line (which 
 
 --
 
-.pull-right[ 
+.pull-right[.blockquote.exercise[
 
-- Paragraphs
-    ```markdown
+#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Paragraphs
+
+```markdown
   First paragraph
   
   Second paragraph
-    ```
+```
+]
+
   First paragraph
 
   Second paragraph
@@ -391,8 +410,6 @@ A new line is started by two whitespaces at the end of the previous line (which 
 A new paragraph is started by a blank line.
 
 ]
-
-
 
 
 ---
@@ -406,19 +423,26 @@ Through `MathJax` the `\(\LaTeX{}\)` math mode can also be used for HTML output 
 
 - Inline `\(\LaTeX{}\)` equations can be written within dollar signs.  
 
+.blockquote.exercise[
+
 ```
 This is an inline equation $f(x)=\frac{1}{\sqrt{2\pi}}\exp{\left(-\frac{1}{2}x^2\right)}$.
 ```
-  
+]
+
 This is an inline equation `\(f(x)=\frac{1}{\sqrt{2\pi}}\exp{\left(-\frac{1}{2}x^2\right)}\)`.
 
 --
   
 - Display style `\(\LaTeX{}\)` equations can be written within double dollar signs.  
 
+.blockquote.exercise[
+
 ```
 This is display style $$f(x)=\frac{1}{\sqrt{2\pi}}\exp{\left(-\frac{1}{2}x^2\right)}$$.
 ```
+]
+
 This is display style `$$f(x)=\frac{1}{\sqrt{2\pi}}\exp{\left(-\frac{1}{2}x^2\right)}$$`
 
 ---
@@ -426,6 +450,10 @@ class: left, top
 ## Math Expressions
 
 - Even more complex math environments such as `align` can be used 
+
+.blockquote.exercise[
+
+#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example
 
 
 ```
@@ -435,6 +463,7 @@ class: left, top
           &amp;=a^{3}+3 a^{2} b+3 a b^{2}+b^{3} 
 \end{align}
 ```
+]
 
 &lt;br&gt;   
 
@@ -480,9 +509,14 @@ For a complete list, we refer to the `knitr` documentation: [Chunk options](http
 - Press `Ctrl + Alt + I` to insert a new R code chunk.
 
 ]
+
 ---
 class: left, top
 ## Code Chunks
+
+.blockquote.exercise[
+
+#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example
 
 ````markdown
 ```{r lin_reg, echo=TRUE, cache = TRUE}
@@ -491,20 +525,33 @@ y &lt;- 0.4 * x + rnorm(100)
 lm(y ~ x)
 ```
 ````
+]
+
+--
+
+&lt;br&gt;
 
 If you mainly use chunk options which are not the default, then it saves time to change the default for the document with `knitr::opts_chunk$set()`.  
+
+.blockquote.exercise[
+
+#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example: chunk setup 
 
 ````markdown
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo=FALSE, warning=FALSE, message=FALSE)
 ```
 ````
-
+]
 ---
 class: left, top
 ## Inline R Code
 
 You can also use R in your running text. When something changes (e.g. the input data) the numbers in the text adjust accordingly as well. 
+
+.blockquote.exercise[
+
+#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example
 
 ````markdown
 ```{r, echo=FALSE}
@@ -514,9 +561,11 @@ answer &lt;- x + y
 ```
 The answer is `r answer`
 ````
+]
 
 
 
+--
 
 The answer is 42.
 
@@ -524,11 +573,14 @@ The answer is 42.
 class: left, top
 ## Tables 
 
-&lt;br&gt; &lt;br&gt;
-
+.font90[
 Tables can be created as follows:
-&lt;br&gt; &lt;br&gt;
-.pull-left[ 
+&lt;br&gt;
+.blockquote.exercise[
+
+#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example
+
+
 ```markdown
 | Right | Left | Default | Center |
 |------:|:-----|---------|:------:|
@@ -536,23 +588,24 @@ Tables can be created as follows:
 |  123  |  123 |  123    |  123   | 
 |    1  |    1 |    1    |    1   | 
 ```
-]
+]]
 
 --
 
-.pull-right[ 
+.font70[
 
+&lt;br&gt;&lt;br&gt;
 
 | Right | Left | Default | Center |
 |------:|:-----|---------|:------:|
 |   12  |   12 |   12    |   12   | 
 |  123  |  123 |  123    |  123   | 
 |   1   |   1  |   1     |   1    | 
-
 ]
-&lt;br&gt;
 
 --
+
+&lt;br&gt;
 
 In general, however, tables should be produced by your code.
 The following slides show some examples. 
@@ -565,6 +618,9 @@ class: left, top
 
 - `knitr::kable()` is probably the easiest way to transform a matrix or a data frame into a table.
 
+.blockquote.exercise[
+#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example
+
 ````markdown
 ```{r}
 result        &lt;- data.frame(rbind(rep(12,4), rep(123, 4), rep(1,4)))
@@ -572,8 +628,12 @@ names(result) &lt;- c("Right", "Left", "Default", "Center")
 knitr::kable(result, align = c("r", "l", "l", "c"), format = "html")
 ```
 ````
+]
+
 
 --
+
+&lt;br&gt;
 
 &lt;table&gt;
  &lt;thead&gt;
@@ -615,6 +675,9 @@ class: left, top
 
 --
 
+.blockquote.exercise[
+#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example
+
 ````markdown
 ```{r}
 library(magrittr)
@@ -625,6 +688,7 @@ knitr::kable(result,
   kableExtra::kable_styling(bootstrap_options = "bordered")
 ```
 ````
+]
 
 --
 
@@ -652,7 +716,7 @@ print.xtable(my_xtable, type  = "html", include.rownames = FALSE)
 --
 
 &lt;!-- html table generated in R 4.1.2 by xtable 1.8-4 package --&gt;
-&lt;!-- Thu Mar 10 14:39:05 2022 --&gt;
+&lt;!-- Thu Mar 10 17:10:01 2022 --&gt;
 &lt;table border=1&gt;
 &lt;tr&gt; &lt;th&gt; Right &lt;/th&gt; &lt;th&gt; Left &lt;/th&gt; &lt;th&gt; Default &lt;/th&gt; &lt;th&gt; Center &lt;/th&gt;  &lt;/tr&gt;
   &lt;tr&gt; &lt;td align="right"&gt; 12.00 &lt;/td&gt; &lt;td&gt; 12.00 &lt;/td&gt; &lt;td&gt; 12.00 &lt;/td&gt; &lt;td align="center"&gt; 12.00 &lt;/td&gt; &lt;/tr&gt;
@@ -794,8 +858,8 @@ plot_ly(mtcars, x = ~wt, y = ~hp, z = ~qsec, color = ~am, colors = c('#BF382A', 
 class: left, top
 ## Interactive documents
 
-<div id="htmlwidget-93c9ad7b53ab88ca862a" style="width:90%;height:70%;" class="plotly html-widget"></div>
-<script type="application/json" data-for="htmlwidget-93c9ad7b53ab88ca862a">{"x":{"visdat":{"381855a2e9a":["function () ","plotlyVisDat"]},"cur_data":"381855a2e9a","attrs":{"381855a2e9a":{"x":{},"y":{},"z":{},"color":{},"colors":["#BF382A","#0C4B8E"],"alpha_stroke":1,"sizes":[10,100],"spans":[1,20],"type":"scatter3d","mode":"markers","inherit":true}},"layout":{"margin":{"b":40,"l":60,"t":25,"r":10},"scene":{"xaxis":{"title":"Weight"},"yaxis":{"title":"Gross horsepower"},"zaxis":{"title":"1/4 mile time"}},"hovermode":"closest","showlegend":true},"source":"A","config":{"modeBarButtonsToAdd":["hoverclosest","hovercompare"],"showSendToCloud":false},"data":[{"x":[3.215,3.44,3.46,3.57,3.19,3.15,3.44,3.44,4.07,3.73,3.78,5.25,5.424,5.345,2.465,3.52,3.435,3.84,3.845],"y":[110,175,105,245,62,95,123,123,180,180,180,205,215,230,97,150,150,245,175],"z":[19.44,17.02,20.22,15.84,20,22.9,18.3,18.9,17.4,17.6,18,17.98,17.82,17.42,20.01,16.87,17.3,15.41,17.05],"type":"scatter3d","mode":"markers","name":"Automatic","marker":{"color":"rgba(191,56,42,1)","line":{"color":"rgba(191,56,42,1)"}},"textfont":{"color":"rgba(191,56,42,1)"},"error_y":{"color":"rgba(191,56,42,1)"},"error_x":{"color":"rgba(191,56,42,1)"},"line":{"color":"rgba(191,56,42,1)"},"frame":null},{"x":[2.62,2.875,2.32,2.2,1.615,1.835,1.935,2.14,1.513,3.17,2.77,3.57,2.78],"y":[110,110,93,66,52,65,66,91,113,264,175,335,109],"z":[16.46,17.02,18.61,19.47,18.52,19.9,18.9,16.7,16.9,14.5,15.5,14.6,18.6],"type":"scatter3d","mode":"markers","name":"Manual","marker":{"color":"rgba(12,75,142,1)","line":{"color":"rgba(12,75,142,1)"}},"textfont":{"color":"rgba(12,75,142,1)"},"error_y":{"color":"rgba(12,75,142,1)"},"error_x":{"color":"rgba(12,75,142,1)"},"line":{"color":"rgba(12,75,142,1)"},"frame":null}],"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.2,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
+<div id="htmlwidget-e042023020bc581a4bff" style="width:90%;height:70%;" class="plotly html-widget"></div>
+<script type="application/json" data-for="htmlwidget-e042023020bc581a4bff">{"x":{"visdat":{"1a801ac77662":["function () ","plotlyVisDat"]},"cur_data":"1a801ac77662","attrs":{"1a801ac77662":{"x":{},"y":{},"z":{},"color":{},"colors":["#BF382A","#0C4B8E"],"alpha_stroke":1,"sizes":[10,100],"spans":[1,20],"type":"scatter3d","mode":"markers","inherit":true}},"layout":{"margin":{"b":40,"l":60,"t":25,"r":10},"scene":{"xaxis":{"title":"Weight"},"yaxis":{"title":"Gross horsepower"},"zaxis":{"title":"1/4 mile time"}},"hovermode":"closest","showlegend":true},"source":"A","config":{"modeBarButtonsToAdd":["hoverclosest","hovercompare"],"showSendToCloud":false},"data":[{"x":[3.215,3.44,3.46,3.57,3.19,3.15,3.44,3.44,4.07,3.73,3.78,5.25,5.424,5.345,2.465,3.52,3.435,3.84,3.845],"y":[110,175,105,245,62,95,123,123,180,180,180,205,215,230,97,150,150,245,175],"z":[19.44,17.02,20.22,15.84,20,22.9,18.3,18.9,17.4,17.6,18,17.98,17.82,17.42,20.01,16.87,17.3,15.41,17.05],"type":"scatter3d","mode":"markers","name":"Automatic","marker":{"color":"rgba(191,56,42,1)","line":{"color":"rgba(191,56,42,1)"}},"textfont":{"color":"rgba(191,56,42,1)"},"error_y":{"color":"rgba(191,56,42,1)"},"error_x":{"color":"rgba(191,56,42,1)"},"line":{"color":"rgba(191,56,42,1)"},"frame":null},{"x":[2.62,2.875,2.32,2.2,1.615,1.835,1.935,2.14,1.513,3.17,2.77,3.57,2.78],"y":[110,110,93,66,52,65,66,91,113,264,175,335,109],"z":[16.46,17.02,18.61,19.47,18.52,19.9,18.9,16.7,16.9,14.5,15.5,14.6,18.6],"type":"scatter3d","mode":"markers","name":"Manual","marker":{"color":"rgba(12,75,142,1)","line":{"color":"rgba(12,75,142,1)"}},"textfont":{"color":"rgba(12,75,142,1)"},"error_y":{"color":"rgba(12,75,142,1)"},"error_x":{"color":"rgba(12,75,142,1)"},"line":{"color":"rgba(12,75,142,1)"},"frame":null}],"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.2,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
 
 - For more examples see [plot.ly](https://plot.ly/r/).
 
@@ -821,8 +885,8 @@ leaflet() %&gt;% addTiles() %&gt;%
 class: left, top
 ## Interactive documents
 
-<div id="htmlwidget-94c25f6147d8269acd89" style="width:100%;height:504px;" class="leaflet html-widget"></div>
-<script type="application/json" data-for="htmlwidget-94c25f6147d8269acd89">{"x":{"options":{"crs":{"crsClass":"L.CRS.EPSG3857","code":null,"proj4def":null,"projectedBounds":null,"options":{}}},"calls":[{"method":"addTiles","args":["//{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",null,null,{"minZoom":0,"maxZoom":18,"tileSize":256,"subdomains":"abc","errorTileUrl":"","tms":false,"noWrap":false,"zoomOffset":0,"zoomReverse":false,"opacity":1,"zIndex":1,"detectRetina":false,"attribution":"&copy; <a href=\"http://openstreetmap.org\">OpenStreetMap<\/a> contributors, <a href=\"http://creativecommons.org/licenses/by-sa/2.0/\">CC-BY-SA<\/a>"}]},{"method":"addMarkers","args":[51.463675,7.00507,null,null,null,{"interactive":true,"draggable":false,"keyboard":true,"title":"","alt":"","zIndexOffset":0,"opacity":1,"riseOnHover":false,"riseOffset":250},null,null,null,null,"Uni DUE",{"interactive":false,"permanent":false,"direction":"auto","opacity":1,"offset":[0,0],"textsize":"10px","textOnly":false,"className":"","sticky":true},null]}],"setView":[[51.463675,7.00507],17,[]],"limits":{"lat":[51.463675,51.463675],"lng":[7.00507,7.00507]}},"evals":[],"jsHooks":[]}</script>
+<div id="htmlwidget-960233cf2b5f65a64662" style="width:100%;height:504px;" class="leaflet html-widget"></div>
+<script type="application/json" data-for="htmlwidget-960233cf2b5f65a64662">{"x":{"options":{"crs":{"crsClass":"L.CRS.EPSG3857","code":null,"proj4def":null,"projectedBounds":null,"options":{}}},"calls":[{"method":"addTiles","args":["//{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",null,null,{"minZoom":0,"maxZoom":18,"tileSize":256,"subdomains":"abc","errorTileUrl":"","tms":false,"noWrap":false,"zoomOffset":0,"zoomReverse":false,"opacity":1,"zIndex":1,"detectRetina":false,"attribution":"&copy; <a href=\"http://openstreetmap.org\">OpenStreetMap<\/a> contributors, <a href=\"http://creativecommons.org/licenses/by-sa/2.0/\">CC-BY-SA<\/a>"}]},{"method":"addMarkers","args":[51.463675,7.00507,null,null,null,{"interactive":true,"draggable":false,"keyboard":true,"title":"","alt":"","zIndexOffset":0,"opacity":1,"riseOnHover":false,"riseOffset":250},null,null,null,null,"Uni DUE",{"interactive":false,"permanent":false,"direction":"auto","opacity":1,"offset":[0,0],"textsize":"10px","textOnly":false,"className":"","sticky":true},null]}],"setView":[[51.463675,7.00507],17,[]],"limits":{"lat":[51.463675,51.463675],"lng":[7.00507,7.00507]}},"evals":[],"jsHooks":[]}</script>
 
 
 ---
@@ -848,8 +912,8 @@ DT::datatable( head(iris, 10),
 
 .font80[
 
-<div id="htmlwidget-03bdccb0e1e03dcb0c65" style="width:100%;height:auto;" class="datatables html-widget"></div>
-<script type="application/json" data-for="htmlwidget-03bdccb0e1e03dcb0c65">{"x":{"filter":"none","vertical":false,"fillContainer":true,"data":[["1","2","3","4","5","6","7","8","9","10"],[5.1,4.9,4.7,4.6,5,5.4,4.6,5,4.4,4.9],[3.5,3,3.2,3.1,3.6,3.9,3.4,3.4,2.9,3.1],[1.4,1.4,1.3,1.5,1.4,1.7,1.4,1.5,1.4,1.5],[0.2,0.2,0.2,0.2,0.2,0.4,0.3,0.2,0.2,0.1],["setosa","setosa","setosa","setosa","setosa","setosa","setosa","setosa","setosa","setosa"]],"container":"<table class=\"display fill-container\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>Sepal.Length<\/th>\n      <th>Sepal.Width<\/th>\n      <th>Petal.Length<\/th>\n      <th>Petal.Width<\/th>\n      <th>Species<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"pageLength":8,"columnDefs":[{"className":"dt-right","targets":[1,2,3,4]},{"orderable":false,"targets":0}],"order":[],"autoWidth":false,"orderClasses":false,"lengthMenu":[8,10,25,50,100]}},"evals":[],"jsHooks":[]}</script>
+<div id="htmlwidget-42f27462672b518882be" style="width:100%;height:auto;" class="datatables html-widget"></div>
+<script type="application/json" data-for="htmlwidget-42f27462672b518882be">{"x":{"filter":"none","vertical":false,"fillContainer":true,"data":[["1","2","3","4","5","6","7","8","9","10"],[5.1,4.9,4.7,4.6,5,5.4,4.6,5,4.4,4.9],[3.5,3,3.2,3.1,3.6,3.9,3.4,3.4,2.9,3.1],[1.4,1.4,1.3,1.5,1.4,1.7,1.4,1.5,1.4,1.5],[0.2,0.2,0.2,0.2,0.2,0.4,0.3,0.2,0.2,0.1],["setosa","setosa","setosa","setosa","setosa","setosa","setosa","setosa","setosa","setosa"]],"container":"<table class=\"display fill-container\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>Sepal.Length<\/th>\n      <th>Sepal.Width<\/th>\n      <th>Petal.Length<\/th>\n      <th>Petal.Width<\/th>\n      <th>Species<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"pageLength":8,"columnDefs":[{"className":"dt-right","targets":[1,2,3,4]},{"orderable":false,"targets":0}],"order":[],"autoWidth":false,"orderClasses":false,"lengthMenu":[8,10,25,50,100]}},"evals":[],"jsHooks":[]}</script>
 
 ]
 

@@ -53,6 +53,9 @@
 }
 
 
+.ver_align {
+  vertical-align: middle;
+}
 
 .columns-2 {
   -webkit-columns: 2;
