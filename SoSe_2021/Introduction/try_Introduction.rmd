@@ -12,7 +12,6 @@ output:
     seal: false # show a title slide with YAML information
     includes:
       in_header: ["../assets/mathjax-equation-numbers.html", "../assets/meta.html"]
-      after_body: "../assets/copybutton.html"
     nature:
       beforeInit: ["../assets/remark-zoom.js", "../xaringan_files/macros.js", "https://platform.twitter.com/widgets.js"]
       highlightStyle: github
@@ -29,6 +28,11 @@ output:
 options(servr.interval = 0.5)
 xaringan::inf_mr()
 ```
+
+```{r xaringanExtra-clipboard, echo=FALSE}
+xaringanExtra::use_clipboard()
+```
+
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE, eval = FALSE)
