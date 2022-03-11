@@ -5,7 +5,7 @@
     <meta charset="utf-8" />
     <meta name="author" content="Martin C. Arnold" />
     <meta name="author" content="Jens Klenke" />
-    <meta name="date" content="2022-03-10" />
+    <meta name="date" content="2022-03-11" />
     <script src="rmarkdown_files/header-attrs-2.12/header-attrs.js"></script>
     <link href="rmarkdown_files/remark-css-0.0.1/default.css" rel="stylesheet" />
     <script src="rmarkdown_files/clipboard-2.0.6/clipboard.min.js"></script>
@@ -699,11 +699,15 @@ for examples.
 class: left, top
 ## `xtable`
 
+.font90[
 - `xtable` provides more functionality than kable but is a bit more difficult to use.
 - If your code produces raw HTML or `\(\LaTeX{}\)` e.g. for a table then you have to set `results='asis'`  in the  chunk options, otherwise it gets formatted and will not work as intended.
+]
 
 --
 
+.font90.blockquote.exercise[
+#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example
 ````markdown
 ```{r, echo=FALSE, results='asis'}
 library(xtable)
@@ -712,26 +716,30 @@ my_xtable &lt;- xtable(result, align = c("r", "r", "l", "l", "c"))
 print.xtable(my_xtable, type  = "html", include.rownames = FALSE)
 ```
 ````
-
+]
 --
 
+.font90[
 &lt;!-- html table generated in R 4.1.2 by xtable 1.8-4 package --&gt;
-&lt;!-- Thu Mar 10 17:10:01 2022 --&gt;
+&lt;!-- Fri Mar 11 16:11:45 2022 --&gt;
 &lt;table border=1&gt;
 &lt;tr&gt; &lt;th&gt; Right &lt;/th&gt; &lt;th&gt; Left &lt;/th&gt; &lt;th&gt; Default &lt;/th&gt; &lt;th&gt; Center &lt;/th&gt;  &lt;/tr&gt;
   &lt;tr&gt; &lt;td align="right"&gt; 12.00 &lt;/td&gt; &lt;td&gt; 12.00 &lt;/td&gt; &lt;td&gt; 12.00 &lt;/td&gt; &lt;td align="center"&gt; 12.00 &lt;/td&gt; &lt;/tr&gt;
   &lt;tr&gt; &lt;td align="right"&gt; 123.00 &lt;/td&gt; &lt;td&gt; 123.00 &lt;/td&gt; &lt;td&gt; 123.00 &lt;/td&gt; &lt;td align="center"&gt; 123.00 &lt;/td&gt; &lt;/tr&gt;
   &lt;tr&gt; &lt;td align="right"&gt; 1.00 &lt;/td&gt; &lt;td&gt; 1.00 &lt;/td&gt; &lt;td&gt; 1.00 &lt;/td&gt; &lt;td align="center"&gt; 1.00 &lt;/td&gt; &lt;/tr&gt;
    &lt;/table&gt;
-
+]
 ---
 class: left, top
 ## `stargazer`
 
 - `stargazer` takes model objects as input and automatically creates an output table   
 
-.pull-left[
 &lt;br&gt;
+
+.pull-left[.blockquote.exercise[
+#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example
+
 ````markdown
 ```{r, results='asis', echo=TRUE}
 
@@ -745,14 +753,11 @@ stargazer::stargazer(linear_model,
       
 ```
 ````
-]
+]]
 
 --
 
-.pull-right[
-&lt;br&gt; 
-.left[
-.font80[
+.font60[.pull-right[
 
 
 &lt;table style="text-align:center"&gt;&lt;tr&gt;&lt;td colspan="2" style="border-bottom: 1px solid black"&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style="text-align:left"&gt;&lt;/td&gt;&lt;td&gt;&lt;em&gt;Dependent variable:&lt;/em&gt;&lt;/td&gt;&lt;/tr&gt;
@@ -769,21 +774,28 @@ stargazer::stargazer(linear_model,
 &lt;tr&gt;&lt;td style="text-align:left"&gt;&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
 &lt;tr&gt;&lt;td colspan="2" style="border-bottom: 1px solid black"&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td colspan="2" style="border-bottom: 1px solid black"&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
 
-]]]
+]]
 
 ---
 class: left, top
 ## Plots
 
+&lt;br&gt;
+
+.pull-left[.blockquote.exercise[
+#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example
 ````markdown
 ```{r, fig.height = 5}
 hist(rnorm(1000))
 ```
 ````
+]]
 
 --
 
+.pull-right[
 ![](rmarkdown_files/figure-html/unnamed-chunk-9-1.png)&lt;!-- --&gt;
+]
 
 ---
 class: left, top
@@ -791,27 +803,33 @@ class: left, top
 
 - Links can be created as follows:
 
+.blockquote.exercise[
 ```markdown
 [This is a link to the R Markdown book](https://bookdown.org/yihui/rmarkdown/)
 ```
+]
 
 --
 
 - To include figures saved on your computer use
 
+.blockquote.exercise[
 ```markdown
 ![Figure Description](path/to/figure.png)
 ```
+]
 
 --
 
 - If you need more control over the appearence of the figure you can use
 
+.blockquote.exercise[
 ````markdown
 ```{r, out.width = "500px", fig.align='center'}
 knitr::include_graphics("path/to/figure.png")
 ```
 ````
+]
 
 ---
 class: left, top
@@ -839,6 +857,9 @@ class: left, top
 
 --
 
+.blockquote.exercise[
+#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example: plot
+
 ````markdown
 ```{r}
 library(plotly)
@@ -853,13 +874,14 @@ plot_ly(mtcars, x = ~wt, y = ~hp, z = ~qsec, color = ~am, colors = c('#BF382A', 
 
 ```
 ````
+]
 
 ---
 class: left, top
 ## Interactive documents
 
-<div id="htmlwidget-e042023020bc581a4bff" style="width:90%;height:70%;" class="plotly html-widget"></div>
-<script type="application/json" data-for="htmlwidget-e042023020bc581a4bff">{"x":{"visdat":{"1a801ac77662":["function () ","plotlyVisDat"]},"cur_data":"1a801ac77662","attrs":{"1a801ac77662":{"x":{},"y":{},"z":{},"color":{},"colors":["#BF382A","#0C4B8E"],"alpha_stroke":1,"sizes":[10,100],"spans":[1,20],"type":"scatter3d","mode":"markers","inherit":true}},"layout":{"margin":{"b":40,"l":60,"t":25,"r":10},"scene":{"xaxis":{"title":"Weight"},"yaxis":{"title":"Gross horsepower"},"zaxis":{"title":"1/4 mile time"}},"hovermode":"closest","showlegend":true},"source":"A","config":{"modeBarButtonsToAdd":["hoverclosest","hovercompare"],"showSendToCloud":false},"data":[{"x":[3.215,3.44,3.46,3.57,3.19,3.15,3.44,3.44,4.07,3.73,3.78,5.25,5.424,5.345,2.465,3.52,3.435,3.84,3.845],"y":[110,175,105,245,62,95,123,123,180,180,180,205,215,230,97,150,150,245,175],"z":[19.44,17.02,20.22,15.84,20,22.9,18.3,18.9,17.4,17.6,18,17.98,17.82,17.42,20.01,16.87,17.3,15.41,17.05],"type":"scatter3d","mode":"markers","name":"Automatic","marker":{"color":"rgba(191,56,42,1)","line":{"color":"rgba(191,56,42,1)"}},"textfont":{"color":"rgba(191,56,42,1)"},"error_y":{"color":"rgba(191,56,42,1)"},"error_x":{"color":"rgba(191,56,42,1)"},"line":{"color":"rgba(191,56,42,1)"},"frame":null},{"x":[2.62,2.875,2.32,2.2,1.615,1.835,1.935,2.14,1.513,3.17,2.77,3.57,2.78],"y":[110,110,93,66,52,65,66,91,113,264,175,335,109],"z":[16.46,17.02,18.61,19.47,18.52,19.9,18.9,16.7,16.9,14.5,15.5,14.6,18.6],"type":"scatter3d","mode":"markers","name":"Manual","marker":{"color":"rgba(12,75,142,1)","line":{"color":"rgba(12,75,142,1)"}},"textfont":{"color":"rgba(12,75,142,1)"},"error_y":{"color":"rgba(12,75,142,1)"},"error_x":{"color":"rgba(12,75,142,1)"},"line":{"color":"rgba(12,75,142,1)"},"frame":null}],"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.2,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
+<div id="htmlwidget-0ca1083427a1dd8b71e3" style="width:90%;height:70%;" class="plotly html-widget"></div>
+<script type="application/json" data-for="htmlwidget-0ca1083427a1dd8b71e3">{"x":{"visdat":{"445014aa7d7":["function () ","plotlyVisDat"]},"cur_data":"445014aa7d7","attrs":{"445014aa7d7":{"x":{},"y":{},"z":{},"color":{},"colors":["#BF382A","#0C4B8E"],"alpha_stroke":1,"sizes":[10,100],"spans":[1,20],"type":"scatter3d","mode":"markers","inherit":true}},"layout":{"margin":{"b":40,"l":60,"t":25,"r":10},"scene":{"xaxis":{"title":"Weight"},"yaxis":{"title":"Gross horsepower"},"zaxis":{"title":"1/4 mile time"}},"hovermode":"closest","showlegend":true},"source":"A","config":{"modeBarButtonsToAdd":["hoverclosest","hovercompare"],"showSendToCloud":false},"data":[{"x":[3.215,3.44,3.46,3.57,3.19,3.15,3.44,3.44,4.07,3.73,3.78,5.25,5.424,5.345,2.465,3.52,3.435,3.84,3.845],"y":[110,175,105,245,62,95,123,123,180,180,180,205,215,230,97,150,150,245,175],"z":[19.44,17.02,20.22,15.84,20,22.9,18.3,18.9,17.4,17.6,18,17.98,17.82,17.42,20.01,16.87,17.3,15.41,17.05],"type":"scatter3d","mode":"markers","name":"Automatic","marker":{"color":"rgba(191,56,42,1)","line":{"color":"rgba(191,56,42,1)"}},"textfont":{"color":"rgba(191,56,42,1)"},"error_y":{"color":"rgba(191,56,42,1)"},"error_x":{"color":"rgba(191,56,42,1)"},"line":{"color":"rgba(191,56,42,1)"},"frame":null},{"x":[2.62,2.875,2.32,2.2,1.615,1.835,1.935,2.14,1.513,3.17,2.77,3.57,2.78],"y":[110,110,93,66,52,65,66,91,113,264,175,335,109],"z":[16.46,17.02,18.61,19.47,18.52,19.9,18.9,16.7,16.9,14.5,15.5,14.6,18.6],"type":"scatter3d","mode":"markers","name":"Manual","marker":{"color":"rgba(12,75,142,1)","line":{"color":"rgba(12,75,142,1)"}},"textfont":{"color":"rgba(12,75,142,1)"},"error_y":{"color":"rgba(12,75,142,1)"},"error_x":{"color":"rgba(12,75,142,1)"},"line":{"color":"rgba(12,75,142,1)"},"frame":null}],"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.2,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
 
 - For more examples see [plot.ly](https://plot.ly/r/).
 
@@ -867,7 +889,8 @@ class: left, top
 class: left, top
 ## Interactive documents
 
-- An interactive map. 
+.pull-left[.blockquote.exercise[.font70[
+#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example: map 
 
 ````markdown
 ```{r, out.width='100%'}
@@ -879,50 +902,59 @@ leaflet() %&gt;% addTiles() %&gt;%
   )
 ```
 ````
-
-- Learn more at [Leaflet for R](https://rstudio.github.io/leaflet).
----
-class: left, top
-## Interactive documents
-
-<div id="htmlwidget-960233cf2b5f65a64662" style="width:100%;height:504px;" class="leaflet html-widget"></div>
-<script type="application/json" data-for="htmlwidget-960233cf2b5f65a64662">{"x":{"options":{"crs":{"crsClass":"L.CRS.EPSG3857","code":null,"proj4def":null,"projectedBounds":null,"options":{}}},"calls":[{"method":"addTiles","args":["//{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",null,null,{"minZoom":0,"maxZoom":18,"tileSize":256,"subdomains":"abc","errorTileUrl":"","tms":false,"noWrap":false,"zoomOffset":0,"zoomReverse":false,"opacity":1,"zIndex":1,"detectRetina":false,"attribution":"&copy; <a href=\"http://openstreetmap.org\">OpenStreetMap<\/a> contributors, <a href=\"http://creativecommons.org/licenses/by-sa/2.0/\">CC-BY-SA<\/a>"}]},{"method":"addMarkers","args":[51.463675,7.00507,null,null,null,{"interactive":true,"draggable":false,"keyboard":true,"title":"","alt":"","zIndexOffset":0,"opacity":1,"riseOnHover":false,"riseOffset":250},null,null,null,null,"Uni DUE",{"interactive":false,"permanent":false,"direction":"auto","opacity":1,"offset":[0,0],"textsize":"10px","textOnly":false,"className":"","sticky":true},null]}],"setView":[[51.463675,7.00507],17,[]],"limits":{"lat":[51.463675,51.463675],"lng":[7.00507,7.00507]}},"evals":[],"jsHooks":[]}</script>
+]]]
 
 
----
-class: left, top
-## Interactive documents
+.pull-right[
 
-.code80[
-
-- The `DT` package also allows us to include interactive tables. 
-
-
-
-````markdown
-```{r}
-DT::datatable( head(iris, 10),
-  fillContainer = TRUE,  options = list(pageLength = 8))
-```
-````
+<div id="htmlwidget-1ecc4e403297e9220e5a" style="width:504px;height:450px;" class="leaflet html-widget"></div>
+<script type="application/json" data-for="htmlwidget-1ecc4e403297e9220e5a">{"x":{"options":{"crs":{"crsClass":"L.CRS.EPSG3857","code":null,"proj4def":null,"projectedBounds":null,"options":{}}},"calls":[{"method":"addTiles","args":["//{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",null,null,{"minZoom":0,"maxZoom":18,"tileSize":256,"subdomains":"abc","errorTileUrl":"","tms":false,"noWrap":false,"zoomOffset":0,"zoomReverse":false,"opacity":1,"zIndex":1,"detectRetina":false,"attribution":"&copy; <a href=\"http://openstreetmap.org\">OpenStreetMap<\/a> contributors, <a href=\"http://creativecommons.org/licenses/by-sa/2.0/\">CC-BY-SA<\/a>"}]},{"method":"addMarkers","args":[51.463675,7.00507,null,null,null,{"interactive":true,"draggable":false,"keyboard":true,"title":"","alt":"","zIndexOffset":0,"opacity":1,"riseOnHover":false,"riseOffset":250},null,null,null,null,"Uni DUE",{"interactive":false,"permanent":false,"direction":"auto","opacity":1,"offset":[0,0],"textsize":"10px","textOnly":false,"className":"","sticky":true},null]}],"setView":[[51.463675,7.00507],17,[]],"limits":{"lat":[51.463675,51.463675],"lng":[7.00507,7.00507]}},"evals":[],"jsHooks":[]}</script>
 
 ]
 
 --
 
+- Learn more at [Leaflet for R](https://rstudio.github.io/leaflet).
+
+---
+class: left, top
+## Interactive documents
+
 .font80[
 
-<div id="htmlwidget-42f27462672b518882be" style="width:100%;height:auto;" class="datatables html-widget"></div>
-<script type="application/json" data-for="htmlwidget-42f27462672b518882be">{"x":{"filter":"none","vertical":false,"fillContainer":true,"data":[["1","2","3","4","5","6","7","8","9","10"],[5.1,4.9,4.7,4.6,5,5.4,4.6,5,4.4,4.9],[3.5,3,3.2,3.1,3.6,3.9,3.4,3.4,2.9,3.1],[1.4,1.4,1.3,1.5,1.4,1.7,1.4,1.5,1.4,1.5],[0.2,0.2,0.2,0.2,0.2,0.4,0.3,0.2,0.2,0.1],["setosa","setosa","setosa","setosa","setosa","setosa","setosa","setosa","setosa","setosa"]],"container":"<table class=\"display fill-container\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>Sepal.Length<\/th>\n      <th>Sepal.Width<\/th>\n      <th>Petal.Length<\/th>\n      <th>Petal.Width<\/th>\n      <th>Species<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"pageLength":8,"columnDefs":[{"className":"dt-right","targets":[1,2,3,4]},{"orderable":false,"targets":0}],"order":[],"autoWidth":false,"orderClasses":false,"lengthMenu":[8,10,25,50,100]}},"evals":[],"jsHooks":[]}</script>
+- The `DT` package also allows us to include interactive tables. 
 
+.blockquote.exercise[
+#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example: map
+
+````markdown
+```{r}
+DT::datatable( head(iris, 10),
+  fillContainer = TRUE,  options = list(pageLength = 5))
+```
+````
+
+]]
+
+--
+
+&lt;br&gt;
+
+.font50[
+
+<div id="htmlwidget-5f097b164ff858dbe62f" style="width:100%;height:auto;" class="datatables html-widget"></div>
+<script type="application/json" data-for="htmlwidget-5f097b164ff858dbe62f">{"x":{"filter":"none","vertical":false,"fillContainer":true,"data":[["1","2","3","4","5","6","7","8","9","10"],[5.1,4.9,4.7,4.6,5,5.4,4.6,5,4.4,4.9],[3.5,3,3.2,3.1,3.6,3.9,3.4,3.4,2.9,3.1],[1.4,1.4,1.3,1.5,1.4,1.7,1.4,1.5,1.4,1.5],[0.2,0.2,0.2,0.2,0.2,0.4,0.3,0.2,0.2,0.1],["setosa","setosa","setosa","setosa","setosa","setosa","setosa","setosa","setosa","setosa"]],"container":"<table class=\"display fill-container\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>Sepal.Length<\/th>\n      <th>Sepal.Width<\/th>\n      <th>Petal.Length<\/th>\n      <th>Petal.Width<\/th>\n      <th>Species<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"pageLength":5,"columnDefs":[{"className":"dt-right","targets":[1,2,3,4]},{"orderable":false,"targets":0}],"order":[],"autoWidth":false,"orderClasses":false,"lengthMenu":[5,10,25,50,100]}},"evals":[],"jsHooks":[]}</script>
 ]
+
 
 ---
 class: left, top
 ## Advanced Topics: Hooks
 
+.font70[
 - You can define your own chunk options using hooks. This is a topic for you if you want to become 
 a professional `knitr` user. 
+]
 
 --
 
@@ -932,7 +964,8 @@ a professional `knitr` user.
 - A chunk hook is a function defining what should happen before or after a code chunk.
 ]
 
-.code70[
+.code80[
+.blockquote.exercise[
 
 ```r
 # Template for a chunk hook
@@ -945,7 +978,7 @@ foo_hook = function(before, options, envir) {
     }
   })
 ```
-]
+]]
 
 --
 
@@ -960,9 +993,13 @@ and after with `before == FALSE`.
 class: left, top
 ## Chunk Hooks: Example
 
+.font90[
 - To reduce the margins of a plot with chunk option `small.mar = TRUE` put the following code chunk 
 at the top of your document. 
 
+
+.blockquote.exercise[
+#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Funktion
 ````markdown
 ```{r, eval = FALSE, echo=TRUE}
 knitr::knit_hooks$set(small.mar = function(before) {
@@ -970,21 +1007,27 @@ knitr::knit_hooks$set(small.mar = function(before) {
 })
 ```
 ````
+]]
+
 --
 
+.font90[
 - `small.mar` now can be used as other chunk options. 
 
+.blockquote.exercise[
+#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example
 ````markdown
 ```{r, small.mar = TRUE}
 hist(rnorm)
 ```
 ````
+]]
 
 ---
 class: left, top
 ## Output Hooks
 
-.font80[
+.font70[
 - Output hooks are (render) functions that define how source code and its output is presented.
 - There are 8 output hooks to deal with differnt types of output: 
   - `source`: the source code
@@ -996,15 +1039,22 @@ class: left, top
   - `inline`: output of inline R code
   - `chunk`: all the output of a chunk
   - `document`: the output of the whole document 
+]
 
+--
 
+.font70[.blockquote.exercise[
+#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example
 
 ```r
 knitr::knit_hooks$set(small.mar = function(before) {
     if (before) par(mar = c(1, 1, 1, 1))  
 })
 ```
+]]
 
+--
+.font70[
 - There is for each of the above a default which you can adjust to your needs. 
 ]
 
@@ -1013,6 +1063,10 @@ class: left, top
 ## Output Hooks: Example
 
 - You can e.g. use a hook to consistantly style all your tables using `kableExtra`.  
+
+.blockquote.exercise[
+#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example
+
 
 
 ```r
@@ -1029,16 +1083,19 @@ knit_hooks$set(
   }
 )
 ```
-
+]
 
 ---
 class: left, top
 ## The `here` package
 
+.font90[
 - `here::here()` is returning the path to the directory where your project file lives in. 
+]
 
 --
 
+.font90[
 **Why is this useful?** 
 
 - If an Rmarkdown file is compiled it sets the working directory to the folder where your `.rmd` file is stored.
@@ -1046,18 +1103,22 @@ class: left, top
   for the interactive part is set to the path of your project file. 
 - If your project becomes more complex and you are using subdirectories the working directory set for compilation
   and interactive work are not necessary the same. This is quite annoying.
+]
 
 --
 
+.font90[
 #### Solution
 
 - use `here::here()` when setting a path.
 
+.blockquote.exercise[
+#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example
 
 ```r
 load(here::here("Data", "my_dataset.rda"))
 ```
-
+]]
 ---
 class: exercise_slide
 ## Exercises

@@ -661,7 +661,7 @@ lazy_function()
 
 .font90[
 
-Why does this not induce am error?
+Why does this not induce an error?
 ]
 
 --

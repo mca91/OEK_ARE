@@ -637,11 +637,15 @@ for examples.
 class: left, top
 ## `xtable`
 
+.font90[
 - `xtable` provides more functionality than kable but is a bit more difficult to use.
 - If your code produces raw HTML or $\LaTeX{}$ e.g. for a table then you have to set `results='asis'`  in the  chunk options, otherwise it gets formatted and will not work as intended.
+]
 
 --
 
+.font90.blockquote.exercise[
+#### `r desktop` Example
 ````markdown
 `r ''````{r, echo=FALSE, results='asis'}
 library(xtable)
@@ -650,23 +654,27 @@ my_xtable <- xtable(result, align = c("r", "r", "l", "l", "c"))
 print.xtable(my_xtable, type  = "html", include.rownames = FALSE)
 ```
 ````
-
+]
 --
 
+.font90[
 ```{r, echo=FALSE, results='asis'}
 library(xtable)
 my_xtable <- xtable(result, align = c("r", "r", "l", "l", "c"))
 print.xtable(my_xtable, type  = "html", include.rownames = FALSE)
 ```
-
+]
 ---
 class: left, top
 ## `stargazer`
 
 - `stargazer` takes model objects as input and automatically creates an output table   
 
-.pull-left[
 <br>
+
+.pull-left[.blockquote.exercise[
+#### `r desktop` Example
+
 ````markdown
 `r ''````{r, results='asis', echo=TRUE}
 
@@ -680,37 +688,41 @@ stargazer::stargazer(linear_model,
       
 ```
 ````
-]
+]]
 
 --
 
-.pull-right[
-<br> 
-.left[
-.font80[
+.font60[.pull-right[
 
 ```{r, results='asis'}
 linear_model <- lm(mpg ~ cyl + wt, data = mtcars)
 stargazer::stargazer(linear_model, type = "html", out.header = TRUE, omit.table.layout = "sn")
 ```
 
-]]]
+]]
 
 ---
 class: left, top
 ## Plots
 
+<br>
+
+.pull-left[.blockquote.exercise[
+#### `r desktop` Example
 ````markdown
 `r ''````{r, fig.height = 5}
 hist(rnorm(1000))
 ```
 ````
+]]
 
 --
 
+.pull-right[
 ```{r, fig.height = 5}
 hist(rnorm(1000))
 ```
+]
 
 ---
 class: left, top
@@ -718,27 +730,33 @@ class: left, top
 
 - Links can be created as follows:
 
+.blockquote.exercise[
 ```markdown
 [This is a link to the R Markdown book](https://bookdown.org/yihui/rmarkdown/)
 ```
+]
 
 --
 
 - To include figures saved on your computer use
 
+.blockquote.exercise[
 ```markdown
 ![Figure Description](path/to/figure.png)
 ```
+]
 
 --
 
 - If you need more control over the appearence of the figure you can use
 
+.blockquote.exercise[
 ````markdown
 `r ''````{r, out.width = "500px", fig.align='center'}
 knitr::include_graphics("path/to/figure.png")
 ```
 ````
+]
 
 ---
 class: left, top
@@ -766,6 +784,9 @@ class: left, top
 
 --
 
+.blockquote.exercise[
+#### `r desktop` Example: plot
+
 ````markdown
 `r ''````{r}
 library(plotly)
@@ -780,6 +801,7 @@ plot_ly(mtcars, x = ~wt, y = ~hp, z = ~qsec, color = ~am, colors = c('#BF382A', 
 
 ```
 ````
+]
 
 ---
 class: left, top
@@ -805,7 +827,8 @@ plot_ly(mtcars, x = ~wt, y = ~hp, z = ~qsec, color = ~am, colors = c('#BF382A', 
 class: left, top
 ## Interactive documents
 
-- An interactive map. 
+.pull-left[.blockquote.exercise[.font70[
+#### `r desktop` Example: map 
 
 ````markdown
 `r ''````{r, out.width='100%'}
@@ -817,60 +840,71 @@ leaflet() %>% addTiles() %>%
   )
 ```
 ````
+]]]
 
-- Learn more at [Leaflet for R](https://rstudio.github.io/leaflet).
----
-class: left, top
-## Interactive documents
 
-```{r, out.width='100%'}
+.pull-right[
+
+```{r, out.height='450'}
 library(leaflet)
 leaflet() %>% addTiles() %>%
   setView(7.005070, 51.463675,zoom = 17) %>%
   addMarkers(
-    7.005070, 51.463675, label = "Uni DUE"  # Uni Essen 
+    7.005070, 51.463675, 
+    label = "Uni DUE"  # Uni Essen 
   )
 ```
-
-
----
-class: left, top
-## Interactive documents
-
-.code80[
-
-- The `DT` package also allows us to include interactive tables. 
-
-
-
-````markdown
-`r ''````{r}
-DT::datatable( head(iris, 10),
-  fillContainer = TRUE,  options = list(pageLength = 8))
-```
-````
 
 ]
 
 --
 
+- Learn more at [Leaflet for R](https://rstudio.github.io/leaflet).
+
+---
+class: left, top
+## Interactive documents
+
 .font80[
+
+- The `DT` package also allows us to include interactive tables. 
+
+.blockquote.exercise[
+#### `r desktop` Example: map
+
+````markdown
+`r ''````{r}
+DT::datatable( head(iris, 10),
+  fillContainer = TRUE,  options = list(pageLength = 5))
+```
+````
+
+]]
+
+--
+
+<br>
+
+.font50[
 
 ```{r}
 DT::datatable(
   head(iris, 10),
-  fillContainer = TRUE, options = list(pageLength = 8)
+  height = 600,
+  fillContainer = TRUE, options = list(pageLength = 5)
 )
 ```
-
 ]
+
 
 ---
 class: left, top
 ## Advanced Topics: Hooks
 
+.font70[
 - You can define your own chunk options using hooks. This is a topic for you if you want to become 
 a professional `knitr` user. 
+]
 
 --
 
@@ -880,7 +914,8 @@ a professional `knitr` user.
 - A chunk hook is a function defining what should happen before or after a code chunk.
 ]
 
-.code70[
+.code80[
+.blockquote.exercise[
 ```{r, echo=TRUE}
 # Template for a chunk hook
 knitr::knit_hooks$set(
@@ -892,7 +927,7 @@ foo_hook = function(before, options, envir) {
     }
   })
 ```
-]
+]]
 
 --
 
@@ -907,9 +942,13 @@ and after with `before == FALSE`.
 class: left, top
 ## Chunk Hooks: Example
 
+.font90[
 - To reduce the margins of a plot with chunk option `small.mar = TRUE` put the following code chunk 
 at the top of your document. 
 
+
+.blockquote.exercise[
+#### `r desktop` Funktion
 ````markdown
 `r ''````{r, eval = FALSE, echo=TRUE}
 knitr::knit_hooks$set(small.mar = function(before) {
@@ -917,21 +956,27 @@ knitr::knit_hooks$set(small.mar = function(before) {
 })
 ```
 ````
+]]
+
 --
 
+.font90[
 - `small.mar` now can be used as other chunk options. 
 
+.blockquote.exercise[
+#### `r desktop` Example
 ````markdown
 `r ''````{r, small.mar = TRUE}
 hist(rnorm)
 ```
 ````
+]]
 
 ---
 class: left, top
 ## Output Hooks
 
-.font80[
+.font70[
 - Output hooks are (render) functions that define how source code and its output is presented.
 - There are 8 output hooks to deal with differnt types of output: 
   - `source`: the source code
@@ -943,14 +988,21 @@ class: left, top
   - `inline`: output of inline R code
   - `chunk`: all the output of a chunk
   - `document`: the output of the whole document 
+]
 
+--
 
+.font70[.blockquote.exercise[
+#### `r desktop` Example
 ```{r, eval = FALSE, echo = TRUE}
 knitr::knit_hooks$set(small.mar = function(before) {
     if (before) par(mar = c(1, 1, 1, 1))  
 })
 ```
+]]
 
+--
+.font70[
 - There is for each of the above a default which you can adjust to your needs. 
 ]
 
@@ -959,6 +1011,10 @@ class: left, top
 ## Output Hooks: Example
 
 - You can e.g. use a hook to consistantly style all your tables using `kableExtra`.  
+
+.blockquote.exercise[
+#### `r desktop` Example
+
 
 ```{r, eval = FALSE, echo=TRUE}
 default_source_hook <- knit_hooks$get("source")
@@ -974,16 +1030,19 @@ knit_hooks$set(
   }
 )
 ```
-
+]
 
 ---
 class: left, top
 ## The `here` package
 
+.font90[
 - `here::here()` is returning the path to the directory where your project file lives in. 
+]
 
 --
 
+.font90[
 **Why is this useful?** 
 
 - If an Rmarkdown file is compiled it sets the working directory to the folder where your `.rmd` file is stored.
@@ -991,17 +1050,21 @@ class: left, top
   for the interactive part is set to the path of your project file. 
 - If your project becomes more complex and you are using subdirectories the working directory set for compilation
   and interactive work are not necessary the same. This is quite annoying.
+]
 
 --
 
+.font90[
 #### Solution
 
 - use `here::here()` when setting a path.
 
+.blockquote.exercise[
+#### `r desktop` Example
 ```{r, eval = FALSE, echo=TRUE}
 load(here::here("Data", "my_dataset.rda"))
 ```
-
+]]
 ---
 class: exercise_slide
 ## Exercises
