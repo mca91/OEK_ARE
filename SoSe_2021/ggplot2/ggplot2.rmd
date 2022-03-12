@@ -70,11 +70,15 @@ R is a free software environment for statistical computing and  <b>graphics</b>.
 .right[&mdash; <cite>[R-Projekt](https://www.r-project.org/)</cite>]
 </blockquote>
 
+--
+
 There are three major graphical systems: 
 
 - R base graphics
 - `lattice`
 - `ggplot2`
+
+--
 
 In this course, we will focus on `ggplot2`. If you want to learn about the others, 
 [R Graphics](https://www.routledge.com/R-Graphics-Third-Edition/Murrell/p/book/9780367780692)
@@ -90,6 +94,8 @@ class: left, top
 - an R package for data visualisation 
 - implementation of the [Grammar of Graphics](https://www.springer.com/de/book/9781475731002) in R
 - part of the [tidyverse](https://www.tidyverse.org/)
+
+--
 
 #### Some interesting links: 
 
@@ -112,6 +118,8 @@ class: left, top
 - statistical transformations (summarize data before plotting)
 - coordinate systems (e.g. Cartesian, polar, ...)
 
+--
+
 The data, mappings, statistical transformations and geometric objects form a layer.
 A plot can have multiple layers. 
 
@@ -119,7 +127,9 @@ A plot can have multiple layers.
 class: left, top
 ## A Basic Example
 
-.blockquote.exercise[
+.font90[.blockquote.exercise[
+
+#### `r desktop` Example
 ```{r, echo = TRUE, eval = FALSE}
 library(ggplot2)
 data("diamonds")
@@ -128,12 +138,16 @@ ggplot(data = diamonds) +
 ```
 ]
 <br>
+]
+
 --
 
 #### `ggplot()`
 
 - Creates a coordinate system that you can add layers to.
 - Everything you provide as an argument will be the default for all added layers.
+
+--
 
 #### `geom_point()`
 
@@ -163,34 +177,46 @@ not the whole dataset included
 class: left, top
 ## Adding Layers
 
+.font90[
 To make the (possibly nonlinear) relationship in the data easier visible we add a smoothing function to the plot.
+]
 
-.blockquote.exercise[
+--
+
+.font90[.blockquote.exercise[
+
+#### `r desktop` Example
 ```{r, echo = TRUE, eval = FALSE}
 ggplot(data = diamonds) + 
   geom_point(mapping = aes(x = carat, y = price)) +
   geom_smooth(mapping = aes(x = carat, y = price), method = 'loess')
 ```
+]]
+
+--
+
+.font90[
+To write more compact code we can
+- omit the parameter names 
+- switch `mapping` to `ggplot()`.    
 ]
 
 --
 
-To write more compact code we can
-- omit the parameter names 
-- switch `mapping` to `ggplot()`.    
-
---
-
+.font90[
 The same mapping is then used for all layers (but can be overwritten if necessary).
+]
 --
 
-.blockquote.exercise[
+.font90[.blockquote.exercise[
+
+#### `r desktop` Example
 ```{r, echo = TRUE, eval = FALSE}
 ggplot(diamonds, aes(carat, price)) + 
   geom_point() +
   geom_smooth(method = 'loess')
 ```
-]
+]]
 
 ---
 class: left, top
@@ -206,6 +232,7 @@ ggplot(diamonds, aes(x = carat, y = price)) +
 class: left, top
 ## Aesthetics
 
+
 - Until now we only used the x and y coordinates as aesthetics.
 - `?geom_point()` tells us about further aesthetics that we can map data to. 
 - Each geom has its own set of aesthetics.
@@ -213,15 +240,20 @@ class: left, top
 --
 
 .blockquote.exercise[
+
+#### `r desktop` Example
 ```{r, echo = TRUE, eval = FALSE}
 ggplot(diamonds, aes(x = carat, y = price,
-                     color = color, shape =  cut)) + 
+                     color = color, 
+                     shape =  cut)) + 
   geom_point()
 ```
 ]
+
 ---
 class: left, top
 ## Aesthetics
+
 
 ```{r, echo = FALSE, eval = TRUE}
 ggplot(diamonds, aes(x = carat, y = price, 
@@ -246,13 +278,16 @@ class: left, top
 - If discrete variables are mapped to aesthetics, ggplot will automatically group the data.
 - In this case every statistic transformation is performed by group.
 
+.blockquote.exercise[
 
+#### `r desktop` Example
 ```{r, echo = TRUE, eval = FALSE, warning=FALSE}
 ggplot(diamonds, aes(x = carat, y = price, 
                      color = color, shape =  cut)) + 
   geom_point() + 
   geom_smooth()
 ```
+]
 
 ---
 class: left, top
@@ -267,18 +302,29 @@ ggplot(diamonds, aes(x = carat, y = price, color = color, shape =  cut)) +
 class: left, top
 ## Statistical Transformations and Aesthetics
 - If this is not desired simply move color and shape as additional aesthetics to `geom_point()`.
-    ```{r, echo = TRUE, eval = FALSE}
+
+.blockquote.exercise[
+
+#### `r desktop` Example
+```{r, echo = TRUE, eval = FALSE}
 ggplot(diamonds, aes(x = carat, y = price)) + 
   geom_point(aes(color = color, shape = cut)) +
   geom_smooth()
-    ```
+```
+]
+
 - Sometimes it is more convenient to leave all aesthetics in `ggplot()` (e.g. if there are many layers) and overwrite the created groups by an arbitrary constant value.
-    ```{r, echo = TRUE, eval = FALSE}
+
+.blockquote.exercise[
+
+#### `r desktop` Example
+```{r, echo = TRUE, eval = FALSE}
 ggplot(diamonds, aes(x = carat, y = price, 
                      color = color, shape = cut)) + 
   geom_point() +  
   geom_smooth(aes(group = 1))
-    ```
+```
+]
 
 ---
 class: left, top
@@ -306,6 +352,7 @@ class: left, top
 - Often it is not a good idea to change the default behaviour (e.g. try  `geom_point(stat = "smooth", method = "lm")`) but we will see an example where it can be useful.
 
 ---
+class: exercise_slide
 ## Exercises
 
 <ol start="2"> 
@@ -318,77 +365,169 @@ class: left, top
 ---
 class: left, top
 ## Bar Plot
+
+.font80[
 `geom_bar()` counts the number of observations within each group and produces a bar plot. 
-```{r, echo = TRUE, eval = TRUE, out.width='50%'}
+
+.pull-left[
+
+<br>
+<br>
+.blockquote.exercise[
+
+#### `r desktop` Example
+```{r, echo = TRUE, eval = FALSE, out.width='100%'}
+ggplot(data = diamonds) + 
+  geom_bar(mapping = aes(x = cut)) 
+# x should be discrete
+```
+]]]
+
+--
+.pull-right[
+```{r, echo = FALSE, eval = TRUE, out.width='100%'}
 ggplot(data = diamonds) + 
   geom_bar(mapping = aes(x = cut)) # x should be discrete
 ```
-
+]
 ---
 class: left, top
 ## Histogram 
+.font90[.pull-left[
 
-```{r, echo = TRUE, eval = TRUE, out.width='50%'}
+<br>
+<br>
+.blockquote.exercise[
+
+#### `r desktop` Example
+```{r, echo = TRUE, eval = FALSE, out.width='50%'}
 ggplot(diamonds, aes(x = depth, fill = cut)) + 
   geom_histogram(binwidth = 0.1) 
 ```
+]]]
+
+--
+.pull-right[
+```{r, echo = FALSE, eval = TRUE, out.width='100%'}
+ggplot(diamonds, aes(x = depth, fill = cut)) + 
+  geom_histogram(binwidth = 0.1) 
+```
+]
 
 ---
 class: left, top
 ## 1D Density 
 
+.font90[.pull-left[
+
+<br>
+<br>
+.blockquote.exercise[
+
+#### `r desktop` Example
 ```{r, echo = TRUE, eval = FALSE, out.width='50%'}
+ggplot(diamonds, aes(x = depth, fill = cut)) + 
+  # try color instead of fill 
+  geom_density() 
+```
+]]]
+
+--
+
+.pull-right[
+```{r, echo = FALSE, eval = TRUE, out.width='100%'}
 ggplot(diamonds, aes(x = depth, fill = cut)) + # try color instead of fill 
   geom_density() 
 ```
-
-```{r, echo = FALSE, eval = TRUE, out.width='50%'}
-ggplot(diamonds, aes(x = depth, fill = cut)) + # try color instead of fill 
-  geom_density() 
-```
-
+]
 ---
 class: left, top
 ## 2D Density
 
-```{r, echo = TRUE, eval = FALSE}
-ggplot(data = diamonds, mapping = aes(carat, price)) + 
-  geom_point() + 
-  geom_density2d()
-```
+.font90[.pull-left[
 
-```{r, echo = FALSE, eval = TRUE, out.width='55%'}
+<br>
+<br>
+.blockquote.exercise[
+
+#### `r desktop` Example
+```{r, echo = TRUE, eval = FALSE}
+ggplot(diamonds, aes(carat, price)) + 
+  geom_point() + 
+  geom_density2d()
+```
+]]]
+
+--
+
+.pull-right[
+```{r, echo = FALSE, eval = TRUE, out.width='100%'}
 ggplot(data = diamonds, mapping = aes(carat, price)) + 
   geom_point() + 
   geom_density2d()
 ```
+]
 
 ---
 class: left, top
 ## 2D Density with `geom = "polygon"`
 
+.font90[.pull-left[
+
+<br>
+<br>
+.blockquote.exercise[
+
+#### `r desktop` Example
 ```{r echo = TRUE, eval = FALSE}
+ggplot(diamonds, aes(carat, price)) + 
+  geom_point() + 
+  stat_density2d(aes(fill = ..level..), 
+                 geom = "polygon")
+```
+]]]
+
+--
+
+.pull-right[
+```{r, echo = FALSE, eval = TRUE, out.width='100%'}
 ggplot(data = diamonds, mapping = aes(carat, price)) + 
   geom_point() + 
-  stat_density2d(aes(fill = ..level..), geom = "polygon")
-```
-
-```{r, echo = FALSE, eval = TRUE, out.width='55%'}
-ggplot(data = diamonds, mapping = aes(carat, price)) + 
-  geom_point() + 
-  stat_density2d(aes(fill = ..level..), geom = "polygon")
+  stat_density2d(aes(fill = ..level..), 
+                 geom = "polygon")
 
 ```
+]
 
 ---
 class: left, top
 ## Faceting using one variable
 - Faceting generates multiple plots each showing a different subset of the data.
-```{r, echo = TRUE, eval = TRUE, out.width='50%'}
-ggplot(data = diamonds, mapping = aes(carat, price))  + 
+
+.font90[.pull-left[
+
+<br>
+<br>
+.blockquote.exercise[
+
+#### `r desktop` Example
+```{r, echo = TRUE, eval = FALSE, out.width='50%'}
+ggplot(diamonds, aes(carat, price))  + 
   geom_point() + 
   facet_grid( ~ cut)
 ```
+]]]
+
+--
+.pull-right[
+
+```{r, echo = FALSE, eval = TRUE, out.width='100%'}
+ggplot(diamonds, aes(carat, price))  + 
+  geom_point() + 
+  facet_grid( ~ cut)
+```
+
+]
 
 ---
 class: left, top
