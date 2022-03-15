@@ -5,7 +5,7 @@
     <meta charset="utf-8" />
     <meta name="author" content="Martin C. Arnold" />
     <meta name="author" content="Jens Klenke" />
-    <meta name="date" content="2022-03-12" />
+    <meta name="date" content="2022-03-15" />
     <script src="ggplot2_files/header-attrs/header-attrs.js"></script>
     <link href="ggplot2_files/remark-css/default.css" rel="stylesheet" />
     <script src="ggplot2_files/clipboard/clipboard.min.js"></script>
@@ -484,69 +484,154 @@ ggplot(diamonds, aes(carat, price))  +
 class: left, top
 ## Faceting using two variables
 
+.font90[.blockquote.exercise[
+
+#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example
+
 ```r
 ggplot(data = diamonds, mapping = aes(carat, price))  + 
   geom_point() + 
   facet_grid(color ~ cut)
 ```
+]]
 
-&lt;img src="ggplot2_files/figure-html/unnamed-chunk-25-1.png" width="50%" style="display: block; margin: auto;" /&gt;
-
+&lt;img src="ggplot2_files/figure-html/unnamed-chunk-26-1.png" width="45%" style="display: block; margin: auto;" /&gt;
 
 
 ---
 class: left, top
 ## Position Adjustments
 - Each geometric object has a parameter for position adjustment.
-    
-    ```r
-    ggplot(data = diamonds) + 
-      geom_bar(mapping = aes(x = cut, fill = clarity), position = "stack") # the default
-    ```
+.blockquote.exercise[
+
+```r
+ggplot(data = diamonds) + 
+  geom_bar(mapping = aes(x = cut, fill = clarity), position = "stack") # the default
+```
+]
+
+--
+
 - Instead of stacking the bars we can position them side-by-side using `dodge`. 
-    
-    ```r
-      geom_bar(., position = "dodge") 
-    ```
+.blockquote.exercise[
+
+```r
+  geom_bar(., position = "dodge") 
+```
+]
+
+--
+
 - With `fill` relative proportions can be compared.
-    
-    ```r
-    geom_bar(., position = "fill") 
-    ```
+.blockquote.exercise[
+
+```r
+geom_bar(., position = "fill") 
+```
+]
 
 ---
 class: left, top
-## Stacked Bar Plot 
-&lt;img src="ggplot2_files/figure-html/unnamed-chunk-29-1.png" width="72%" style="display: block; margin: auto;" /&gt;
+## Stacked Bar Plot
+
+.font70[.blockquote.exercise[
+
+#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example
+
+```r
+ggplot(data = diamonds) + 
+  geom_bar(mapping = aes(x = cut, fill = clarity), position = "stack") # the default
+```
+]
+
+&lt;br&gt;
+]
+
+--
+
+&lt;img src="ggplot2_files/figure-html/unnamed-chunk-31-1.png" width="55%" style="display: block; margin: auto;" /&gt;
+
+
 
 ---
 class: left, top
 ## Dodged Bar Plot 
-&lt;img src="ggplot2_files/figure-html/unnamed-chunk-30-1.png" width="72%" style="display: block; margin: auto;" /&gt;
+
+.font70[.blockquote.exercise[
+
+#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example
+
+```r
+ggplot(data = diamonds) + 
+  geom_bar(mapping = aes(x = cut, fill = clarity), position = "dodge") 
+```
+]
+&lt;br&gt;
+]
+
+--
+
+&lt;img src="ggplot2_files/figure-html/unnamed-chunk-33-1.png" width="55%" style="display: block; margin: auto;" /&gt;
+
 
 ---
 class: left, top
 ## Filled Bar Plot
-&lt;img src="ggplot2_files/figure-html/unnamed-chunk-31-1.png" width="72%" style="display: block; margin: auto;" /&gt;
+
+.font70[.blockquote.exercise[
+
+#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example
+
+```r
+ggplot(data = diamonds) + 
+  geom_bar(mapping = aes(x = cut, fill = clarity), position = "fill") 
+```
+]
+&lt;br&gt;
+]
+
+--
+
+&lt;img src="ggplot2_files/figure-html/unnamed-chunk-35-1.png" width="55%" style="display: block; margin: auto;" /&gt;
 
 ---
 class: left, top
 ## Scales
 
+.font80[
 - Scales determine how the data are mapped to the aesthetics (e.g. which value takes which color).
 - Scales are defined by functions of the form `scale_aestheticname_scalename()`.
+]
 
+--
+
+.font80[.blockquote.exercise[
+
+#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example
 
 ```r
 ggplot(diamonds, aes(carat, price, color = cut)) + geom_point() + scale_color_grey()
 ```
+]
+&lt;br&gt;]
 
-&lt;img src="ggplot2_files/figure-html/unnamed-chunk-32-1.png" width="50%" style="display: block; margin: auto;" /&gt;
+--
+
+&lt;img src="ggplot2_files/figure-html/unnamed-chunk-37-1.png" width="45%" style="display: block; margin: auto;" /&gt;
 
 ---
 class: left, top
 ## Scales
+
+.font80[
 - You can also define your own scales.
+]
+
+--
+
+.font80[.blockquote.exercise[
+
+#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example
 
 
 ```r
@@ -554,8 +639,14 @@ ggplot(diamonds, aes(carat, price, color = cut)) +
   geom_point() + 
   scale_color_manual(values = c("#c9792e", "blue", "green", "gray", "thistle2"))
 ```
+]
+&lt;br&gt;
+]
 
-&lt;img src="ggplot2_files/figure-html/unnamed-chunk-33-1.png" width="50%" style="display: block; margin: auto;" /&gt;
+--
+
+&lt;img src="ggplot2_files/figure-html/unnamed-chunk-39-1.png" width="45%" style="display: block; margin: auto;" /&gt;
+
 
 ---
 class: left, top
@@ -568,17 +659,38 @@ class: left, top
 - change the axis labels
 - change the legend title.
 
+--
+
+.blockquote.exercise[
+
+#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example
 
 ```r
 ggplot(diamonds, aes(x = carat, y = price, fill = cut)) + 
   geom_point() +
   labs(title = "Diamanten", x = "Karat", y = "Preis", fill = "Schnitt") 
 ```
-
+]
 ---
 class: left, top
 ## Titles and labels 
-&lt;img src="ggplot2_files/figure-html/unnamed-chunk-35-1.png" width="72%" style="display: block; margin: auto;" /&gt;
+
+.font80[.blockquote.exercise[
+
+#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example
+
+
+```r
+ggplot(diamonds, aes(x = carat, y = price, fill = cut)) + 
+  geom_point() +
+  labs(title = "Diamanten", x = "Karat", y = "Preis", fill = "Schnitt") 
+```
+]]
+
+--
+
+
+&lt;img src="ggplot2_files/figure-html/unnamed-chunk-42-1.png" width="50%" style="display: block; margin: auto;" /&gt;
 
 ---
 class: left, top
@@ -592,19 +704,39 @@ Themes control the appearance of the plot
 - grid lines
 - ...
 
+--
+
 There are many predefined themes. However, if you like you may also define everything yourself.
 
+--
+
+.font80[.blockquote.exercise[
+
+#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example
 
 ```r
 ggplot(diamonds, aes(carat, price, color = cut)) + 
   geom_point() + theme_bw()
 ```
+]]
 
 ---
 class: left, top
 ## Themes
 
-&lt;img src="ggplot2_files/figure-html/unnamed-chunk-37-1.png" width="72%" style="display: block; margin: auto;" /&gt;
+.font80[.blockquote.exercise[
+
+#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example
+
+```r
+ggplot(diamonds, aes(carat, price, color = cut)) + 
+  geom_point() + theme_bw()
+```
+]]
+
+--
+
+&lt;img src="ggplot2_files/figure-html/unnamed-chunk-45-1.png" width="55%" style="display: block; margin: auto;" /&gt;
 
 ---
 class: left, top
@@ -616,7 +748,11 @@ class: left, top
     - only plot subsets of the data (e.g. `facet_grid`)
     - making the points transparent
 
+--
 
+.font80[.blockquote.exercise[
+
+#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example
 
 ```r
 library(cowplot)
@@ -629,19 +765,27 @@ trans &lt;- ggplot(diamonds, aes(carat, price)) +
 
 plot_grid(over1, trans)
 ```
+]]
 
 ---
 class: left, top
 ## Transparency
 
-&lt;img src="ggplot2_files/figure-html/unnamed-chunk-39-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+&lt;img src="ggplot2_files/figure-html/unnamed-chunk-47-1.png" width="100%" style="display: block; margin: auto;" /&gt;
 
 ---
 class: left, top
 ## Jittering
 
+.font80[
 - Even in cases with only a few data points overplotting can become an issue if there is only a small number of unique values. 
 - Adding small random numbers can help to reduce overplotting. 
+]
+--
+
+.font80[.blockquote.exercise[
+
+#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example
 
 ```r
 over2 &lt;- ggplot(mtcars, aes(am, cyl)) + 
@@ -652,12 +796,13 @@ jitter &lt;- ggplot(mtcars, aes(am, cyl)) +
 
 plot_grid(over2, jitter) # from cowplot 
 ```
+]]
 
 ---
 class: left, top
 ## Jittering
 
-&lt;img src="ggplot2_files/figure-html/unnamed-chunk-41-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+&lt;img src="ggplot2_files/figure-html/unnamed-chunk-49-1.png" width="100%" style="display: block; margin: auto;" /&gt;
 
 ---
 class: left, top
@@ -667,6 +812,11 @@ class: left, top
 - With basic `ggplot2` it is e.g. quite tricky to create a composite plot as 
   created by `ggExtra::ggMarginal()`
 
+--
+
+.font80[.blockquote.exercise[
+
+#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example
 
 ```r
 library(ggExtra)
@@ -681,18 +831,20 @@ ggMarginal(scatter_plot,          # ggExtra
             fill = '#FFA500'
            )
 ```
+]]
 
 ---
 class: left, top
 ## Composite Plots
 
-&lt;img src="ggplot2_files/figure-html/unnamed-chunk-43-1.png" width="72%" style="display: block; margin: auto;" /&gt;
+&lt;img src="ggplot2_files/figure-html/unnamed-chunk-51-1.png" width="72%" style="display: block; margin: auto;" /&gt;
 
 ---
-class: left, top
+class: exercise_slide
 
 ## Exercises
 
+.font90[
 &lt;ol start="6"&gt;
 &lt;li&gt; Download the Titanic data set from Moodle and &lt;/li&gt;
 &lt;/ol&gt;
@@ -715,8 +867,11 @@ class: left, top
 
 &lt;ol start="8"&gt;
 &lt;li&gt; Compare the two data sets  &lt;TT&gt;economics&lt;/TT&gt; and &lt;TT&gt;economics_long&lt;/TT&gt; (both come with ggplot) with respect to the ease of use when working with &lt;TT&gt;ggplot&lt;/TT&gt;.&lt;/li&gt;
+]
 
 ---
+class: exercise_slide
+
 &lt;ol start="9"&gt;
 &lt;li&gt;Reproduce the plot created by the following code with &lt;TT&gt;ggplot&lt;/TT&gt;.&lt;/li&gt;
 
@@ -744,7 +899,7 @@ lines(wt_new, conf_interval[, 3], col = "steelblue", lty = 2)
 
 
 
-
+???
 
 
 

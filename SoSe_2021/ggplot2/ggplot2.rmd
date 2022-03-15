@@ -532,51 +532,119 @@ ggplot(diamonds, aes(carat, price))  +
 ---
 class: left, top
 ## Faceting using two variables
-```{r, echo = TRUE, eval = TRUE, out.width='50%'}
+
+.font90[.blockquote.exercise[
+
+#### `r desktop` Example
+```{r, echo = TRUE, eval = FALSE, out.width='45%'}
+ggplot(data = diamonds, mapping = aes(carat, price))  + 
+  geom_point() + 
+  facet_grid(color ~ cut)
+```
+]]
+
+```{r, echo = FALSE, eval = TRUE, out.width='45%'}
 ggplot(data = diamonds, mapping = aes(carat, price))  + 
   geom_point() + 
   facet_grid(color ~ cut)
 ```
 
 
-
 ---
 class: left, top
 ## Position Adjustments
 - Each geometric object has a parameter for position adjustment.
-    ```{r, echo = TRUE, eval = FALSE}
-ggplot(data = diamonds) + 
-  geom_bar(mapping = aes(x = cut, fill = clarity), position = "stack") # the default
-    ```
-- Instead of stacking the bars we can position them side-by-side using `dodge`. 
-    ```{r, echo = TRUE, eval = FALSE}
-  geom_bar(., position = "dodge") 
-    ```
-- With `fill` relative proportions can be compared.
-    ```{r, echo = TRUE, eval = FALSE}
-geom_bar(., position = "fill") 
-    ```
-
----
-class: left, top
-## Stacked Bar Plot 
-```{r, echo = FALSE, eval = TRUE}
+.blockquote.exercise[
+```{r, echo = TRUE, eval = FALSE}
 ggplot(data = diamonds) + 
   geom_bar(mapping = aes(x = cut, fill = clarity), position = "stack") # the default
 ```
+]
+
+--
+
+- Instead of stacking the bars we can position them side-by-side using `dodge`. 
+.blockquote.exercise[
+```{r, echo = TRUE, eval = FALSE}
+  geom_bar(., position = "dodge") 
+```
+]
+
+--
+
+- With `fill` relative proportions can be compared.
+.blockquote.exercise[
+```{r, echo = TRUE, eval = FALSE}
+geom_bar(., position = "fill") 
+```
+]
+
+---
+class: left, top
+## Stacked Bar Plot
+
+.font70[.blockquote.exercise[
+
+#### `r desktop` Example
+```{r, echo = TRUE, eval = FALSE}
+ggplot(data = diamonds) + 
+  geom_bar(mapping = aes(x = cut, fill = clarity), position = "stack") # the default
+```
+]
+
+<br>
+]
+
+--
+
+```{r, echo = FALSE, eval = TRUE, out.width='55%'}
+ggplot(data = diamonds) + 
+  geom_bar(mapping = aes(x = cut, fill = clarity), position = "stack") # the default
+```
+
+
 
 ---
 class: left, top
 ## Dodged Bar Plot 
-```{r, echo = FALSE, eval = TRUE}
+
+.font70[.blockquote.exercise[
+
+#### `r desktop` Example
+```{r, echo = TRUE, eval = FALSE, out.width='55%'}
+ggplot(data = diamonds) + 
+  geom_bar(mapping = aes(x = cut, fill = clarity), position = "dodge") 
+```
+]
+<br>
+]
+
+--
+
+```{r, echo = FALSE, eval = TRUE, out.width='55%'}
 ggplot(data = diamonds) + 
   geom_bar(mapping = aes(x = cut, fill = clarity), position = "dodge") 
 ```
 
+
 ---
 class: left, top
 ## Filled Bar Plot
-```{r, echo = FALSE, eval = TRUE}
+
+.font70[.blockquote.exercise[
+
+#### `r desktop` Example
+```{r, echo = TRUE, eval = FALSE, out.width='55%'}
+ggplot(data = diamonds) + 
+  geom_bar(mapping = aes(x = cut, fill = clarity), position = "fill") 
+```
+]
+<br>
+]
+
+--
+
+```{r, echo = FALSE, eval = TRUE, out.width='55%'}
 ggplot(data = diamonds) + 
   geom_bar(mapping = aes(x = cut, fill = clarity), position = "fill") 
 ```
@@ -585,23 +653,59 @@ ggplot(data = diamonds) +
 class: left, top
 ## Scales
 
+.font80[
 - Scales determine how the data are mapped to the aesthetics (e.g. which value takes which color).
 - Scales are defined by functions of the form `scale_aestheticname_scalename()`.
+]
 
-```{r, echo = TRUE, eval = TRUE, out.width='50%'}
+--
+
+.font80[.blockquote.exercise[
+
+#### `r desktop` Example
+```{r, echo = TRUE, eval = FALSE, out.width='50%'}
+ggplot(diamonds, aes(carat, price, color = cut)) + geom_point() + scale_color_grey()
+```
+]
+<br>]
+
+--
+
+```{r, echo = FALSE, eval = TRUE, out.width='45%'}
 ggplot(diamonds, aes(carat, price, color = cut)) + geom_point() + scale_color_grey()
 ```
 
 ---
 class: left, top
 ## Scales
-- You can also define your own scales.
 
-```{r, echo = TRUE, eval = TRUE, out.width='50%'}
+.font80[
+- You can also define your own scales.
+]
+
+--
+
+.font80[.blockquote.exercise[
+
+#### `r desktop` Example
+
+```{r, echo = TRUE, eval = FALSE, out.width='50%'}
 ggplot(diamonds, aes(carat, price, color = cut)) + 
   geom_point() + 
   scale_color_manual(values = c("#c9792e", "blue", "green", "gray", "thistle2"))
 ```
+]
+<br>
+]
+
+--
+
+```{r, echo = FALSE, eval = TRUE, out.width='45%'}
+ggplot(diamonds, aes(carat, price, color = cut)) + 
+  geom_point() + 
+  scale_color_manual(values = c("#c9792e", "blue", "green", "gray", "thistle2"))
+```
+
 
 ---
 class: left, top
@@ -614,16 +718,36 @@ class: left, top
 - change the axis labels
 - change the legend title.
 
+--
+
+.blockquote.exercise[
+
+#### `r desktop` Example
 ```{r, echo = TRUE, eval = FALSE}
 ggplot(diamonds, aes(x = carat, y = price, fill = cut)) + 
   geom_point() +
   labs(title = "Diamanten", x = "Karat", y = "Preis", fill = "Schnitt") 
 ```
-
+]
 ---
 class: left, top
 ## Titles and labels 
-```{r, echo = FALSE, eval = TRUE}
+
+.font80[.blockquote.exercise[
+
+#### `r desktop` Example
+
+```{r, echo = TRUE, eval = FALSE}
+ggplot(diamonds, aes(x = carat, y = price, fill = cut)) + 
+  geom_point() +
+  labs(title = "Diamanten", x = "Karat", y = "Preis", fill = "Schnitt") 
+```
+]]
+
+--
+
+
+```{r, echo = FALSE, eval = TRUE, out.width='50%'}
 ggplot(diamonds, aes(x = carat, y = price, fill = cut)) + 
   geom_point() +
   labs(title = "Diamanten", x = "Karat", y = "Preis", fill = "Schnitt") 
@@ -641,18 +765,37 @@ Themes control the appearance of the plot
 - grid lines
 - ...
 
+--
+
 There are many predefined themes. However, if you like you may also define everything yourself.
 
+--
+
+.font80[.blockquote.exercise[
+
+#### `r desktop` Example
 ```{r, echo = TRUE, eval = FALSE}
 ggplot(diamonds, aes(carat, price, color = cut)) + 
   geom_point() + theme_bw()
 ```
+]]
 
 ---
 class: left, top
 ## Themes
 
-```{r}
+.font80[.blockquote.exercise[
+
+#### `r desktop` Example
+```{r, echo = TRUE, eval = FALSE}
+ggplot(diamonds, aes(carat, price, color = cut)) + 
+  geom_point() + theme_bw()
+```
+]]
+
+--
+
+```{r, out.width='55%'}
 ggplot(diamonds, aes(carat, price, color = cut)) + 
   geom_point() + theme_bw()
 ```
@@ -667,7 +810,11 @@ class: left, top
     - only plot subsets of the data (e.g. `facet_grid`)
     - making the points transparent
 
+--
 
+.font80[.blockquote.exercise[
+
+#### `r desktop` Example
 ```{r, eval = FALSE, echo = TRUE}
 library(cowplot)
 
@@ -679,6 +826,7 @@ trans <- ggplot(diamonds, aes(carat, price)) +
 
 plot_grid(over1, trans)
 ```
+]]
 
 ---
 class: left, top
@@ -700,8 +848,15 @@ plot_grid(over1, trans) # from cowplot
 class: left, top
 ## Jittering
 
+.font80[
 - Even in cases with only a few data points overplotting can become an issue if there is only a small number of unique values. 
 - Adding small random numbers can help to reduce overplotting. 
+]
+--
+
+.font80[.blockquote.exercise[
+
+#### `r desktop` Example
 ```{r, eval = FALSE, echo = TRUE, fig.width=10, out.width='100%'}
 over2 <- ggplot(mtcars, aes(am, cyl)) + 
   geom_point() 
@@ -711,6 +866,7 @@ jitter <- ggplot(mtcars, aes(am, cyl)) +
 
 plot_grid(over2, jitter) # from cowplot 
 ```
+]]
 
 ---
 class: left, top
@@ -734,6 +890,11 @@ class: left, top
 - With basic `ggplot2` it is e.g. quite tricky to create a composite plot as 
   created by `ggExtra::ggMarginal()`
 
+--
+
+.font80[.blockquote.exercise[
+
+#### `r desktop` Example
 ```{r, eval = FALSE, echo = TRUE}
 library(ggExtra)
 scatter_plot <- ggplot(diamonds, aes(carat, price)) + 
@@ -747,6 +908,7 @@ ggMarginal(scatter_plot,          # ggExtra
             fill = '#FFA500'
            )
 ```
+]]
 
 ---
 class: left, top
@@ -769,10 +931,11 @@ ggMarginal(scatter_plot,
 ```
 
 ---
-class: left, top
+class: exercise_slide
 
 ## Exercises
 
+.font90[
 <ol start="6">
 <li> Download the Titanic data set from Moodle and </li>
 </ol>
@@ -795,8 +958,11 @@ class: left, top
 
 <ol start="8">
 <li> Compare the two data sets  <TT>economics</TT> and <TT>economics_long</TT> (both come with ggplot) with respect to the ease of use when working with <TT>ggplot</TT>.</li>
+]
 
 ---
+class: exercise_slide
+
 <ol start="9">
 <li>Reproduce the plot created by the following code with <TT>ggplot</TT>.</li>
 
@@ -823,7 +989,7 @@ lines(wt_new, conf_interval[, 3], col = "steelblue", lty = 2)
 
 
 
-
+???
 
 ```{r, eval = FALSE}
 library(ggplot2)
