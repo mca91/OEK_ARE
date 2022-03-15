@@ -129,7 +129,9 @@ print(mtcars_tibble)
 
 - more consistent subsetting behavior
 
-.blockquote.exercise.font90[
+.blockquote.exercise.font80[
+#### `r desktop` Example
+
 ```{r, echo = TRUE, eval = FALSE}
 mtcars[ ,1:2] # returns a data.frame
 mtcars[ ,1]   # returns a vector 
@@ -144,6 +146,7 @@ mtcars_tibble[ ,1]   # returns a tibble
 - lazy and sequential evaluation 
 
 .blockquote.exercise[
+#### `r desktop` Example
 ```{r, echo = TRUE, eval = FALSE}
 data.frame(x = 1:3, y = x^2) # not working
 tibble(x = 1:3, y = x^2)
@@ -155,6 +158,7 @@ tibble(x = 1:3, y = x^2)
 - higher flexibility with nested data
 
 .blockquote.exercise[
+#### `r desktop` Example
 ```{r, echo = TRUE, eval = FALSE}
 data_df  <- data.frame(days = 1:3,
                        data = list(mtcars)) # not working
@@ -179,14 +183,17 @@ background-position: 97.5% 8%
 
 The `dplyr` package is the most important package of the `tidyverse` when it comes to data manipulation and transformation. 
 
+--
+
 The core characteristics of the package:
 
 - focus on data frames (data frame in &rarr; data frame out)
 - verbose compared to base R which leads to longer but easier to read code
 - consistent syntax. 
 
-You can compare the functionality to that of a  relational database which provides methods to work with
-single tables and multiple tables. 
+--
+
+You can compare the functionality to that of a  relational database which provides methods to work with single tables and multiple tables. 
 
 ---
 class: top, left
@@ -243,7 +250,7 @@ arrange(mtcars_tibble, desc(cyl))
 ```{r, echo = TRUE, eval = FALSE}
 relocate(mtcars_tibble, gear)
 relocate(mtcars_tibble, gear, .after = last_col())
-relocate(mtcars_tibble, gear, .before = mpg)
+relocate(mtcars_tibble, gear, .before = cyl)
 ```
 ]
 
@@ -276,18 +283,18 @@ summarise(mtcars_tibble, mean_hp = mean(hp), max_mpg = max(mpg))
 class: top, left
 ## Single Table Functions
 
-- `sample_n()` and `sample_frac()` to take random samples.
+- `slice_sample()` to take random samples
 
 .blockquote.exercise[
 ```{r, echo = TRUE, eval = FALSE}
-sample_n(mtcars_tibble, 10)
-sample_frac(mtcars_tibble, 0.1)
+slice_sample(mtcars_tibble, n = 10)
+slice_sample(mtcars_tibble, prop = 0.1)
 ```
 ]
 
 --
 
-- `distinct()` removes duplicate rows.
+- `distinct()` removes duplicate rows
 
 .blockquote.exercise[
 ```{r, echo = TRUE, eval = FALSE}
@@ -311,12 +318,12 @@ tally(mtcars_tibble); tally(mtcars_tibble, cyl)
 ---
 class: top, left
 
+.font80[
 ## Filter 
 
-.font80[
 The function `filter()` selects rows based on their values. 
 
-- Use comparison operators `==`, `>`, `>=`, `<`, `<=`, and `!=` to filter rows based on a condition. 
+- Use comparison operators `==`, `>`, `>=`, `<`, `<=`, and `!=` to filter rows based on a logical condition. 
 
 .blockquote.exercise[
 ```{r, echo = TRUE, eval = FALSE}
@@ -339,7 +346,7 @@ filter(mtcars_tibble, hp > 100 | cyl == 4)
 --
 
 .font80[
-- Additional arguments to `filter()` are combined with `&` which is the same as the above. 
+- Additional arguments to `filter()` are combined in the back end with `&` which is the same as the above. 
 
 .blockquote.exercise[
 ```{r, echo = TRUE, eval = FALSE}
@@ -702,6 +709,7 @@ class: top, left
 We could nest all those functions to get rid of the intermediate result.
 
 .blockquote.exercise[ 
+#### `r desktop` Example
 ```{r, echo = TRUE}
 summarise(group_by(mutate(filter(mtcars_tibble, cyl <= 8), gpm = 1/mpg)), 
           count = n(), 
@@ -724,8 +732,8 @@ The value on the left side of the operator becomes the input to the function on 
 
 --
 
-.blockquote.exercise.font90[ 
-
+.blockquote.exercise.font80[ 
+#### `r desktop` Example
 ```{r, echo = TRUE, eval = FALSE}
 mtcars_tibble %>% 
   mutate(gpm = 1/mpg) %>%

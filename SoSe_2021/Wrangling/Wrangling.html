@@ -5,7 +5,7 @@
     <meta charset="utf-8" />
     <meta name="author" content="Martin C. Arnold" />
     <meta name="author" content="Jens Klenke" />
-    <meta name="date" content="2022-03-10" />
+    <meta name="date" content="2022-03-15" />
     <script src="Wrangling_files/header-attrs/header-attrs.js"></script>
     <link href="Wrangling_files/remark-css/default.css" rel="stylesheet" />
     <script src="Wrangling_files/clipboard/clipboard.min.js"></script>
@@ -26,10 +26,6 @@
       cursor: default;
     }
     </style>
-
-    <script src="https://code.jquery.com/jquery-3.4.1.min.js"
-      integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
-      crossorigin="anonymous"></script>
     <link rel="stylesheet" href="../assets/ude_fonts.css" type="text/css" />
     <link rel="stylesheet" href="../assets/ude.css" type="text/css" />
     <link rel="stylesheet" href="../assets/title_slides.css" type="text/css" />
@@ -130,7 +126,9 @@ print(mtcars_tibble)
 
 - more consistent subsetting behavior
 
-.blockquote.exercise.font90[
+.blockquote.exercise.font80[
+#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example
+
 
 ```r
 mtcars[ ,1:2] # returns a data.frame
@@ -146,6 +144,7 @@ mtcars_tibble[ ,1]   # returns a tibble
 - lazy and sequential evaluation 
 
 .blockquote.exercise[
+#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example
 
 ```r
 data.frame(x = 1:3, y = x^2) # not working
@@ -158,6 +157,7 @@ tibble(x = 1:3, y = x^2)
 - higher flexibility with nested data
 
 .blockquote.exercise[
+#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example
 
 ```r
 data_df  &lt;- data.frame(days = 1:3,
@@ -183,14 +183,17 @@ background-position: 97.5% 8%
 
 The `dplyr` package is the most important package of the `tidyverse` when it comes to data manipulation and transformation. 
 
+--
+
 The core characteristics of the package:
 
 - focus on data frames (data frame in &amp;rarr; data frame out)
 - verbose compared to base R which leads to longer but easier to read code
 - consistent syntax. 
 
-You can compare the functionality to that of a  relational database which provides methods to work with
-single tables and multiple tables. 
+--
+
+You can compare the functionality to that of a  relational database which provides methods to work with single tables and multiple tables. 
 
 ---
 class: top, left
@@ -252,7 +255,7 @@ arrange(mtcars_tibble, desc(cyl))
 ```r
 relocate(mtcars_tibble, gear)
 relocate(mtcars_tibble, gear, .after = last_col())
-relocate(mtcars_tibble, gear, .before = mpg)
+relocate(mtcars_tibble, gear, .before = cyl)
 ```
 ]
 
@@ -287,19 +290,19 @@ summarise(mtcars_tibble, mean_hp = mean(hp), max_mpg = max(mpg))
 class: top, left
 ## Single Table Functions
 
-- `sample_n()` and `sample_frac()` to take random samples.
+- `slice_sample()` to take random samples
 
 .blockquote.exercise[
 
 ```r
-sample_n(mtcars_tibble, 10)
-sample_frac(mtcars_tibble, 0.1)
+slice_sample(mtcars_tibble, n = 10)
+slice_sample(mtcars_tibble, prop = 0.1)
 ```
 ]
 
 --
 
-- `distinct()` removes duplicate rows.
+- `distinct()` removes duplicate rows
 
 .blockquote.exercise[
 
@@ -325,12 +328,12 @@ tally(mtcars_tibble); tally(mtcars_tibble, cyl)
 ---
 class: top, left
 
+.font80[
 ## Filter 
 
-.font80[
 The function `filter()` selects rows based on their values. 
 
-- Use comparison operators `==`, `&gt;`, `&gt;=`, `&lt;`, `&lt;=`, and `!=` to filter rows based on a condition. 
+- Use comparison operators `==`, `&gt;`, `&gt;=`, `&lt;`, `&lt;=`, and `!=` to filter rows based on a logical condition. 
 
 .blockquote.exercise[
 
@@ -355,7 +358,7 @@ filter(mtcars_tibble, hp &gt; 100 | cyl == 4)
 --
 
 .font80[
-- Additional arguments to `filter()` are combined with `&amp;` which is the same as the above. 
+- Additional arguments to `filter()` are combined in the back end with `&amp;` which is the same as the above. 
 
 .blockquote.exercise[
 
@@ -745,6 +748,7 @@ class: top, left
 We could nest all those functions to get rid of the intermediate result.
 
 .blockquote.exercise[ 
+#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example
 
 ```r
 summarise(group_by(mutate(filter(mtcars_tibble, cyl &lt;= 8), gpm = 1/mpg)), 
@@ -775,8 +779,8 @@ The value on the left side of the operator becomes the input to the function on 
 
 --
 
-.blockquote.exercise.font90[ 
-
+.blockquote.exercise.font80[ 
+#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example
 
 ```r
 mtcars_tibble %&gt;% 
