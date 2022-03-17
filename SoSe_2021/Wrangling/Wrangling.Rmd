@@ -97,7 +97,7 @@ Tibbles are the main data structure used in the `tidyverse` and can be viewed as
 ]
 .blockquote.exercise.font90[
 ```{r, echo = TRUE, eval = TRUE}
-    class(a_tibble)
+class(a_tibble)
 ```
 ]
 
@@ -842,6 +842,9 @@ iris %>% summarise(across(ends_with('Width'), mean))
 
 
 ???
+
+The ~ operator in R creates formula. So ~ lm(mpg ~ wt, data = .) is a formula. Formulas are useful in R because they prevent immediate evaluation of symbols. For example you can define
+
 
 purrr-style formula? 
 
