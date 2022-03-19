@@ -5,8 +5,8 @@
     <meta charset="utf-8" />
     <meta name="author" content="Martin C. Arnold" />
     <meta name="author" content="Jens Klenke" />
-    <meta name="date" content="2022-03-10" />
-    <script src="databases_files/header-attrs-2.12/header-attrs.js"></script>
+    <meta name="date" content="2022-03-19" />
+    <script src="databases_files/header-attrs-2.13/header-attrs.js"></script>
     <link href="databases_files/remark-css-0.0.1/default.css" rel="stylesheet" />
     <script src="databases_files/clipboard-2.0.6/clipboard.min.js"></script>
     <link href="databases_files/xaringanExtra-clipboard-0.2.6/xaringanExtra-clipboard.css" rel="stylesheet" />
@@ -26,10 +26,6 @@
       cursor: default;
     }
     </style>
-
-    <script src="https://code.jquery.com/jquery-3.4.1.min.js"
-      integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
-      crossorigin="anonymous"></script>
     <link rel="stylesheet" href="../assets/ude_fonts.css" type="text/css" />
     <link rel="stylesheet" href="../assets/ude.css" type="text/css" />
     <link rel="stylesheet" href="../assets/title_slides.css" type="text/css" />
@@ -45,12 +41,14 @@
 
 
 
+
+
 class: title-slide title-sqlite center middle
 
 
 # Advanced R for Econometricians
 ## Databases using R
-
+### Martin C. Arnold, Jens Klenke
 
 ---
 ## Memory Limitations of R
@@ -63,13 +61,19 @@ class: title-slide title-sqlite center middle
 
 ---
 ## (Relational) Databases
+
+.font90[
 - A database is a place where data is stored and can be manipulated.
 - A relational database aims to reduce redundancies by spreading the data over multiple tables and
   relate them to each other. 
+]
 
-#### Example of Redundent Data
+--
 
-.font90[
+.font90[.blockquote.exercise[
+
+#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example: Redundent Data
+
 &lt;table&gt;
  &lt;thead&gt;
   &lt;tr&gt;
@@ -166,11 +170,16 @@ class: title-slide title-sqlite center middle
   &lt;/tr&gt;
 &lt;/tbody&gt;
 &lt;/table&gt;
-]
+
+&lt;br&gt;
+]]
 ---
 #### Example of Non-Redundent Data 
 
 - The same information would be stored in a relational database like this: 
+
+--
+
 
 
 
@@ -291,6 +300,8 @@ class: title-slide title-sqlite center middle
 ]
 
 &lt;br&gt;
+
+--
 - The relationship between the tables is defined by the `id` columns (called keys).
 
 
@@ -301,10 +312,20 @@ class: title-slide title-sqlite center middle
 - `dplyr` also works with remote on-disk data stored in relational databases.
 - For this to work you need 
 
+--
+
+.blockquote.exercise[
+
 ```r
 install.packages("dbplyr")
 ```
+]
+
+--
+
 - You’ll also need to install a `DBI` backend package. The `DBI` package provides a common interface that allows `dplyr` to work with many different databases using the same code. 
+
+--
 
 - Some commonly used backends are:
     - `RMariaDB` connects to MySQL and MariaDB.
@@ -315,66 +336,119 @@ install.packages("dbplyr")
 ---
 ## Connect to a Database
 
+.font80[
 - To connect to a database authentication information such as 
   username and password are required (the database admin should provide those). 
 - You also need to specify a driver that makes communication with the database possible.
 - There is a remote MySQL database hosted on the web which we have access to:
-    
-    ```r
-    library(dbplyr)
-    library(dplyr)
-    con &lt;- DBI::dbConnect(
+]
+
+--
+
+.font80[.blockquote.exercise[
+
+#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Setup the connection 
+
+
+```r
+library(dbplyr)
+library(dplyr)
+library(DBI)
+con &lt;- DBI::dbConnect(
           drv = RMariaDB::MariaDB(), # MariaDB driver works for MySQL as well
-          username = "sql7312029",
-          dbname   = "sql7312029", 
-          host     = "sql7.freesqldatabase.com",
-          password = rstudioapi::askForPassword("Database password"),
+          username = "Username",
+          dbname   = keyring::key_list('sql_try')[1,2], 
+          host     = "sql11.freesqldatabase.com",
+          password = keyring::key_get('sql_try',
+                                      keyring::key_list('sql_try')[1,2]),
           port     = "3306"
           )
-    ```
+```
+]]
 
 
 
+--
+
+
+.font80[.blockquote.exercise[
+
+#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example: Writing data
 
 ```r
 DBI::dbWriteTable(con, "gapminder", gapminder::gapminder)
 DBI::dbWriteTable(con, "country_codes", gapminder::country_codes)
 ```
 
+]]
+???
+
+you can use keyring
+
+
 ---
 ## Access Data
 
 - When the connection is established we can use the object `con` to communicate with the database.
 - The function `DBI::dbListTables()` tells us which tables are in the database.
-    
-    ```r
-    DBI::dbListTables(con)
-    ```
-- With `dplyr::tbl()` we can create an object which is a reference to a table in the database. Most `dplyr` functions work on this object as it was as a data frame (or `tibble`).
-    
-    ```r
-    gap_db &lt;- tbl(con, "gapminder")
-    class(gap_db)
-    ```
 
+.blockquote.exercise[
+
+```r
+DBI::dbListTables(con)
+```
+
+```
+## [1] "country_codes" "gapminder"
+```
+]
+
+--
+
+- With `dplyr::tbl()` we can create an object which is a reference to a table in the database. Most `dplyr` functions work on this object as it was as a data frame (or `tibble`).
+
+--
+
+.blockquote.exercise[
+
+#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example 
+
+```r
+gap_db &lt;- tbl(con, "gapminder")
+class(gap_db)
+```
+
+```
+## [1] "tbl_MariaDBConnection" "tbl_dbi"               "tbl_sql"              
+## [4] "tbl_lazy"              "tbl"
+```
+]
 ---
 ## Use Standard `dplyr`  Functions on the Database
 
 
 ```r
-gap_avg_db &lt;- gap_db %&gt;% 
-                group_by(continent) %&gt;% 
-                select_if(is.numeric) %&gt;% 
-                select(-year) %&gt;%
-                summarise_all(mean)
+gap_avg_db &lt;- gap_db %&gt;%
+  group_by(continent) %&gt;%
+  select(where(is.numeric)) %&gt;%
+  summarise(across(everything(),mean))
 ```
 
 - Even if it seems as if `gap_avg_db` is a data frame it still is only a set of instructions to be performed by the data base. 
 - `show_query()` tells us which instructions are sent to the database. 
-    
-    ```r
-    show_query(gap_avg_db)
-    ```
+
+
+```r
+show_query(gap_avg_db)
+```
+
+```
+## &lt;SQL&gt;
+## SELECT `continent`, AVG(`continent`) AS `continent`
+## FROM (SELECT `continent`
+## FROM `gapminder`) `q01`
+## GROUP BY `continent`
+```
 
 
 ---

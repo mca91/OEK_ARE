@@ -22,6 +22,18 @@ output:
         scroll: false # disable slide transitions by scrolling
 ---
 
+```{r icons, include=FALSE}
+library(icons)
+
+# pre-define icons
+desktop <- icons::icon_style(icons::fontawesome$solid$desktop, fill = "#004c93")
+checker_green <- icons::icon_style(icons::fontawesome$solid$check, fill = "green")
+times_red <- icons::icon_style(icons::fontawesome$solid$times, fill = "red")
+
+library(keyring)
+```
+
+
 ```{r xaringanExtra-clipboard_2, echo=FALSE}
 # copy button styles mainly in ude.css
 htmltools::tagList(
@@ -53,13 +65,12 @@ knit_hooks$set(
 ```
 
 
-
 class: title-slide title-sqlite center middle
 
 
 # `r rmarkdown::metadata$title`
 ## `r rmarkdown::metadata$subtitle`
-
+### `r rmarkdown::metadata$author`
 
 ---
 ## Memory Limitations of R
@@ -72,13 +83,19 @@ class: title-slide title-sqlite center middle
 
 ---
 ## (Relational) Databases
+
+.font90[
 - A database is a place where data is stored and can be manipulated.
 - A relational database aims to reduce redundancies by spreading the data over multiple tables and
   relate them to each other. 
+]
 
-#### Example of Redundent Data
+--
 
-.font90[
+.font90[.blockquote.exercise[
+
+#### `r desktop` Example: Redundent Data
+
 ```{r, echo = FALSE, eval = TRUE, results = 'asis', message = FALSE}
 library(dplyr)
 set.seed(123)
@@ -97,11 +114,16 @@ sells <- tibble(store_id = rep(1:2, each = 4),
 
 knitr::kable(sells, format = "html")
 ```
-]
+
+<br>
+]]
 ---
 #### Example of Non-Redundent Data 
 
 - The same information would be stored in a relational database like this: 
+
+--
+
 
 ```{r, eval = TRUE, echo = FALSE}
 store <- tibble(store_id =  1:2, 
@@ -132,6 +154,8 @@ knitr::kable(customer, format = "html", caption = "Customer")
 ]
 
 <br>
+
+--
 - The relationship between the tables is defined by the `id` columns (called keys).
 
 
@@ -141,10 +165,20 @@ knitr::kable(customer, format = "html", caption = "Customer")
 
 - `dplyr` also works with remote on-disk data stored in relational databases.
 - For this to work you need 
+
+--
+
+.blockquote.exercise[
 ```{r, eval = FALSE}
 install.packages("dbplyr")
 ```
+]
+
+--
+
 - You’ll also need to install a `DBI` backend package. The `DBI` package provides a common interface that allows `dplyr` to work with many different databases using the same code. 
+
+--
 
 - Some commonly used backends are:
     - `RMariaDB` connects to MySQL and MariaDB.
@@ -155,72 +189,107 @@ install.packages("dbplyr")
 ---
 ## Connect to a Database
 
+.font80[
 - To connect to a database authentication information such as 
   username and password are required (the database admin should provide those). 
 - You also need to specify a driver that makes communication with the database possible.
 - There is a remote MySQL database hosted on the web which we have access to:
-    ```{r, eval = FALSE}
+]
+
+--
+
+.font80[.blockquote.exercise[
+
+#### `r desktop` Setup the connection 
+
+```{r, eval = FALSE}
 library(dbplyr)
 library(dplyr)
+library(DBI)
 con <- DBI::dbConnect(
           drv = RMariaDB::MariaDB(), # MariaDB driver works for MySQL as well
-          username = "sql7312029",
-          dbname   = "sql7312029", 
-          host     = "sql7.freesqldatabase.com",
-          password = rstudioapi::askForPassword("Database password"),
+          username = "Username",
+          dbname   = keyring::key_list('sql_try')[1,2], 
+          host     = "sql11.freesqldatabase.com",
+          password = keyring::key_get('sql_try',
+                                      keyring::key_list('sql_try')[1,2]),
           port     = "3306"
           )
+```
+]]
 
-    ```
-
-```{r, eval = FALSE, echo = FALSE}
+```{r, eval = TRUE, echo = FALSE}
 library(dplyr)
 con <- DBI::dbConnect(
                drv = RMariaDB::MariaDB(), # MariaDB driver works for MySQL as well
                username = 'sql11460561',
-               dbname   = 'sql11460561', 
+               dbname   = keyring::key_list('sql_try')[1,2], 
                host     = 'sql11.freesqldatabase.com',
-               password = 'D2pkl1XBCf',
+               password = keyring::key_get('sql_try',
+                                           keyring::key_list('sql_try')[1,2]),
                port     = '3306'
                )
 ```
 
+--
+
+
+.font80[.blockquote.exercise[
+
+#### `r desktop` Example: Writing data
 ```{r, echo = TRUE, eval = FALSE}
 DBI::dbWriteTable(con, "gapminder", gapminder::gapminder)
 DBI::dbWriteTable(con, "country_codes", gapminder::country_codes)
 ```
+
+]]
+???
+
+you can use keyring
+
 
 ---
 ## Access Data
 
 - When the connection is established we can use the object `con` to communicate with the database.
 - The function `DBI::dbListTables()` tells us which tables are in the database.
-    ```{r, eval = FALSE}
+
+.blockquote.exercise[
+```{r, eval = TRUE}
 DBI::dbListTables(con)
-    ```
+```
+]
+
+--
+
 - With `dplyr::tbl()` we can create an object which is a reference to a table in the database. Most `dplyr` functions work on this object as it was as a data frame (or `tibble`).
-    ```{r, eval = FALSE}
+
+--
+
+.blockquote.exercise[
+
+#### `r desktop` Example 
+```{r, eval = TRUE}
 gap_db <- tbl(con, "gapminder")
 class(gap_db)
-    ```
-
+```
+]
 ---
 ## Use Standard `dplyr`  Functions on the Database
 
-```{r, message=FALSE, warning=FALSE, eval = FALSE}
-gap_avg_db <- gap_db %>% 
-                group_by(continent) %>% 
-                select_if(is.numeric) %>% 
-                select(-year) %>%
-                summarise_all(mean)
-
+```{r, message=FALSE, warning=FALSE, eval = TRUE}
+gap_avg_db <- gap_db %>%
+  group_by(continent) %>%
+  select(where(is.numeric)) %>%
+  summarise(across(everything(),mean))
 ```
 
 - Even if it seems as if `gap_avg_db` is a data frame it still is only a set of instructions to be performed by the data base. 
 - `show_query()` tells us which instructions are sent to the database. 
-    ```{r, warning=FALSE, eval = FALSE}
+
+```{r, warning=FALSE, eval = TRUE}
 show_query(gap_avg_db)
-    ```
+```
 
 
 ---
