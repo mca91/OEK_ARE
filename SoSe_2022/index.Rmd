@@ -55,8 +55,10 @@ class: title-slide title-rintro middle
 </ol>
 ]]
 
+<br>
 
 .pull-down-small_margin.font70[
+<br>
 ### Additional Topics for self-study
 
 <ol start = "8">
