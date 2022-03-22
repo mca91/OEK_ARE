@@ -1,16 +1,17 @@
 ---
 title: "Advanced R for Econometricians"
 subtitle: "First Steps with `RcppArmadillo`"
-author: "Martin C. Arnold"
+author:
+  - "Martin C. Arnold"
+  - "Jens Klenke"
 date: "`r Sys.Date()`"
 output:
   xaringan::moon_reader:
-    css: ["default", "../assets/sydney-fonts.css", "../assets/sydney.css", "../assets/title_slides.css", "../xaringan_files/custom.css"]
+    css: ["default", "../assets/ude_fonts.css", "../assets/ude.css", "../assets/title_slides.css", "../assets/custom.css"]
     self_contained: false # if true, fonts will be stored locally
     seal: false # show a title slide with YAML information
     includes:
       in_header: "../assets/mathjax-equation-numbers.html"
-      after_body: "../assets/copybutton.html"
     nature:
       beforeInit: ["../assets/remark-zoom.js", "../xaringan_files/macros.js", "https://platform.twitter.com/widgets.js"]
       highlightStyle: github
@@ -20,13 +21,22 @@ output:
       navigation:
         scroll: false # disable slide transitions by scrolling
 ---
+```{r xaringanExtra-clipboard_2, echo=FALSE}
+# copy button styles mainly in ude.css
+htmltools::tagList(
+  xaringanExtra::use_clipboard(
+    button_text = "<i class=\"fa fa-clipboard\"></i>",
+    success_text = "<i class=\"fa fa-check\" style=\"color: #00ff00\"></i>",
+    error_text = "<i class=\"fa fa-times-circle\" style=\"color: #F94144\"></i>"
+  ),
+  rmarkdown::html_dependency_font_awesome()
+)
+```
 
 ```{r setup, include=FALSE}
 options(htmltools.dir.version = F)
 knitr::opts_chunk$set(warning = F, message = F, eval=F)
-```
 
-```{r, include=FALSE, eval=T}
 # packages needed
 library(microbenchmark)
 library(parallel)
@@ -35,6 +45,12 @@ library(dplyr)
 library(tidyr)
 library(Rcpp)
 library(ggplot2)
+library(icons)
+
+# pre-define icons
+desktop <- icons::icon_style(icons::fontawesome$solid$desktop, fill = "#004c93")
+checker_green <- icons::icon_style(icons::fontawesome$solid$check, fill = "green")
+times_red <- icons::icon_style(icons::fontawesome$solid$times, fill = "red")
 ```
 
 class: title-slide title-rcpparmadillo center middle
@@ -159,7 +175,7 @@ double inner_prod_rcpparma(arma::vec x, arma::vec y) {
 The `RcppArmadillo` version is faster:
 
 ```{r, echo=F, message=F, warning=F, cache=T, eval=T}
-cppFunction('
+ssnicppFunction('
   double inner_prod_rcpp(NumericVector x, NumericVector y) {
   int K = x.length();
   double ip = 0;

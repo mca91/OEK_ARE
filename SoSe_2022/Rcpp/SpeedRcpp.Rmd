@@ -1,16 +1,17 @@
 ---
 title: "Advanced R for Econometricians"
 subtitle: "Speeding Things Up with `Rcpp`"
-author: "Martin C. Arnold"
+author:
+  - "Martin C. Arnold"
+  - "Jens Klenke"
 date: "`r Sys.Date()`"
 output:
   xaringan::moon_reader:
-    css: ["default", "../assets/sydney-fonts.css", "../assets/sydney.css", "../assets/title_slides.css", "../xaringan_files/custom.css"]
+    css: ["default", "../assets/ude_fonts.css", "../assets/ude.css", "../assets/title_slides.css", "../assets/custom.css"]
     self_contained: false # if true, fonts will be stored locally
     seal: false # show a title slide with YAML information
     includes:
       in_header: "../assets/mathjax-equation-numbers.html"
-      after_body: "../assets/copybutton.html"
     nature:
       beforeInit: ["../assets/remark-zoom.js", "../xaringan_files/macros.js", "https://platform.twitter.com/widgets.js"]
       highlightStyle: github
@@ -20,13 +21,22 @@ output:
       navigation:
         scroll: false # disable slide transitions by scrolling
 ---
+```{r xaringanExtra-clipboard_2, echo=FALSE}
+# copy button styles mainly in ude.css
+htmltools::tagList(
+  xaringanExtra::use_clipboard(
+    button_text = "<i class=\"fa fa-clipboard\"></i>",
+    success_text = "<i class=\"fa fa-check\" style=\"color: #00ff00\"></i>",
+    error_text = "<i class=\"fa fa-times-circle\" style=\"color: #F94144\"></i>"
+  ),
+  rmarkdown::html_dependency_font_awesome()
+)
+```
 
 ```{r setup, include=FALSE}
 options(htmltools.dir.version = F)
 knitr::opts_chunk$set(warning = F, message = F)
-```
 
-```{r, include=FALSE}
 # packages needed
 library(microbenchmark)
 library(tidyverse)
@@ -35,8 +45,13 @@ library(tictoc)
 library(dplyr)
 library(tidyr)
 library(Rcpp)
-```
+library(icons)
 
+# pre-define icons
+desktop <- icons::icon_style(icons::fontawesome$solid$desktop, fill = "#004c93")
+checker_green <- icons::icon_style(icons::fontawesome$solid$check, fill = "green")
+times_red <- icons::icon_style(icons::fontawesome$solid$times, fill = "red")
+```
 class: title-slide title-rcpp center middle
 
 # `r rmarkdown::metadata$title`
@@ -108,7 +123,7 @@ Typical bottlenecks in R that be addressed using C++ are:
 
 `Rcpp` is a dependency to ~1500 CRAN packages and an unknown large number of packages on GitHub.
 
-```{r, cache=T, message=F, warning=F}
+```{r, eval = F, cache=T, message=F, warning=F}
 library(pagerank) 
 CRAN <- "http://cloud.r-project.org"
 p_rank <- compute_pagerank(CRAN)
@@ -120,7 +135,7 @@ This puts responsibility on the development team to keep Rcpp performant and rel
 ---
 ## `Rcpp` &mdash; Popularity
 
-```{r, cache=T, fig.align='center', echo=F, out.width='500px'}
+```{r, cache=T, eval = F, fig.align='center', echo=F, out.width='500px'}
 d <- data.frame("PageRank" = sort(p_rank[1:30]*100, decreasing = T)) %>% tibble::rownames_to_column()
 
 library(cowplot)
@@ -237,7 +252,7 @@ bool isOdd_cpp(int num = 10) {
 Small self-contained functions are easily compiled and linked using `cppFunction()`.
 
 ```{r}
-cppFunction('
+Rcpp::cppFunction('
 bool isOdd_cpp(int num = 10) {
   bool result = (num % 2 == 1);
   return result;
@@ -261,7 +276,7 @@ What happened?
 
 - `Rcpp` generates a wrapper function in R. It then compiles and links the C++ function to the wrapper. The function is now available in R under its C++ name.
 
-```{r}
+```{r, eval = F}
 isOdd_cpp
 ```
 

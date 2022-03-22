@@ -1,7 +1,9 @@
 ---
 title: "Advanced R for Econometricians"
 subtitle: "Functional Style R Programming"
-author: "Martin C. Arnold"
+author:
+  - "Martin C. Arnold"
+  - "Jens Klenke"
 date: "`r Sys.Date()`"
 output:
   xaringan::moon_reader:
@@ -38,6 +40,12 @@ options(htmltools.dir.version = FALSE)
 library(dplyr)
 library(purrr)
 library(readr)
+library(icons)
+
+# pre-define icons
+desktop <- icons::icon_style(icons::fontawesome$solid$desktop, fill = "#004c93")
+checker_green <- icons::icon_style(icons::fontawesome$solid$check, fill = "green")
+times_red <- icons::icon_style(icons::fontawesome$solid$times, fill = "red")
 ```
 
 class: title-slide title-purrr center middle
@@ -199,7 +207,7 @@ Functionals can also produce other data structures, e.g., data frames as output.
 
 .pull-right[
 .blockquote.exercise[
-#### `r icon::fa("desktop")` Example: `map()`
+#### `r desktop` Example: `map()`
 
 `map(1:3, f)` is `list(f(1), f(2), f(3))`.
 ```{r}
@@ -222,7 +230,7 @@ Obviously `map()` returns a list.
 - Base R equivalents are `sapply()` and `vapply()`
 
 .blockquote.exercise[
-#### `r icon::fa("desktop")` Example: `map_*()`
+#### `r desktop` Example: `map_*()`
 .pull-left[
 <br>
 ![:image 90%](img/map-list.png)
@@ -257,7 +265,7 @@ map_int(mtcars, n_unique)
 - A good rule of thumb is that if a function spans lines or uses `{...}`, we should give it a name.
 
 .blockquote.exercise[
-#### `r icon::fa("desktop")` Example: `map_*()` with inline anonymous function
+#### `r desktop` Example: `map_*()` with inline anonymous function
 
 ```{r}
 map_dbl(mtcars, function(x) length(unique(x)))
@@ -277,7 +285,7 @@ map_dbl(mtcars, ~ length(unique(.x)))
 The `map_*()` functions are  useful for selecting elements from lists by name, position or both.
 
 .blockquote.exercise[
-#### `r icon::fa("desktop")` Example: element extraction with `map_*()`
+#### `r desktop` Example: element extraction with `map_*()`
 
 ```{r}
 x <- list(
@@ -328,7 +336,7 @@ sapply(x, "[[", 1)
 
 .smaller[
 .blockquote.exercise[
-#### `r icon::fa("desktop")` Example: element extraction with `map_*()`
+#### `r desktop` Example: element extraction with `map_*()`
 
 Note that components must exist in all lists. 
 
@@ -352,8 +360,7 @@ Keep in mind that this requires your subsequent code to work with `NA`s.
 
 .smaller[
 .blockquote.exercise[
-
-#### `r icon::fa("desktop")` Example: mapping with additional arguments &mdash; ctd.
+#### `r desktop` Example: mapping with additional arguments &mdash; ctd.
 
 Additional arguments to the mapping function may be passed *after* the function name. But think about evaluation!
 
@@ -389,7 +396,7 @@ Arguments passed to an anonymous function are evaluated in every iteration. The 
 
 .smaller[
 .blockquote.exercise[
-#### `r icon::fa("desktop")` Example: mapping with additional arguments &mdash; ctd.
+#### `r desktop` Example: mapping with additional arguments &mdash; ctd.
 
 Additional arguments are *not decomposed*: `map_*()` is only vectorised over the data passed as the first argument. Vector arguments are passed along.
 
@@ -414,7 +421,7 @@ map(1:3, rnorm, mean = c(100, 10, 1))
 .medium[
 
 .blockquote.exercise[
-#### `r icon::fa("desktop")` Example: mapping over a different argument
+#### `r desktop` Example: mapping over a different argument
 
 Assume you'd like to investigate the impact of different amounts of trimming when computing the sample mean of observations from a heavy-tailed distribution.
 
@@ -611,7 +618,7 @@ The table shows input (rows) and output types (columns).
 The `modify()` function works on the input *components* and returns an object of the same type as the input.
 
 .blockquote.exercise[
-#### `r icon::fa("desktop")` Example: `data.frame` in / `data.frame` out
+#### `r desktop` Example: `data.frame` in / `data.frame` out
 
 ```{r}
 df <- data.frame(
@@ -638,7 +645,7 @@ df <- modify(df, ~ .x * 2)
 `map2()` is vectorised over two arguments.
 
 .blockquote.exercise[
-#### `r icon::fa("desktop")` Example: weighted mean using `map2()`
+#### `r desktop` Example: weighted mean using `map2()`
 
 .pull-left[
   <br>
@@ -673,7 +680,7 @@ map2_dbl(xs, ws, weighted.mean)
 Additional arguments may be passed just as with `map()`.
 
 .blockquote.exercise[
-#### `r icon::fa("desktop")` Example: weighted mean using `map2()` &mdash; ctd.
+#### `r desktop` Example: weighted mean using `map2()` &mdash; ctd.
 
 .pull-left[
   ![:image 90%](img/map2-arg.png)
@@ -697,7 +704,7 @@ map2_dbl(xs, ws, weighted.mean, na.rm = TRUE)
 Note that `map2()` also recycles inputs to make sure they are the same length.
 
 .blockquote.exercise[
-#### `r icon::fa("desktop")` Example: weighted mean using `map2()` &mdash; ctd.
+#### `r desktop` Example: weighted mean using `map2()` &mdash; ctd.
 
 .pull-left[
   ![:image 90%](img/map2-recycle.png)
@@ -722,7 +729,7 @@ map2_dbl(1:6, 1, ~ .x + .y)
 - There is no base R equivalent but wrapping `lapply()` with `invisible()` comes close
 
 .blockquote.exercise[
-#### `r icon::fa("desktop")` Example: assigning and passing objects
+#### `r desktop` Example: assigning and passing objects
 
 .pull-left[
 ![:image 50%](img/walk.png)
@@ -749,7 +756,7 @@ Assignment to an environment is a side-effect.
 `walk2()` is a convenient alternative which is vectorised over two arguments. 
 
 .blockquote.exercise[
-#### `r icon::fa("desktop")` Example: write to disc
+#### `r desktop` Example: write to disc
 
 .pull-left[
   ![:image 80%](img/walk2.png)
@@ -781,7 +788,7 @@ A common side-effect which needs two arguments (object and path) is writing to d
     `imap(.x, .f)` applies `.f` to values `.x` *and indices or names derived from* `.x`.
 
 .blockquote.exercise[
-#### `r icon::fa("desktop")` Example: named column means
+#### `r desktop` Example: named column means
 
 `imap()` is a useful helper if we want to work with values along with variable names.
 
@@ -807,7 +814,7 @@ A common side-effect which needs two arguments (object and path) is writing to d
 `pmap()` generalises `map()` and `map2()` to `p` vectorised arguments. Thus `pmap(list(x, y), f)` is the same as `map2(x, y, f)`.
 
 .blockquote.exercise[
-#### `r icon::fa("desktop")` Example: weighted mean with `pmap()`
+#### `r desktop` Example: weighted mean with `pmap()`
 
 .pull-left[
   ![:image 90%](img/pmap.png)
@@ -835,7 +842,7 @@ pmap_dbl(list(xs, ws), weighted.mean)
 As before, additional arguments may be passed after `.f` and they are recycled, if necessary.
 
 .blockquote.exercise[
-#### `r icon::fa("desktop")` Example: weighted mean with `pmap()` &mdash; ctd.
+#### `r desktop` Example: weighted mean with `pmap()` &mdash; ctd.
 
 .pull-left[
   ![:image 95%](img/pmap-arg.png)
@@ -859,7 +866,7 @@ pmap_dbl(list(xs, ws), weighted.mean,
 Note that `pmap()` gives much finer control over argument matching due to the possibility to use named lists. This is very convenient for working with complex objects of type list.
 
 .blockquote.exercise[
-#### `r icon::fa("desktop")` Example: argument matching using named list
+#### `r desktop` Example: argument matching using named list
 
 .pull-left[
   <br>
@@ -890,7 +897,7 @@ pmap_dbl(list(trim = trims), mean, x = x)
 Remember that a data frame is a list and thus can be passed as a collection of inputs to `pmap()`. 
 
 .blockquote.exercise[
-#### `r icon::fa("desktop")` Example: `pmap()` with data.frame as input
+#### `r desktop` Example: `pmap()` with data.frame as input
 
 .pull-left[
   <br>
@@ -971,7 +978,7 @@ exclude: true
 `reduce()` is useful for generalising a binary function (a function with two inputs) to any number of inputs.
 
 .blockquote.exercise[
-#### `r icon::fa("desktop")` Example: set operations with vectors
+#### `r desktop` Example: set operations with vectors
 
 Consider the following list of numeric vectors `l`.
 
@@ -989,7 +996,7 @@ exclude: true
 
 .medium[
 .blockquote.exercise[
-#### `r icon::fa("desktop")` Example: set operations with vectors &mdash; ctd.
+#### `r desktop` Example: set operations with vectors &mdash; ctd.
 
 A base R solution is rather cumbersome even for a small set of vectors.
 
@@ -1018,7 +1025,7 @@ exclude: true
 `accumulate()` is a variant of `reduce()` which returns the final and all intermediate results.
 
 .blockquote.exercise[
-#### `r icon::fa("desktop")` Example: cumulative sum
+#### `r desktop` Example: cumulative sum
 
 The difference between `reduce()` and `accumulate()` is best understood using a sequence of binary arithmetic operations.
 
@@ -1041,7 +1048,7 @@ exclude: true
 
 .smaller[
 .blockquote.exercise[
-#### `r icon::fa("desktop")` Example: set operations with vectors &mdash; ctd.
+#### `r desktop` Example: set operations with vectors &mdash; ctd.
 
 So with `.f` a function for binary intersection we also obtain the 'intermediate' sets.
 
@@ -1064,7 +1071,7 @@ Function Factories
 A function factory is a function that makes functions.
 
 .blockquote.exercise[
-#### `r icon::fa("desktop")` Example: function factory
+#### `r desktop` Example: function factory
 
 ```{r}
 nth_root <- function(n) {   # function factory
@@ -1086,7 +1093,7 @@ cube_root(8)
 The enclosing environment of the manufactured function is an **execution environment** of the function factory.
 
 .blockquote.exercise[
-#### `r icon::fa("desktop")` Example: function factory &mdash; ctd.
+#### `r desktop` Example: function factory &mdash; ctd.
 
 ```{r}
 rlang::env_print(cube_root)     # inspect enclosing environment
@@ -1109,7 +1116,7 @@ rlang::fn_env(cube_root)$n      # retrieve from enclosing environment
 Remember lazy evaluation!
 
 .blockquote.exercise[
-#### `r icon::fa("desktop")` Example: function factory &mdash; ctd.
+#### `r desktop` Example: function factory &mdash; ctd.
 
 ```{r}
 n <- 2
@@ -1136,7 +1143,7 @@ sq(64)             # should evaluate to 8?!
 Remember lazy evaluation!
 
 .blockquote.exercise[
-#### `r icon::fa("desktop")` Example: function factory &mdash; ctd.
+#### `r desktop` Example: function factory &mdash; ctd.
 
 ```{r}
 nth_root <- function(n) {
@@ -1176,7 +1183,7 @@ f1 <- function(n) {
 .smaller[
 Function factories allow us to create functions with a memory.
 .blockquote.exercise[
-#### `r icon::fa("desktop")` Example: counter
+#### `r desktop` Example: counter
 
 ```{r}
 new_counter <- function() {

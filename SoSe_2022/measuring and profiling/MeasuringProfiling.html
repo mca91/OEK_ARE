@@ -1,12 +1,19 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<html lang="" xml:lang="">
   <head>
     <title>Advanced R for Econometricians</title>
     <meta charset="utf-8" />
     <meta name="author" content="Martin C. Arnold" />
-    <meta name="date" content="2020-01-13" />
+    <meta name="author" content="Jens Klenke" />
+    <meta name="date" content="2022-03-22" />
+    <script src="MeasuringProfiling_files/header-attrs/header-attrs.js"></script>
     <link href="MeasuringProfiling_files/remark-css/default.css" rel="stylesheet" />
-    <link href="MeasuringProfiling_files/font-awesome/css/fontawesome-all.min.css" rel="stylesheet" />
+    <script src="MeasuringProfiling_files/clipboard/clipboard.min.js"></script>
+    <link href="MeasuringProfiling_files/xaringanExtra-clipboard/xaringanExtra-clipboard.css" rel="stylesheet" />
+    <script src="MeasuringProfiling_files/xaringanExtra-clipboard/xaringanExtra-clipboard.js"></script>
+    <script>window.xaringanExtraClipboard(null, {"button":"<i class=\"fa fa-clipboard\"><\/i>","success":"<i class=\"fa fa-check\" style=\"color: #00ff00\"><\/i>","error":"<i class=\"fa fa-times-circle\" style=\"color: #F94144\"><\/i>"})</script>
+    <link href="MeasuringProfiling_files/font-awesome/css/all.css" rel="stylesheet" />
+    <link href="MeasuringProfiling_files/font-awesome/css/v4-shims.css" rel="stylesheet" />
     <script type="text/x-mathjax-config">
       MathJax.Hub.Config({
         TeX: { equationNumbers: { autoNumber: "AMS" } },
@@ -19,14 +26,10 @@
       cursor: default;
     }
     </style>
-    
-    <script src="https://code.jquery.com/jquery-3.4.1.min.js"
-      integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
-      crossorigin="anonymous"></script>
-    <link rel="stylesheet" href="../assets/sydney-fonts.css" type="text/css" />
-    <link rel="stylesheet" href="../assets/sydney.css" type="text/css" />
+    <link rel="stylesheet" href="../assets/ude_fonts.css" type="text/css" />
+    <link rel="stylesheet" href="../assets/ude.css" type="text/css" />
     <link rel="stylesheet" href="../assets/title_slides.css" type="text/css" />
-    <link rel="stylesheet" href="../xaringan_files/custom.css" type="text/css" />
+    <link rel="stylesheet" href="../assets/custom.css" type="text/css" />
   </head>
   <body>
     <textarea id="source">
@@ -40,7 +43,7 @@ class: title-slide title-measuring center middle
 
 # Advanced R for Econometricians
 ## Measuring Performance and Profiling
-### Martin C. Arnold
+### Martin C. Arnold, Jens Klenke
 
 ---
 ## What's up next? &amp;mdash; Overview
@@ -69,7 +72,6 @@ class: segue-red
 # packages needed
 library(profvis)
 library(bench)
-library(tidyverse)
 ```
 
 - **Profiling** means measuring run time of our code *line-by-line* using realistic inputs in order to identify *bottlenecks*.
@@ -98,7 +100,7 @@ It’s tempting to think you just know where the bottlenecks in your code are. I
 - Note: results are *stochastic* &amp;mdash; we never run a function under the same conditions twice (memory usage, CPU load etc.) 
 
 .blockquote.exercise[
-#### <i class="fas  fa-desktop "></i> Example: profiling a call of `replicate()`
+#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example: profiling a call of `replicate()`
 
 ```r
 tmp &lt;- tempfile()
@@ -125,7 +127,7 @@ writeLines(readLines(tmp))
 
 .smaller[
 .blockquote.exercise[
-#### <i class="fas  fa-desktop "></i> Exercise: profiling nested functions
+#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Exercise: profiling nested functions
 
 Profile a call of `f()` and visualise the results using `profvis::profvis()`.
 
@@ -167,7 +169,7 @@ h &lt;- function() {
 
 .smaller[
 .blockquote.exercise[
-#### <i class="fas  fa-desktop "></i> Example: profiling linear regression
+#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example: profiling linear regression
 
 
 ```r
@@ -205,7 +207,7 @@ background-size: 650px
 ## Memory Profiling
 
 .blockquote.exercise[
-#### <i class="fas  fa-desktop "></i> Exercise: extensive garbage collection
+#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Exercise: extensive garbage collection
 
 The following code generates a large number of short-lived objects by *copy-on-modification*.
 
@@ -239,7 +241,7 @@ profvis({
 Sometimes code statements seem fairly innocent but are very inefficient both when it comes to memory and speed.
 
 .blockquote.exercise[
-#### <i class="fas  fa-desktop "></i> Exercise: coercion to another type
+#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Exercise: coercion to another type
 
 Can you explain why execution of the third line needs 762.9MB memory?
 
@@ -313,7 +315,7 @@ class: segue-red
 ## Microbenchmarking &amp;mdash; `bench::mark()`
 
 .blockquote.exercise[
-#### <i class="fas  fa-desktop "></i> Example: "the fastest square root"
+#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example: "the fastest square root"
 
 
 ```r
@@ -329,8 +331,8 @@ x &lt;- runif(100)
 ## # A tibble: 2 x 6
 ##   expression      min   median `itr/sec` mem_alloc `gc/sec`
 ##   &lt;bch:expr&gt; &lt;bch:tm&gt; &lt;bch:tm&gt;     &lt;dbl&gt; &lt;bch:byt&gt;    &lt;dbl&gt;
-## 1 sqrt(x)       353ns    432ns  1252485.      848B        0
-## 2 x^0.5        2.31µs   2.51µs   321495.      848B        0
+## 1 sqrt(x)       300ns    400ns  1758118.      848B        0
+## 2 x^0.5         2.3us    2.4us   378411.      848B        0
 ```
 
 
@@ -343,9 +345,13 @@ plot(lb)
 ## Microbenchmarking &amp;mdash; `bench::mark()`
 
 .blockquote.exercise[
-#### <i class="fas  fa-desktop "></i> Example: "the fastest square root"
+#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example: "the fastest square root"
 
-&lt;img src="MeasuringProfiling_files/figure-html/unnamed-chunk-11-1.png" style="display: block; margin: auto;" /&gt;
+
+```r
+# hab hier die eval ausgeschaltet, da es bei mir nicht lief!
+plot(lb)
+```
 
 ]
 
@@ -354,7 +360,7 @@ plot(lb)
 
 .smaller[
 .blockquote.exercise[
-#### <i class="fas  fa-desktop "></i> Example: non-equivalent code
+#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example: non-equivalent code
 
 
 ```r
@@ -393,7 +399,7 @@ Sometimes it is useful to benchmark against a grid of parameters. This can be do
 
 .smaller[
 .blockquote.exercise[
-#### <i class="fas  fa-desktop "></i> **Exercise: benchmark against parameter grid**
+#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; **Exercise: benchmark against parameter grid**
 
 Benchmark `create_df()` for combination of `rows = c(10000, 100000)` and `cols = c(10, 100)`.
 
@@ -423,14 +429,13 @@ create_df &lt;- function(rows, cols) {
   How do the estimates from `system.time()` compare to those from `bench::mark()`? Why are they different?
 
 2. Here are two other ways to compute the square root of a vector. Which do you think will be fastest? Use microbenchmarking to test your answers.
-    
-    ```r
+
+```r
     x^(1/2)
     exp(log(x)/2)
-    ```
+```
 
 ---
-class: segue-red
 ### (Why) is R slow?
 
 ---
@@ -457,7 +462,7 @@ But:
 
 .smaller[
 .blockquote.exercise[
-#### <i class="fas  fa-desktop "></i> Example: extreme dynamism
+#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example: extreme dynamism
 
 
 ```r
@@ -503,7 +508,7 @@ for (i in 1:1e6) {
 
 .smaller[
 .blockquote.exercise[
-#### <i class="fas  fa-desktop "></i> Example: have you seen z?
+#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example: have you seen z?
 
 The interpreter asks: which environment does the value of `z` come from?
 
@@ -521,10 +526,10 @@ search()
 ```
 
 ```
-##  [1] ".GlobalEnv"             "package:tidyr"          "package:dplyr"         
-##  [4] "package:tictoc"         "package:parallel"       "package:microbenchmark"
-##  [7] "package:stats"          "package:graphics"       "package:grDevices"     
-## [10] "package:utils"          "package:datasets"       ".RprofileMartin"       
+##  [1] ".GlobalEnv"             "package:icons"          "package:tidyr"         
+##  [4] "package:dplyr"          "package:tictoc"         "package:parallel"      
+##  [7] "package:microbenchmark" "package:stats"          "package:graphics"      
+## [10] "package:grDevices"      "package:utils"          "package:datasets"      
 ## [13] "package:methods"        "Autoloads"              "package:base"
 ```
 
@@ -535,7 +540,7 @@ search()
 
 .smaller[
 .blockquote.exercise[
-#### <i class="fas  fa-desktop "></i> Example: have you seen z? &amp;mdash; ctd.
+#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example: have you seen z? &amp;mdash; ctd.
 
 Interpreter asks: which environment does the value of `z` come from?
 
@@ -568,7 +573,7 @@ Name look-up is done every time we call `print(z)`!
 Even more problematic: most operations are lexically scoped function calls. This includes `+` and `-` but also (sometimes "recklessly" used) *operators* like `(` and `{`.
 
 .blockquote.exercise[
-#### <i class="fas  fa-desktop "></i> Example: excessive usage of parenthesis
+#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example: excessive usage of parenthesis
 
 (or: a good example of poorly written code)
 
@@ -587,9 +592,9 @@ bench::mark(g(x), h(x), i(x))
 ## # A tibble: 3 x 6
 ##   expression      min   median `itr/sec` mem_alloc `gc/sec`
 ##   &lt;bch:expr&gt; &lt;bch:tm&gt; &lt;bch:tm&gt;     &lt;dbl&gt; &lt;bch:byt&gt;    &lt;dbl&gt;
-## 1 g(x)          792ns   1.01µs   642107.      848B        0
-## 2 h(x)          787ns   1.05µs   625269.      848B        0
-## 3 i(x)          753ns    961ns   623330.      848B        0
+## 1 g(x)          500ns    700ns  1076771.      848B    108. 
+## 2 h(x)          500ns    700ns  1039037.      848B      0  
+## 3 i(x)          500ns    700ns   925182.      848B     92.5
 ```
 
 ]]
@@ -599,7 +604,7 @@ bench::mark(g(x), h(x), i(x))
 
 .smaller[
 .blockquote.exercise[
-#### <i class="fas  fa-desktop "></i> Example: function calls in nested environments
+#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example: function calls in nested environments
 
 
 ```r
@@ -629,7 +634,7 @@ f4 &lt;- set_env(f, random_env(environment(f3)))
 
 .smaller[
 .blockquote.exercise[
-#### <i class="fas  fa-desktop "></i> Example: function calls in nested environments &amp;mdash; ctd.
+#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example: function calls in nested environments &amp;mdash; ctd.
 
 
 ```r
@@ -640,10 +645,10 @@ bench::mark(f(1, 2), f2(1, 2), f3(1, 2), f4(1, 2))
 ## # A tibble: 4 x 6
 ##   expression      min   median `itr/sec` mem_alloc `gc/sec`
 ##   &lt;bch:expr&gt; &lt;bch:tm&gt; &lt;bch:tm&gt;     &lt;dbl&gt; &lt;bch:byt&gt;    &lt;dbl&gt;
-## 1 f(1, 2)       311ns    410ns  1481970.        0B       0 
-## 2 f2(1, 2)      580ns    701ns  1201247.        0B       0 
-## 3 f3(1, 2)      605ns    732ns  1203301.        0B       0 
-## 4 f4(1, 2)      644ns    761ns  1167563.        0B     117.
+## 1 f(1, 2)       300ns    400ns  1568554.        0B       0 
+## 2 f2(1, 2)      500ns    700ns  1071876.        0B     107.
+## 3 f3(1, 2)      500ns    700ns  1149359.        0B       0 
+## 4 f4(1, 2)      600ns    700ns  1230237.        0B     123.
 ```
 
 Each additional environment between `f()` and the global environment where `+` and `^` are defined increases computation time.
@@ -656,7 +661,7 @@ Each additional environment between `f()` and the global environment where `+` a
 Remember that function arguments are lazy &amp;mdash; they are only evaluated when actually needed. 
 
 .blockquote.exercise[
-#### <i class="fas  fa-desktop "></i> Example: lazy evaluation
+#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example: lazy evaluation
 
 
 ```r
@@ -685,7 +690,7 @@ f1(stop("My dog speaks Chinese"))
 Promises are very convenient but should be avoided if speed is crucial.
 
 .blockquote.exercise[
-#### <i class="fas  fa-desktop "></i> Example: lazy evaluation &amp;mdash; ctd.
+#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example: lazy evaluation &amp;mdash; ctd.
 
 
 ```r
@@ -698,8 +703,8 @@ bench::mark(f1(), f2())
 ## # A tibble: 2 x 6
 ##   expression      min   median `itr/sec` mem_alloc `gc/sec`
 ##   &lt;bch:expr&gt; &lt;bch:tm&gt; &lt;bch:tm&gt;     &lt;dbl&gt; &lt;bch:byt&gt;    &lt;dbl&gt;
-## 1 f1()          144ns    184ns  2729040.        0B        0
-## 2 f2()          234ns    292ns  1473400.        0B        0
+## 1 f1()              0    100ns  4848670.        0B        0
+## 2 f2()          200ns    400ns  2062026.        0B        0
 ```
 
 Arguments trigger promises each time the function is *called*. Superfluous arguments thus lead to avoidable overhead.
@@ -717,7 +722,7 @@ Arguments trigger promises each time the function is *called*. Superfluous argum
 
 - We are (mostly) happy to accept the slower speed for the time saved from not having to reinvent the wheel each time we want to implement a new function that, e.g., computes a test statistic.
 
-    (meanwhile there are 15333 packages available on [CRAN](https://cran.r-project.org/) with many useful functions waiting to be discovered by you!)
+    (meanwhile there are 18966 packages available on [CRAN](https://cran.r-project.org/) with many useful functions waiting to be discovered by you!)
 
 - We cannot overcome the circumstances described in this section. However, there are a few things to keep in mind when you want to write high performance code. We'll discuss these in the next chapter.
 
@@ -725,7 +730,7 @@ Arguments trigger promises each time the function is *called*. Superfluous argum
 class: segue-red
 
 ![:image 30%](pikaball.gif)
-### Thank You!
+### Thank You! 
     </textarea>
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
 <script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
@@ -780,6 +785,32 @@ if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
     deleted = true;
   });
 })();
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
 // adds .remark-code-has-line-highlighted class to <pre> parent elements
 // of code chunks containing highlighted lines with class .remark-code-line-highlighted
 (function(d) {
@@ -797,58 +828,6 @@ if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
   }
   preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
 })(document);</script>
-<script type="text/x-mathjax-config">
-  
-  function addCopyButtonToCode(){
-    // get all code elements
-    var allCodeBlocksElements = $( ".r" );
-    // For each element, do the following steps
-    allCodeBlocksElements.each(function(ii) {
-      // define a unique id for this element and add it
-      var currentId = "codeblock" + (ii + 1);
-      $(this).attr('id', currentId);
-      
-
-      // add the button just after the text in the code block w/ jquery
-      var clipButton = '<img src="https://image.flaticon.com/icons/svg/54/54662.svg" width="16" alt="Copy to clipboard" onclick=copyToClipboard("#' + currentId + '") style="float:right;cursor:pointer;">';
-      $(this).prepend(clipButton);
-    });
-    
-  }
-
-$(document).ready(function () {
-  // Once the DOM is loaded for the page, attach clipboard buttons
-  addCopyButtonToCode();
-});
-
-
-function copyToClipboard(element) {
-  var $temp = $("<textarea>");
-  $("body").append($temp);
-  
-  let vars = '';
-  
-  $(element).children().each((i, v) => {
-      vars += $(v).text() + '\n'
-    })
-  
-  $temp.val(vars).select();
-  document.execCommand("copy");
-  $temp.remove();
-}
-
-</script>
-
-<script>
-(function() {
-  var links = document.getElementsByTagName('a');
-  for (var i = 0; i < links.length; i++) {
-    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
-      links[i].target = '_blank';
-    }
-  }
-})();
-</script>
 
 <script>
 slideshow._releaseMath = function(el) {

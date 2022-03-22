@@ -1,21 +1,17 @@
 ---
 title: "Advanced R for Econometricians"
 subtitle: "Measuring Performance and Profiling"
-author: "Martin C. Arnold"
+author:
+  - "Martin C. Arnold"
+  - "Jens Klenke"
 date: "`r Sys.Date()`"
 output:
   xaringan::moon_reader:
-    css: 
-      - "default" 
-      - "../assets/sydney-fonts.css"
-      - "../assets/sydney.css"
-      - "../assets/title_slides.css"
-      - "../xaringan_files/custom.css"
+    css: ["default", "../assets/ude_fonts.css", "../assets/ude.css", "../assets/title_slides.css", "../assets/custom.css"]
     self_contained: false # if true, fonts will be stored locally
     seal: false # show a title slide with YAML information
     includes:
       in_header: "../assets/mathjax-equation-numbers.html"
-      after_body: "../assets/copybutton.html"
     nature:
       beforeInit: ["../assets/remark-zoom.js", "../xaringan_files/macros.js", "https://platform.twitter.com/widgets.js"]
       highlightStyle: github
@@ -26,18 +22,34 @@ output:
         scroll: false # disable slide transitions by scrolling
 ---
 
+```{r xaringanExtra-clipboard_2, echo=FALSE}
+# copy button styles mainly in ude.css
+htmltools::tagList(
+  xaringanExtra::use_clipboard(
+    button_text = "<i class=\"fa fa-clipboard\"></i>",
+    success_text = "<i class=\"fa fa-check\" style=\"color: #00ff00\"></i>",
+    error_text = "<i class=\"fa fa-times-circle\" style=\"color: #F94144\"></i>"
+  ),
+  rmarkdown::html_dependency_font_awesome()
+)
+```
+
 ```{r setup, include=FALSE}
 options(htmltools.dir.version = F)
 knitr::opts_chunk$set(warning = F, message = F)
-```
 
-```{r, include=FALSE}
 # packages needed
 library(microbenchmark)
 library(parallel)
 library(tictoc)
 library(dplyr)
 library(tidyr)
+library(icons)
+
+# pre-define icons
+desktop <- icons::icon_style(icons::fontawesome$solid$desktop, fill = "#004c93")
+checker_green <- icons::icon_style(icons::fontawesome$solid$check, fill = "green")
+times_red <- icons::icon_style(icons::fontawesome$solid$times, fill = "red")
 ```
 
 class: title-slide title-measuring center middle
@@ -100,7 +112,7 @@ It’s tempting to think you just know where the bottlenecks in your code are. I
 - Note: results are *stochastic* &mdash; we never run a function under the same conditions twice (memory usage, CPU load etc.) 
 
 .blockquote.exercise[
-#### `r icon::fa("desktop")` Example: profiling a call of `replicate()`
+#### `r desktop` Example: profiling a call of `replicate()`
 ```{r, eval = F, cache=TRUE}
 tmp <- tempfile()
 
@@ -126,7 +138,7 @@ sample.interval=100000
 
 .smaller[
 .blockquote.exercise[
-#### `r icon::fa("desktop")` Exercise: profiling nested functions
+#### `r desktop` Exercise: profiling nested functions
 
 Profile a call of `f()` and visualise the results using `profvis::profvis()`.
 
@@ -167,7 +179,7 @@ h <- function() {
 
 .smaller[
 .blockquote.exercise[
-#### `r icon::fa("desktop")` Example: profiling linear regression
+#### `r desktop` Example: profiling linear regression
 
 ```{r, eval=FALSE}
 profvis({
@@ -204,7 +216,7 @@ background-size: 650px
 ## Memory Profiling
 
 .blockquote.exercise[
-#### `r icon::fa("desktop")` Exercise: extensive garbage collection
+#### `r desktop` Exercise: extensive garbage collection
 
 The following code generates a large number of short-lived objects by *copy-on-modification*.
 
@@ -237,7 +249,7 @@ profvis({
 Sometimes code statements seem fairly innocent but are very inefficient both when it comes to memory and speed.
 
 .blockquote.exercise[
-#### `r icon::fa("desktop")` Exercise: coercion to another type
+#### `r desktop` Exercise: coercion to another type
 
 Can you explain why execution of the third line needs 762.9MB memory?
 
@@ -310,7 +322,7 @@ class: segue-red
 ## Microbenchmarking &mdash; `bench::mark()`
 
 .blockquote.exercise[
-#### `r icon::fa("desktop")` Example: "the fastest square root"
+#### `r desktop` Example: "the fastest square root"
 
 ```{r, eval=T}
 x <- runif(100)
@@ -330,9 +342,10 @@ plot(lb)
 ## Microbenchmarking &mdash; `bench::mark()`
 
 .blockquote.exercise[
-#### `r icon::fa("desktop")` Example: "the fastest square root"
+#### `r desktop` Example: "the fastest square root"
 
-```{r, echo=F, fig.width=14, fig.height=5.5, fig.align='center'}
+```{r, echo=T, eval =F, fig.width=14, fig.height=5.5, fig.align='center'}
+# hab hier die eval ausgeschaltet, da es bei mir nicht lief!
 plot(lb)
 ```
 
@@ -343,7 +356,7 @@ plot(lb)
 
 .smaller[
 .blockquote.exercise[
-#### `r icon::fa("desktop")` Example: non-equivalent code
+#### `r desktop` Example: non-equivalent code
 
 ```{r, eval=F}
 set.seed(42)
@@ -380,7 +393,7 @@ Sometimes it is useful to benchmark against a grid of parameters. This can be do
 
 .smaller[
 .blockquote.exercise[
-#### `r icon::fa("desktop")` **Exercise: benchmark against parameter grid**
+#### `r desktop` **Exercise: benchmark against parameter grid**
 
 Benchmark `create_df()` for combination of `rows = c(10000, 100000)` and `cols = c(10, 100)`.
 
@@ -408,13 +421,12 @@ create_df <- function(rows, cols) {
   How do the estimates from `system.time()` compare to those from `bench::mark()`? Why are they different?
 
 2. Here are two other ways to compute the square root of a vector. Which do you think will be fastest? Use microbenchmarking to test your answers.
-    ```{r, eval=F}
+```{r, eval=F}
     x^(1/2)
     exp(log(x)/2)
-    ```
+```
 
 ---
-class: segue-red
 ### (Why) is R slow?
 
 ---
@@ -441,7 +453,7 @@ But:
 
 .smaller[
 .blockquote.exercise[
-#### `r icon::fa("desktop")` Example: extreme dynamism
+#### `r desktop` Example: extreme dynamism
 
 ```{r, echo=TRUE, rx =T}
 x <- 0L
@@ -486,7 +498,7 @@ for (i in 1:1e6) {
 
 .smaller[
 .blockquote.exercise[
-#### `r icon::fa("desktop")` Example: have you seen z?
+#### `r desktop` Example: have you seen z?
 
 The interpreter asks: which environment does the value of `z` come from?
 
@@ -508,7 +520,7 @@ search()
 
 .smaller[
 .blockquote.exercise[
-#### `r icon::fa("desktop")` Example: have you seen z? &mdash; ctd.
+#### `r desktop` Example: have you seen z? &mdash; ctd.
 
 Interpreter asks: which environment does the value of `z` come from?
 
@@ -540,7 +552,7 @@ Name look-up is done every time we call `print(z)`!
 Even more problematic: most operations are lexically scoped function calls. This includes `+` and `-` but also (sometimes "recklessly" used) *operators* like `(` and `{`.
 
 .blockquote.exercise[
-#### `r icon::fa("desktop")` Example: excessive usage of parenthesis
+#### `r desktop` Example: excessive usage of parenthesis
 
 (or: a good example of poorly written code)
 
@@ -561,7 +573,7 @@ bench::mark(g(x), h(x), i(x))
 
 .smaller[
 .blockquote.exercise[
-#### `r icon::fa("desktop")` Example: function calls in nested environments
+#### `r desktop` Example: function calls in nested environments
 
 ```{r, cache=T}
 f <- function(x, y) {
@@ -590,7 +602,7 @@ f4 <- set_env(f, random_env(environment(f3)))
 
 .smaller[
 .blockquote.exercise[
-#### `r icon::fa("desktop")` Example: function calls in nested environments &mdash; ctd.
+#### `r desktop` Example: function calls in nested environments &mdash; ctd.
 
 ```{r, warning=F, message=F, cache=T}
 bench::mark(f(1, 2), f2(1, 2), f3(1, 2), f4(1, 2))
@@ -606,7 +618,7 @@ Each additional environment between `f()` and the global environment where `+` a
 Remember that function arguments are lazy &mdash; they are only evaluated when actually needed. 
 
 .blockquote.exercise[
-#### `r icon::fa("desktop")` Example: lazy evaluation
+#### `r desktop` Example: lazy evaluation
 
 ```{r, eval=F}
 f1 <- function(a) {
@@ -633,7 +645,7 @@ f1(stop("My dog speaks Chinese"))
 Promises are very convenient but should be avoided if speed is crucial.
 
 .blockquote.exercise[
-#### `r icon::fa("desktop")` Example: lazy evaluation &mdash; ctd.
+#### `r desktop` Example: lazy evaluation &mdash; ctd.
 
 ```{r}
 f1 <- function(a) NULL

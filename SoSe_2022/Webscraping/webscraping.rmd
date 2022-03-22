@@ -1,17 +1,19 @@
 ---
 title: "Advanced R for Econometricians"
 subtitle: "Web Scraping with rvest"
-author: "Alexander Gerber"
-date: "5 November 2018"
+author:
+  - "Martin C. Arnold"
+  - "Jens Klenke"
+date: "`r Sys.Date()`"
 output:
   xaringan::moon_reader:
-    css: ["default", "../assets/sydney-fonts.css", "../assets/sydney.css", "../assets/title_slides.css"]
+    css: ["default", "../assets/ude_fonts.css", "../assets/ude.css", "../assets/title_slides.css", "../assets/custom.css"]
     self_contained: false # if true, fonts will be stored locally
     seal: false # show a title slide with YAML information
     includes:
       in_header: "../assets/mathjax-equation-numbers.html"
     nature:
-      beforeInit: ["../assets/remark-zoom.js", "https://platform.twitter.com/widgets.js"]
+      beforeInit: ["../assets/remark-zoom.js", "../xaringan_files/macros.js", "https://platform.twitter.com/widgets.js"]
       highlightStyle: github
       highlightLines: true
       countIncrementalSlides: false
@@ -20,17 +22,36 @@ output:
         scroll: false # disable slide transitions by scrolling
 ---
 
+```{r xaringanExtra-clipboard_2, echo=FALSE}
+# copy button styles mainly in ude.css
+htmltools::tagList(
+  xaringanExtra::use_clipboard(
+    button_text = "<i class=\"fa fa-clipboard\"></i>",
+    success_text = "<i class=\"fa fa-check\" style=\"color: #00ff00\"></i>",
+    error_text = "<i class=\"fa fa-times-circle\" style=\"color: #F94144\"></i>"
+  ),
+  rmarkdown::html_dependency_font_awesome()
+)
+```
+
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE, warning=FALSE, message=FALSE)
 options(htmltools.dir.version = FALSE)
 def.chunk.hook  <- knitr::knit_hooks$get("chunk")
+
+library(icons)
+
+# pre-define icons
+desktop <- icons::icon_style(icons::fontawesome$solid$desktop, fill = "#004c93")
+checker_green <- icons::icon_style(icons::fontawesome$solid$check, fill = "green")
+times_red <- icons::icon_style(icons::fontawesome$solid$times, fill = "red")
 ```
 
 class: title-slide title-rvest center middle
 
 # `r rmarkdown::metadata$title`
 ## `r rmarkdown::metadata$subtitle`
-
+### `r rmarkdown::metadata$author`
 ---
 class: left, top
 ## What is Web Scraping?
@@ -140,7 +161,7 @@ The first step is to load the website into R using `xml2::read_html()` ( `rvest`
 
 ```{r}
 library(rvest)
-URL <- here::here("webscraping/examples/simple_html_page.html") # path of my html file
+URL <- here::here("SoSe_2022/webscraping/examples/simple_html_page.html") # path of my html file
 (page <- read_html(URL))
 ```
 
@@ -271,7 +292,7 @@ each user review looks the same). We can use those to scrape the content we desi
 Let's say we want to select all paragraphs (`p`) which are a decendent of an element with class `.red`. We can achieve this with
 
 ```{r}
-url <- here::here("webscraping/examples/simple_html_page_with_css.html")
+url <- here::here("SoSe_2022/webscraping/examples/simple_html_page_with_css.html")
 page <- url %>% read_html()
 page %>%  
   html_nodes(".red") %>% 

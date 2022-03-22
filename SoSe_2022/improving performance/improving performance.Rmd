@@ -1,16 +1,17 @@
 ---
 title: "Advanced R for Econometricians"
 subtitle: "Improving Performance"
-author: "Martin C. Arnold"
+author:
+  - "Martin C. Arnold"
+  - "Jens Klenke"
 date: "`r Sys.Date()`"
 output:
   xaringan::moon_reader:
-    css: ["default", "../assets/sydney-fonts.css", "../assets/sydney.css", "../assets/title_slides.css", "../xaringan_files/custom.css"]
+    css: ["default", "../assets/ude_fonts.css", "../assets/ude.css", "../assets/title_slides.css", "../assets/custom.css"]
     self_contained: false # if true, fonts will be stored locally
     seal: false # show a title slide with YAML information
     includes:
       in_header: "../assets/mathjax-equation-numbers.html"
-      after_body: "../assets/copybutton.html"
     nature:
       beforeInit: ["../assets/remark-zoom.js", "../xaringan_files/macros.js", "https://platform.twitter.com/widgets.js"]
       highlightStyle: github
@@ -20,6 +21,18 @@ output:
       navigation:
         scroll: false # disable slide transitions by scrolling
 ---
+
+```{r xaringanExtra-clipboard_2, echo=FALSE}
+# copy button styles mainly in ude.css
+htmltools::tagList(
+  xaringanExtra::use_clipboard(
+    button_text = "<i class=\"fa fa-clipboard\"></i>",
+    success_text = "<i class=\"fa fa-check\" style=\"color: #00ff00\"></i>",
+    error_text = "<i class=\"fa fa-times-circle\" style=\"color: #F94144\"></i>"
+  ),
+  rmarkdown::html_dependency_font_awesome()
+)
+```
 
 ```{r setup, include=FALSE}
 options(htmltools.dir.version = F)
@@ -33,6 +46,12 @@ library(parallel)
 library(tictoc)
 library(dplyr)
 library(tidyr)
+library(icons)
+
+# pre-define icons
+desktop <- icons::icon_style(icons::fontawesome$solid$desktop, fill = "#004c93")
+checker_green <- icons::icon_style(icons::fontawesome$solid$check, fill = "green")
+times_red <- icons::icon_style(icons::fontawesome$solid$times, fill = "red")
 ```
 
 class: title-slide title-performance center middle
@@ -125,7 +144,7 @@ The techniques discussed next follow this paradigm. If this is not enough, we st
 If you cannot find existing solutions, start by reducing your code to the bare essentials.
 
 .blockquote.exercise[
-#### `r icon::fa("desktop")` Exercise: coercion of inputs / robustness checks
+#### `r desktop` Exercise: coercion of inputs / robustness checks
 
 ```{r, cache = T}
 X <- matrix(1:1000, ncol = 10)
@@ -151,7 +170,7 @@ A function is faster if it has less to do &mdash; obvious but often neglected!
 **Use functions tailored to specific input and output types / specific problems!**
 
 .blockquote.exercise[
-#### `r icon::fa("desktop")` Exercise: coercion of inputs / robustness checks &mdash; ctd.
+#### `r desktop` Exercise: coercion of inputs / robustness checks &mdash; ctd.
 
 Which approach is faster and why?
 
@@ -167,7 +186,7 @@ apply(X, 1, sum)
 
 .smaller[
 .blockquote.exercise[
-#### `r icon::fa("desktop")` Exercise: searching a vector
+#### `r desktop` Exercise: searching a vector
 
 What is the fastest way to check if `10` is an element of `1:100`?
 
@@ -178,7 +197,7 @@ What is the fastest way to check if `10` is an element of `1:100`?
 
 .smaller[
 .blockquote.exercise[
-#### `r icon::fa("desktop")` Exercise: Linear Regression &mdash; computation of $SE(\widehat\beta)$
+#### `r desktop` Exercise: Linear Regression &mdash; computation of $SE(\widehat\beta)$
 
 Which approach is faster and why? Name disadvantages of the fastest one.
 
@@ -209,7 +228,7 @@ b <- function() {
 Be as explicit as possible.
 
 .blockquote.exercise[
-#### `r icon::fa("desktop")` Example: method dispatch takes time
+#### `r desktop` Example: method dispatch takes time
 
 ```{r}
 x <- runif(1e2)
@@ -227,7 +246,7 @@ bench::mark(
 .smaller[
 Benchmark against alternatives that rely on primitive functions.
 .blockquote.exercise[
-#### `r icon::fa("desktop")` Example: primitives are faster
+#### `r desktop` Example: primitives are faster
 ```{r}
 bench::mark(
   mean.default(x),
@@ -328,7 +347,7 @@ Disregarding these patterns by writing code which operates on $1\times1$ vectors
 **Why is vectorisation efficient? &mdash; ctd. **
 
 .blockquote.exercise[
-#### `r icon::fa("desktop")` Example: vector addition
+#### `r desktop` Example: vector addition
 
 $$\begin{pmatrix} 1 \\ 2\\ 3 \end{pmatrix}+\begin{pmatrix} 4 \\ 5\\ 6 \end{pmatrix} = \begin{pmatrix} 5 \\ 7\\ 9 \end{pmatrix}$$
 
@@ -377,7 +396,7 @@ Thus 'scalar' operations work on vector *elements* which is (often) needlessly c
 By 'vectorised' we mean that the function works on vectors, i.e., performs vector arithmetic and calls functions which work on vectors.
 
 .blockquote.exercise[
-#### `r icon::fa("desktop")` Example: scalar vs. vectorised computation of euclidean norm
+#### `r desktop` Example: scalar vs. vectorised computation of euclidean norm
 
 .pull-left[
 ```{r}
@@ -415,7 +434,7 @@ L2_vec <- function(x) {
 By 'vectorised' we mean that the function works on vectors, i.e., performs vector arithmetic and calls functions which work on vectors.
 
 .blockquote.exercise[
-#### `r icon::fa("desktop")` Example: scalar vs. vectorised computation of euclidean norm
+#### `r desktop` Example: scalar vs. vectorised computation of euclidean norm
 ```{r, cache=T}
 bench::mark(
   L2_scalar(1:1e4),
@@ -474,7 +493,7 @@ Allocate the required storage before the loop and *fill* the object!
 ## 3. Vectorise your code
 
 .blockquote.exercise[
-#### `r icon::fa("desktop")` Example: avoid growing objects
+#### `r desktop` Example: avoid growing objects
 
 ```{r, include=FALSE, eval=F}
 library(tidyverse)
@@ -523,7 +542,7 @@ bmk %>% unnest() %>% ggplot(aes(x = n, y = as.numeric(median), color = as.charac
 ## 3. Vectorise your code
 
 .blockquote.exercise[
-#### `r icon::fa("desktop")` Example: good and bad `for()` loops
+#### `r desktop` Example: good and bad `for()` loops
 .pull-left[.smaller[
 ```{r}
 # Bad: c()/cbind()/rbind()
@@ -548,7 +567,7 @@ rw_bad <- function(N) {
 ## 3. Vectorise your code
 
 .blockquote.exercise[
-#### `r icon::fa("desktop")` Example: good and bad `for()` loops
+#### `r desktop` Example: good and bad `for()` loops
 .pull-left[.smaller[
 ```{r}
 # Good: proper initialisation/iteration
@@ -575,7 +594,7 @@ rw_good <- function(N) {
 ## 3. Vectorise your code
 
 .blockquote.exercise[
-#### `r icon::fa("desktop")` Example: good and bad `for()` loops
+#### `r desktop` Example: good and bad `for()` loops
 ```{r, cache = T}
 bench::mark(rw_good(1e4), 
             rw_bad(1e4))
@@ -588,7 +607,7 @@ bench::mark(rw_good(1e4),
 **Are `for()` loops slower than the `*apply()` functions?**
 
 .blockquote.exercise[
-#### `r icon::fa("desktop")` Example: `for()` vs. `apply()`
+#### `r desktop` Example: `for()` vs. `apply()`
 ```{r}
 X <- matrix(rnorm(1e4), ncol = 1e4)
 
@@ -610,7 +629,7 @@ colmax <- function(x) {
 **Are `for()` loops slower than the `*apply()` functions?**
 
 .blockquote.exercise[
-#### `r icon::fa("desktop")` Example: `for()` vs. `apply()` &mdash; ctd. 
+#### `r desktop` Example: `for()` vs. `apply()` &mdash; ctd. 
 ```{r}
 bench::mark(
   colmax(X),
@@ -731,7 +750,7 @@ Note that the behavior of `detectCores()` is platform specific and not always re
 
 .smaller[
 .blockquote.exercise[
-#### `r icon::fa("desktop")` Example: send them cores to sleep (on MacOS)
+#### `r desktop` Example: send them cores to sleep (on MacOS)
 ```{r, eval=F}
 r <- mclapply(1:8, function(i) Sys.sleep(20), mc.cores = 7)
 ```
@@ -744,7 +763,7 @@ r <- mclapply(1:8, function(i) Sys.sleep(20), mc.cores = 7)
 
 .smaller[
 .blockquote.exercise[
-#### `r icon::fa("desktop")` Example: send them cores to sleep (on MacOS) &mdash; ctd.
+#### `r desktop` Example: send them cores to sleep (on MacOS) &mdash; ctd.
 What happened?
 
 - The R session (the main Process) opened 8 sub-processes, so-called *forks* (labeled `rsession` in the activity monitor)
@@ -761,7 +780,7 @@ What happened?
 
 .smaller[
 .blockquote.exercise[
-#### `r icon::fa("desktop")` Example: send them cores to sleep (Windows)  
+#### `r desktop` Example: send them cores to sleep (Windows)  
 
 An alternative on Windows is to use `parallel::parLapply()`. The setup is somewhat more complex.
 
@@ -790,7 +809,7 @@ stopCluster(cl)
 ## 4. Parallelisation
 
 .blockquote.exercise[
-#### `r icon::fa("desktop")` Example: parallelised bootstrapping
+#### `r desktop` Example: parallelised bootstrapping
 
 Remember the function `cor_df()` from the case study in *2. Do as Little as Possible*. A faster approach, `cor_df2()`, is given  below.
 
@@ -821,7 +840,7 @@ function(df, n) {
 ## 4. Parallelisation
 
 .blockquote.exercise[
-#### `r icon::fa("desktop")` Example: parallelised bootstrapping &mdash; ctd.
+#### `r desktop` Example: parallelised bootstrapping &mdash; ctd.
 
 Calling `cor_df2()` a large number of times is time consuming. 
 
@@ -844,7 +863,7 @@ cat('
 ## 4. Parallelisation
 
 .blockquote.exercise[
-#### `r icon::fa("desktop")` Example: parallelised bootstrapping &mdash; ctd.
+#### `r desktop` Example: parallelised bootstrapping &mdash; ctd.
 
 Luckily, it is straightforward to bootstrap in parallel using `mclapply()`.
 
@@ -870,7 +889,7 @@ Note that using 8 cores in my case is (only) ~5 times faster than the serial app
 
 .smaller[
 .blockquote.exercise[
-#### `r icon::fa("desktop")` Example: too much overhead
+#### `r desktop` Example: too much overhead
 
 Parallelisation may be inefficient:
 
@@ -934,7 +953,7 @@ Development version @ https://github.com/FunWithR/MonteCarlo
 
 .smaller[
 .blockquote.exercise[
-#### `r icon::fa("desktop")` Example: Unit Root test
+#### `r desktop` Example: Unit Root test
 Consider the DGP $$y_t = \rho y_{t-1} + \epsilon_t, \ \ \epsilon_t\sim N(0,1)$$ with $y_0 = 0$ and $\rho = 1.$ It is a well known result that the limit of the $t$-ratio $$t = \frac{\hat\rho-1}{SE(\hat\rho)}$$ can be written as a functional of [Wiener processes](https://en.wikipedia.org/wiki/Wiener_process),
 
 $$ t \Rightarrow \frac{[W(1)]^2 -1}{2\sqrt{\int_0^1[W(r)]^2 dr}}.$$
@@ -947,7 +966,7 @@ The asymptotic distribution of $t$ is non-normal and its quantiles cannot be der
 
 .smaller[
 .blockquote.exercise[
-#### `r icon::fa("desktop")` Example: Unit Root test &mdash; ctd.
+#### `r desktop` Example: Unit Root test &mdash; ctd.
 We use the `MonteCarlo` package to simulate the limit distribution of $t$.
 
 ```{r, message=F}
@@ -979,7 +998,7 @@ sim <- function(rho, Time) {
 
 .smaller[
 .blockquote.exercise[
-#### `r icon::fa("desktop")` Example: Unit Root test &mdash; ctd.
+#### `r desktop` Example: Unit Root test &mdash; ctd.
 
 ```{r, cache=T, message=F, results='hide'}
 # setup list of parameters
@@ -1005,7 +1024,7 @@ t_sim <- apply(r$result$t, 3, c)
 
 .smaller[
 .blockquote.exercise[
-#### `r icon::fa("desktop")` Example: Unit Root test &mdash; ctd.
+#### `r desktop` Example: Unit Root test &mdash; ctd.
 
 Estimates of the finite sample quantiles are close to the quantiles of the corresponding asymptotic Dickey-Fuller distribution
 
@@ -1027,7 +1046,7 @@ curve(dnorm(x), from = -4, to = 4, add = T, lty = 2, col = "red")
 
 .smaller[
 .blockquote.exercise[
-#### `r icon::fa("desktop")` Example: Unit Root test &mdash; ctd.
+#### `r desktop` Example: Unit Root test &mdash; ctd.
 ```{r, fig.retina=T, echo=F, fig.align='center', fig.height=6.5}
 plot(density(t_sim), main = "Dickey-Fuller Distribution")
 curve(dnorm(x), from = -4, to = 4, add = T, lty = 2, col = "red")
@@ -1040,7 +1059,7 @@ curve(dnorm(x), from = -4, to = 4, add = T, lty = 2, col = "red")
 It is a great benefit to work with the package if you want to run the simulation for several parameter combinations. 
 
 .blockquote.exercise[
-#### `r icon::fa("desktop")` Example: Power of DF-Test
+#### `r desktop` Example: Power of DF-Test
 
 We write a simple wrapper for `sim()` which returns a logical value for rejection at 5% using the asymptotic critical value.
 
@@ -1062,7 +1081,7 @@ sim_pow <- function(rho, Time) {
 
 .smaller[
 .blockquote.exercise[
-#### `r icon::fa("desktop")` Example: Power of DF-Test &mdash; ctd.
+#### `r desktop` Example: Power of DF-Test &mdash; ctd.
 
 We consider all combination for a sequence of alternatives and three different sample sizes.
 
@@ -1085,7 +1104,7 @@ r <- MonteCarlo(
 
 .smaller[
 .blockquote.exercise[
-#### `r icon::fa("desktop")` Example: Power of DF-Test &mdash; ctd.
+#### `r desktop` Example: Power of DF-Test &mdash; ctd.
 Content of a `MonteCarlo` object is easily transformed and visualised using `tidyverse` functions.
 
 ```{r, eval = F}
@@ -1105,7 +1124,7 @@ ggplot(tbl) +
 
 .smaller[
 .blockquote.exercise[
-#### `r icon::fa("desktop")` Example: Power of DF-Test &mdash; ctd.
+#### `r desktop` Example: Power of DF-Test &mdash; ctd.
 ```{r, echo=F, out.width='60%', fig.width=10, dpi=200, fig.align='center'}
 library(dplyr)
 library(ggplot2)
@@ -1123,7 +1142,7 @@ ggplot(tbl) +
 
 .smaller[
 .blockquote.exercise[
-#### `r icon::fa("desktop")` Example: Power of DF-Test &mdash; ctd.
+#### `r desktop` Example: Power of DF-Test &mdash; ctd.
 Conversion of the results into a $\LaTeX$ table is particularly useful.
 ```{r, eval=F}
 # generate LaTeX table from simulation results
