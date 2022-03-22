@@ -4,7 +4,8 @@
     <title>Advanced R for Econometricians</title>
     <meta charset="utf-8" />
     <meta name="author" content="Martin C. Arnold" />
-    <meta name="date" content="2022-03-10" />
+    <meta name="author" content="Jens Klenke" />
+    <meta name="date" content="2022-03-22" />
     <script src="Advanced_files/header-attrs/header-attrs.js"></script>
     <link href="Advanced_files/remark-css/default.css" rel="stylesheet" />
     <script src="Advanced_files/clipboard/clipboard.min.js"></script>
@@ -25,10 +26,6 @@
       cursor: default;
     }
     </style>
-
-    <script src="https://code.jquery.com/jquery-3.4.1.min.js"
-      integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
-      crossorigin="anonymous"></script>
     <link rel="stylesheet" href="../assets/ude_fonts.css" type="text/css" />
     <link rel="stylesheet" href="../assets/ude.css" type="text/css" />
     <link rel="stylesheet" href="../assets/title_slides.css" type="text/css" />
@@ -48,7 +45,7 @@ class: title-slide title-rintro center middle
 
 # Advanced R for Econometricians
 ## Advanced R Concepts
-### Martin C. Arnold
+### Martin C. Arnold, Jens Klenke
 
 ---
 ## Overview
@@ -260,11 +257,11 @@ ref(x, character = TRUE)
 ```
 
 ```
-## o [1:0x229efcb0] &lt;chr&gt; 
+## o [1:0x229e0618] &lt;chr&gt; 
 ## +-[2:0x14159d70] &lt;string: "a"&gt; 
 ## +-[2:0x14159d70] 
-## +-[3:0x22258ab0] &lt;string: "abc"&gt; 
-## \-[4:0x1434d5a0] &lt;string: "d"&gt;
+## +-[3:0x22248c40] &lt;string: "abc"&gt; 
+## \-[4:0x1434d588] &lt;string: "d"&gt;
 ```
 ]]]
 
@@ -307,7 +304,7 @@ obj_addr(x)
 ```
 
 ```
-## [1] "0x229fd820"
+## [1] "0x229ee188"
 ```
 
 ```r
@@ -315,7 +312,7 @@ obj_addr(y)
 ```
 
 ```
-## [1] "0x229ff060"
+## [1] "0x229ef9c8"
 ```
 ]]
 ]]]
@@ -491,15 +488,15 @@ ref(l1, l2)
 ```
 
 ```
-## o [1:0x13771668] &lt;list&gt; 
-## +-[2:0x12d7ca78] &lt;dbl&gt; 
-## +-[3:0x12d7ca40] &lt;dbl&gt; 
-## \-[4:0x12d7ca08] &lt;dbl&gt; 
+## o [1:0x137f34e8] &lt;list&gt; 
+## +-[2:0x12dfe928] &lt;dbl&gt; 
+## +-[3:0x12dfe8f0] &lt;dbl&gt; 
+## \-[4:0x12dfe8b8] &lt;dbl&gt; 
 ##  
-## o [5:0x1380e468] &lt;list&gt; 
-## +-[2:0x12d7ca78] 
-## +-[3:0x12d7ca40] 
-## \-[6:0x12d7c928] &lt;dbl&gt;
+## o [5:0x1388e3c8] &lt;list&gt; 
+## +-[2:0x12dfe928] 
+## +-[3:0x12dfe8f0] 
+## \-[6:0x12dfe7d8] &lt;dbl&gt;
 ```
 
 ]
@@ -824,15 +821,15 @@ lobstr::ref(x)
 .pull-right[
 
 ```
-## o [1:0x21791530] &lt;list&gt; 
-## \-[2:0x21562778] &lt;int&gt;
+## o [1:0x217831e0] &lt;list&gt; 
+## \-[2:0x21551d38] &lt;int&gt;
 ```
 
 ```
-## o [1:0x1358e748] &lt;list&gt; 
-## +-[2:0x21562778] &lt;int&gt; 
-## \-o [3:0x21791530] &lt;list&gt; 
-##   \-[2:0x21562778]
+## o [1:0x1360e688] &lt;list&gt; 
+## +-[2:0x21551d38] &lt;int&gt; 
+## \-o [3:0x217831e0] &lt;list&gt; 
+##   \-[2:0x21551d38]
 ```
 ]]]
 
@@ -1052,9 +1049,9 @@ lobstr::ref(funs)
 ```
 
 ```
-## o [1:0x1336e350] &lt;list&gt; 
-## +-[2:0x227e55a0] &lt;fn&gt; 
-## \-[3:0x227e54f8] &lt;fn&gt;
+## o [1:0x122a8798] &lt;list&gt; 
+## +-[2:0x16d83880] &lt;fn&gt; 
+## \-[3:0x16d83928] &lt;fn&gt;
 ```
 
 ```r
