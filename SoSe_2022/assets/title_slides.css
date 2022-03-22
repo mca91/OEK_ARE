@@ -2,6 +2,7 @@
     background-image: url(../assets/ude_logo.png), url(../assets/rlogo.png);
     background-position: 7% 10%, 90% 90%;
     background-size: 220px, 180px;
+    color: rgba(255, 255, 255, 0.68);
 }
 
 .title-git {
