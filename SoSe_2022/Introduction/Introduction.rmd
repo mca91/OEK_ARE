@@ -52,7 +52,7 @@ checker_green <- icons::icon_style(icons::fontawesome$solid$check, fill = "green
 times_red <- icons::icon_style(icons::fontawesome$solid$times, fill = "red")
 ```
 
-class: class: title-slide title-rintro center middle
+class: title-slide title-rintro center middle
 
 #  `r rmarkdown::metadata$title`
 ## `r rmarkdown::metadata$subtitle`

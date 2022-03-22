@@ -18,9 +18,13 @@ output:
       countIncrementalSlides: false
       ratio: "16:9"
 ---
+class: title-slide title-rintro middle
+
+.font70[
+<br>
+
 ### Outline
 
-.font90[
 .pull-left[
 1. Introduction
 2. Prerequisites
@@ -52,8 +56,8 @@ output:
 ]]
 
 
-.pull-down-small_margin.font90[
-#### Additional Topics for self-study
+.pull-down-small_margin.font70[
+### Additional Topics for self-study
 
 <ol start = "8">
   <li> Shiny </li>
