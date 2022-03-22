@@ -18,15 +18,14 @@ output:
       countIncrementalSlides: false
       ratio: "16:9"
 ---
-class: title-slide title-rintro middle
-
+class: title-slide title-index 
 .font70[
-<br>
+# Advanced `R` for Econometricians 
 
 ### Outline
 
 .pull-left[
-1. Introduction
+1. [Introduction](Introduction/Introduction.html)
 2. Prerequisites
    - Rmarkdown 
    - Git and Github
