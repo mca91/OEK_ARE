@@ -5,7 +5,7 @@
     <meta charset="utf-8" />
     <meta name="author" content="Martin C. Arnold" />
     <meta name="author" content="Jens Klenke" />
-    <meta name="date" content="2022-03-22" />
+    <meta name="date" content="2022-03-24" />
     <script src="webscraping_files/header-attrs/header-attrs.js"></script>
     <link href="webscraping_files/remark-css/default.css" rel="stylesheet" />
     <script src="webscraping_files/clipboard/clipboard.min.js"></script>
@@ -51,7 +51,11 @@ class: left, top
 Web scraping is the process of extracting data from websites. It can be used if the desired data 
 are not readily available via e.g. a download link or an API.
 
-### Example
+--
+
+.font90.blockquote.exercise[
+
+#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example
 
 Consider the website https://www.trustpilot.com/ which is a platform for customer reviews.
 
@@ -59,9 +63,13 @@ Each review consists of different parts such as
 - a short text
 - a date
 - a rating from 1 to 5 stars. 
+]
+
+--
 
 Let's say we are interested whether the ratings of a shop change over time. For this we would need 
 to gather the date and the star rating which are, however, not downloadable. 
+
 
 We will learn how we can access these data nontheless to perform the analysis. 
 
@@ -69,7 +77,9 @@ We will learn how we can access these data nontheless to perform the analysis.
 class: left, top
 ## Legal Issues
 
-Web scraping is generally legal. However, depending on the jurisdiction it can be considerd illegal in some cases.
+Web scraping is generally legal. However, depending on the jurisdiction it can be considered illegal in some cases.
+
+--
 
 You should be careful if...
 
@@ -80,16 +90,24 @@ You should be careful if...
 - you want to republish the scraped content, e.g. an article from a newspage. 
 - webscraping is prohibited by the Terms of Service, even if this doesn't make it illegal per se.  
 
+--
+
 **Important**: avoid troubles by limiting the number of requests to a reasonable amount (e.g. 1 request every 10 seconds). Otherwise it could be considered as a denial of service attack. 
 
 
 ---
 ## The Structure of a Website
 
+.font80[
 To extract data from a website it is necessary to understand the basics of how a website is built. 
+]
 
-Here is a very simple website bulid only with HTML: 
-.code60[
+--
+
+.font70.blockquote.exercise[
+
+#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Basic HTML example:
+
 ```{}
 &lt;!DOCTYPE html&gt;
   &lt;html&gt;
@@ -111,14 +129,19 @@ Here is a very simple website bulid only with HTML:
 ```
 ]
 
+--
+
+.font80[
 - The `&lt;html&gt;...&lt;/html&gt;` tags are the container for all other HTML elements.
 - The `&lt;head&gt;...&lt;/head&gt;` tags contain meta data which are not directly visible on the web page.
-- `&lt;body&gt;...&lt;/body&gt;` contains everything we can see such as text, links, images, tables, lists, etc. This is the most relevant part. 
-
+- `&lt;body&gt;...&lt;/body&gt;` contains everything we can see such as text, links, images, tables, lists, etc. This is the most relevant part for webscraping. 
+]
 ---
 ## The Body
 
-.code70[
+.code70.blockquote.exercise[
+
+#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Exmaple
 ```{}
   &lt;body&gt;
   
@@ -134,22 +157,38 @@ Here is a very simple website bulid only with HTML:
 ```
 ]
 
+--
+
+.font90[
 - In the body part tags are used to give the displayed information a structure. In our example we use: 
     - `&lt;h1&gt;...&lt;/h1&gt;`   to define a heading
     - `&lt;p&gt;...&lt;/p&gt;`     to define text
     - `&lt;div&gt;...&lt;/div&gt;` to define different sections.
 
 - Look at the [w3schools tag list](https://www.w3schools.com/tags/default.asp) for other tags you might encounter. 
+]
 
+--
+
+.font90[
 We will start by scraping the simple HTML page from before. 
 Create a new HTML document and copy the code form the last slide into it.
+]
 
 ---
 ## `read_html()`
 
+
 The package `rvest` makes use of the structure of an HTML document to extract the relevant information. 
 
 The first step is to load the website into R using `xml2::read_html()` ( `rvest` depends on `xml2` whereby `xml2`  automatically loads when `rvest` gets loaded). 
+
+&lt;br&gt;
+
+--
+
+.code90.blockquote.exercise[
+#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Exmaple
 
 
 ```r
@@ -164,25 +203,29 @@ URL &lt;- here::here("SoSe_2022/webscraping/examples/simple_html_page.html") # p
 ## [1] &lt;head&gt;\n&lt;meta http-equiv="Content-Type" content="text/html; charset=UTF-8 ...
 ## [2] &lt;body&gt;\r\n  \r\n  &lt;h1&gt;This is a Heading&lt;/h1&gt;\r\n  &lt;p&gt;This is a paragraph. ...
 ```
-
+]
 
 ---
 ## XML Structure
 
-Our page is now stored as an xml document which has a hierarchical data structure. For our page it looks like this. 
+.font90[
+Our page is now stored as an `xml` document which has a hierarchical data structure. For our page it looks like this. ]
 
-&lt;img src="xml_structure1.png" width="650px" style="display: block; margin: auto;" /&gt;
+&lt;img src="xml_structure1.png" width="600px" style="display: block; margin: auto;" /&gt;
 
+--
+
+.font90[
 - We call everything sourrounded by a rectangle or a circle a node. 
 - We call everything sourrounded by a rectangle with rounded corners data. 
-
+]
 ---
 ## `html_node()`
 
-We can navigate through the xml object using `rvest::html_node()`.
+We can navigate through the `xml` object using `rvest::html_node()`.
 
 -  Get all `p` node
-
+.blockquote.exercise[
 
 ```r
 page %&gt;% rvest::html_nodes("p")
@@ -193,8 +236,12 @@ page %&gt;% rvest::html_nodes("p")
 ## [1] &lt;p&gt;This is a paragraph.&lt;/p&gt;
 ## [2] &lt;p&gt;This is another paragraph.&lt;/p&gt;
 ```
+]
+
+--
 
 -  Get only `p` nodes which are children of `div` nodes
+.blockquote.exercise[
 
 ```r
 page %&gt;% 
@@ -206,13 +253,18 @@ page %&gt;%
 ## {xml_nodeset (1)}
 ## [1] &lt;p&gt;This is another paragraph.&lt;/p&gt;
 ```
+]
 
 ---
 ## `html_text()`
-
 If we got the nodes which contain the data we want to scrape, we can use `rvest::html_text()` to 
 extract the data (i.e. the text between the tags) as a normal character vector. 
 
+&lt;br&gt;
+
+--
+
+.blockquote.exercise[
 
 ```r
 page %&gt;% 
@@ -224,31 +276,41 @@ page %&gt;%
 ```
 ## [1] "This is another paragraph."
 ```
+]
 
 ---
 ## CSS 
 
+.font90[
 Websites are not only built with HTML. CSS is the language which is used to style a website.
 Let's add a bit more to our simple page: 
 
 - add a link to a `css` file (which doesn't exist now) in the head section of your html file 
-
+.blockquote.exercise[
 ```{}
 &lt;link rel="stylesheet" href="stylesheet.css"&gt;
 ```
+]]
 
+--
+
+.font90[
 - add another `div` with a heading and a paragraph
 
 - create a new file `stylesheet.css` in the same folder as your HTML file 
 
-- copy the following code into that file and see what happens
+- copy the following code into that file and see what happens]
 
+--
+
+.blockquote.exercise[
 ```{}
 div h1 {
   color: green;
   text-align: center;
 };
 ```
+]
 
 ---
 ## CSS Selectors
