@@ -5,8 +5,8 @@
     <meta charset="utf-8" />
     <meta name="author" content="Martin C. Arnold" />
     <meta name="author" content="Jens Klenke" />
-    <meta name="date" content="2022-03-19" />
-    <script src="databases_files/header-attrs-2.13/header-attrs.js"></script>
+    <meta name="date" content="2022-03-24" />
+    <script src="databases_files/header-attrs-2.12/header-attrs.js"></script>
     <link href="databases_files/remark-css-0.0.1/default.css" rel="stylesheet" />
     <script src="databases_files/clipboard-2.0.6/clipboard.min.js"></script>
     <link href="databases_files/xaringanExtra-clipboard-0.2.6/xaringanExtra-clipboard.css" rel="stylesheet" />
@@ -414,7 +414,7 @@ DBI::dbListTables(con)
 #### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example 
 
 ```r
-gap_db &lt;- tbl(con, "gapminder") 
+gap_db &lt;- tbl(con, "gapminder")
 class(gap_db)
 ```
 
@@ -430,15 +430,15 @@ class(gap_db)
 
 #### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example 
 
-
 ```r
 gap_avg_db &lt;- gap_db %&gt;%
-  group_by(continent) %&gt;%
-  select(where(is.numeric), -year) %&gt;%
-  summarise(across(everything(),mean))
+  group_by(continent) %&gt;% 
+  select_if(is.numeric) %&gt;% 
+  select(-year) %&gt;%
+  summarise_all(mean)
 ```
-]
 
+]
 
 --
 
@@ -459,22 +459,38 @@ show_query(gap_avg_db)
 
 ```
 ## &lt;SQL&gt;
-## SELECT `continent`, AVG(`continent`) AS `continent`
-## FROM (SELECT `continent`
+## SELECT `continent`, AVG(`lifeExp`) AS `lifeExp`, AVG(`pop`) AS `pop`, AVG(`gdpPercap`) AS `gdpPercap`
+## FROM (SELECT `continent`, `lifeExp`, `pop`, `gdpPercap`
 ## FROM `gapminder`) `q01`
 ## GROUP BY `continent`
 ```
 ]
 
+???
+
+
+- select_if superseded
+- but dbplyr **do not** support predicate functions, i.e. you can not use where(is.numeric) to select all numeric variables.
+
+
+
 ---
 ## Use Standard `dplyr` Functions on the Database
 
-
+.font90[
 When working with databases, `dplyr` tries to be as lazy as possible:
 
 - It never pulls data into R unless you explicitly ask for it.
 - It delays doing any work until the last possible moment: it collects everything you want to do and then sends it to the database in one step.
 - `collect()` actually pulls the data into R.  
+]
+
+--
+
+
+.font90.blockquote.exercise[
+#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example 
+
 
 ```r
 gap_avg &lt;- gap_avg_db %&gt;% collect(n = Inf)
@@ -482,79 +498,118 @@ print(gap_avg)
 ```
 
 ```
-## # A tibble: 5 x 2
-##   continent continent..2
-##   &lt;chr&gt;            &lt;dbl&gt;
-## 1 Africa               0
-## 2 Americas             0
-## 3 Asia                 0
-## 4 Europe               0
-## 5 Oceania              0
+## # A tibble: 5 x 4
+##   continent lifeExp       pop gdpPercap
+##   &lt;chr&gt;       &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;
+## 1 Africa       48.9  9916003.     2194.
+## 2 Americas     64.7 24504795.     7136.
+## 3 Asia         60.1 77038722.     7902.
+## 4 Europe       71.9 17169765.    14469.
+## 5 Oceania      74.3  8874672.    18622.
 ```
-
+]
 ---
 ## Disconnect
 
 - If the connection to the database is no longer needed you should disconnect to free system ressources. 
 
-    
-    ```r
-    DBI::dbDisconnect(con)
-    rm(con)
-    ```
+--
 
+.blockquote.exercise[
 
+```r
+DBI::dbDisconnect(con)
+rm(con)
+```
+]
 
 ---
+
+.font90[
 ## Set up an SQLite Database
 
 - SQLite is very light weighted Database Management System 
 - An SQLite database is contained in a single file. There is no need for a server. 
 - Everything you need is to install the `RSQLite` packages. 
+]
 
+--
+
+.font90[
 #### Create an SQLite Database
 - A new SQLite database is automatically created if you call `DBI::dbConnect()`
 with argument `dbname = "path_to_database"` where `"path_to_database"` is a path to 
 a non-existing file. 
 - In case `"path_to_database"` is an existing SQLite database it 
 connects to that database. 
-    
-    ```r
-    library(dplyr)
-    con &lt;- DBI::dbConnect(
-               drv = RSQLite::SQLite(),
-               dbname = here::here("databases","mtcars.sqlite3"), 
-               )
-    ```
+]
+
+--
+
+.font90.blockquote.exercise[
+#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example 
+
+
+```r
+library(dplyr)
+con &lt;- DBI::dbConnect(
+  drv = RSQLite::SQLite(),
+  dbname = here::here("databases","mtcars.sqlite3"), 
+  )
+```
+]
+
+???
+
+SQLite -&gt; SQLite is a C-language library that implements a small, fast, self-contained, high-reliability, full-featured, SQL database engine.
+
 
 ---
 ## Write Data to the Database
 
-- With 
-    
-    ```r
-    DBI::dbWriteTable(con, 
+- we add the data frame `mtcars` as a new table to the database.
+
+--
+
+.font90.blockquote.exercise[
+#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example 
+
+```r
+DBI::dbWriteTable(con,
                   name = "mtcars_db", 
                   value = mtcars)
-    ```
-we add the data frame `mtcars` as a new table with name `mtcars_db` to the database.
+```
+]
+
+--
 
 - To add data to an existing table we use the additional argument `append = TRUE`.
-    
-    ```r
-    new_car &lt;- data.frame(mpg = 1, cyl = 16, disp = 800, hp = 210, 
+
+--
+
+.font90.blockquote.exercise[
+#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example 
+
+
+```r
+new_car &lt;- data.frame(mpg = 1, cyl = 16, disp = 800, hp = 210, 
                       drat = 5, wt = 6, qsec = 2, vs = 1, am = 0)
-    rownames(new_car) &lt;- "Super Car 500"
-    
-    DBI::dbWriteTable(con, 
+rownames(new_car) &lt;- "Super Car 500"
+
+DBI::dbWriteTable(con, 
                   name = "mtcars_db", 
                   value = new_car, 
                   append = TRUE)
-    
-    DBI::dbDisconnect(con)
-    ```
 
+DBI::dbDisconnect(con)
+```
+
+]
+
+???
+with name `mtcars_db` 
 ---
+class: exercise_slide
 ## Exercises
 
 1. Set up a new SQLite database containing the Boston Crime data. 
