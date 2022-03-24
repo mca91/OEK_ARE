@@ -91,7 +91,7 @@ What do you know about R?
 ---
 ## Grading
 
-- There will be three graded assignments.  
+- There will be __two__ graded assignments.  
 
 - You will have to work on a final group project which focuses on one or more of the topics discussed in the course. 
 
