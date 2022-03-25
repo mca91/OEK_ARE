@@ -21,6 +21,12 @@ output:
       navigation:
         scroll: false # disable slide transitions by scrolling
 ---
+```{r moon_reader, include = FALSE, eval = FALSE}
+# setup for moon reader
+# copy it to console
+options(servr.interval = 0.5)
+xaringan::inf_mr()
+```
 
 ```{r xaringanExtra-clipboard_2, echo=FALSE}
 # copy button styles mainly in ude.css
@@ -34,7 +40,7 @@ htmltools::tagList(
 )
 ```
 
-```{r, include=FALSE}
+```{r set-up, include = FALSE}
 knitr::opts_chunk$set(echo = TRUE, eval = FALSE)
 library(icons)
 
@@ -53,25 +59,46 @@ class: title-slide title-shiny center middle
 ---
 ## What is Shiny? 
 
-The `shiny` package allows to build interactive web applications for data analysis.
+.font90[
+The `shiny` package allows to build interactive web applications for e.g. data analysis.
+]
 
-It can be used for, e.g.
+--
+
+.font90[
+It can be used for,inter alia:
 
 - building a graphical user interface for R
 - reporting results
 - creating interactive documents.
+]
 
-To build a Shiny app you only need to learn the Shiny syntax.  
-If you want to customize your app you can use HTML/CSS/Javascript.  
+--
 
+.font90[
+- To build a Shiny app you only need to learn the Shiny syntax.  
+- If you want to customize your app you can use HTML/CSS/Javascript.  
+]
+
+--
+.font90[
 Here are some examples: 
 
 - [K-Means](https://shiny.rstudio.com/gallery/kmeans-example.html)
 - [Genome Viewer](https://shiny.rstudio.com/gallery/genome-browser.html)
 - [Dashboard](https://www.rgonzo.us/shiny/apps/textanalysis/)
-  
+]
+
+--
+.font90[
 There is also a [cheatsheet](https://shiny.rstudio.com/images/shiny-cheatsheet.pdf). 
-  
+]
+
+???
+https://corona.stat.uni-muenchen.de/maps/
+https://experience.arcgis.com/experience/478220a4c454480e823b17327b2bf1d4
+
+
 ---
 
 
@@ -84,9 +111,16 @@ A Shiny app consist of 2 parts
     - controls the layout and appearance of your app.
     - contains elements for user input.
     - contains the output you want to visualize.
-2. The server script
-    - contains the instructions for the R session which always works behind the scene.
-    - takes the user input and produces the output which is sent back to the UI.
+    
+--
+<ol start = "2">
+  <li> The server script </li>
+  <ul>
+    <li>contains the instructions for the R session which always works behind the scene</li>
+    <li>takes the user input and produces the output which is sent back to the UI</li>
+  </ul> 
+</ol>
+    
 
 ---
 
