@@ -21,6 +21,12 @@ output:
       navigation:
         scroll: false # disable slide transitions by scrolling
 ---
+```{r moon_reader, include = FALSE, eval = FALSE}
+# setup for moon reader
+# copy it to console
+options(servr.interval = 0.5)
+xaringan::inf_mr()
+```
 
 ```{r xaringanExtra-clipboard_2, echo=FALSE}
 # copy button styles mainly in ude.css
@@ -195,7 +201,7 @@ The first step is to load the website into R using `xml2::read_html()` ( `rvest`
 
 --
 
-.code90.blockquote.exercise[
+.font90.blockquote.exercise[
 #### `r desktop` Exmaple
 
 ```{r}
@@ -305,24 +311,29 @@ What if we want different `div` sections to look differently?
 For this classes and ids can be specified. For web scraping we usually only need 
 to know about classes, but ids work quite similar. 
 
-- change the code of one `div` section to  
+--
 
+- change the code of one `div` section to  
+.blockquote.exercise[
 ```{}
 <div class = "blue"> ... </div> 
 ```
-and the other to 
-
+]
+- and the other to 
+.blockquote.exercise[
 ```{}
 <div class = "red"> ... </div> 
 ```
-
+]
 ---
 ## CSS Selectors
 
-Having added a class attribute to our `div` sections, we can now use this class in the CSS file as 
-follows
+.font80[
+Having added a class attribute to our `div` sections, we can now use this class in the CSS file as follows
+]
+--
 
-.code90[
+.pull-left-1.font80.blockquote.exercise[
 ```{}
 .blue h1 {
   color: blue;
@@ -336,23 +347,39 @@ follows
 ```
 ]
 
-What is before the `{}` is called a CSS selector. It can consist of classes, ids, tags and of 
-any combination of those elements. E.g. `.blue h1` reads as: select all `h1` headings inside an element with class `blue`. 
-Note: you need to put a `.` before the class name. 
+.pull-right-2[
+- What is before the `{}` is called a CSS selector. 
+  - It can consist of classes, ids, tags and of any combination of those elements. 
+  - E.g. `.blue h1` reads as: select all `h1` headings inside an element with class `blue`.
+  - Note: you need to put a `.` before the class name. 
+]
 
+--
 
+.pull-down[ <br><br>
 For more on selectors look at [w3chools CSS Selector Reference](https://www.w3schools.com/cssref/css_selectors.asp).
+<br>
+<br>
+<br>
+$\qquad$
+]
 
+--
 
+.pull-down[
 The web developer uses selectors to style similar content in the same way (e.g. on trustpilot.com 
 each user review looks the same). We can use those to scrape the content we desire more specifically.   
-
+]
 
 ---
 ## Use the Selectors 
 
-Let's say we want to select all paragraphs (`p`) which are a decendent of an element with class `.red`. We can achieve this with
+Let's say we want to select all paragraphs (`p`) which are a descend of an element with class `.red`. We can achieve this with
 
+--
+
+.font90.blockquote.exercise[
+#### `r desktop` Exmaple
 ```{r}
 url <- here::here("SoSe_2022/webscraping/examples/simple_html_page_with_css.html")
 page <- url %>% read_html()
@@ -361,26 +388,52 @@ page %>%
   html_nodes("p") %>%
   html_text()
 ```
+]
+
+--
 
 or in short
+.font90.blockquote.exercise[
+#### `r desktop` Exmaple
 
 ```{r}
 page %>%  
   html_nodes(".red p") %>% 
   html_text()
 ```
+]
 
 ---
 ## Extract attributes
 
-Sometimes we are not interested in the text between element tags but the relevant information is hidden 
-in the tag attributes. Attributes are everything that is defined in the opening tag, e.g in 
+.font70[
+Sometimes we are not interested in the text between element tags but the relevant information is hidden in the tag attributes. 
+
+Attributes are everything that is defined in the opening tag, e.g in 
+]
+
+--
+
+.font70.blockquote.exercise[
+#### `r desktop` Exmaple
 
 ```{}
 <div class = "blue"> ... </div> 
 ```
-`class = "blue"` is an attribute. With `html_attrs()` and `html_attr()`  we can extract these information.
-.code70[
+]
+
+--
+
+.font70[
+- `class = "blue"` is an attribute. 
+
+With `html_attrs()` and `html_attr()`  we can extract these information.
+]
+
+--
+
+.font70.blockquote.exercise[
+#### `r desktop` Exmaple
 ```{r}
 # Get all attributes
 page %>%  
@@ -397,8 +450,14 @@ page %>%
 ---
 ## HTML tables 
 
+.font80[
 Since data are often stored in tables, `rvest` provides the function `html_table()` which parses a HTML table into a data frame. Tables in HTML look like this: 
-.code70[
+]
+--
+.pull-left-1[
+.font80.blockquote.exercise[
+#### `r desktop` Exmaple
+
 ```{}
 <table style="width:100%">
   <tr>
@@ -418,15 +477,19 @@ Since data are often stored in tables, `rvest` provides the function `html_table
   </tr>
 </table>
 ```
+]]
+
+
+--
+.pull-right-2.font80[
+<br> <br>
+.blockquote.exercise[
+#### `r desktop` Exercise:
+- Add this table to your HTML file.
+- Try to scrape the data using `html_table()`
 ]
 
-Add this table to your HTML file and try to scrape the data using `html_table()`.
-```{r, echo=FALSE, eval = FALSE}
-page %>%  
-  html_nodes("table") %>%
-  html_table()
-```
-
+]
 ---
 ## CSS Selector Gadget
 
@@ -435,12 +498,13 @@ How do we find the CSS selectors
 1. Looking into the source code (depending on your web browser you can right click on the webpage and click e.g. source code, inspect, ...)
 
 2. Digging through the source code is often not necessary. If you use Chrome install 
-   the [Selector Gadget](https://cran.r-project.org/web/packages/rvest/vignettes/selectorgadget.html).
+   the [Selector Gadget](https://rvest.tidyverse.org/articles/selectorgadget.html).
 
 
 ---
 ## A real example: trustpilot.com
 
+.font80[
 We want to write a function that for each review extracts
 
 - the name of the reviewer
@@ -448,10 +512,15 @@ We want to write a function that for each review extracts
 - the date
 - the review title
 - the review text
+]
 
+--
+
+.font80[
 The final function to extract data from one URL might look like this: 
 
-.code70[
+.blockquote.exercise[
+#### `r desktop` Exmaple
 ```{r, eval = FALSE}
 get_reviews <- function(url){
   page <- read_html(url)
@@ -464,10 +533,13 @@ get_reviews <- function(url){
   )
 }
 ```
-]
+]]
 
 ---
-## A real example: trustpilot.com
+class: exercise_slide
+## Exercise: 
+
+#### A real example: `trustpilot.com`
 
 Not only do we want to scrape all reviews from one URL but all reviews for a company which 
 are distributed over many URLs. Can you write a function which can do this?
