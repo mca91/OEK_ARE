@@ -19,7 +19,7 @@ output:
       ratio: "16:9"
 ---
 class: title-slide title-index 
-.font70[
+.font60[
 # Advanced `R` for Econometricians 
 
 ### Outline
@@ -56,7 +56,7 @@ class: title-slide title-index
 
 <br>
 
-.pull-down-small_margin.font70[
+.pull-down-small_margin.font60[
 <br>
 ### Additional Topics for self-study
 
