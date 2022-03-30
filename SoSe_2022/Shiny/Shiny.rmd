@@ -113,6 +113,7 @@ A Shiny app consist of 2 parts
     - contains the output you want to visualize.
     
 --
+
 <ol start = "2">
   <li> The server script </li>
   <ul>

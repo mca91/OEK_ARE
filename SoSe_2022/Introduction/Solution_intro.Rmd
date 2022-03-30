@@ -1,0 +1,36 @@
+---
+title: "Exercise Solutions Introduction"
+author: 'Jens Klenke' 
+output: html_document
+---
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
+```
+
+```{r xaringanExtra-clipboard_2, echo=FALSE}
+# copy button styles mainly in ude.css 
+# https://github.com/gadenbuie/xaringanExtra
+htmltools::tagList(
+  xaringanExtra::use_clipboard(
+    button_text = "<i class=\"fa fa-clipboard\"></i>",
+    success_text = "<i class=\"fa fa-check\" style=\"color: #00ff00\"></i>",
+    error_text = "<i class=\"fa fa-times-circle\" style=\"color: #F94144\"></i>"),
+  rmarkdown::html_dependency_font_awesome() 
+  )
+```
+
+## Slide 13
+
+1. list can store different data types
+2. data frames can store different values with different types
+3. class()
+4. is.character()
+
+
+
+
+
+
+
+
+
