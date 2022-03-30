@@ -5,7 +5,7 @@
     <meta charset="utf-8" />
     <meta name="author" content="Martin C. Arnold" />
     <meta name="author" content="Jens Klenke" />
-    <meta name="date" content="2022-03-12" />
+    <meta name="date" content="2022-03-30" />
     <script src="rmarkdown_files/header-attrs-2.13/header-attrs.js"></script>
     <link href="rmarkdown_files/remark-css-0.0.1/default.css" rel="stylesheet" />
     <script src="rmarkdown_files/clipboard-2.0.6/clipboard.min.js"></script>
@@ -28,9 +28,9 @@
     <script src="rmarkdown_files/proj4-2.6.2/proj4.min.js"></script>
     <script src="rmarkdown_files/Proj4Leaflet-1.0.1/proj4leaflet.js"></script>
     <link href="rmarkdown_files/rstudio_leaflet-1.3.1/rstudio_leaflet.css" rel="stylesheet" />
-    <script src="rmarkdown_files/leaflet-binding-2.1.0/leaflet.js"></script>
+    <script src="rmarkdown_files/leaflet-binding-2.1.1/leaflet.js"></script>
     <link href="rmarkdown_files/datatables-css-0.0.0/datatables-crosstalk.css" rel="stylesheet" />
-    <script src="rmarkdown_files/datatables-binding-0.21/datatables.js"></script>
+    <script src="rmarkdown_files/datatables-binding-0.22/datatables.js"></script>
     <link href="rmarkdown_files/dt-core-1.11.3/css/jquery.dataTables.min.css" rel="stylesheet" />
     <link href="rmarkdown_files/dt-core-1.11.3/css/jquery.dataTables.extra.css" rel="stylesheet" />
     <script src="rmarkdown_files/dt-core-1.11.3/js/jquery.dataTables.min.js"></script>
@@ -716,8 +716,8 @@ print.xtable(my_xtable, type  = "html", include.rownames = FALSE)
 --
 
 .font90[
-&lt;!-- html table generated in R 4.1.3 by xtable 1.8-4 package --&gt;
-&lt;!-- Sat Mar 12 00:21:34 2022 --&gt;
+&lt;!-- html table generated in R 4.1.2 by xtable 1.8-4 package --&gt;
+&lt;!-- Wed Mar 30 13:23:33 2022 --&gt;
 &lt;table border=1&gt;
 &lt;tr&gt; &lt;th&gt; Right &lt;/th&gt; &lt;th&gt; Left &lt;/th&gt; &lt;th&gt; Default &lt;/th&gt; &lt;th&gt; Center &lt;/th&gt;  &lt;/tr&gt;
   &lt;tr&gt; &lt;td align="right"&gt; 12.00 &lt;/td&gt; &lt;td&gt; 12.00 &lt;/td&gt; &lt;td&gt; 12.00 &lt;/td&gt; &lt;td align="center"&gt; 12.00 &lt;/td&gt; &lt;/tr&gt;
@@ -876,8 +876,8 @@ plot_ly(mtcars, x = ~wt, y = ~hp, z = ~qsec, color = ~am, colors = c('#BF382A', 
 class: left, top
 ## Interactive documents
 
-<div id="htmlwidget-74a8a0541264a2a92ec9" style="width:90%;height:70%;" class="plotly html-widget"></div>
-<script type="application/json" data-for="htmlwidget-74a8a0541264a2a92ec9">{"x":{"visdat":{"38f4257f2913":["function () ","plotlyVisDat"]},"cur_data":"38f4257f2913","attrs":{"38f4257f2913":{"x":{},"y":{},"z":{},"color":{},"colors":["#BF382A","#0C4B8E"],"alpha_stroke":1,"sizes":[10,100],"spans":[1,20],"type":"scatter3d","mode":"markers","inherit":true}},"layout":{"margin":{"b":40,"l":60,"t":25,"r":10},"scene":{"xaxis":{"title":"Weight"},"yaxis":{"title":"Gross horsepower"},"zaxis":{"title":"1/4 mile time"}},"hovermode":"closest","showlegend":true},"source":"A","config":{"modeBarButtonsToAdd":["hoverclosest","hovercompare"],"showSendToCloud":false},"data":[{"x":[3.215,3.44,3.46,3.57,3.19,3.15,3.44,3.44,4.07,3.73,3.78,5.25,5.424,5.345,2.465,3.52,3.435,3.84,3.845],"y":[110,175,105,245,62,95,123,123,180,180,180,205,215,230,97,150,150,245,175],"z":[19.44,17.02,20.22,15.84,20,22.9,18.3,18.9,17.4,17.6,18,17.98,17.82,17.42,20.01,16.87,17.3,15.41,17.05],"type":"scatter3d","mode":"markers","name":"Automatic","marker":{"color":"rgba(191,56,42,1)","line":{"color":"rgba(191,56,42,1)"}},"textfont":{"color":"rgba(191,56,42,1)"},"error_y":{"color":"rgba(191,56,42,1)"},"error_x":{"color":"rgba(191,56,42,1)"},"line":{"color":"rgba(191,56,42,1)"},"frame":null},{"x":[2.62,2.875,2.32,2.2,1.615,1.835,1.935,2.14,1.513,3.17,2.77,3.57,2.78],"y":[110,110,93,66,52,65,66,91,113,264,175,335,109],"z":[16.46,17.02,18.61,19.47,18.52,19.9,18.9,16.7,16.9,14.5,15.5,14.6,18.6],"type":"scatter3d","mode":"markers","name":"Manual","marker":{"color":"rgba(12,75,142,1)","line":{"color":"rgba(12,75,142,1)"}},"textfont":{"color":"rgba(12,75,142,1)"},"error_y":{"color":"rgba(12,75,142,1)"},"error_x":{"color":"rgba(12,75,142,1)"},"line":{"color":"rgba(12,75,142,1)"},"frame":null}],"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.2,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
+<div id="htmlwidget-6c7b10c7936616baff8f" style="width:90%;height:70%;" class="plotly html-widget"></div>
+<script type="application/json" data-for="htmlwidget-6c7b10c7936616baff8f">{"x":{"visdat":{"67c0275a7980":["function () ","plotlyVisDat"]},"cur_data":"67c0275a7980","attrs":{"67c0275a7980":{"x":{},"y":{},"z":{},"color":{},"colors":["#BF382A","#0C4B8E"],"alpha_stroke":1,"sizes":[10,100],"spans":[1,20],"type":"scatter3d","mode":"markers","inherit":true}},"layout":{"margin":{"b":40,"l":60,"t":25,"r":10},"scene":{"xaxis":{"title":"Weight"},"yaxis":{"title":"Gross horsepower"},"zaxis":{"title":"1/4 mile time"}},"hovermode":"closest","showlegend":true},"source":"A","config":{"modeBarButtonsToAdd":["hoverclosest","hovercompare"],"showSendToCloud":false},"data":[{"x":[3.215,3.44,3.46,3.57,3.19,3.15,3.44,3.44,4.07,3.73,3.78,5.25,5.424,5.345,2.465,3.52,3.435,3.84,3.845],"y":[110,175,105,245,62,95,123,123,180,180,180,205,215,230,97,150,150,245,175],"z":[19.44,17.02,20.22,15.84,20,22.9,18.3,18.9,17.4,17.6,18,17.98,17.82,17.42,20.01,16.87,17.3,15.41,17.05],"type":"scatter3d","mode":"markers","name":"Automatic","marker":{"color":"rgba(191,56,42,1)","line":{"color":"rgba(191,56,42,1)"}},"textfont":{"color":"rgba(191,56,42,1)"},"error_y":{"color":"rgba(191,56,42,1)"},"error_x":{"color":"rgba(191,56,42,1)"},"line":{"color":"rgba(191,56,42,1)"},"frame":null},{"x":[2.62,2.875,2.32,2.2,1.615,1.835,1.935,2.14,1.513,3.17,2.77,3.57,2.78],"y":[110,110,93,66,52,65,66,91,113,264,175,335,109],"z":[16.46,17.02,18.61,19.47,18.52,19.9,18.9,16.7,16.9,14.5,15.5,14.6,18.6],"type":"scatter3d","mode":"markers","name":"Manual","marker":{"color":"rgba(12,75,142,1)","line":{"color":"rgba(12,75,142,1)"}},"textfont":{"color":"rgba(12,75,142,1)"},"error_y":{"color":"rgba(12,75,142,1)"},"error_x":{"color":"rgba(12,75,142,1)"},"line":{"color":"rgba(12,75,142,1)"},"frame":null}],"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.2,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
 
 - For more examples see [plot.ly](https://plot.ly/r/).
 
@@ -903,8 +903,8 @@ leaflet() %&gt;% addTiles() %&gt;%
 
 .pull-right[
 
-<div id="htmlwidget-84c132fa37133d815694" style="width:504px;height:450px;" class="leaflet html-widget"></div>
-<script type="application/json" data-for="htmlwidget-84c132fa37133d815694">{"x":{"options":{"crs":{"crsClass":"L.CRS.EPSG3857","code":null,"proj4def":null,"projectedBounds":null,"options":{}}},"calls":[{"method":"addTiles","args":["//{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",null,null,{"minZoom":0,"maxZoom":18,"tileSize":256,"subdomains":"abc","errorTileUrl":"","tms":false,"noWrap":false,"zoomOffset":0,"zoomReverse":false,"opacity":1,"zIndex":1,"detectRetina":false,"attribution":"&copy; <a href=\"http://openstreetmap.org\">OpenStreetMap<\/a> contributors, <a href=\"http://creativecommons.org/licenses/by-sa/2.0/\">CC-BY-SA<\/a>"}]},{"method":"addMarkers","args":[51.463675,7.00507,null,null,null,{"interactive":true,"draggable":false,"keyboard":true,"title":"","alt":"","zIndexOffset":0,"opacity":1,"riseOnHover":false,"riseOffset":250},null,null,null,null,"Uni DUE",{"interactive":false,"permanent":false,"direction":"auto","opacity":1,"offset":[0,0],"textsize":"10px","textOnly":false,"className":"","sticky":true},null]}],"setView":[[51.463675,7.00507],17,[]],"limits":{"lat":[51.463675,51.463675],"lng":[7.00507,7.00507]}},"evals":[],"jsHooks":[]}</script>
+<div id="htmlwidget-178444afaa0962d03290" style="width:504px;height:450px;" class="leaflet html-widget"></div>
+<script type="application/json" data-for="htmlwidget-178444afaa0962d03290">{"x":{"options":{"crs":{"crsClass":"L.CRS.EPSG3857","code":null,"proj4def":null,"projectedBounds":null,"options":{}}},"calls":[{"method":"addTiles","args":["https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",null,null,{"minZoom":0,"maxZoom":18,"tileSize":256,"subdomains":"abc","errorTileUrl":"","tms":false,"noWrap":false,"zoomOffset":0,"zoomReverse":false,"opacity":1,"zIndex":1,"detectRetina":false,"attribution":"&copy; <a href=\"https://openstreetmap.org\">OpenStreetMap<\/a> contributors, <a href=\"https://creativecommons.org/licenses/by-sa/2.0/\">CC-BY-SA<\/a>"}]},{"method":"addMarkers","args":[51.463675,7.00507,null,null,null,{"interactive":true,"draggable":false,"keyboard":true,"title":"","alt":"","zIndexOffset":0,"opacity":1,"riseOnHover":false,"riseOffset":250},null,null,null,null,"Uni DUE",{"interactive":false,"permanent":false,"direction":"auto","opacity":1,"offset":[0,0],"textsize":"10px","textOnly":false,"className":"","sticky":true},null]}],"setView":[[51.463675,7.00507],17,[]],"limits":{"lat":[51.463675,51.463675],"lng":[7.00507,7.00507]}},"evals":[],"jsHooks":[]}</script>
 
 ]
 
@@ -938,8 +938,8 @@ DT::datatable( head(iris, 10),
 
 .font50[
 
-<div id="htmlwidget-51d8886a3a45e100ac18" style="width:100%;height:auto;" class="datatables html-widget"></div>
-<script type="application/json" data-for="htmlwidget-51d8886a3a45e100ac18">{"x":{"filter":"none","vertical":false,"fillContainer":true,"data":[["1","2","3","4","5","6","7","8","9","10"],[5.1,4.9,4.7,4.6,5,5.4,4.6,5,4.4,4.9],[3.5,3,3.2,3.1,3.6,3.9,3.4,3.4,2.9,3.1],[1.4,1.4,1.3,1.5,1.4,1.7,1.4,1.5,1.4,1.5],[0.2,0.2,0.2,0.2,0.2,0.4,0.3,0.2,0.2,0.1],["setosa","setosa","setosa","setosa","setosa","setosa","setosa","setosa","setosa","setosa"]],"container":"<table class=\"display fill-container\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>Sepal.Length<\/th>\n      <th>Sepal.Width<\/th>\n      <th>Petal.Length<\/th>\n      <th>Petal.Width<\/th>\n      <th>Species<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"pageLength":5,"columnDefs":[{"className":"dt-right","targets":[1,2,3,4]},{"orderable":false,"targets":0}],"order":[],"autoWidth":false,"orderClasses":false,"lengthMenu":[5,10,25,50,100]}},"evals":[],"jsHooks":[]}</script>
+<div id="htmlwidget-35f1d19cbc75cdc93861" style="width:100%;height:auto;" class="datatables html-widget"></div>
+<script type="application/json" data-for="htmlwidget-35f1d19cbc75cdc93861">{"x":{"filter":"none","vertical":false,"fillContainer":true,"data":[["1","2","3","4","5","6","7","8","9","10"],[5.1,4.9,4.7,4.6,5,5.4,4.6,5,4.4,4.9],[3.5,3,3.2,3.1,3.6,3.9,3.4,3.4,2.9,3.1],[1.4,1.4,1.3,1.5,1.4,1.7,1.4,1.5,1.4,1.5],[0.2,0.2,0.2,0.2,0.2,0.4,0.3,0.2,0.2,0.1],["setosa","setosa","setosa","setosa","setosa","setosa","setosa","setosa","setosa","setosa"]],"container":"<table class=\"display fill-container\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>Sepal.Length<\/th>\n      <th>Sepal.Width<\/th>\n      <th>Petal.Length<\/th>\n      <th>Petal.Width<\/th>\n      <th>Species<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"pageLength":5,"columnDefs":[{"className":"dt-right","targets":[1,2,3,4]},{"orderable":false,"targets":0}],"order":[],"autoWidth":false,"orderClasses":false,"lengthMenu":[5,10,25,50,100]}},"evals":[],"jsHooks":[]}</script>
 ]
 
 
@@ -995,7 +995,7 @@ at the top of your document.
 
 
 .blockquote.exercise[
-#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Funktion
+#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Function
 ````markdown
 ```{r, eval = FALSE, echo=TRUE}
 knitr::knit_hooks$set(small.mar = function(before) {
@@ -1058,7 +1058,7 @@ knitr::knit_hooks$set(small.mar = function(before) {
 class: left, top
 ## Output Hooks: Example
 
-- You can e.g. use a hook to consistantly style all your tables using `kableExtra`.  
+- You can e.g. use a hook to consistently style all your tables using `kableExtra`.  
 
 .blockquote.exercise[
 #### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example
@@ -1124,8 +1124,8 @@ class: exercise_slide
     - Crime Incidents Report Data
     - Explorative Data Analysis.
 2. Use the first section to read in the "Crime Incident Reports" available under 
-   [Boston crime](https://data.boston.gov/dataset/crime-incident-reports-august-2015-to-date-source-new-system). Add some information about the source of the data and list all available columns with a short description Hint: Take a look at the 
-table `RMS_Crime_Incident_Field_Explanation`. 
+   [Boston crime](https://data.boston.gov/dataset/crime-incident-reports-august-2015-to-date-source-new-system). Add some information about the source of the data and list all available columns with a short description  
+   Hint: Take a look at the table `RMS_Crime_Incident_Field_Explanation`. 
 
 3. Optimize your code chunks so that the document doesn't load the data every time you compile. 
 
@@ -1140,8 +1140,8 @@ table `RMS_Crime_Incident_Field_Explanation`.
 class: exercise_slide
 ## Exercises
 &lt;ol start="7"&gt; 
-&lt;li&gt;  Remember that nested ordered lists are not supported by Rmarkdown. Produce one nonetheless in your HTML and your PDF document. &lt;/li&gt;
-&lt;li&gt; Also build some slides using the code you have written. You are free to choose one among all available presentation formats. &lt;/li&gt;
+&lt;li&gt;  Remember that nested ordered lists are not supported by Rmarkdown. Nonetheless, produce one in your HTML and your PDF document. &lt;/li&gt;
+&lt;li&gt; Also, build some slides using the code you have written. You are free to choose one presentation format among all available formats. &lt;/li&gt;
 &lt;li&gt; Find out how to always use the current date in the YAML header.&lt;/li&gt;
 &lt;/ol&gt;
 
