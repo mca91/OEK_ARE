@@ -61,6 +61,7 @@ class: title-slide title-index
 ### Additional Topics for self-study
 
 <ol start = "8">
+  <li>data.table</li>
   <li> Shiny </li>
   <li> Writing Packages </li>
 </ol>
