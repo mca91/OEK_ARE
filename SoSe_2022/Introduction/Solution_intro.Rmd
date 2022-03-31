@@ -181,7 +181,10 @@ Write a for loop doing the same as:
 
 - Choose the number of trials $N$ so that the probability to have one succession is 95%    
   
+<!-- 
+https://www.vrcbuzz.com/negative-binomial-distribution-probabilities-using-r/#Negative_Binomial_Distribution_Quantiles_using_qnbinom_in_R
 
+-->
 
 
 
