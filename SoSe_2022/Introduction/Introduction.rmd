@@ -79,9 +79,9 @@ Slides, exercises and announcements will be provided on:
 <br>
 The password for the course is **"Hadley"**.  
 <br>
-On Moodle you will find a link to [Datacamp](https://www.datacamp.com) which will give you free access to all their content. 
+<!--On Moodle you will find a link to [Datacamp](https://www.datacamp.com) which will give you free access to all their content. -->
 <br>
-<br>
+
 ]
 ???
 Background? 
@@ -544,6 +544,9 @@ square_1()
 ]]
 
 --
+
+<br>
+
 .small[
 .blockquote.exercise[ 
 

@@ -172,7 +172,35 @@ print(count)
 ```
   - note that $n$ has to be high enough
   - umstellen auf 95% sicherheit 
+7. What is the problem here?
+  - Curly braces are open and closed before the statement is past to the function
+8. What is the problem here? Can you debug it?
+  - `df` will not be past to the final call and `fast_lm` is the wrong call
+  ```{r}
   
+df <- mtcars
+
+lin_mod <- function(df){
+  lm(y ~ . ,data = df)
+}
+
+simple_lin_mod <- function(data, y, x){
+  df <- data[ ,c(y, x)]
+  names(df) <- c("y", "x")
+  lin_mod(df)
+}
+
+simple_lin_mod(df, "mpg", "cyl")
+```
+
+
+
+
+
+
+
+
+
 #### New 6
 
 Write a `for` loop which would work for at least 95 % 
@@ -185,6 +213,9 @@ Write a for loop doing the same as:
 https://www.vrcbuzz.com/negative-binomial-distribution-probabilities-using-r/#Negative_Binomial_Distribution_Quantiles_using_qnbinom_in_R
 
 -->
+
+
+###
 
 
 
