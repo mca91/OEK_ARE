@@ -14,6 +14,7 @@
     <script>window.xaringanExtraClipboard(null, {"button":"<i class=\"fa fa-clipboard\"><\/i>","success":"<i class=\"fa fa-check\" style=\"color: #00ff00\"><\/i>","error":"<i class=\"fa fa-times-circle\" style=\"color: #F94144\"><\/i>"})</script>
     <link href="Advanced_files/font-awesome/css/all.css" rel="stylesheet" />
     <link href="Advanced_files/font-awesome/css/v4-shims.css" rel="stylesheet" />
+    <script src="Advanced_files/xaringanExtra-progressBar/progress-bar.js"></script>
     <script type="text/x-mathjax-config">
       MathJax.Hub.Config({
         TeX: { equationNumbers: { autoNumber: "AMS" } },
@@ -49,6 +50,27 @@ class: title-slide title-rintro center middle
 
 ---
 ## Overview
+
+<style>.xe__progress-bar__container {
+  bottom:0;
+  opacity: 1;
+  position:absolute;
+  right:0;
+  left: 0;
+}
+.xe__progress-bar {
+  height: 0.25em;
+  background-color: #004c93;
+  width: calc(var(--slide-current) / var(--slide-total) * 100%);
+}
+.remark-visible .xe__progress-bar {
+  animation: xe__progress-bar__wipe 200ms forwards;
+  animation-timing-function: cubic-bezier(.86,0,.07,1);
+}
+@keyframes xe__progress-bar__wipe {
+  0% { width: calc(var(--slide-previous) / var(--slide-total) * 100%); }
+  100% { width: calc(var(--slide-current) / var(--slide-total) * 100%); }
+}</style>
 
 Make sure the `lobstr` package is attached!
 
@@ -259,7 +281,7 @@ ref(x, character = TRUE)
 ```
 
 ```
-## █ [1:0x1194303e8] &lt;chr&gt; 
+## █ [1:0x115de2388] &lt;chr&gt; 
 ## ├─[2:0x14aaeeec8] &lt;string: "a"&gt; 
 ## ├─[2:0x14aaeeec8] 
 ## ├─[3:0x12d1da2d0] &lt;string: "abc"&gt; 
@@ -307,7 +329,7 @@ obj_addr(x)
 ```
 
 ```
-## [1] "0x1195aca58"
+## [1] "0x115f3d7a8"
 ```
 
 ```r
@@ -315,7 +337,7 @@ obj_addr(y)
 ```
 
 ```
-## [1] "0x116944a68"
+## [1] "0x108fc67b8"
 ```
 ]]
 ]]]
@@ -491,15 +513,15 @@ ref(l1, l2)
 ```
 
 ```
-## █ [1:0x10c5e5ce8] &lt;list&gt; 
-## ├─[2:0x105184928] &lt;dbl&gt; 
-## ├─[3:0x105184960] &lt;dbl&gt; 
-## └─[4:0x105184998] &lt;dbl&gt; 
+## █ [1:0x119778018] &lt;list&gt; 
+## ├─[2:0x119865328] &lt;dbl&gt; 
+## ├─[3:0x1198653d0] &lt;dbl&gt; 
+## └─[4:0x119865408] &lt;dbl&gt; 
 ##  
-## █ [5:0x11a966318] &lt;list&gt; 
-## ├─[2:0x105184928] 
-## ├─[3:0x105184960] 
-## └─[6:0x105184ab0] &lt;dbl&gt;
+## █ [5:0x115e09f48] &lt;list&gt; 
+## ├─[2:0x119865328] 
+## ├─[3:0x1198653d0] 
+## └─[6:0x1198654e8] &lt;dbl&gt;
 ```
 
 ]
@@ -831,15 +853,15 @@ lobstr::ref(x)
 .pull-right[
 
 ```
-## █ [1:0x108eb7680] &lt;list&gt; 
-## └─[2:0x107e5feb0] &lt;int&gt;
+## █ [1:0x10c275e70] &lt;list&gt; 
+## └─[2:0x10ab18f60] &lt;int&gt;
 ```
 
 ```
-## █ [1:0x11d7065c8] &lt;list&gt; 
-## ├─[2:0x107e5feb0] &lt;int&gt; 
-## └─█ [3:0x108eb7680] &lt;list&gt; 
-##   └─[2:0x107e5feb0]
+## █ [1:0x11d74ffc8] &lt;list&gt; 
+## ├─[2:0x10ab18f60] &lt;int&gt; 
+## └─█ [3:0x10c275e70] &lt;list&gt; 
+##   └─[2:0x10ab18f60]
 ```
 ]]]
 
@@ -1062,9 +1084,9 @@ lobstr::ref(funs)
 ```
 
 ```
-## █ [1:0x11d69da08] &lt;list&gt; 
-## ├─[2:0x11ae8c8a0] &lt;fn&gt; 
-## └─[3:0x11ae8c7f8] &lt;fn&gt;
+## █ [1:0x11d6ede48] &lt;list&gt; 
+## ├─[2:0x1051eec08] &lt;fn&gt; 
+## └─[3:0x1051eeb60] &lt;fn&gt;
 ```
 
 ```r

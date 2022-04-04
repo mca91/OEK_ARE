@@ -61,6 +61,10 @@ class: title-slide title-rintro center middle
 ---
 ## Overview
 
+```{r xaringanExtra, echo = FALSE}
+xaringanExtra::use_progress_bar(color = "#004c93", location = "bottom")
+```
+
 Make sure the `lobstr` package is attached!
 
 ```{r, eval=F}
