@@ -7,15 +7,23 @@ date: "`r format(Sys.time(), '%d %B, %Y')`"
 output: html_document
 ---
 
+### Optimize code chunks 
+
+- When a code chunk is time-consuming to run, you may consider caching it via the chunk option `cache = TRUE`. When the `cache` is turned on, knitr will skip the execution of this code chunk if it has been executed before and nothing in the code chunk has changed since then.
+
+### Hide your code chunks by setting a global option 
+````markdown
+`r ''````{r setup, include = TRUE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+````
+
 # Obtain the Crime Incidents Data
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
-```
 
 First, we download the data and import it to R.
 
-```{r, cache=TRUE}
+```{r, cache = TRUE}
 library(tidyverse)
 library(data.table)
 crime <- readr::read_csv(here::here('SoSe_2022/Rmarkdown/Exercise/crime_boston.csv'))

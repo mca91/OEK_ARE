@@ -371,6 +371,22 @@ pre code {
 </div>
 
 
+<div id="optimize-code-chunks" class="section level3">
+<h3>Optimize code chunks</h3>
+<ul>
+<li>When a code chunk is time-consuming to run, you may consider caching
+it via the chunk option <code>cache = TRUE</code>. When the
+<code>cache</code> is turned on, knitr will skip the execution of this
+code chunk if it has been executed before and nothing in the code chunk
+has changed since then.</li>
+</ul>
+</div>
+<div id="hide-your-code-chunks-by-setting-a-global-option" class="section level3">
+<h3>Hide your code chunks by setting a global option</h3>
+<pre class="markdown"><code>```{r setup, include = TRUE}
+knitr::opts_chunk$set(echo = FALSE)
+```</code></pre>
+</div>
 <div id="obtain-the-crime-incidents-data" class="section level1">
 <h1>Obtain the Crime Incidents Data</h1>
 <p>First, we download the data and import it to R.</p>
