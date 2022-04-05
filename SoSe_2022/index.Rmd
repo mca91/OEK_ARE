@@ -33,24 +33,24 @@ class: title-slide title-index
 4. Data Wrangling and Transformation
    - dplyr
    - Databases
+5. Web Scraping
 ]
 
 .pull-right[
-<ol start = "5">
-<li> Advanced R Programming </li>
-<ul>
-  <li> Advanced Concepts</li>
-  <li> Functional Programming</li>
-  <li> Object Oriented Programming</li>
-</ul>
-<li> Performance </li> 
-<ul>
-  <li> Profiling and Benchmarking</li> 
-  <li> Improving Performance</li>
-  <li> Rcpp</li>
-  <li> RcppArmadillo</li>
-</ul>
-<li> Web Scraping</li>
+<ol start = "6">
+  <li> Advanced R Programming </li>
+  <ul>
+    <li> Advanced Concepts</li>
+    <li> Functional Programming</li>
+    <li> Object Oriented Programming</li>
+  </ul>
+  <li> Performance </li> 
+  <ul>
+    <li> Profiling and Benchmarking</li> 
+    <li> Improving Performance</li>
+    <li> Rcpp</li>
+    <li> RcppArmadillo</li>
+  </ul>
 </ol>
 ]]
 

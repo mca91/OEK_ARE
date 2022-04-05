@@ -551,6 +551,24 @@ class: exercise_slide
 (inspect the result) and merges the changes into his repository. Then do the same thing the other way arround. 
 
 ---
+## Github Desktop
+
+.pull-left[
+- You can also use the [Github Desktop](https://desktop.github.com/) GUI 
+  - Easier to use
+  - All main features available
+  - Tracks and Highlights changes
+  - History and version comparison in one window
+]
+
+.pull-right[
+```{r, eval = TRUE, echo = FALSE, out.width = "700px", fig.align='right'}
+knitr::include_graphics("github-dark-mode.png")
+```
+]
+
+
+---
 ## Solving conflicts
 
 - The original `HelloGit.txt` file looked like this
@@ -666,12 +684,6 @@ class: exercise_slide
 - It allows you to diverge form the linear development of your project to having multiple parallel versions at the same time. 
 
 - If you want to dig deeper into Git this would be one of the key features you should learn about after you digested the basics (which should be enough for this course.)
-
----
-## Github Desktop
-
-
-
 
 
 
