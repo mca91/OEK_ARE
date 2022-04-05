@@ -85,7 +85,6 @@ get_company_data <- function(company, num_pages){
   return(df)
 }
 
-
 # Scrape data for multiple companies using purrr
 
 companies <-setNames(c("www.amazon.com", "www.alibaba.com"), 
@@ -100,5 +99,20 @@ data %>%
   ggplot(aes(x = date, y = rating, col = company)) + geom_line() + geom_point(aes(size = N)) #+ 
   coord_cartesian(xlim = c(as.POSIXct("2015-01-01"), as.POSIXct("2019-08-01")))
 
-
+### CSS selectros have change
+  
+  
+  own_url <- paste0("https://www.trustpilot.com/review/", companies[1], "?page=", 1)
+  html <- read_html(url) 
+  get_name(html)
+  
+  html %>%
+    html_nodes('.styles_linkwrapper__73Tdy') %>%   
+    html_text() %>% 
+    str_trim()
+  
+  .typography_body__9UBeQ
+  
+  
+  
 

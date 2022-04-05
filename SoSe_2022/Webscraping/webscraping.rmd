@@ -73,11 +73,15 @@ are not readily available via e.g. a download link or an API.
 
 Consider the website https://www.trustpilot.com/ which is a platform for customer reviews.
 
+]
+
+--
+
 Each review consists of different parts such as
 - a short text
 - a date
 - a rating from 1 to 5 stars. 
-]
+
 
 --
 

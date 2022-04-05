@@ -5,7 +5,7 @@
     <meta charset="utf-8" />
     <meta name="author" content="Martin C. Arnold" />
     <meta name="author" content="Jens Klenke" />
-    <meta name="date" content="2022-03-25" />
+    <meta name="date" content="2022-04-05" />
     <script src="webscraping_files/header-attrs/header-attrs.js"></script>
     <link href="webscraping_files/remark-css/default.css" rel="stylesheet" />
     <script src="webscraping_files/clipboard/clipboard.min.js"></script>
@@ -60,11 +60,15 @@ are not readily available via e.g. a download link or an API.
 
 Consider the website https://www.trustpilot.com/ which is a platform for customer reviews.
 
+]
+
+--
+
 Each review consists of different parts such as
 - a short text
 - a date
 - a rating from 1 to 5 stars. 
-]
+
 
 --
 
@@ -201,8 +205,8 @@ URL &lt;- here::here("SoSe_2022/webscraping/examples/simple_html_page.html") # p
 ```
 ## {html_document}
 ## &lt;html&gt;
-## [1] &lt;head&gt;\n&lt;meta http-equiv="Content-Type" content="text/html; charset=UTF-8"&gt;\n&lt;title&gt;Page  ...
-## [2] &lt;body&gt;\r\n  \r\n  &lt;h1&gt;This is a Heading&lt;/h1&gt;\r\n  &lt;p&gt;This is a paragraph.&lt;/p&gt;\r\n  \r\n   ...
+## [1] &lt;head&gt;\n&lt;meta http-equi ...
+## [2] &lt;body&gt;\r\n  \r\n  &lt;h1&gt;T ...
 ```
 ]
 
@@ -234,8 +238,8 @@ page %&gt;% rvest::html_nodes("p")
 
 ```
 ## {xml_nodeset (2)}
-## [1] &lt;p&gt;This is a paragraph.&lt;/p&gt;
-## [2] &lt;p&gt;This is another paragraph.&lt;/p&gt;
+## [1] &lt;p&gt;This is a paragraph. ...
+## [2] &lt;p&gt;This is another para ...
 ```
 ]
 
@@ -252,7 +256,7 @@ page %&gt;%
 
 ```
 ## {xml_nodeset (1)}
-## [1] &lt;p&gt;This is another paragraph.&lt;/p&gt;
+## [1] &lt;p&gt;This is another para ...
 ```
 ]
 

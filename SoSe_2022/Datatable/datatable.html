@@ -3,8 +3,17 @@
   <head>
     <title>Advanced R for Econometricians</title>
     <meta charset="utf-8" />
+    <meta name="author" content="Martin C. Arnold" />
+    <meta name="author" content="Jens Klenke" />
+    <meta name="date" content="2022-04-05" />
     <script src="datatable_files/header-attrs/header-attrs.js"></script>
     <link href="datatable_files/remark-css/default.css" rel="stylesheet" />
+    <script src="datatable_files/clipboard/clipboard.min.js"></script>
+    <link href="datatable_files/xaringanExtra-clipboard/xaringanExtra-clipboard.css" rel="stylesheet" />
+    <script src="datatable_files/xaringanExtra-clipboard/xaringanExtra-clipboard.js"></script>
+    <script>window.xaringanExtraClipboard(null, {"button":"<i class=\"fa fa-clipboard\"><\/i>","success":"<i class=\"fa fa-check\" style=\"color: #00ff00\"><\/i>","error":"<i class=\"fa fa-times-circle\" style=\"color: #F94144\"><\/i>"})</script>
+    <link href="datatable_files/font-awesome/css/all.css" rel="stylesheet" />
+    <link href="datatable_files/font-awesome/css/v4-shims.css" rel="stylesheet" />
     <script type="text/x-mathjax-config">
       MathJax.Hub.Config({
         TeX: { equationNumbers: { autoNumber: "AMS" } },
@@ -17,14 +26,10 @@
       cursor: default;
     }
     </style>
-
-    <script src="https://code.jquery.com/jquery-3.4.1.min.js"
-      integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
-      crossorigin="anonymous"></script>
-    <link rel="stylesheet" href="C:/Users/Jens-/Documents/GitHub/OEK_ARE/assets/sydney-fonts.css" type="text/css" />
-    <link rel="stylesheet" href="C:/Users/Jens-/Documents/GitHub/OEK_ARE/assets/sydney.css" type="text/css" />
-    <link rel="stylesheet" href="C:/Users/Jens-/Documents/GitHub/OEK_ARE/assets/custom.css" type="text/css" />
-    <link rel="stylesheet" href="C:/Users/Jens-/Documents/GitHub/OEK_ARE/assets/title_slides.css" type="text/css" />
+    <link rel="stylesheet" href="../assets/ude_fonts.css" type="text/css" />
+    <link rel="stylesheet" href="../assets/ude.css" type="text/css" />
+    <link rel="stylesheet" href="../assets/title_slides.css" type="text/css" />
+    <link rel="stylesheet" href="../assets/custom.css" type="text/css" />
   </head>
   <body>
     <textarea id="source">
@@ -32,11 +37,14 @@
 
 
 
+
+
+
 class: title-slide title-datatable center middle
 
 # Advanced R for Econometricians
-
 ## `data.table`
+### Martin C. Arnold, Jens Klenke
 
 ---
 ## What is a `data.table`?
@@ -44,6 +52,9 @@ class: title-slide title-datatable center middle
 The `data.table` package provides yet another alternative to data frames.
 Similarly to `tibbles` the `data.table` class extends standard data frames. 
 
+--
+
+.blockquote.exercise[
 
 ```r
 library(data.table)
@@ -54,9 +65,14 @@ class(DT)
 ```
 ## [1] "data.table" "data.frame"
 ```
+]
+
+--
 
 Compared to `tibbles` which provide only some convenience functionality over data frames,
 `data.tables` are more like `tibbles` with integrated `dplyr`. 
+
+--
 
 ### Some Interesting Links
 
@@ -68,6 +84,7 @@ Compared to `tibbles` which provide only some convenience functionality over dat
 
 A data frame can be coerced to a `data.table` with `as.data.table()`. 
 
+.blockquote.exercise[
 
 ```r
 library(data.table)
@@ -79,9 +96,13 @@ class(DT)
 ```
 ## [1] "data.table" "data.frame"
 ```
+]
+
+--
 
 However, the preferred way is to use `setDT()`.
 
+.blockquote.exercise[
 
 ```r
 setDT(df)
@@ -91,62 +112,60 @@ class(df)
 ```
 ## [1] "data.table" "data.frame"
 ```
+]
 
+--
+&lt;br&gt;
 What is the difference? 
 
 ---
 ## Modify by Reference
 
+.blockquote.exercise[
 
 ```r
 library(lobstr)
 X &lt;- data.frame(a = rnorm(10), b = rnorm(10)) 
 obj_addr(X$a)
-```
-
-```
-## [1] "0x1daf9a30"
-```
-
-```r
 X &lt;- as.data.table(X)
 obj_addr(X$a)
 ```
 
 ```
-## [1] "0x1daf87a0"
+## [1] "0x1cca46c3b20"
+## [1] "0x1cca46c4ba0"
 ```
+]
 
+--
 
+.blockquote.exercise[
 
 ```r
 X &lt;- data.frame(a = rnorm(10), b = rnorm(10)) 
 obj_addr(X$a)
-```
-
-```
-## [1] "0x1de8ef90"
-```
-
-```r
 setDT(X)
 obj_addr(X$a)
 ```
 
 ```
-## [1] "0x1de8ef90"
+## [1] "0x1cca3f34fc0"
+## [1] "0x1cca3f34fc0"
 ```
+]
 
 ---
 ## Why to use `data.table`
 
-Compared to base R and the `tidyverse` the advantages of `data.table` are
+Compared to base `R` and the `tidyverse` the advantages of `data.table` are
 
 - speed
 - memory efficiency 
 - compact syntax (which can be also a downside).
 
 `data.table` can be used if the other options already exceeded their limits especially in terms of memory. 
+
+--
 
 The main functionality can be compared to `dplyr`
 
@@ -162,9 +181,12 @@ The main functionality can be compared to `dplyr`
 With `dplyr` we use for each operation a single purpose function. 
 With `data.table` (almost) all instructions are written in `[]`.
 
+--
+
 
 The general form of `data.table` syntax is:
 
+.blockquote.exercise[
 ```{}
     DT[ i,  j,  by ] # + extra arguments
         |   |   |
@@ -172,21 +194,27 @@ The general form of `data.table` syntax is:
         |    -------&gt; what to do?
          ---&gt; on which rows?
 ```
+]
 
+--
 
 Preparing a data.table:
+
+.blockquote.exercise[
 
 ```r
 library(ggplot2)
 # setDT connot be used on data sets coming with packages 
 DT &lt;- as.data.table(diamonds)
 ```
-
+]
 ---
 ## `i`: Filtering rows
 
 - `i` is used for filtering rows. Note that no `$` is needed. 
+--
 
+.blockquote.exercise[
 
 ```r
 DT[cut== "Fair" | cut == "Good"]
@@ -206,12 +234,16 @@ DT[cut== "Fair" | cut == "Good"]
 ## 6515:  0.79 Good     F     SI1  58.1    59  2756 6.06 6.13 3.54
 ## 6516:  0.72 Good     D     SI1  63.1    55  2757 5.69 5.75 3.61
 ```
+]
 
 ---
 ## i: keys
 
 When setting the `key` attribute a `data.table` is sorted in memory using a [radix-sort](https://en.wikipedia.org/wiki/Radix_sort). This can be used for very fast lookup.
 
+--
+
+.blockquote.exercise[
 
 ```r
 # one key column
@@ -222,26 +254,48 @@ DT["Fair"]
 setkey(DT,cut,color)
 DT[list("Fair", "J")] 
 ```
+]
 
- `.(...)` is a convenient alias for `list(...)`. 
+&lt;p style="margin: 30px;"&gt;&lt;/p&gt;
+--
 
+`.(...)` is a convenient alias for `list(...)`. 
+
+--
+
+&lt;p style="margin: 30px;"&gt;&lt;/p&gt;
+
+.blockquote.exercise[
 
 ```r
 DT[.("Fair", "J")]
 ```
+]
 
 ---
 ## Lookup
 
+.font90[
 A list or a `data.table` can be passed to `i` to run a lookup. (This is actually a join as we will see later.)
 
+.blockquote.exercise[
 
 ```r
 # Lookup table: 
 LU &lt;- data.table(color = c("E", "I") , clarity = c("SI2", "VS2")) 
 ```
+]]
+
+--
+
+.font90[
+&lt;p style="margin: 20px;"&gt;&lt;/p&gt;
 
 For every row in LU, look up corresponding rows in DT,  using the variables specified in "on".
+
+&lt;p style="margin: 20px;"&gt;&lt;/p&gt;
+
+.blockquote.exercise[
 
 ```r
 DT[LU, on = c("color", "clarity")]
@@ -261,90 +315,128 @@ DT[LU, on = c("color", "clarity")]
 ## 2881:  0.73     Ideal     I     VS2  61.3    56  2756 5.80 5.84 3.57
 ## 2882:  0.73     Ideal     I     VS2  61.6    55  2756 5.82 5.84 3.59
 ```
-
+]]
 ---
 ## j: Subsetting columns 
 
  `j` can be used for simple subsetting in the following ways:
 
 - Returning a single vector.
-    
-    ```r
-    DT[ , price]
-    ```
-- Returning a `data.table` with only one column. 
-    
-    ```r
-    DT[ , .(price)]
-    ```
-- Returning `data.table` with multiple columns.
-    
-    ```r
-    DT[ , .(price, depth)]
-    DT[ , 1:2]
-    DT[ , c("price", "depth")]
-    ```
+.blockquote.exercise[
 
+```r
+DT[ , price]
+```
+]
+
+--
+
+- Returning a `data.table` with only one column. 
+.blockquote.exercise[
+
+```r
+DT[ , .(price)]
+```
+]
+
+--
+
+- Returning `data.table` with multiple columns.
+.blockquote.exercise[
+
+```r
+DT[ , .(price, depth)]
+DT[ , 1:2]
+DT[ , c("price", "depth")]
+```
+]
 ---
 ## j: Subsetting columns 
 
 - If the column names are stored in a variable use
-    
-    ```r
-    cols &lt;- c("price", "depth")
-    DT[ , ..cols]                # or
-    DT[ , cols, with = FALSE]
-    ```
 
+--
+
+.blockquote.exercise[
+
+```r
+cols &lt;- c("price", "depth")
+DT[ , ..cols]                # or
+DT[ , cols, with = FALSE]
+```
+]
 ---
 ## j: Add and Remove Columns by Reference
 
 - Add a variable. 
-    
-    ```r
-    DT[ ,price_eur := price/0.91]
-    ```
+.blockquote.exercise[
+
+```r
+DT[ ,price_eur := price/0.91]
+```
+]
+
+--
 
 - Add multiple variables
-    
-    ```r
-    # Here, we need to quote at the left hand side: 
-    DT[ ,c("x","y") := .(log(price), price - mean(price))]
-    ```
+.blockquote.exercise[
+
+```r
+# Here, we need to quote at the left hand side: 
+DT[ ,c("x","y") := .(log(price), price - mean(price))]
+```
+]
+
+--
 
 - Remove one variable. 
-    
-    ```r
-    DT[ , price_eur := NULL]
-    ```
+.blockquote.exercise[
+
+```r
+DT[ , price_eur := NULL]
+```
+]
+
+--
 
 - Remove multiple variables. 
-    
-    ```r
-    DT[ , c("x", "price_eur") := NULL]
-    ```
+.blockquote.exercise[
+
+```r
+DT[ , c("x", "price_eur") := NULL]
+```
+]
 
 ---
 ## Update Columns by Reference
 
 - Simple update
-    
-    ```r
-    DT[price &gt; 2500, price := 2500]
-    ```
+.blockquote.exercise[
+
+```r
+DT[price &gt; 2500, price := 2500]
+```
+]
+--
+
+&lt;br&gt;
 
 - Updating multiple columns.
-    
-    ```r
-    DT[price &gt; 2500, c("price","depth") := .(log(price), sqrt(depth))]
-    ```
+.blockquote.exercise[
 
+```r
+DT[price &gt; 2500, c("price","depth") := .(log(price), sqrt(depth))]
+```
+]
 
 ---
 ## j: Evaluate Expressions
 
 `j` can be used to evaluate expressions. Columns can be accessed as if they were in the global environment (compare to `dplyr::summarise()`).  
 
+--
+
+.blockquote.exercise[
 
 ```r
 DT[ , mean(price) / sd(depth)]
@@ -353,11 +445,15 @@ DT[ , mean(price) / sd(depth)]
 ```
 ## [1] 1264.789
 ```
+]
 
 The results are simply returned as a value which can be assigned to some variable. 
 
+--
+
 Several expressions can be used by putting them in a list. If a list is used, the result is returned as a `data.table`.
 
+.blockquote.exercise[
 
 ```r
 DT[ , .(mean_price = mean(price), sd_depth = sd(depth))]
@@ -367,7 +463,7 @@ DT[ , .(mean_price = mean(price), sd_depth = sd(depth))]
 ##    mean_price sd_depth
 ## 1:   1811.963 1.432621
 ```
-
+]
 
 
 ---
@@ -375,33 +471,48 @@ DT[ , .(mean_price = mean(price), sd_depth = sd(depth))]
 
 The `by` argument allows operations by group (compare to `dplyr::group_by()`).
 
+--
+
 - Grouping by a single variable
-    
-    ```r
-    DT[ , .(mean_price = mean(price)), by = clarity]
-    ```
+.blockquote.exercise[
+
+```r
+DT[ , .(mean_price = mean(price)), by = clarity]
+```
+]
+
+--
 
 - Grouping by multiple variables.
-    
-    ```r
-    DT[ , .(mean_price = mean(price)), by = .(clarity, color)]
-    ```
+.blockquote.exercise[
+
+```r
+DT[ , .(mean_price = mean(price)), by = .(clarity, color)]
+```
+]
+
+--
 
 - Grouping by expressions.
-    
-    ```r
-    DT[ , mean(carat), by = list("Is price larger than 2300?" = price &gt; 2300)]
-    ```
+.blockquote.exercise[
 
+```r
+DT[ , mean(carat), by = list("Is price larger than 2300?" = price &gt; 2300)]
+```
+]
 ---
 ## `keyby`
 
 Additionally to grouping `keyby` runs `setkey()` on the by columns 	&amp;rarr; results are sorted.
 
- 
+--
+
+.blockquote.exercise[
+
 
 
 ```r
+# only the first and list five rows are printed
 DT[ , mean(price), keyby = .(clarity, color)]
 ```
 
@@ -419,18 +530,20 @@ DT[ , mean(price), keyby = .(clarity, color)]
 ## 55:      IF     I 1243.769
 ## 56:      IF     J 1349.686
 ```
-
+]
 
 
 ---
 ## .SD
 
-Similar to `dplyr::*_all()`, `dplyr::*_at()`, and `dplyr::*_if()` we can 
-aggregate multiple columns concisely using the special symbol `.SD`. 
+Similar to `dplyr::across()` together with the predicate functions of the `dplyr` package we can aggregate multiple columns concisely using the special symbol `.SD`. 
 
 If nothing else is specified, `.SD` corresponds to all columns in the `data.table`.
 We can use this together with `lapply` to aggregate all columns using the same function. 
 
+--
+
+.blockquote.exercise[
 
 ```r
 numeric_DT &lt;- data.table(a = rnorm(10), b = rnorm(10), c = rnorm(10))
@@ -438,12 +551,16 @@ numeric_DT[ ,lapply(.SD, mean)]
 ```
 
 ```
-##             a          b         c
-## 1: -0.5744676 -0.3557319 0.2546456
+##              a          b            c
+## 1: -0.03384578 -0.3668077 -0.008208604
 ```
+]
+
+--
 
 We can however change `.SD` to only contain a subset of all columns using `.SDcols`.
 
+.blockquote.exercise[
 
 ```r
 num_cols &lt;- names(DT)[sapply(DT, is.numeric)] 
@@ -454,80 +571,99 @@ DT[ , lapply(.SD, mean), .SDcols = num_cols ]
 ##        carat   depth    table    price        x            y        z
 ## 1: 0.7979397 61.7494 57.45718 1811.963 7.786768 -3.96194e-13 3.538734
 ```
-
+]
 
 
 ---
 ## Joins
 
+.blockquote.exercise[
 
 ```r
 library(dplyr)
 members &lt;- as.data.table(band_members)
 instruments &lt;- as.data.table(band_instruments)
 ```
+]
+
+--
 
 - Left join (`members` is the left table )
-    
-    ```r
-    instruments[members, on = "name"]
-    ```
-    
-    ```
-    ##    name  plays    band
-    ## 1: Mick   &lt;NA&gt;  Stones
-    ## 2: John guitar Beatles
-    ## 3: Paul   bass Beatles
-    ```
+.blockquote.exercise[
+
+```r
+instruments[members, on = "name"]
+```
+
+```
+##    name  plays    band
+## 1: Mick   &lt;NA&gt;  Stones
+## 2: John guitar Beatles
+## 3: Paul   bass Beatles
+```
+]
+
+--
 
 - Left join by reference
-    
-    ```r
-    members[instruments, band := band, on = "name"]
-    ```
+.blockquote.exercise[
 
+```r
+members[instruments, band := band, on = "name"]
+```
+]
 ---
 ## Joins
 - Inner join
-    
-    ```r
-    instruments[members, on = "name", nomatch = 0]
-    ```
-    
-    ```
-    ##    name  plays    band
-    ## 1: John guitar Beatles
-    ## 2: Paul   bass Beatles
-    ```
+.blockquote.exercise[
+
+```r
+instruments[members, on = "name", nomatch = 0]
+```
+
+```
+##    name  plays    band
+## 1: John guitar Beatles
+## 2: Paul   bass Beatles
+```
+]
+
+--
 
 - A full join cannot be achieved with standard `data.table` syntax. Use `data.table::merge()`.
-    
-    ```r
-    merge(members, instruments, all = TRUE)
-    ```
-    
-    ```
-    ##     name    band  plays
-    ## 1:  John Beatles guitar
-    ## 2: Keith    &lt;NA&gt; guitar
-    ## 3:  Mick  Stones   &lt;NA&gt;
-    ## 4:  Paul Beatles   bass
-    ```
+.blockquote.exercise[
+
+```r
+merge(members, instruments, all = TRUE)
+```
+
+```
+##     name    band  plays
+## 1:  John Beatles guitar
+## 2: Keith    &lt;NA&gt; guitar
+## 3:  Mick  Stones   &lt;NA&gt;
+## 4:  Paul Beatles   bass
+```
+]
 ---
 ## Joins
 - Anti-Join
-    
-    ```r
-    merge(members, instruments, all = TRUE)[is.na(plays)]
-    ```
-    
-    ```
-    ##    name   band plays
-    ## 1: Mick Stones  &lt;NA&gt;
-    ```
+.blockquote.exercise[
+
+```r
+merge(members, instruments, all = TRUE)[is.na(plays)]
+```
+
+```
+##    name   band plays
+## 1: Mick Stones  &lt;NA&gt;
+```
+]
 ---
 ## Joins: Overview
 &lt;br&gt;
+
+.font90[
 &lt;table&gt;
  &lt;thead&gt;
   &lt;tr&gt;
@@ -570,11 +706,12 @@ instruments &lt;- as.data.table(band_instruments)
   &lt;/tr&gt;
 &lt;/tbody&gt;
 &lt;/table&gt;
-
+]
 
 ---
 ## Rolling Join 
 
+.blockquote.exercise[
 
 ```r
 DT &lt;- data.table(t = c(1.2, 2.8, 4.5, 10), value = c(3, 8, 4, 2), id_DT = 1:4) 
@@ -588,7 +725,11 @@ DT[LU, on = "t", roll = TRUE]
 ## 2: 1.0    NA    NA     2
 ## 3: 9.0     4     3     3
 ```
-Looks for closest value of `t` in `DT` which is smaller than `t` in `LU`.
+]
+
+--
+
+- Looks for closest value of `t` in `DT` which is smaller than `t` in `LU`.
 
 ---
 ## Other Useful Functions from the `data.table` package
@@ -601,6 +742,7 @@ Looks for closest value of `t` in `DT` which is smaller than `t` in `LU`.
 -  `shift()`: For lead and lag
 
 ---
+class: exercise_slide
 ## Exercises 
 
 1. Repeat the exercises from the chapter on `dplyr` using `data.table`. 
@@ -623,6 +765,7 @@ Looks for closest value of `t` in `DT` which is smaller than `t` in `LU`.
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
 <script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
 <script src="../assets/remark-zoom.js"></script>
+<script src="../xaringan_files/macros.js"></script>
 <script src="https://platform.twitter.com/widgets.js"></script>
 <script>var slideshow = remark.create({
 "highlightStyle": "github",
