@@ -563,10 +563,9 @@ class: exercise_slide
 
 .pull-right[
 ```{r, eval = TRUE, echo = FALSE, out.width = "700px", fig.align='right'}
-knitr::include_graphics("github-dark-mode.png")
+knitr::include_graphics("github_desktop.png")
 ```
 ]
-
 
 ---
 ## Solving conflicts
