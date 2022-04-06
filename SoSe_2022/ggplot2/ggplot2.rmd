@@ -21,11 +21,17 @@ output:
       navigation:
         scroll: false # disable slide transitions by scrolling
 ---
+class: title-slide title-ggplot2 center middle
+
 ```{r moon_reader, include=FALSE, eval = FALSE}
 # setup for moon reader
 # copy it to console
 options(servr.interval = 0.5)
 xaringan::inf_mr()
+```
+
+```{r xaringanExtra_progress-bar, echo = FALSE}
+xaringanExtra::use_progress_bar(color = "#004c93", location = "bottom")
 ```
 
 ```{r xaringanExtra-clipboard_2, echo=FALSE}
@@ -55,7 +61,6 @@ checker_green <- icons::icon_style(fontawesome$solid$check, fill = "green")
 times_red <- icons::icon_style(fontawesome$solid$times, fill = "red")
 
 ```
-class: title-slide title-ggplot2 center middle
 
 # `r rmarkdown::metadata$title`
 ## `r rmarkdown::metadata$subtitle`

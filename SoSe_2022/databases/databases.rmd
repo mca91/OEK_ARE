@@ -21,7 +21,7 @@ output:
       navigation:
         scroll: false # disable slide transitions by scrolling
 ---
-
+class: title-slide title-sqlite center middle
 ```{r icons, include=FALSE}
 library(icons)
 
@@ -33,6 +33,9 @@ times_red <- icons::icon_style(icons::fontawesome$solid$times, fill = "red")
 library(keyring)
 ```
 
+```{r xaringanExtra_progress-bar, echo = FALSE}
+xaringanExtra::use_progress_bar(color = "#004c93", location = "bottom")
+```
 
 ```{r xaringanExtra-clipboard_2, echo=FALSE}
 # copy button styles mainly in ude.css
@@ -63,10 +66,6 @@ knit_hooks$set(
   }
 )
 ```
-
-
-class: title-slide title-sqlite center middle
-
 
 # `r rmarkdown::metadata$title`
 ## `r rmarkdown::metadata$subtitle`

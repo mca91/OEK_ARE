@@ -5,9 +5,10 @@
     <meta charset="utf-8" />
     <meta name="author" content="Martin C. Arnold" />
     <meta name="author" content="Jens Klenke" />
-    <meta name="date" content="2022-04-05" />
+    <meta name="date" content="2022-04-06" />
     <script src="webscraping_files/header-attrs/header-attrs.js"></script>
     <link href="webscraping_files/remark-css/default.css" rel="stylesheet" />
+    <script src="webscraping_files/xaringanExtra-progressBar/progress-bar.js"></script>
     <script src="webscraping_files/clipboard/clipboard.min.js"></script>
     <link href="webscraping_files/xaringanExtra-clipboard/xaringanExtra-clipboard.css" rel="stylesheet" />
     <script src="webscraping_files/xaringanExtra-clipboard/xaringanExtra-clipboard.js"></script>
@@ -34,13 +35,33 @@
   <body>
     <textarea id="source">
 
-
-
-
-
-
-
 class: title-slide title-rvest center middle
+
+
+<style>.xe__progress-bar__container {
+  bottom:0;
+  opacity: 1;
+  position:absolute;
+  right:0;
+  left: 0;
+}
+.xe__progress-bar {
+  height: 0.25em;
+  background-color: #004c93;
+  width: calc(var(--slide-current) / var(--slide-total) * 100%);
+}
+.remark-visible .xe__progress-bar {
+  animation: xe__progress-bar__wipe 200ms forwards;
+  animation-timing-function: cubic-bezier(.86,0,.07,1);
+}
+@keyframes xe__progress-bar__wipe {
+  0% { width: calc(var(--slide-previous) / var(--slide-total) * 100%); }
+  100% { width: calc(var(--slide-current) / var(--slide-total) * 100%); }
+}</style>
+
+
+
+
 
 # Advanced R for Econometricians
 ## Web Scraping with rvest
@@ -205,8 +226,8 @@ URL &lt;- here::here("SoSe_2022/webscraping/examples/simple_html_page.html") # p
 ```
 ## {html_document}
 ## &lt;html&gt;
-## [1] &lt;head&gt;\n&lt;meta http-equi ...
-## [2] &lt;body&gt;\r\n  \r\n  &lt;h1&gt;T ...
+## [1] &lt;head&gt;\n&lt;meta http-equiv="Content-Type" content="text/html; charset=UTF-8 ...
+## [2] &lt;body&gt;\r\n  \r\n  &lt;h1&gt;This is a Heading&lt;/h1&gt;\r\n  &lt;p&gt;This is a paragraph. ...
 ```
 ]
 
@@ -238,8 +259,8 @@ page %&gt;% rvest::html_nodes("p")
 
 ```
 ## {xml_nodeset (2)}
-## [1] &lt;p&gt;This is a paragraph. ...
-## [2] &lt;p&gt;This is another para ...
+## [1] &lt;p&gt;This is a paragraph.&lt;/p&gt;
+## [2] &lt;p&gt;This is another paragraph.&lt;/p&gt;
 ```
 ]
 
@@ -256,7 +277,7 @@ page %&gt;%
 
 ```
 ## {xml_nodeset (1)}
-## [1] &lt;p&gt;This is another para ...
+## [1] &lt;p&gt;This is another paragraph.&lt;/p&gt;
 ```
 ]
 

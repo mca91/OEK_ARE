@@ -6,8 +6,9 @@
     <meta name="author" content="Martin C. Arnold" />
     <meta name="author" content="Jens Klenke" />
     <meta name="date" content="2022-04-06" />
-    <script src="Introduction_files/header-attrs-2.13/header-attrs.js"></script>
+    <script src="Introduction_files/header-attrs-2.12/header-attrs.js"></script>
     <link href="Introduction_files/remark-css-0.0.1/default.css" rel="stylesheet" />
+    <script src="Introduction_files/xaringanExtra-progressBar-0.0.1/progress-bar.js"></script>
     <script src="Introduction_files/clipboard-2.0.6/clipboard.min.js"></script>
     <link href="Introduction_files/xaringanExtra-clipboard-0.2.6/xaringanExtra-clipboard.css" rel="stylesheet" />
     <script src="Introduction_files/xaringanExtra-clipboard-0.2.6/xaringanExtra-clipboard.js"></script>
@@ -34,14 +35,34 @@
   <body>
     <textarea id="source">
 
-
-
-
-
-
-
-
 class: title-slide title-rintro center middle
+
+
+<style>.xe__progress-bar__container {
+  bottom:0;
+  opacity: 1;
+  position:absolute;
+  right:0;
+  left: 0;
+}
+.xe__progress-bar {
+  height: 0.25em;
+  background-color: #004c93;
+  width: calc(var(--slide-current) / var(--slide-total) * 100%);
+}
+.remark-visible .xe__progress-bar {
+  animation: xe__progress-bar__wipe 200ms forwards;
+  animation-timing-function: cubic-bezier(.86,0,.07,1);
+}
+@keyframes xe__progress-bar__wipe {
+  0% { width: calc(var(--slide-previous) / var(--slide-total) * 100%); }
+  100% { width: calc(var(--slide-current) / var(--slide-total) * 100%); }
+}</style>
+
+
+
+
+
 
 #  Advanced R for Econometricians
 ## Introduction

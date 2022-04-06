@@ -5,9 +5,10 @@
     <meta charset="utf-8" />
     <meta name="author" content="Martin C. Arnold" />
     <meta name="author" content="Jens Klenke" />
-    <meta name="date" content="2022-03-24" />
+    <meta name="date" content="2022-04-06" />
     <script src="databases_files/header-attrs-2.12/header-attrs.js"></script>
     <link href="databases_files/remark-css-0.0.1/default.css" rel="stylesheet" />
+    <script src="databases_files/xaringanExtra-progressBar-0.0.1/progress-bar.js"></script>
     <script src="databases_files/clipboard-2.0.6/clipboard.min.js"></script>
     <link href="databases_files/xaringanExtra-clipboard-0.2.6/xaringanExtra-clipboard.css" rel="stylesheet" />
     <script src="databases_files/xaringanExtra-clipboard-0.2.6/xaringanExtra-clipboard.js"></script>
@@ -34,16 +35,32 @@
   <body>
     <textarea id="source">
 
-
-
-
-
-
-
-
-
-
 class: title-slide title-sqlite center middle
+
+
+<style>.xe__progress-bar__container {
+  bottom:0;
+  opacity: 1;
+  position:absolute;
+  right:0;
+  left: 0;
+}
+.xe__progress-bar {
+  height: 0.25em;
+  background-color: #004c93;
+  width: calc(var(--slide-current) / var(--slide-total) * 100%);
+}
+.remark-visible .xe__progress-bar {
+  animation: xe__progress-bar__wipe 200ms forwards;
+  animation-timing-function: cubic-bezier(.86,0,.07,1);
+}
+@keyframes xe__progress-bar__wipe {
+  0% { width: calc(var(--slide-previous) / var(--slide-total) * 100%); }
+  100% { width: calc(var(--slide-current) / var(--slide-total) * 100%); }
+}</style>
+
+
+
 
 
 # Advanced R for Econometricians
@@ -511,7 +528,7 @@ print(gap_avg)
 ---
 ## Disconnect
 
-- If the connection to the database is no longer needed you should disconnect to free system ressources. 
+- If the connection to the database is no longer needed you should disconnect to free system resources. 
 
 --
 
@@ -528,7 +545,7 @@ rm(con)
 .font90[
 ## Set up an SQLite Database
 
-- SQLite is very light weighted Database Management System 
+- SQLite is a very light weighted Database Management System 
 - An SQLite database is contained in a single file. There is no need for a server. 
 - Everything you need is to install the `RSQLite` packages. 
 ]
