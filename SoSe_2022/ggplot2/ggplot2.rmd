@@ -1,6 +1,6 @@
 ---
 title: "Advanced R for Econometricians"
-subtitle: "Data Visualization with ggplot2"
+subtitle: "Data Visualisation with ggplot2"
 author: 
   - "Martin C. Arnold"
   - "Jens Klenke"
@@ -63,7 +63,7 @@ class: title-slide title-ggplot2 center middle
 
 ---
 class: left, top
-## Data Visualization 
+## Data Visualisation 
 
 <blockquote style ="margin-top:0%;">
 R is a free software environment for statistical computing and  <b>graphics</b>.
@@ -113,7 +113,7 @@ class: left, top
 - data
 - aesthetic mappings (e.g. mapping of data to x and y coordinates, size, color, shape, ...)
 - geometric objects (e.g. points, lines, bars, ...)
-- scales (controls mapping from data to aesthetics ,e.g., which colors should be used)
+- scales (controls mapping from data to aesthetics , e.g., which colors should be used)
 - facets (splitting data to create plots for subgroups)
 - statistical transformations (summarize data before plotting)
 - coordinate systems (e.g. Cartesian, polar, ...)
