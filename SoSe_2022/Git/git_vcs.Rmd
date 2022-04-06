@@ -629,7 +629,7 @@ Automatic merge failed; fix conflicts and then commit the result.
 ---
 ## Solving conflicts
 
-- Instead of solving the conflict, Git will parepare the file in a way that makes it easy for you to solve the conflict yourself. Look for everything starting with `<<<<<<< HEAD` and ending with   
+- Instead of solving the conflict, Git will prepare the file in a way that makes it easy for you to solve the conflict yourself. Look for everything starting with `<<<<<<< HEAD` and ending with   
 
 .blockquote.exercise[
 `>>>>>>> refs/...`. 
