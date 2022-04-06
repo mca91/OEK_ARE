@@ -875,7 +875,7 @@ class: top, left
 If `summarise()` is too limited, because it can only handle functions that have a single 
 return value, use 
   - `group_modify(.tbl, .f, ...)` to return a grouped tibble. In that case `.f` must return a data frame.
-  - `group_map(.tbl, .f, ...)` to returns a list of results from calling `.f` on each group.
+  - `group_map(.tbl, .f, ...)` to return a list of results from calling `.f` on each group.
   - `group_walk(.tbl, .f, ...)` to call `.f` for side effects and returns the input `.tbl`, invisibly.
 
 ]
@@ -911,7 +911,7 @@ class: exercise_slide
 Use `dplyr` on the Boston crime data to:
 
 <ol start="6"> 
-<li>  Find out in which district the most incident where reported.  </li>
+<li>  Find out in which district the most incidents were reported.  </li>
 <li>  Create an ordered list of the top ten districts according to the number of drug violations. Start with the district with most drug violations. </li>
 <li>  What was the most dangerous hour of the week according to the number of homicides (<code>OFFENSE_CODE_GROUP == 'Homicide'</code>)?  </li>
 <li>  Calculate for each district the proportion of motor vehicle accidents to all reported incidents (<code>OFFENSE_CODE_GROUP == 'Motor Vehicle Accident Response'</code>).   </li>
@@ -1101,7 +1101,7 @@ table4a %>%
 
 --
 
-.font90
+.font90[
 See the help file for more information
 ]
 
