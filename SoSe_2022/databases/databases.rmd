@@ -340,7 +340,7 @@ print(gap_avg)
 ---
 ## Disconnect
 
-- If the connection to the database is no longer needed you should disconnect to free system ressources. 
+- If the connection to the database is no longer needed you should disconnect to free system resources. 
 
 --
 
@@ -356,7 +356,7 @@ rm(con)
 .font90[
 ## Set up an SQLite Database
 
-- SQLite is very light weighted Database Management System 
+- SQLite is a very light weighted Database Management System 
 - An SQLite database is contained in a single file. There is no need for a server. 
 - Everything you need is to install the `RSQLite` packages. 
 ]
