@@ -130,7 +130,7 @@ A Shiny app consist of 2 parts
 
 ## A minimal example 
 
-
+.blockquote.exercise[
 ```{r}
 library(shiny)
 
@@ -143,6 +143,9 @@ server <- function(input, output) {}
 # Run the shiny app 
 shinyApp(ui = ui, server = server)
 ```
+]
+
+--
 
 Another way to build an app is 
 - create a new directory (say `.../App-1`) with files `ui.R` and `server.R`
@@ -154,6 +157,7 @@ Another way to build an app is
 
 We will now extend our app by adding a simple sidebar layout. 
 
+.blockquote.exercise[
 ```{r, eval = FALSE, echo = TRUE, results='asis'}
 ui <- fluidPage(
   
@@ -167,30 +171,37 @@ ui <- fluidPage(
 server <- function(input, output) {}
 shinyApp(ui = ui, server = server)
 ```
+]
+
+--
 
 - `fluidPage()` creates a new website that we can fill with content.
 -  Type any of those functions in the R console to see that HTML code is returned. 
 
 ---
 ## Adding Elements for User Input 
-  
+
+.blockquote.exercise[  
 ```{r}
 ui <- fluidPage(
   titlePanel("Title Panel"), 
   sidebarLayout(
     sidebarPanel("Sidebar Panel",
-                 br(),                               # linebreak
+                 br(),                           # linebreak
                  br(),
                  sliderInput(
-                 inputId = "num",                    # input value can be accessed from the server 
-                 label = "Choose a number",          # function via the inputId
+                 inputId = "num",                # input value can be accessed from the server 
+                 label = "Choose a number",      # function via the inputId
                  value = 25, min = 1, max = 100)
                  ),
     mainPanel("Main Panel")
   )
 )
 ```
-  
+]
+
+--
+
 You can find an overview of input elements [here](https://shiny.rstudio.com/gallery/widget-gallery.html).
 A very convenient input element not yet contained in the overview is [varSelectInput](https://shiny.rstudio.com/reference/shiny/latest/varSelectInput.html). 
 ---
@@ -205,7 +216,10 @@ There are some rules:
 - the output that depends on user input needs to be created by a render function.
 - the output to be displayed needs to be saved as `output$outputId`.
 
+--
 
+.blockquote.exercise[
+#### `r desktop` Example
 ```{r}
 server <- function(input, output) {
   
@@ -215,13 +229,15 @@ server <- function(input, output) {
   
 }
 ```
-
+]
 
 ---
 ## Display Output in the User Interface
 
-Output can be added to the user interface by one of the output functions. 
+Output can be added to the user interface by one of the output functions.
 
+.font90.blockquote.exercise[
+#### `r desktop` Example
 ```{r}
 ui <- fluidPage(
   titlePanel("Title Panel"), 
@@ -243,7 +259,7 @@ ui <- fluidPage(
   )
 )
 ```
-
+]
 
 
 ---

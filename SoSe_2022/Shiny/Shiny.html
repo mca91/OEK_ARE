@@ -138,7 +138,7 @@ A Shiny app consist of 2 parts
 
 ## A minimal example 
 
-
+.blockquote.exercise[
 
 ```r
 library(shiny)
@@ -152,6 +152,9 @@ server &lt;- function(input, output) {}
 # Run the shiny app 
 shinyApp(ui = ui, server = server)
 ```
+]
+
+--
 
 Another way to build an app is 
 - create a new directory (say `.../App-1`) with files `ui.R` and `server.R`
@@ -163,6 +166,7 @@ Another way to build an app is
 
 We will now extend our app by adding a simple sidebar layout. 
 
+.blockquote.exercise[
 
 ```r
 ui &lt;- fluidPage(
@@ -177,31 +181,38 @@ ui &lt;- fluidPage(
 server &lt;- function(input, output) {}
 shinyApp(ui = ui, server = server)
 ```
+]
+
+--
 
 - `fluidPage()` creates a new website that we can fill with content.
 -  Type any of those functions in the R console to see that HTML code is returned. 
 
 ---
 ## Adding Elements for User Input 
-  
+
+.blockquote.exercise[  
 
 ```r
 ui &lt;- fluidPage(
   titlePanel("Title Panel"), 
   sidebarLayout(
     sidebarPanel("Sidebar Panel",
-                 br(),                               # linebreak
+                 br(),                           # linebreak
                  br(),
                  sliderInput(
-                 inputId = "num",                    # input value can be accessed from the server 
-                 label = "Choose a number",          # function via the inputId
+                 inputId = "num",                # input value can be accessed from the server 
+                 label = "Choose a number",      # function via the inputId
                  value = 25, min = 1, max = 100)
                  ),
     mainPanel("Main Panel")
   )
 )
 ```
-  
+]
+
+--
+
 You can find an overview of input elements [here](https://shiny.rstudio.com/gallery/widget-gallery.html).
 A very convenient input element not yet contained in the overview is [varSelectInput](https://shiny.rstudio.com/reference/shiny/latest/varSelectInput.html). 
 ---
@@ -216,7 +227,10 @@ There are some rules:
 - the output that depends on user input needs to be created by a render function.
 - the output to be displayed needs to be saved as `output$outputId`.
 
+--
 
+.blockquote.exercise[
+#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example
 
 ```r
 server &lt;- function(input, output) {
@@ -227,13 +241,15 @@ server &lt;- function(input, output) {
   
 }
 ```
-
+]
 
 ---
 ## Display Output in the User Interface
 
-Output can be added to the user interface by one of the output functions. 
+Output can be added to the user interface by one of the output functions.
 
+.font90.blockquote.exercise[
+#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example
 
 ```r
 ui &lt;- fluidPage(
@@ -256,7 +272,7 @@ ui &lt;- fluidPage(
   )
 )
 ```
-
+]
 
 
 ---
