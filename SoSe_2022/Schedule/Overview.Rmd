@@ -1,0 +1,64 @@
+---
+title: "Advanced R for Econometricians"
+subtitle: "Semester overview"
+author:
+- name: M.Sc. Martin C. Arnold
+- name: M.Sc. Jens Klenke 
+date: "`r format(Sys.time(), '%B %d, %Y')`"
+output:
+  pdf_document:
+    citation_package: natbib
+    fig_caption: yes
+    keep_tex: yes
+    latex_engine: pdflatex
+    template: assets/svm-latex-ms.tex
+  html_document:
+    df_print: paged
+geometry: margin=1in
+term: Sommer 2022
+endnote: no
+show_solutions: yes
+tables: yes
+---
+
+```{r setup, eval = T, echo=F, purl=F, warning=FALSE, message=FALSE}
+knitr::opts_chunk$set(message = FALSE, warning = FALSE)
+
+library(ggplot2)
+library(dplyr)
+library(kableExtra)
+# Show R solution code
+sol <- T
+```
+
+# Course Schedule 
+
+```{r, echo = FALSE}
+options(knitr.kable.NA = '')
+overview <- readxl::read_xlsx(here::here('SoSe_2022/Schedule/Semester_overview.xlsx'))
+ 
+overview |>
+knitr::kable(booktabs = TRUE, linesep = "", escape = FALSE,) |>
+  kable_styling(latex_options = c("striped", "hold_position")) |>
+  add_footnote("We still reserve the right to modify the schedule if necessary.", notation = "number")
+```
+
+
+# Assignments 
+
+In general, there will be two assignments, each of which will determine 10% of the final grade. **We reserve the right to change the schedule** so that we can respond to the development of the course. However, you will be informed about any possible changes in due time in Moodle and/or in class. 
+
+- The first assignment and detailed information will be handed out on **16$^{th}$May**, and the submission deadline will be **30$^{th}$May**. 
+
+- The second assignment and detailed information will be handed out on **13$^{th}$June**, and the submission deadline will be **27$^{th}$June**. 
+
+# Final Group Project 
+
+The topic list for the final group projects will be available on Moodle on **10$^{th}$June**. We encourage you to develop your own ideas for your group project. Please come forward with your suggestions as early as possible so that we can discuss them. You have time to choose your final topic until **17$^{th}$June**. For this purpose, a tool will be set up on Moodle. You must submit your final project by **9$^{th}$September**. The presentation of the final projects will take place in the week from **4$^{th}$ -- 7$^{th}$ October**.
+
+
+If you have any further question do not hesitate to ask. 
+
+
+
+

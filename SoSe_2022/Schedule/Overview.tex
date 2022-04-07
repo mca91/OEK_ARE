@@ -1,0 +1,280 @@
+\documentclass[]{article}
+\usepackage[left=1in,top=1in,right=1in,bottom=1in]{geometry}
+
+\usepackage{relsize}
+
+\usepackage{scrextend}
+
+\usepackage[ngerman]{babel}
+\usepackage{eurosym}
+
+\usepackage{enumerate}
+\usepackage{enumitem}
+
+\newcommand*{\authorfont}{\fontfamily{phv}\selectfont}
+\usepackage{lmodern}
+
+
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+
+
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\allowdisplaybreaks
+
+\usepackage[wsol,wsolpubl]{optional}
+
+\newcommand{\optb}[2]{\opt{#1}{\textit{Lösung:} #2}}
+\newcommand{\sol}[2]{\opt{#1}{#2}}
+\newcommand{\solind}[2]{\opt{#1}{\setlength{\leftskip}{2.5em} \textit{Lösung:}\newline #2}}
+\newcommand{\ind}[2]{\opt{#1}{\setlength{\leftskip}{2.5em} #2}}
+
+
+% \setlength{\leftskip}{2.5em}
+
+\usepackage{abstract}
+\renewcommand{\abstractname}{}    % clear the title
+\renewcommand{\absnamepos}{empty} % originally center
+
+\renewenvironment{abstract}
+ {{%
+    \setlength{\leftmargin}{0mm}
+    \setlength{\rightmargin}{\leftmargin}%
+  }%
+  \relax}
+ {\endlist}
+
+\makeatletter
+\def\@maketitle{%
+  \newpage
+%  \null
+%  \vskip 2em%
+%  \begin{center}%
+  \let \footnote \thanks
+    {\fontsize{14}{15}\selectfont \center  \setlength{\parindent}{0pt} \@title \par}%
+}
+%\fi
+\makeatother
+
+
+
+
+\setcounter{secnumdepth}{0}
+
+\usepackage{longtable,booktabs}
+
+\usepackage{graphicx}
+
+\author{\Large M.Sc. Martin C.
+Arnold\vspace{0.05in} \newline\normalsize\emph{}   \and \Large M.Sc.
+Jens Klenke\vspace{0.05in} \newline\normalsize\emph{}  }
+
+\title{\center Advanced R for Econometricians \\[1em]\smaller{Semester
+overview}  }
+ 
+
+
+\date{}
+
+\usepackage{titlesec}
+
+\titleformat*{\section}{\normalsize\bfseries}
+\titleformat*{\subsection}{\normalsize\itshape}
+\titleformat*{\subsubsection}{\normalsize\itshape}
+\titleformat*{\paragraph}{\normalsize\itshape}
+\titleformat*{\subparagraph}{\normalsize\itshape}
+
+
+\usepackage{natbib}
+\bibliographystyle{plainnat}
+\usepackage[strings]{underscore} % protect underscores in most circumstances
+
+
+
+\newtheorem{hypothesis}{Hypothesis}
+\usepackage{setspace}
+
+\makeatletter
+\@ifpackageloaded{hyperref}{}{%
+\ifxetex
+  \PassOptionsToPackage{hyphens}{url}\usepackage[setpagesize=false, % page size defined by xetex
+              unicode=false, % unicode breaks when used with xetex
+              xetex]{hyperref}
+\else
+  \PassOptionsToPackage{hyphens}{url}\usepackage[unicode=true]{hyperref}
+\fi
+}
+
+\@ifpackageloaded{color}{
+    \PassOptionsToPackage{usenames,dvipsnames}{color}
+}{%
+    \usepackage[usenames,dvipsnames]{color}
+}
+\makeatother
+\hypersetup{breaklinks=true,
+            bookmarks=true,
+            pdfauthor={M.Sc. Martin C. Arnold () and M.Sc. Jens
+Klenke ()},
+             pdfkeywords = {},  
+            pdftitle={Advanced R for Econometricians: Semester
+overview},
+            colorlinks=true,
+            citecolor=blue,
+            urlcolor=blue,
+            linkcolor=magenta,
+            pdfborder={0 0 0}}
+\urlstyle{same}  % don't use monospace font for urls
+
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{multirow}
+\usepackage{wrapfig}
+\usepackage{float}
+\usepackage{colortbl}
+\usepackage{pdflscape}
+\usepackage{tabu}
+\usepackage{threeparttable}
+\usepackage{threeparttablex}
+\usepackage[normalem]{ulem}
+\usepackage{makecell}
+\usepackage{xcolor}
+
+
+% add tightlist ----------
+\providecommand{\tightlist}{%
+\setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+
+\newcommand{\var}{\mbox{\sf Var}}
+\newcommand{\E}{\mbox{\sf E}}
+\newcommand{\cov}{\mbox{\sf Cov}}
+\newcommand{\pr}{\mbox{\sf P}}
+\newcommand{\corr}{\mbox{\sf Cor}}
+
+\setlength{\parindent}{0pt}
+
+\begin{document}
+	
+% \pagenumbering{arabic}% resets `page` counter to 1 
+%    
+
+% \maketitle
+
+{% \usefont{T1}{pnc}{m}{n}
+
+{
+
+\vskip 40pt\relax \normalsize\fontsize{11}{12}
+
+\begin{minipage}[t]{.49\textwidth}
+Chair of Econometrics
+
+M.Sc. Martin C. Arnold \hskip 15pt \emph{\small }   \par M.Sc. Jens
+Klenke \hskip 15pt \emph{\small }   
+\end{minipage}% 
+%
+\hfill
+%
+\begin{minipage}[t]{.49\textwidth}
+  \begin{flushright}
+    Sommer 2022\\
+    University Duisburg-Essen\\
+    Department of Economics\\
+  \end{flushright}
+\end{minipage}
+
+\vspace{20pt}
+
+}
+
+\setlength{\parindent}{0pt}
+\thispagestyle{plain}
+{\fontsize{10}{10}\selectfont\raggedright 
+{\let\newpage\relax\maketitle}
+ % title \par  
+
+}
+
+
+}
+
+\vskip 8.5pt
+
+
+
+
+
+\vskip 6.5pt
+
+
+\noindent  \hypertarget{course-schedule}{%
+\section{Course Schedule}\label{course-schedule}}
+
+\begin{table}[!h]
+\centering
+\begin{tabular}{rlll}
+\toprule
+Week & Date & Topic & Lecturer\\
+\midrule
+\cellcolor{gray!6}{1} & \cellcolor{gray!6}{2022-04-04} & \cellcolor{gray!6}{Introduction} & \cellcolor{gray!6}{Jens}\\
+2 & 2022-04-11 & R Markdown/Git & Jens\\
+\cellcolor{gray!6}{3} & \cellcolor{gray!6}{2022-04-18} & \cellcolor{gray!6}{Easter Monday (self-study topics)} & \cellcolor{gray!6}{}\\
+4 & 2022-04-25 & Git & Jens\\
+\cellcolor{gray!6}{5} & \cellcolor{gray!6}{2022-05-02} & \cellcolor{gray!6}{ggplot2} & \cellcolor{gray!6}{Jens}\\
+6 & 2022-05-09 & dplyr/databases & Jens\\
+\cellcolor{gray!6}{7} & \cellcolor{gray!6}{2022-05-16} & \cellcolor{gray!6}{Web Scraping} & \cellcolor{gray!6}{Jens}\\
+8 & 2022-05-23 & Advanced Concepts & Martin\\
+\cellcolor{gray!6}{9} & \cellcolor{gray!6}{2022-05-30} & \cellcolor{gray!6}{Functional} & \cellcolor{gray!6}{Martin}\\
+10 & 2022-06-06 & Whit Monday  (self-study topics) & \\
+\cellcolor{gray!6}{11} & \cellcolor{gray!6}{2022-06-13} & \cellcolor{gray!6}{OOP} & \cellcolor{gray!6}{Martin}\\
+12 & 2022-06-20 & Profiling /Benchmarking & Martin\\
+\cellcolor{gray!6}{13} & \cellcolor{gray!6}{2022-06-27} & \cellcolor{gray!6}{Improving Performance} & \cellcolor{gray!6}{Martin}\\
+14 & 2022-07-04 & Rcpp & Martin\\
+\cellcolor{gray!6}{15} & \cellcolor{gray!6}{2022-07-11} & \cellcolor{gray!6}{RcppAramdillo} & \cellcolor{gray!6}{Martin}\\
+\bottomrule
+\multicolumn{4}{l}{\textsuperscript{1} We still reserve the right to modify the schedule if necessary.}\\
+\end{tabular}
+\end{table}
+
+\hypertarget{assignments}{%
+\section{Assignments}\label{assignments}}
+
+In general, there will be two assignments, each of which will determine
+10\% of the final grade. \textbf{We reserve the right to change the
+schedule} so that we can respond to the development of the course.
+However, you will be informed about any possible changes in due time in
+Moodle and/or in class.
+
+\begin{itemize}
+\item
+  The first assignment and detailed information will be handed out on
+  \textbf{16\(^{th}\)May}, and the submission deadline will be
+  \textbf{30\(^{th}\)May}.
+\item
+  The second assignment and detailed information will be handed out on
+  \textbf{13\(^{th}\)June}, and the submission deadline will be
+  \textbf{27\(^{th}\)June}.
+\end{itemize}
+
+\hypertarget{final-group-project}{%
+\section{Final Group Project}\label{final-group-project}}
+
+The topic list for the final group projects will be available on Moodle
+on \textbf{10\(^{th}\)June}. We encourage you to develop your own ideas
+for your group project. Please come forward with your suggestions as
+early as possible so that we can discuss them. You have time to choose
+your final topic until \textbf{17\(^{th}\)June}. For this purpose, a
+tool will be set up on Moodle. You must submit your final project by
+\textbf{9\(^{th}\)September}. The presentation of the final projects
+will take place in the week from \textbf{4\(^{th}\) -- 7\(^{th}\)
+October}.
+
+If you have any further question do not hesitate to ask.
+
+
+
+
+\newpage
+\singlespacing 
+\end{document}
