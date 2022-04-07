@@ -31,7 +31,7 @@ library(kableExtra)
 sol <- T
 ```
 
-# Course schedule 
+# Course Schedule 
 
 ```{r, echo = FALSE}
 options(knitr.kable.NA = '')
