@@ -15,7 +15,7 @@ output:
   html_document:
     df_print: paged
 geometry: margin=1in
-term: Sommer 2022
+term: Summer 2022
 endnote: no
 show_solutions: yes
 tables: yes
@@ -31,7 +31,7 @@ library(kableExtra)
 sol <- T
 ```
 
-# Course Schedule 
+# Course schedule 
 
 ```{r, echo = FALSE}
 options(knitr.kable.NA = '')
@@ -40,24 +40,42 @@ overview <- readxl::read_xlsx(here::here('SoSe_2022/Schedule/Semester_overview.x
 overview |>
 knitr::kable(booktabs = TRUE, linesep = "", escape = FALSE,) |>
   kable_styling(latex_options = c("striped", "hold_position")) |>
-  add_footnote("We still reserve the right to modify the schedule if necessary.", notation = "number")
+  add_footnote("we still reserve the right to modify the schedule if necessary.", notation = "number")
 ```
-
 
 # Assignments 
 
-In general, there will be two assignments, each of which will determine 10% of the final grade. **We reserve the right to change the schedule** so that we can respond to the development of the course. However, you will be informed about any possible changes in due time in Moodle and/or in class. 
+ **Please note that the schedule is tentative: assignments may be postponed with respect to course progress. Given so, you will be informed about any changes in due time via Moodle and in class.** 
 
-- The first assignment and detailed information will be handed out on **16$^{th}$May**, and the submission deadline will be **30$^{th}$May**. 
+- There will be two assignments, each contributing 10% of the final grade.
 
-- The second assignment and detailed information will be handed out on **13$^{th}$June**, and the submission deadline will be **27$^{th}$June**. 
+- The first assignment will be issued on **May 16$^{th}$**. The submission deadline is **May 30$^{th}$**. 
+
+- The second assignment will be issued on **June 13$^{th}$**. The submission deadline is **June 27$^{th}$**. 
 
 # Final Group Project 
 
-The topic list for the final group projects will be available on Moodle on **10$^{th}$June**. We encourage you to develop your own ideas for your group project. Please come forward with your suggestions as early as possible so that we can discuss them. You have time to choose your final topic until **17$^{th}$June**. For this purpose, a tool will be set up on Moodle. You must submit your final project by **9$^{th}$September**. The presentation of the final projects will take place in the week from **4$^{th}$ -- 7$^{th}$ October**.
+- The final projects should be confined with the topics discussed in class but may go beyond that. Since this is a programming course, you should---regardless of the specific topic of your project---demonstrate proficiency in the main paradigms taught (tidy / OOP / FP / efficient programming), if applicable.
 
+- You may work in groups of up to 3 students. We expect you to work collaboratively, preferably via Git. Final project code should be made available in private repositories (more on this later). You should specify contributions of each group member.
 
-If you have any further question do not hesitate to ask. 
+- The final project is to be documented in the style of a seminar paper / reproducible research report of approx. 30 pages. We will provide a rmarkdown template from which you will benefit the most if you pay attention to Jens' rmarkdown lesson :-). You must submit your final project and the report by **September 9$^{th}$**.
+
+- Projects will be presented in oral presentations (approx. 20 minutes). The presentation will be held in the week from **October 4$^{th}$ -- October 7$^{th}$**. Further info follows.
+
+# Grading
+
+The final grade will be the weighted average of the two assignments (20% each), the group project (50%) and the presentations (30%).
+
+# Topics
+
+- Topic proposals will be posted on Moodle on **June 10$^{th}$**. 
+
+- We encourage you to propose your own project ideas. Please come forward with your suggestions as early as possible so that we can discuss them and give you timely feedback. 
+
+- Projects should be registered with us until **June 17$^{th}$**. We will set up a form on Moodle.
+
+Please do not hesitate to ask if you have further questions.
 
 
 
