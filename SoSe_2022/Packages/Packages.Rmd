@@ -22,6 +22,13 @@ output:
         scroll: false # disable slide transitions by scrolling
 ---
 class: title-slide title-packages center middle
+```{r moon_reader, include=FALSE, eval = FALSE}
+# setup for moon reader
+# copy it to console
+options(servr.interval = 0.5)
+xaringan::inf_mr()
+```
+
 ```{r xaringanExtra-clipboard_2, echo=FALSE}
 # copy button styles mainly in ude.css
 htmltools::tagList(
@@ -57,7 +64,7 @@ times_red <- icons::icon_style(icons::fontawesome$solid$times, fill = "red")
 ---
 ## Minimal Package
 
-.smaller[
+.font90[
 
 The smallest usable R package consists of 
 
@@ -66,19 +73,25 @@ The smallest usable R package consists of
 - a `NAMESPACE` file which defines which functions are imported and exported. 
 
 - By running
+.blockquote.exercise[
 ```{r, echo = TRUE, eval = FALSE}
-    usethis::create_package("path/to/package/pkgname")
+  usethis::create_package("path/to/package/pkgname")
 ```
-    
+  ]
     a minimal package gets automatically created. It will also create and open an R project for your package. 
+]
 
+--
+
+.font90[
 - We learnt how to work with Git and we want you to use it for package development, too. 
 
     Git is easily initialized with: 
-    ```{r, eval = FALSE, echo = TRUE}
-    usethis::use_git()
-    ```
-
+.blockquote.exercise[
+```{r, eval = FALSE, echo = TRUE}
+  usethis::use_git()
+```
+]
 ]
 
 ???
@@ -92,18 +105,22 @@ usethis::create_package(here::here("Packages", "example"))
 We start by writing a first little package together. The steps are 
 based on [R packages: The whole game](https://r-pkgs.org/whole-game.html). 
 
+--
+
 Before we start we should think about what our package should do:
 
 - Since `factors` in R are often frustrating to work with we could write a package which makes working with `factors` easier. 
 
-
 --
+
 - Have you ever tried to combine 2 factors?
-    ```{r, eval = TRUE, echo = FALSE}
-    (a <- factor(c("character", "hits", "your", "eyeballs")))
-    (b <- factor(c("but", "integer", "where it", "counts")))
-    c(a, b)
-    ```
+.blockquote.exercise[
+```{r, eval = TRUE, echo = FALSE}
+  (a <- factor(c("character", "hits", "your", "eyeballs")))
+  (b <- factor(c("but", "integer", "where it", "counts")))
+  c(a, b)
+```
+9
 --
     Lets write a function called `fbind()` that does what one would expect.
 

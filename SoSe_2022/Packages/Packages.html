@@ -5,7 +5,7 @@
     <meta charset="utf-8" />
     <meta name="author" content="Martin C. Arnold" />
     <meta name="author" content="Jens Klenke" />
-    <meta name="date" content="2022-04-06" />
+    <meta name="date" content="2022-04-07" />
     <script src="Packages_files/header-attrs-2.12/header-attrs.js"></script>
     <link href="Packages_files/remark-css-0.0.1/default.css" rel="stylesheet" />
     <script src="Packages_files/clipboard-2.0.6/clipboard.min.js"></script>
@@ -38,6 +38,8 @@
 class: title-slide title-packages center middle
 
 
+
+
 <style>.xe__progress-bar__container {
   bottom:0;
   opacity: 1;
@@ -68,7 +70,7 @@ class: title-slide title-packages center middle
 ---
 ## Minimal Package
 
-.smaller[
+.font90[
 
 The smallest usable R package consists of 
 
@@ -77,21 +79,27 @@ The smallest usable R package consists of
 - a `NAMESPACE` file which defines which functions are imported and exported. 
 
 - By running
+.blockquote.exercise[
 
 ```r
-    usethis::create_package("path/to/package/pkgname")
+  usethis::create_package("path/to/package/pkgname")
 ```
-    
+  ]
     a minimal package gets automatically created. It will also create and open an R project for your package. 
+]
 
+--
+
+.font90[
 - We learnt how to work with Git and we want you to use it for package development, too. 
 
     Git is easily initialized with: 
-    
-    ```r
-    usethis::use_git()
-    ```
+.blockquote.exercise[
 
+```r
+  usethis::use_git()
+```
+]
 ]
 
 ???
@@ -106,29 +114,33 @@ usethis::create_package(here::here("Packages", "example"))
 We start by writing a first little package together. The steps are 
 based on [R packages: The whole game](https://r-pkgs.org/whole-game.html). 
 
+--
+
 Before we start we should think about what our package should do:
 
 - Since `factors` in R are often frustrating to work with we could write a package which makes working with `factors` easier. 
 
-
 --
+
 - Have you ever tried to combine 2 factors?
-    
-    ```
-    ## [1] character hits      your      eyeballs 
-    ## Levels: character eyeballs hits your
-    ```
-    
-    ```
-    ## [1] but      integer  where it counts  
-    ## Levels: but counts integer where it
-    ```
-    
-    ```
-    ## [1] character hits      your      eyeballs  but       integer   where it 
-    ## [8] counts   
-    ## Levels: character eyeballs hits your but counts integer where it
-    ```
+.blockquote.exercise[
+
+```
+## [1] character hits      your      eyeballs 
+## Levels: character eyeballs hits your
+```
+
+```
+## [1] but      integer  where it counts  
+## Levels: but counts integer where it
+```
+
+```
+## [1] character hits      your      eyeballs  but       integer   where it 
+## [8] counts   
+## Levels: character eyeballs hits your but counts integer where it
+```
+9
 --
     Lets write a function called `fbind()` that does what one would expect.
 
