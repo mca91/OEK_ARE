@@ -284,6 +284,7 @@ print(knitr::kable(a, format = "html"))
 <iframe width="1051" height="550" src="https://www.youtube.com/embed/jbkSRLYSojo?list=PLB33D8_2SjkZvPYB1CbyMtQhlM-D106hk" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
 ---
+class: exercise_slide
 ## Exercises
 
 Install and load the `gapminder` package.
@@ -291,13 +292,14 @@ Install and load the `gapminder` package.
 1. Recreate the following app.  
 Hints: The variables on the x and y axis must be numeric. The values returned by the input widgets are character strings.  
 
-    ```{r, eval = TRUE, echo = FALSE, out.width = "800px"}
+```{r, eval = TRUE, echo = FALSE, out.width = "800px"}
 knitr::include_graphics("../img/shiny1.png")
-    ```
+```
 
 
 
 ---
+class: exercise_slide
 <ol start=2>
 <li> Add two more input variables that control the color and size of the points. </li>
 <li> Add a slider that allows to subset the data by year.<br>
@@ -319,6 +321,8 @@ We have seen that the output created by a render function changes automatically 
 knitr::include_graphics("./draw.io/shiny_slide_12.png")
 ```
 
+--
+
 - The reactive source is usually the user input which is accessible through `input$inputId`. It can only have dependents (it is always a parent node). 
 - The reactive endpoint is usually produced by one of the render functions and assigned to `output$OutputId`. It can only be dependent (it is always a child node). 
 
@@ -327,10 +331,13 @@ knitr::include_graphics("./draw.io/shiny_slide_12.png")
 
 We have already written a simple app using those two elements.  
 
+<br>
+
 ```{r, eval = TRUE, echo = FALSE, fig.align='center', out.width="40%"}
 knitr::include_graphics("./draw.io/shiny_slide_13.png")
 ```
 
+<br>
 Whenever  `input$num` changes the reactive endpoints using this input are notified that they need to re-execute. 
 
 ---
@@ -338,7 +345,7 @@ Whenever  `input$num` changes the reactive endpoints using this input are notifi
 
 .font90[
 Which structure has the following code?
-
+.blockquote.exercise[
 ```{r, echo = TRUE}
 # Calculate nth number in Fibonacci sequence
 fib <- function(n) ifelse(n<3, 1, fib(n-1)+fib(n-2))
@@ -347,8 +354,10 @@ server <- function(input, output) {
   output$nthValueInv <- renderText({ 1 / fib(as.numeric(input$n)) })
 }
 ```
-]
+]]
+
 --
+
 .font90[
 There are two child nodes depending on one parent node. 
 
@@ -356,14 +365,14 @@ There are two child nodes depending on one parent node.
 knitr::include_graphics("./draw.io/shiny_slide_14.png")
 ```
 
-Furthermore, each of the childs evaluates `fib()` separately, which leads to redundant computations.  
+Furthermore, each of the children evaluates `fib()` separately, which leads to redundant computations.  
 ]
 
 ---
 ## Reactivity
-
+.font90[
 By using a reactive conductor created by `reactive()` we can rewrite the code so that `fib()` executes only once. 
-
+.blockquote.exercise[
 ```{r}
 server <- function(input, output) {
   # reactive conductor depending on reactive source
@@ -373,12 +382,17 @@ server <- function(input, output) {
   output$nthValueInv <- renderText({ 1 / currentFib() })
 }
 ```
+]]
+
+--
 
 ```{r, eval = TRUE, echo = FALSE, fig.align='center', out.width="35%"}
 knitr::include_graphics("./draw.io/shiny_slide_15.png")
 ```
-  
+
+.font90[  
 Note that you need `()` (here ` currentFib()`) to access the value computed by `reactive()`. 
+]
 
 ---
 ## Prevent reactivity with `isolate()`
@@ -396,7 +410,9 @@ What is the problem here?
 ---
 ## Example 
 
+.blockquote.exercise[
 
+#### `r desktop` Example
 ```{r}
 ui <- fluidPage(
   numericInput("n", "Number of observations" ,10),
@@ -417,7 +433,7 @@ output$hist <- renderPlot({
 
 shinyApp(ui, server)
 ```
-
+]
 
 ---
 ## Prevent reactivity with `isolate()`
@@ -432,6 +448,9 @@ knitr::include_graphics("./draw.io/shiny_slide_18.png")
 ---
 ## Example
 
+.blockquote.exercise[
+
+#### `r desktop` Example
 ```{r}
 ui <- fluidPage(
   numericInput("n", "Number of observations" ,100),
@@ -455,8 +474,9 @@ output$hist <- renderPlot({
 
 shinyApp(ui, server)
 ```
-
+]
 ---
+class: exercise_slide
 ## Exercises 
 
 <ol start=4>
@@ -473,6 +493,13 @@ shinyApp(ui, server)
 
 The `DT` package provides a powerful tool for interactive inspection and filtration of rectangular data. 
 
+--
+
+<br>
+
+.blockquote.exercise[
+
+#### `r desktop` Example
 ```{r}
 library(DT)
 
@@ -491,12 +518,17 @@ server <- function(input, output) {
   
 shinyApp(ui, server)
 ```
-
+]
 ---
 ## DataTables
-
+.font90[
 We can even use the filtered rows for further computation. 
+]
+--
 
+.font90.blockquote.exercise[
+
+#### `r desktop` Example
 ```{r}
 ui <- basicPage(
   h2("The mtcars data"),
@@ -520,8 +552,9 @@ server <- function(input, output){
   
 shinyApp(ui, server)
 ```
-
+]
 ---
+class: exercise_slide
 ## Exercises 
 <ol start=6>
 <li> Add a DataTable displaying the selcted data to your Gapminder app. Use a <a href = "https://shiny.rstudio.com/articles/tabsets.html">Tab Panel</a> to allow switching between the

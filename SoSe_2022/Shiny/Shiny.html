@@ -5,7 +5,7 @@
     <meta charset="utf-8" />
     <meta name="author" content="Martin C. Arnold" />
     <meta name="author" content="Jens Klenke" />
-    <meta name="date" content="2022-04-06" />
+    <meta name="date" content="2022-04-07" />
     <script src="Shiny_files/header-attrs-2.12/header-attrs.js"></script>
     <link href="Shiny_files/remark-css-0.0.1/default.css" rel="stylesheet" />
     <script src="Shiny_files/xaringanExtra-progressBar-0.0.1/progress-bar.js"></script>
@@ -337,6 +337,7 @@ ui &lt;- fluidPage(
 &lt;iframe width="1051" height="550" src="https://www.youtube.com/embed/jbkSRLYSojo?list=PLB33D8_2SjkZvPYB1CbyMtQhlM-D106hk" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen&gt;&lt;/iframe&gt;
 
 ---
+class: exercise_slide
 ## Exercises
 
 Install and load the `gapminder` package.
@@ -344,11 +345,12 @@ Install and load the `gapminder` package.
 1. Recreate the following app.  
 Hints: The variables on the x and y axis must be numeric. The values returned by the input widgets are character strings.  
 
-    &lt;img src="../img/shiny1.png" width="800px" /&gt;
+&lt;img src="../img/shiny1.png" width="800px" /&gt;
 
 
 
 ---
+class: exercise_slide
 &lt;ol start=2&gt;
 &lt;li&gt; Add two more input variables that control the color and size of the points. &lt;/li&gt;
 &lt;li&gt; Add a slider that allows to subset the data by year.&lt;br&gt;
@@ -366,6 +368,8 @@ We have seen that the output created by a render function changes automatically 
 
 &lt;img src="./draw.io/shiny_slide_12.png" width="40%" style="display: block; margin: auto;" /&gt;
 
+--
+
 - The reactive source is usually the user input which is accessible through `input$inputId`. It can only have dependents (it is always a parent node). 
 - The reactive endpoint is usually produced by one of the render functions and assigned to `output$OutputId`. It can only be dependent (it is always a child node). 
 
@@ -374,8 +378,11 @@ We have seen that the output created by a render function changes automatically 
 
 We have already written a simple app using those two elements.  
 
+&lt;br&gt;
+
 &lt;img src="./draw.io/shiny_slide_13.png" width="40%" style="display: block; margin: auto;" /&gt;
 
+&lt;br&gt;
 Whenever  `input$num` changes the reactive endpoints using this input are notified that they need to re-execute. 
 
 ---
@@ -383,7 +390,7 @@ Whenever  `input$num` changes the reactive endpoints using this input are notifi
 
 .font90[
 Which structure has the following code?
-
+.blockquote.exercise[
 
 ```r
 # Calculate nth number in Fibonacci sequence
@@ -393,21 +400,23 @@ server &lt;- function(input, output) {
   output$nthValueInv &lt;- renderText({ 1 / fib(as.numeric(input$n)) })
 }
 ```
-]
+]]
+
 --
+
 .font90[
 There are two child nodes depending on one parent node. 
 
 &lt;img src="./draw.io/shiny_slide_14.png" width="35%" style="display: block; margin: auto;" /&gt;
 
-Furthermore, each of the childs evaluates `fib()` separately, which leads to redundant computations.  
+Furthermore, each of the children evaluates `fib()` separately, which leads to redundant computations.  
 ]
 
 ---
 ## Reactivity
-
+.font90[
 By using a reactive conductor created by `reactive()` we can rewrite the code so that `fib()` executes only once. 
-
+.blockquote.exercise[
 
 ```r
 server &lt;- function(input, output) {
@@ -418,10 +427,15 @@ server &lt;- function(input, output) {
   output$nthValueInv &lt;- renderText({ 1 / currentFib() })
 }
 ```
+]]
+
+--
 
 &lt;img src="./draw.io/shiny_slide_15.png" width="35%" style="display: block; margin: auto;" /&gt;
-  
+
+.font90[  
 Note that you need `()` (here ` currentFib()`) to access the value computed by `reactive()`. 
+]
 
 ---
 ## Prevent reactivity with `isolate()`
@@ -437,7 +451,9 @@ What is the problem here?
 ---
 ## Example 
 
+.blockquote.exercise[
 
+#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example
 
 ```r
 ui &lt;- fluidPage(
@@ -459,7 +475,7 @@ output$hist &lt;- renderPlot({
 
 shinyApp(ui, server)
 ```
-
+]
 
 ---
 ## Prevent reactivity with `isolate()`
@@ -472,6 +488,9 @@ computation.
 ---
 ## Example
 
+.blockquote.exercise[
+
+#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example
 
 ```r
 ui &lt;- fluidPage(
@@ -496,8 +515,9 @@ output$hist &lt;- renderPlot({
 
 shinyApp(ui, server)
 ```
-
+]
 ---
+class: exercise_slide
 ## Exercises 
 
 &lt;ol start=4&gt;
@@ -514,6 +534,13 @@ shinyApp(ui, server)
 
 The `DT` package provides a powerful tool for interactive inspection and filtration of rectangular data. 
 
+--
+
+&lt;br&gt;
+
+.blockquote.exercise[
+
+#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example
 
 ```r
 library(DT)
@@ -533,12 +560,17 @@ server &lt;- function(input, output) {
   
 shinyApp(ui, server)
 ```
-
+]
 ---
 ## DataTables
-
+.font90[
 We can even use the filtered rows for further computation. 
+]
+--
 
+.font90.blockquote.exercise[
+
+#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example
 
 ```r
 ui &lt;- basicPage(
@@ -563,8 +595,9 @@ server &lt;- function(input, output){
   
 shinyApp(ui, server)
 ```
-
+]
 ---
+class: exercise_slide
 ## Exercises 
 &lt;ol start=6&gt;
 &lt;li&gt; Add a DataTable displaying the selcted data to your Gapminder app. Use a &lt;a href = "https://shiny.rstudio.com/articles/tabsets.html"&gt;Tab Panel&lt;/a&gt; to allow switching between the
