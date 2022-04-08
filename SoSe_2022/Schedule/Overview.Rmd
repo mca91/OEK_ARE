@@ -40,7 +40,7 @@ overview <- readxl::read_xlsx(here::here('SoSe_2022/Schedule/Semester_overview.x
 overview |>
 knitr::kable(booktabs = TRUE, linesep = "", escape = FALSE,) |>
   kable_styling(latex_options = c("striped", "hold_position")) |>
-  add_footnote("we still reserve the right to modify the schedule if necessary.", notation = "number")
+  add_footnote("We still reserve the right to modify the schedule if necessary.", notation = "number")
 ```
 
 # Assignments 
@@ -55,9 +55,9 @@ knitr::kable(booktabs = TRUE, linesep = "", escape = FALSE,) |>
 
 # Final Group Project 
 
-- The final projects should be confined with the topics discussed in class but may go beyond that. Since this is a programming course, you should---regardless of the specific topic of your project---demonstrate proficiency in the main paradigms taught (tidy / OOP / FP / efficient programming), if applicable.
+- The final projects should deal with the topics discussed in class but may go beyond that. Since this is a programming course, you should---regardless of the specific topic of your project---demonstrate proficiency in the main paradigms taught (tidy / OOP / FP / efficient programming), if applicable.
 
-- You may work in groups of up to 3 students. We expect you to work collaboratively, preferably via Git. Final project code should be made available in private repositories (more on this later). You should specify contributions of each group member.
+- You may work in groups of up to 3 students. We expect you to work collaboratively, preferably via Git. The final project code should be made available in private repositories (more on this later). You should specify the contributions of each group member.
 
 - The final project is to be documented in the style of a seminar paper / reproducible research report of approx. 30 pages. We will provide a rmarkdown template from which you will benefit the most if you pay attention to Jens' rmarkdown lesson :-). You must submit your final project and the report by **September 9$^{th}$**.
 
