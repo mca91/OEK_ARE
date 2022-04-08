@@ -13,7 +13,7 @@ output: html_document
 
 ### Hide your code chunks by setting a global option 
 ````markdown
-`r ''````{r setup, include = TRUE}
+`r ''````{r setup, include = FALSE}
 knitr::opts_chunk$set(echo = FALSE)
 ```
 ````
@@ -23,7 +23,7 @@ knitr::opts_chunk$set(echo = FALSE)
 
 First, we download the data and import it to R.
 
-```{r, cache = TRUE}
+```{r, echo = TRUE,  cache = TRUE}
 library(tidyverse)
 library(data.table)
 crime <- readr::read_csv(here::here('SoSe_2022/Rmarkdown/Exercise/crime_boston.csv'))
@@ -33,7 +33,7 @@ crime_description <- readxl::read_xlsx(here::here('SoSe_2022/Rmarkdown/Exercise/
 
 Let's have a look at the variable description:
 
-```{r}
+```{r, echo = TRUE, cache = TRUE}
 knitr::kable(crime_description)
 ```
 
@@ -41,7 +41,7 @@ knitr::kable(crime_description)
 
 First we want to get an overview of the data.
 
-```{r, cache=T}
+```{r, echo = TRUE, cache = TRUE}
 glimpse(crime)
 ```
 
@@ -49,7 +49,7 @@ As we can see, the dataset consists of `r dim(crime)[1]` Observations in `r dim(
 
 Lets focus on the DAY_OC_WEEK.
 
-```{r, cache= T}
+```{r, echo = TRUE, cache = TRUE}
 # OFFENSE_CODE should be a factor
 crime <- crime %>% mutate(DAY_OF_WEEK = as_factor(DAY_OF_WEEK))
 
@@ -64,7 +64,7 @@ Some districts have more crimes than others and the crime is a little bit lazy o
 
 https://stackoverflow.com/questions/10405945/html-ordered-list-1-1-1-2-nested-counters-and-scope-not-working
 
-```{r, echo=F, eval = TRUE, results='asis'}
+```{r,echo = TRUE, eval = TRUE, results='asis'}
 cat('
 <style>
   ol {

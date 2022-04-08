@@ -366,7 +366,7 @@ pre code {
 <h1 class="title toc-ignore">Solution</h1>
 <h4 class="author">Martin Arnold</h4>
 <h4 class="author">Jens Klenke</h4>
-<h4 class="date">04 April, 2022</h4>
+<h4 class="date">08 April, 2022</h4>
 
 </div>
 
@@ -383,7 +383,7 @@ has changed since then.</li>
 </div>
 <div id="hide-your-code-chunks-by-setting-a-global-option" class="section level3">
 <h3>Hide your code chunks by setting a global option</h3>
-<pre class="markdown"><code>```{r setup, include = TRUE}
+<pre class="markdown"><code>```{r setup, include = FALSE}
 knitr::opts_chunk$set(echo = FALSE)
 ```</code></pre>
 </div>
@@ -518,6 +518,33 @@ bit lazy on sundays.</p>
 <div id="nested-ordered-list-for-html-output" class="section level2">
 <h2>Nested ordered list for HTML output</h2>
 <p><a href="https://stackoverflow.com/questions/10405945/html-ordered-list-1-1-1-2-nested-counters-and-scope-not-working" class="uri">https://stackoverflow.com/questions/10405945/html-ordered-list-1-1-1-2-nested-counters-and-scope-not-working</a></p>
+<pre class="r"><code>cat(&#39;
+&lt;style&gt;
+  ol {
+    counter-reset: item;
+    content: counters(item, &quot;.&quot;); 
+  }
+  li {
+    margin: 10px 0;
+    display: block;
+  }
+  li:before { 
+    content: counters(item, &quot;.&quot;) &quot;. &quot;; 
+    counter-increment: item 
+  }
+&lt;/style&gt;
+
+&lt;ol&gt;
+  &lt;li&gt; Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum.
+      &lt;ol&gt;
+          &lt;li&gt;Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum.&lt;/li&gt;
+      &lt;/ol&gt;
+  &lt;/li&gt;
+
+  &lt;li&gt;Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum.&lt;/li&gt;
+
+&lt;/ol&gt;
+&#39;)</code></pre>
 <style>
   ol {
     counter-reset: item;
