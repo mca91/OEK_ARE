@@ -1,0 +1,46 @@
+---
+title: "Solution live"
+author: "Jens Klenke"
+date: '2022-04-11'
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+
+library(magrittr)
+library(ggplot2)
+```
+
+# Crime Incidents Report Data
+
+
+```{r, cache = TRUE}
+boston_crime <- readr::read_csv(here::here('SoSe_2022/Rmarkdown/Exercise/crime_boston.csv'))
+
+crime_description <- readxl::read_xlsx(here::here('SoSe_2022/Rmarkdown/Exercise/rmscrimeincidentfieldexplanation.xlsx'))
+```
+
+```{r}
+knitr::kable(crime_description)
+```
+
+# Explorative Data Analysis
+
+```{r}
+str(boston_crime)
+```
+
+
+```{r}
+boston_crime %>%
+  dplyr::mutate(DAY_OF_WEEK = as.factor(DAY_OF_WEEK)) %>%
+  ggplot2::ggplot() +
+  ggplot2::geom_bar(ggplot2::aes(x = DAY_OF_WEEK, fill = DISTRICT))
+```
+
+
+
+
+
+
