@@ -26,7 +26,7 @@ get_review <- function(html){
 
 
 html %>% 
-  html_nodes(".review-content-header__dates")
+  html_nodes(".time")
 
 
 get_date <- function(html){
@@ -99,20 +99,54 @@ data %>%
   ggplot(aes(x = date, y = rating, col = company)) + geom_line() + geom_point(aes(size = N)) #+ 
   coord_cartesian(xlim = c(as.POSIXct("2015-01-01"), as.POSIXct("2019-08-01")))
 
+  
+  
+##### ----- new functions -----
 ### CSS selectros have change
   
   
   own_url <- paste0("https://www.trustpilot.com/review/", companies[1], "?page=", 1)
-  html <- read_html(url) 
-  get_name(html)
-  
+  html <- read_html(own_url) 
+  names_try <-   get_name(html)
+  title_try <- get_title(html)
+  review_try <- get_review(html)
+  date_try <- get_date(html)
+
+get_name <- function(html){
   html %>%
-    html_nodes('.styles_linkwrapper__73Tdy') %>%   
+    html_nodes('.styles_consumerName__dP8Um') %>%   
     html_text() %>% 
     str_trim()
-  
-  .typography_body__9UBeQ
-  
-  
-  
+}  
 
+get_title <- function(html){
+  html %>% html_nodes('.styles_linkwrapper__73Tdy') %>%   
+    html_text() %>% 
+    str_trim()
+}
+  
+# problem when empty!
+get_review <- function(html){
+  html %>% html_nodes('.styles_reviewCard__hcAvl .typography_body__9UBeQ') %>%   
+    html_text() %>% 
+    str_trim() 
+}  
+
+get_date <- function(html){
+  
+  html %>%  
+    html_text %>%
+    str_trim() %>% 
+    str_match_all('publishedDate\\D+(\\d.+?Z)\\D') %>% 
+    data.frame(stringsAsFactors = F) %>%
+    extract2(2) %>%
+    lubridate::ymd_hms()
+}  
+  
+get_rating <- function(html){
+  html %>%
+    html_nodes('.styles_reviewHeader__iU9Px img') %>%  
+    map(.x = ., ~ html_attr(.x, "alt")) %>% 
+    map(~ str_match(.x, "[1-5]")) %>% 
+    as.numeric()
+}

@@ -117,7 +117,7 @@ Before we can use Git we need to install it:
 .blockquote.exercise[ 
 ```terminal
 $ git --version
-git version 2.26.2.windows.1
+git version 2.34.1.windows.1
 ```
 ]
 --
