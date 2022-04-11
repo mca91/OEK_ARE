@@ -1,0 +1,118 @@
+---
+title: "Exercise Solutions Introduction"
+author: 'Jens Klenke' 
+output: 
+  html_document:
+   css: ["../assets/ude_fonts.css", "../assets/ude.css", "../assets/title_slides.css", "../assets/custom.css"]
+---
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
+```
+
+```{r xaringanExtra-clipboard_2, echo=FALSE}
+# copy button styles mainly in ude.css 
+# https://github.com/gadenbuie/xaringanExtra
+htmltools::tagList(
+  xaringanExtra::use_clipboard(
+    button_text = "<i class=\"fa fa-clipboard\"></i>",
+    success_text = "<i class=\"fa fa-check\" style=\"color: #00ff00\"></i>",
+    error_text = "<i class=\"fa fa-times-circle\" style=\"color: #F94144\"></i>"),
+  rmarkdown::html_dependency_font_awesome() 
+  )
+```
+
+## Exercise 
+
+1. Combine all elements of `df_list` to one data frame. The result should be only a single line of code.
+  - `do.call(rbind.data.frame, df_list)`
+    - `do.call` pass elements of `df_list` as arguments to `rbind`. It's equivalent of `rbind(df_list[[1]], df_list[[2]], df_list[[3]], ....., df_list[[length of df_list]])`. 
+2. Fix each of the following common data frame subsetting errors:
+  - `mtcars[mtcars$cyl == 4, ]`
+  - `mtcars[-c(1:4), ]`
+  - `mtcars[mtcars$cyl <= 5, ]`
+  - `mtcars[mtcars$cyl == 4 | mtcars$cyl == 6, ]`
+3. What does `df[is.na(df)] <- 0` do
+  - replaces all `NA`s with `0` but keeps the dimensions. 
+4. How would you randomly permute the columns of a data frame?
+  - `df[sample(1:nrow(df)), ]`
+5. Write a `while` and a `repeat` loop doing the same as
+```{r}
+for(i in LETTERS[1:10]){
+  print(i)
+}
+
+# while 
+i <- 0
+while (i < 10) {
+  i = i + 1
+  print(LETTERS[i])
+  
+}
+# alternative 
+i <- 1
+while (i < 11) {
+  print(LETTERS[i])
+  i = i + 1 
+}
+
+# repeat
+i <- 0
+repeat{
+  i = i + 1
+  print(LETTERS[i])
+  if (i > 9) {
+    break
+  }
+  
+}
+
+# alternative
+i <- 1
+repeat{
+  print(LETTERS[i])
+  i = i + 1 
+  if (i > 10) {
+    break
+  }
+}
+```
+6. Write a `for` loop doing the same as
+
+```{r}
+count <- 0
+repeat{
+  x     <- sample(1:6, 1)
+  count <- count + 1 
+  if(x == 6) break
+}
+print(count)
+
+for (i in 1:100) {
+  x     <- sample(1:6, 1)
+  count <- i
+  if(x == 6) break
+}
+print(count)
+```
+  - note that $n$ has to be high enough
+7. What is the problem here?
+  - Curly braces are open and closed before the statement is passed to the function
+8. What is the problem here? Can you debug it?
+  - `df` will not be passed to the final call and `fast_lm` is the wrong call
+  ```{r}
+  
+df <- mtcars
+
+lin_mod <- function(df){
+  lm(y ~ . ,data = df)
+}
+
+simple_lin_mod <- function(data, y, x){
+  df <- data[ ,c(y, x)]
+  names(df) <- c("y", "x")
+  lin_mod(df)
+}
+
+simple_lin_mod(df, "mpg", "cyl")
+```
+

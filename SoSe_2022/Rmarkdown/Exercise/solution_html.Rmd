@@ -1,25 +1,12 @@
 ---
 title: "Solution"
 author: 
-  - "Martin Arnold"
   - "Jens Klenke"
 date: "`r format(Sys.time(), '%d %B, %Y')`"
 output: html_document
 ---
 
-### Optimize code chunks 
-
-- When a code chunk is time-consuming to run, you may consider caching it via the chunk option `cache = TRUE`. When the `cache` is turned on, knitr will skip the execution of this code chunk if it has been executed before and nothing in the code chunk has changed since then.
-
-### Hide your code chunks by setting a global option 
-````markdown
-`r ''````{r setup, include = FALSE}
-knitr::opts_chunk$set(echo = FALSE)
-```
-````
-
 # Obtain the Crime Incidents Data
-
 
 First, we download the data and import it to R.
 
@@ -58,7 +45,26 @@ ggplot(crime) +
 
 ```
 
-Some districts have more crimes than others and the crime is a little bit lazy on sundays.
+Some districts have more crimes than others and the crime is a little bit lazy on Sundays.
+
+### Optimize code chunks 
+
+- When a code chunk is time-consuming to run, you may consider caching it via the chunk option `cache = TRUE`. When the `cache` is turned on, knitr will skip the execution of this code chunk if it has been executed before and nothing in the code chunk has changed since then.
+
+### Hide your code chunks by setting a global option 
+````markdown
+`r ''````{r setup, include = FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+````
+
+## Nested ordered list for HTML output
+
+*Hint*
+
+Try to searh for html ordered nested list on stackoverflow
+
+<!--
 
 ## Nested ordered list for HTML output
 
@@ -93,3 +99,6 @@ cat('
 </ol>
 ')
 ```
+
+
+-->
