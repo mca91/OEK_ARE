@@ -1,9 +1,11 @@
 ---
-title: "Solution"
+title: "Rmarkdown Exercise Solution"
 author: 
   - "Jens Klenke"
 date: "`r format(Sys.time(), '%d %B, %Y')`"
-output: html_document
+output: 
+  html_document:
+    css: ["../../assets/ude_fonts.css", "../../assets/ude.css", "../../assets/title_slides.css", "../../assets/custom.css"]
 ---
 
 # Obtain the Crime Incidents Data
@@ -63,6 +65,13 @@ knitr::opts_chunk$set(echo = FALSE)
 *Hint*
 
 Try to searh for html ordered nested list on stackoverflow
+
+## Nested ordered list for LaTeX output
+
+*Hint*
+
+Try to search for nested enumeration latex. 
+
 
 <!--
 

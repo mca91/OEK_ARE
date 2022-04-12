@@ -102,7 +102,7 @@ data %>%
   
   
 ##### ----- new functions -----
-### CSS selectros have change
+### CSS selectors have change
   
   
   own_url <- paste0("https://www.trustpilot.com/review/", companies[1], "?page=", 1)

@@ -4,6 +4,4 @@ chrome-extension://efaidnbmnnnibpcajpcglclefindmkaj/viewer.html?pdfurl=https%3A%
 
 https://www.ece.iastate.edu/~hongwei/group/miscl/LaTEX-shortIntro.pdf
 
-
-
 https://tex.stackexchange.com/questions/239199/latex-distributions-what-are-their-main-differences
