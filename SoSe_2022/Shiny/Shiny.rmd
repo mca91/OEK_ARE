@@ -63,13 +63,13 @@ times_red <- icons::icon_style(icons::fontawesome$solid$times, fill = "red")
 ## What is Shiny? 
 
 .font90[
-The `shiny` package allows to build interactive web applications for e.g. data analysis.
+The `shiny` package allows to build interactive web applications for, e.g., data analysis.
 ]
 
 --
 
 .font90[
-It can be used for,inter alia:
+It can be used for, among other things:
 
 - building a graphical user interface for R
 - reporting results
@@ -113,7 +113,7 @@ A Shiny app consist of 2 parts
 1. The user interface script 
     - controls the layout and appearance of your app.
     - contains elements for user input.
-    - contains the output you want to visualize.
+    - contains the output you want to visualise.
     
 --
 
