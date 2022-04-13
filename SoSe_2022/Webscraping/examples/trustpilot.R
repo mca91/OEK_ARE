@@ -150,3 +150,40 @@ get_rating <- function(html){
     map(~ str_match(.x, "[1-5]")) %>% 
     as.numeric()
 }
+
+
+
+
+# location
+
+html %>%
+  html_nodes('.styles_detailsIcon__Fo_ua+ .styles_detailsIcon__Fo_ua') %>%   
+  html_text() %>% 
+  str_trim()
+
+
+
+html %>%
+  html_nodes('.styles_consumerDetailsWrapper__p2wdr .styles_consumerExtraDetails__fxS4S') %>%   
+  html_text() %>% 
+  str_trim()
+
+
+html %>%
+  html_nodes('.styles_detailsIcon__Fo_ua:nth-child(1)') %>%   
+  html_text() %>% 
+  str_trim()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
