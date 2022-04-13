@@ -106,6 +106,7 @@ data %>%
   
   
   own_url <- paste0("https://www.trustpilot.com/review/", companies[1], "?page=", 1)
+  own_url <- 'https://www.oek.wiwi.uni-due.de/studium-lehre/lehrveranstaltungen/sommersemester-22/'
   html <- read_html(own_url) 
   names_try <-   get_name(html)
   title_try <- get_title(html)
@@ -166,7 +167,8 @@ html %>%
 html %>%
   html_nodes('.styles_consumerDetailsWrapper__p2wdr .styles_consumerExtraDetails__fxS4S') %>%   
   html_text() %>% 
-  str_trim()
+  str_trim() |>
+  readr::parse_number()
 
 
 html %>%
@@ -175,15 +177,14 @@ html %>%
   str_trim()
 
 
+#middlecontainer a
+html %>%
+  html_nodes('#middlecontainer a') %>%   
+  html_text() %>% 
+  str_trim()
 
-
-
-
-
-
-
-
-
-
-
-
+# dd:nth-child(2)
+html %>%
+  html_nodes('dd:nth-child(2)') %>%   
+  html_text() %>% 
+  str_trim()

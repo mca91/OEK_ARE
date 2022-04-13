@@ -89,7 +89,7 @@ Here are some examples:
 
 - [K-Means](https://shiny.rstudio.com/gallery/kmeans-example.html)
 - [Genome Viewer](https://shiny.rstudio.com/gallery/genome-browser.html)
-- [Dashboard](https://www.rgonzo.us/shiny/apps/textanalysis/)
+- [Shiny Gallery](https://shiny.rstudio.com/gallery/)
 ]
 
 --
