@@ -32,7 +32,6 @@ sells_data %>%
 
 # also discuss how you can use variable Names with withespaces (backtickels ``)
 
-
 sells_data %<>%
   janitor::clean_names()
 
@@ -44,13 +43,24 @@ sells_data %<>%
   # computing 
   dplyr::mutate(order_date = lubridate::mdy(order_date),
          ship_date = lubridate::mdy(ship_date),
-         process_time = order_date - ship_date)
-
-
+         process_time = ship_date - order_date)
 
 # cookbook 
 
+
+
+
 # ggplot 
+# boxplot of time process per delivery
+sells_data %>%
+  dplyr::mutate(ship_mode = factor(ship_mode, c('Same Day', 'First Class',
+                                                'Second Class', 'Standard Class'))) %>%
+  ggplot2::ggplot( aes(x = ship_mode, y = process_time)) +
+  ggplot2::geom_boxplot()
+
+
+
+# histogramm of orders per day
 sells_data %>%
   dplyr::mutate(weekday = factor(weekdays(order_date), weekdays(min(BBBB$order_date) + 3:9))) %>%
   ggplot2::ggplot( aes(x= weekday)) +
