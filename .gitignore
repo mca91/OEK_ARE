@@ -40,7 +40,6 @@ rsconnect/
 .Rproj.user
 
 # Ignore
-*.R
 .sqlite3
 
 # Local Alex
