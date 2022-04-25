@@ -317,14 +317,14 @@ class: exercise_slide
 ```terminal
 C:\MyProject>git log
 commit dfc8e86ac16116ed574884d171769b6e0e35c2f9
-Author: Gerber <alexander.gerber@wiwinf.uni-due.de>
-Date:   Mon Sep 23 15:26:58 2019 +0200
+Author: jens.klenke <jens.klenke@uni-due.de>
+Date:   Tue Apr 19 15:26:58 2022 +0200
 
     Welcome Git with Hello Git!
 
 commit 2f17088a3831efd6870ffc8ca54c93df6b39035d
-Author: Gerber <alexander.gerber@wiwinf.uni-due.de>
-Date:   Mon Sep 23 15:02:02 2019 +0200
+Author: jens.klenke <jens.klenke@uni-due.de
+Date:   Wed Apr 13 15:02:02 2022 +0200
 
     Initial commit!
 ```
@@ -452,12 +452,10 @@ git reset 27d048
 class: exercise_slide
 
 ## Exercises
-1. Make some changes to `HelloGit.txt` in your repository and add it to the staging area. 
-2. Now, you remember that you forgot some important changes and you want to unstage `HelloGit.txt`. For this, remove first `HelloGit.txt` from the staging area (`git status` will help you). Now make some changes and commit them. 
-3. Restore the initial state of the `HelloGit.txt` file (i.e. the state after your initial commit).  
+4. Make some changes to `HelloGit.txt` in your repository and add it to the staging area. 
+5. Now, you remember that you forgot some important changes and you want to unstage `HelloGit.txt`. For this, remove first `HelloGit.txt` from the staging area (`git status` will help you). Now make some changes and commit them. 
+6. Restore the initial state of the `HelloGit.txt` file (i.e. the state after your initial commit).  
 4. Create a new text file with arbitrary content. Add and commit your changes. 
-5. Remove the file but do not commit. 
-6. Try to restore the file. 
 
 
 ---
