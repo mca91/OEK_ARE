@@ -62,21 +62,6 @@ knitr::opts_chunk$set(echo = FALSE)
 
 ## Nested ordered list for HTML output
 
-*Hint*
-
-Try to searh for html ordered nested list on stackoverflow
-
-## Nested ordered list for LaTeX output
-
-*Hint*
-
-Try to search for nested enumeration latex. 
-
-
-<!--
-
-## Nested ordered list for HTML output
-
 https://stackoverflow.com/questions/10405945/html-ordered-list-1-1-1-2-nested-counters-and-scope-not-working
 
 ```{r,echo = TRUE, eval = TRUE, results='asis'}
@@ -109,5 +94,3 @@ cat('
 ')
 ```
 
-
--->

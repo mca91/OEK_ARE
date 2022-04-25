@@ -66,10 +66,13 @@ Some districts have more crimes than others and the crime is a little bit lazy o
 
 Try to search for nested enumeration latex. 
 
-
-<!--
-
 https://tex.stackexchange.com/questions/78842/nested-enumeration-numbering
+
+
+````markdown
+\renewcommand{\labelenumii}{\theenumii}
+\renewcommand{\theenumii}{\theenumi.\arabic{enumii}.}
+````
 
 \renewcommand{\labelenumii}{\theenumii}
 \renewcommand{\theenumii}{\theenumi.\arabic{enumii}.}
@@ -83,5 +86,3 @@ https://tex.stackexchange.com/questions/78842/nested-enumeration-numbering
   \item Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum.
 \end{enumerate}
 
-
--->
