@@ -126,6 +126,20 @@ Klenke ()},
             pdfborder={0 0 0}}
 \urlstyle{same}  % don't use monospace font for urls
 
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{multirow}
+\usepackage{wrapfig}
+\usepackage{float}
+\usepackage{colortbl}
+\usepackage{pdflscape}
+\usepackage{tabu}
+\usepackage{threeparttable}
+\usepackage{threeparttablex}
+\usepackage[normalem]{ulem}
+\usepackage{makecell}
+\usepackage{xcolor}
 
 
 % add tightlist ----------
@@ -200,29 +214,27 @@ Klenke \hskip 15pt \emph{\small }
 
 \noindent  \pagenumbering{gobble}
 
-\rowcolors{2}{gray!25}{white}
-\begin{table}[h!]
+\begin{table}[!h]
 \centering
-%\caption{}
-\label{tab:my-table}
-\resizebox{\textwidth}{!}{%
-\begin{tabular}{@{}lcl@{}}
+\resizebox{\linewidth}{!}{
+\begin{tabular}{>{}l>{}l>{}lc>{}l>{}l>{}l}
 \toprule
-\textbf{Windows CMD}                                         & \textbf{Task}                            & \textbf{Mac OS Terminal}                                   \\[1em] 
-
-dir                                                          & List folders and files                   & ls                                                         \\
-cd                                                           & Full path to current diretory            & pwd                                                        \\
-cd ..                                                        & One directory up in directory tree       & cd ..                                                      \\
-cd \textbackslash{}                                          & Back to root directory                   & cd \textbackslash{}                                        \\
-mkdir Folder\_new                                            & Creat new directory in current directory & mkdir Folder\_new                                          \\
-rmdir Folder\_name                                           & Remove a directory                       & rmdir Folder\_name                                         \\
-del File\_name                                               & Remove a file                            & rm File\_name                                              \\
-copy File\_name \textless{}path to destination\textgreater{} & Copy a file                              & cp File\_name \textless{}path to destination\textgreater{} \\
-move File\_name \textless{}path to destination\textgreater{} & Move a file                              & mv File\_name \textless{}path to destination\textgreater{} \\
-cls                                                          & Clear terminal                           & clear                                                      \\ 
-\hline
-\end{tabular}%
-}
+\multicolumn{3}{c}{\textbf{Windows CMD}} & \multicolumn{1}{c}{\textbf{ }} & \multicolumn{3}{c}{\textbf{Mac OS Terminal}} \\
+\cmidrule(l{3pt}r{3pt}){1-3} \cmidrule(l{3pt}r{3pt}){5-7}
+\textbf{Command} & \textbf{1. Argument} & \textbf{2. Argument} & \textbf{Task} & \textbf{Command} & \textbf{1. Argument} & \textbf{2. Argument}\\
+\midrule
+\ttfamily{\cellcolor{gray!6}{dir}} & \ttfamily{\cellcolor{gray!6}{}} & \ttfamily{\cellcolor{gray!6}{}} & \cellcolor{gray!6}{List folders and files} & \ttfamily{\cellcolor{gray!6}{dir}} & \ttfamily{\cellcolor{gray!6}{}} & \ttfamily{\cellcolor{gray!6}{}}\\
+\ttfamily{cd} & \ttfamily{} & \ttfamily{} & Full path to current directory & \ttfamily{pwd} & \ttfamily{} & \ttfamily{}\\
+\ttfamily{\cellcolor{gray!6}{cd}} & \ttfamily{\cellcolor{gray!6}{..}} & \ttfamily{\cellcolor{gray!6}{}} & \cellcolor{gray!6}{One directory up in directory tree} & \ttfamily{\cellcolor{gray!6}{cd}} & \ttfamily{\cellcolor{gray!6}{..}} & \ttfamily{\cellcolor{gray!6}{}}\\
+\ttfamily{cd} & \ttfamily{\textbackslash{}} & \ttfamily{} & Back to root directory & \ttfamily{cd} & \ttfamily{\textbackslash{}} & \ttfamily{}\\
+\ttfamily{\cellcolor{gray!6}{mkdir}} & \ttfamily{\cellcolor{gray!6}{Folder\_name}} & \ttfamily{\cellcolor{gray!6}{}} & \cellcolor{gray!6}{Create new directory in current directory} & \ttfamily{\cellcolor{gray!6}{mkdir}} & \ttfamily{\cellcolor{gray!6}{Folder\_name}} & \ttfamily{\cellcolor{gray!6}{}}\\
+\ttfamily{rmdir} & \ttfamily{Folder\_name} & \ttfamily{} & Remove a directory & \ttfamily{rmdir} & \ttfamily{Folder\_name} & \ttfamily{}\\
+\ttfamily{\cellcolor{gray!6}{del}} & \ttfamily{\cellcolor{gray!6}{File\_name}} & \ttfamily{\cellcolor{gray!6}{}} & \cellcolor{gray!6}{Remove a file} & \ttfamily{\cellcolor{gray!6}{rm}} & \ttfamily{\cellcolor{gray!6}{File\_name}} & \ttfamily{\cellcolor{gray!6}{}}\\
+\ttfamily{copy} & \ttfamily{File\_name} & \ttfamily{path\_to\_destination} & Copy a file & \ttfamily{cp} & \ttfamily{File\_name} & \ttfamily{path\_to\_destination}\\
+\ttfamily{\cellcolor{gray!6}{move}} & \ttfamily{\cellcolor{gray!6}{File\_name}} & \ttfamily{\cellcolor{gray!6}{path\_to\_destination}} & \cellcolor{gray!6}{Move a file} & \ttfamily{\cellcolor{gray!6}{mv}} & \ttfamily{\cellcolor{gray!6}{File\_name}} & \ttfamily{\cellcolor{gray!6}{path\_to\_destination}}\\
+\ttfamily{cls} & \ttfamily{} & \ttfamily{} & Clear terminal & \ttfamily{clear} & \ttfamily{} & \ttfamily{}\\
+\bottomrule
+\end{tabular}}
 \end{table}
 
 
