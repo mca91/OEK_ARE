@@ -1,0 +1,69 @@
+---
+title: "Terminal Commands"
+subtitle: ""
+author:
+- name: M.Sc. Martin C. Arnold
+- name: M.Sc. Jens Klenke 
+date: "`r format(Sys.time(), '%B %d, %Y')`"
+output:
+  pdf_document:
+    citation_package: natbib
+    fig_caption: yes
+    keep_tex: yes
+    latex_engine: pdflatex
+    template: assets/svm-latex-ms.tex
+  html_document:
+    df_print: paged
+geometry: margin = 0.1in
+term: Summer 2022
+endnote: no
+show_solutions: yes
+tables: yes
+classoption: landscape
+---
+
+\pagenumbering{gobble}
+
+```{r setup, echo=F, purl=F, warning=FALSE, message=FALSE}
+
+knitr::opts_chunk$set(message = FALSE, warning = FALSE)
+
+library(ggplot2)
+library(dplyr)
+# Show R solution code
+sol <- T
+```
+
+\rowcolors{2}{gray!25}{white}
+\begin{table}[h!]
+\centering
+%\caption{}
+\label{tab:my-table}
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{@{}lcl@{}}
+\toprule
+\textbf{Windows CMD}                                         & \textbf{Task}                            & \textbf{Mac OS Terminal}                                   \\[1em] 
+
+dir                                                          & List folders and files                   & ls                                                         \\
+cd                                                           & Full path to current diretory            & pwd                                                        \\
+cd ..                                                        & One directory up in directory tree       & cd ..                                                      \\
+cd \textbackslash{}                                          & Back to root directory                   & cd \textbackslash{}                                        \\
+mkdir Folder\_new                                            & Creat new directory in current directory & mkdir Folder\_new                                          \\
+rmdir Folder\_name                                           & Remove a directory                       & rmdir Folder\_name                                         \\
+del File\_name                                               & Remove a file                            & rm File\_name                                              \\
+copy File\_name \textless{}path to destination\textgreater{} & Copy a file                              & cp File\_name \textless{}path to destination\textgreater{} \\
+move File\_name \textless{}path to destination\textgreater{} & Move a file                              & mv File\_name \textless{}path to destination\textgreater{} \\
+cls                                                          & Clear terminal                           & clear                                                      \\ 
+\hline
+\end{tabular}%
+}
+\end{table}
+
+
+
+
+
+
+
+
+
