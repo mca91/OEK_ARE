@@ -5,7 +5,7 @@
     <meta charset="utf-8" />
     <meta name="author" content="Martin C. Arnold" />
     <meta name="author" content="Jens Klenke" />
-    <meta name="date" content="2022-04-06" />
+    <meta name="date" content="2022-04-28" />
     <script src="webscraping_files/header-attrs/header-attrs.js"></script>
     <link href="webscraping_files/remark-css/default.css" rel="stylesheet" />
     <script src="webscraping_files/xaringanExtra-progressBar/progress-bar.js"></script>
@@ -97,7 +97,7 @@ Let's say we are interested whether the ratings of a shop change over time. For 
 to gather the date and the star rating which are, however, not downloadable. 
 
 
-We will learn how we can access these data nontheless to perform the analysis. 
+We will learn how we can access these data nonetheless to perform the analysis. 
 
 ---
 class: left, top
@@ -114,7 +114,7 @@ You should be careful if...
 - you scrape personal information such as email addresses, etc. 
 - you scrape a substantial amount of a website's content
 - you want to republish the scraped content, e.g. an article from a newspage. 
-- webscraping is prohibited by the Terms of Service, even if this doesn't make it illegal per se.  
+- web scraping is prohibited by the Terms of Service, even if this doesn't make it illegal per se.  
 
 --
 
@@ -160,7 +160,7 @@ To extract data from a website it is necessary to understand the basics of how a
 .font80[
 - The `&lt;html&gt;...&lt;/html&gt;` tags are the container for all other HTML elements.
 - The `&lt;head&gt;...&lt;/head&gt;` tags contain meta data which are not directly visible on the web page.
-- `&lt;body&gt;...&lt;/body&gt;` contains everything we can see such as text, links, images, tables, lists, etc. This is the most relevant part for webscraping. 
+- `&lt;body&gt;...&lt;/body&gt;` contains everything we can see such as text, links, images, tables, lists, etc. This is the most relevant part for web scraping. 
 ]
 ---
 ## The Body
@@ -198,7 +198,7 @@ To extract data from a website it is necessary to understand the basics of how a
 
 .font90[
 We will start by scraping the simple HTML page from before. 
-Create a new HTML document and copy the code form the last slide into it.
+Create a new HTML document and copy the code from the last slide into it.
 ]
 
 ---
@@ -207,7 +207,7 @@ Create a new HTML document and copy the code form the last slide into it.
 
 The package `rvest` makes use of the structure of an HTML document to extract the relevant information. 
 
-The first step is to load the website into R using `xml2::read_html()` ( `rvest` depends on `xml2` whereby `xml2`  automatically loads when `rvest` gets loaded). 
+The first step is to load the website into R using `xml2::read_html()` (`rvest` depends on `xml2` whereby `xml2`  automatically loads when `rvest` gets loaded). 
 
 &lt;br&gt;
 
@@ -227,7 +227,7 @@ URL &lt;- here::here("SoSe_2022/webscraping/examples/simple_html_page.html") # p
 ## {html_document}
 ## &lt;html&gt;
 ## [1] &lt;head&gt;\n&lt;meta http-equiv="Content-Type" content="text/html; charset=UTF-8 ...
-## [2] &lt;body&gt;\r\n  \r\n  &lt;h1&gt;This is a Heading&lt;/h1&gt;\r\n  &lt;p&gt;This is a paragraph. ...
+## [2] &lt;body&gt;\n  \n  &lt;h1&gt;This is a Heading&lt;/h1&gt;\n  &lt;p&gt;This is a paragraph.&lt;/p&gt;\n ...
 ```
 ]
 
@@ -242,8 +242,8 @@ Our page is now stored as an `xml` document which has a hierarchical data struct
 --
 
 .font90[
-- We call everything sourrounded by a rectangle or a circle a node. 
-- We call everything sourrounded by a rectangle with rounded corners data. 
+- We call everything surrounded by a rectangle or a circle a node. 
+- We call everything surrounded by a rectangle with rounded corners data. 
 ]
 ---
 ## `html_node()`

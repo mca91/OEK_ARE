@@ -92,7 +92,7 @@ Let's say we are interested whether the ratings of a shop change over time. For 
 to gather the date and the star rating which are, however, not downloadable. 
 
 
-We will learn how we can access these data nontheless to perform the analysis. 
+We will learn how we can access these data nonetheless to perform the analysis. 
 
 ---
 class: left, top
@@ -109,7 +109,7 @@ You should be careful if...
 - you scrape personal information such as email addresses, etc. 
 - you scrape a substantial amount of a website's content
 - you want to republish the scraped content, e.g. an article from a newspage. 
-- webscraping is prohibited by the Terms of Service, even if this doesn't make it illegal per se.  
+- web scraping is prohibited by the Terms of Service, even if this doesn't make it illegal per se.  
 
 --
 
@@ -155,7 +155,7 @@ To extract data from a website it is necessary to understand the basics of how a
 .font80[
 - The `<html>...</html>` tags are the container for all other HTML elements.
 - The `<head>...</head>` tags contain meta data which are not directly visible on the web page.
-- `<body>...</body>` contains everything we can see such as text, links, images, tables, lists, etc. This is the most relevant part for webscraping. 
+- `<body>...</body>` contains everything we can see such as text, links, images, tables, lists, etc. This is the most relevant part for web scraping. 
 ]
 ---
 ## The Body
@@ -193,7 +193,7 @@ To extract data from a website it is necessary to understand the basics of how a
 
 .font90[
 We will start by scraping the simple HTML page from before. 
-Create a new HTML document and copy the code form the last slide into it.
+Create a new HTML document and copy the code from the last slide into it.
 ]
 
 ---
@@ -202,7 +202,7 @@ Create a new HTML document and copy the code form the last slide into it.
 
 The package `rvest` makes use of the structure of an HTML document to extract the relevant information. 
 
-The first step is to load the website into R using `xml2::read_html()` ( `rvest` depends on `xml2` whereby `xml2`  automatically loads when `rvest` gets loaded). 
+The first step is to load the website into R using `xml2::read_html()` (`rvest` depends on `xml2` whereby `xml2`  automatically loads when `rvest` gets loaded). 
 
 <br>
 
@@ -231,8 +231,8 @@ knitr::include_graphics("xml_structure1.png")
 --
 
 .font90[
-- We call everything sourrounded by a rectangle or a circle a node. 
-- We call everything sourrounded by a rectangle with rounded corners data. 
+- We call everything surrounded by a rectangle or a circle a node. 
+- We call everything surrounded by a rectangle with rounded corners data. 
 ]
 ---
 ## `html_node()`
