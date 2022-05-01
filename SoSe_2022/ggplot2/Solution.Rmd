@@ -50,17 +50,17 @@ Hence, we note that there is a difference whether we map color to a numeric or a
 5. Use a simple linear regression model and a quadratic regression model for smoothing.
 
     - Simple linear regression model
-    ```{r}
-    ggplot(mtcars, aes(hp, mpg, color = as.factor(cyl))) +
-      geom_point() +
-      geom_smooth(method = lm)
-    ```
+```{r}
+  ggplot(mtcars, aes(hp, mpg, color = as.factor(cyl))) +
+    geom_point() +
+    geom_smooth(method = lm)
+```
     - Quadratic regression model
-    ```{r}
-    ggplot(mtcars, aes(hp, mpg, color = as.factor(cyl))) +
-      geom_point() +
-      geom_smooth(method = lm, formula = y ~ I(x + x^2))
-    ```
+```{r}
+  ggplot(mtcars, aes(hp, mpg, color = as.factor(cyl))) +
+    geom_point() +
+    geom_smooth(method = lm, formula = y ~ I(x + x^2))
+```
     
 7. Download the Titanic data set from Moodle and
 
