@@ -100,6 +100,7 @@ Hence, we note that there is a difference whether we map color to a numeric or a
   ggplot(titanic, aes(x = survived)) +
     geom_bar()
 ```
+
   - Add a color coding to the previous plot to visualize the differences between the passengers' gender.
 
 ```{r}
