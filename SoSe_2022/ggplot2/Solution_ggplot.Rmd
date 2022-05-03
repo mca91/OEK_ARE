@@ -22,7 +22,6 @@ htmltools::tagList(
 ```
 
 ```{r packages}
-
 library(ggplot2)
 library(readr)
 library(here)
@@ -88,7 +87,7 @@ Hence, we note that there is a difference whether we map color to a numeric or a
     geom_smooth(method = lm, formula = y ~ I(x + x^2))
 ```
 
-7. Download the Titanic data set from Moodle and
+6. Download the Titanic data set from Moodle and
 
 ```{r}
   titanic <- readr::read_csv(here::here("SoSe_2022/ggplot2/titanic.csv"))
@@ -123,7 +122,7 @@ Hence, we note that there is a difference whether we map color to a numeric or a
     geom_density(alpha = 0.5)
 ```
 
-8. Try to answer the following questions about the `mpg` dataset (comes with ggplot2) using ggplot.
+7. Try to answer the following questions about the `mpg` dataset (comes with ggplot2) using ggplot.
 
   - How are engine size and fuel economy related?
 
@@ -146,7 +145,7 @@ Hence, we note that there is a difference whether we map color to a numeric or a
      geom_density(alpha = 0.5)
 ```
     
-9. Compare the two data sets economics and economics_long (both come with ggplot) with respect to the ease of use when working with ggplot.
+8. Compare the two data sets economics and economics_long (both come with ggplot) with respect to the ease of use when working with ggplot.
     
 ```{r}
   ggplot(economics_long, aes(x = date, y = value, color = variable)) + 
@@ -164,7 +163,7 @@ Hence, we note that there is a difference whether we map color to a numeric or a
 
 `ggplot2` likes long data. If you want to plot multiple variables with color coding and legend, then you should transform your data set into a format similar to `economics_long`. See `tidyr` for switching between long and wide data formats.
 
-10. Reproduce the plot created by the following code with ggplot.
+9. Reproduce the plot created by the following code with ggplot.
 
 ```{r}
     plot(mtcars$mpg ~ mtcars$wt, xlab = "wt", ylab = "mpg", pch = 19, ylim = c(5, 35))
