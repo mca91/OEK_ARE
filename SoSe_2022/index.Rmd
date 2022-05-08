@@ -31,7 +31,7 @@ class: title-slide title-index
    - [Git and Github](Git/git_vcs.html)
 3. [Data Visualisation with ggplot](ggplot2/ggplot2.html)
 4. Data Wrangling and Transformation
-   - dplyr
+   - [dplyr](Wrangling/Wrangling.html)
    - Databases
 5. Web Scraping
 ]

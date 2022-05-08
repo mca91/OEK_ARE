@@ -1180,8 +1180,8 @@ class: exercise_slide
 ## Exercises
 
 <ol start="11"> 
-<li>  Compute the rate for `table2`, and `table4a` + `table4b`.  </li>
-<li>  Recreate the plot given by the code below using `table2` instead of `table1`.  </li>
+<li>  Compute the rate for <code>table2</code>, and <code>table4a</code> + <code>table4b</code>.  </li>
+<li>  Recreate the plot given by the code below using <code>table2</code> instead of <code>table1</code>. </li>
 </ol>
 
 ```{r, echo = TRUE, eval = FALSE}
