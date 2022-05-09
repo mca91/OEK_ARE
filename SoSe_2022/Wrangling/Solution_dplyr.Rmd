@@ -55,7 +55,7 @@ filter(flights, dest %in% c("IAH", "HOU"))
   - Were delayed by at least an hour, but made up over 30 minutes in flight.
 
 ```{r}
-filter(flights, dep_delay > 60 & arr_delay <= dep_delay - 30)
+filter(flights, dep_delay >= 60 & arr_delay <= dep_delay - 30)
 ```
 
   - Departed between midnight and 6am.
@@ -131,9 +131,9 @@ crime %>%
 9. Calculate for each district the proportion of motor vehicle accidents to all reported incidents (<code>OFFENSE_CODE_GROUP == 'Motor Vehicle Accident Response'</code>). 
 
 ```{r}
-crime %>% 
+ crime %>% 
   group_by(DISTRICT) %>%  
-  transmute(prop_accidents = sum(OFFENSE_CODE_GROUP == "Motor Vehicle Accident Response") / n())
+  transmute(prop_accidents = sum(OFFENSE_CODE_GROUP == "Motor Vehicle Accident Response") / n()) 
 ```
 
 10. Sort the data set chronologically by year and month. Then take the first 10.000 observations and compute the proportion of incidents where a shooting was involved for each district. Now take a random sample of size 10.000. Is there a noteworthy difference? <i>Hint:</i> There is a variable called <code>SHOOTING</code>.
