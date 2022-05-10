@@ -159,11 +159,22 @@ crime  %>%
 11. Compute the TB rate for table2, table4a and table4b.
 
 ```{r}
-table2[table2$type == "cases", "count"] / table2[table2$type == "population", "count"]
+table2 %>%
+  tidyr::pivot_wider(names_from = type, values_from = count) %>%
+  dplyr::mutate(rate = cases/population)
 ```
 
 ```{r}
-table4a[ ,-1] / table4b[ ,-1]
+table4a %>%
+  tidyr::pivot_longer(cols = c(`1999`, `2000`), 
+                      names_to = 'year', 
+                      values_to = 'cases') %>%
+  dplyr::left_join(table4b %>%  
+                      tidyr::pivot_longer(cols = c(`1999`, `2000`), 
+                                          names_to = 'year', 
+                                          values_to = 'population'), 
+                   by = c('country', 'year')) %>%
+  dplyr::mutate(rate = cases/population)
 ```
 
 12. Recreate the plot given by the code below using `table2` instead of `table1`. 
