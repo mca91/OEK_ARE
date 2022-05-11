@@ -47,23 +47,27 @@ get_links<- function(locations, num_pages){
 
 
 # getting dataframe 
-data <- map2_dfr(locations, c(5, 5), get_links) #, .id = "company") 
+data <- map2_dfr(locations, c(2, 2), get_links) #, .id = "company") 
 
-html <- read_html(data_try[[1,1]])
+html <- read_html(data[[1,1]])
 
 extract_page_data <- function(url, ...){
   html <- read_html(url) 
-  tibble(title = get_title(html),
+ df <-  tibble(title = get_title(html),
          get_location(html),
-         get_prices(html),
-         deposite = get_deposit(html),
+         warm_rent = get_warm.rent(html),
+         cold_rent = get_cold.rent(html),
+         deposite = get_deposit(html), 
          get_size(html) ,
          building_type = get_building.type(html),
          energy_class = get_energy.class(html),
          energy_consumption = get_energy.cons(html),
          build_year = get_year(html)
   )
-  Sys.sleep(sample(2:15, 1))
+ 
+ return(df)
+ 
+ Sys.sleep(sample(2:15, 1))
 }
 
 data_try <- data %>%
@@ -72,8 +76,9 @@ data_try <- data %>%
 data_try %<>%
   purrr::pmap_dfr(extract_page_data)
   
-map2_dfr(companies, c(3, 3), get_company_data, .id = "company") 
+url <- data_try[[3,1]]
 
+extract_page_data(data_try[[1,1]])
 
 ########## functions 
 # title 
@@ -105,47 +110,40 @@ get_location <- function(html){
 get_location(html)
 
 # prices
-get_prices <- function(html){
-  df <- html |>
-    html_nodes('#aPreise .cell__row') |> 
-    html_text() |> 
-    str_trim() |>
-    readr::parse_number() |>
-    matrix(nrow = 1) |>
-    as_tibble() |>
-    dplyr::rename('cold_rent' = 1, 
-                  'service_charges' = 2,
-                  'heating_costs' = 3,
-                  'warm_rent' = 4
-                  )
-  
-  return(df)
-  
-}
-
-# prices must ne more precise
-
 
 
 html <- read_html(data_try[[2,1]])
 # Warmmiete
-get_prices <- function(html){
-  df <- 
-    
-    html |>
-    html_nodes('#aPreise .cell__row') |> 
-    html_text() |> 
-    str_trim() |>
-    as_tibble() |>
-    dplyr::filter(stringr::str_detect(value, 'Warmmiete')) |>
-    readr::parse_number()
-  
-  
-  return(df)
-  
+get_warm.rent <- function(html){
+   
+df <- html %>%
+  html_nodes('#aPreise .cell__row') %>% 
+  html_text() %>%
+  str_trim() %>%
+  as_tibble() %>%
+  dplyr::filter(stringr::str_detect(value, 'Warmmiete') & !stringr::str_detect(value, 'Heizkosten')) %>%
+  pull() 
+
+  ifelse(length(df) == 0, NA, 
+             readr::parse_number(df, locale = locale(decimal_mark = ",", grouping_mark = ".")))
+
 }
 
+get_warm.rent(html)
 
+get_cold.rent <- function(html){
+  
+  df <- html %>%
+    html_nodes('#aPreise .cell__row') %>%  #.cell__row:nth-child(4)
+    html_text() %>%
+    str_trim() %>%
+    as_tibble() %>%
+    dplyr::filter(stringr::str_detect(value, 'Kaltmiete')) %>%
+    pull() 
+  
+  ifelse(length(df) == 0, NA, 
+           readr::parse_number(df, locale = locale(decimal_mark = ",", grouping_mark = ".")))
+}
 
 
 get_prices(html)
@@ -156,8 +154,7 @@ get_size <- function(html){
     html_nodes('.has-font-300') %>% 
     html_text() %>% 
     str_trim() %>%
-    stringr::str_replace_all(',', '.') %>%
-    readr::parse_number() %>%
+    readr::parse_number(locale = locale(decimal_mark = ",")) %>%
     matrix(nrow = 1) %>%
     as_tibble() %>%
     dplyr::select(-1) %>%
@@ -182,7 +179,7 @@ get_energy.class(html)
 # build year
 get_year <- function(html){
 html %>%
-  html_nodes('.cell:nth-child(3) p') %>% 
+  html_nodes('app-energy .cell:nth-child(3) p') %>% 
   html_text() %>% 
   str_trim() %>%
   .[2]
@@ -197,8 +194,7 @@ get_deposit <- function(html){
     html_nodes('#aPreise .ng-star-inserted .card-content') %>% 
     html_text() %>% 
     str_trim() %>%
-    stringr::str_replace_all(',', '.') %>%
-    readr::parse_number()
+    readr::parse_number(locale = locale(decimal_mark = ",", grouping_mark = "."))
 }
 
 get_deposit(html)
@@ -209,8 +205,7 @@ get_energy.cons <- function(html){
     html_nodes('.ng-star-inserted:nth-child(6) .has-font-75+ p') %>% 
     html_text() %>% 
     str_trim() %>%
-    stringr::str_replace_all(',', '.') %>%
-    readr::parse_number()
+    readr::parse_number(locale = locale(decimal_mark = ",", grouping_mark = "."))
 }
 
 get_energy.cons(html)
