@@ -23,6 +23,5 @@ data %<>%
   dplyr::mutate(row_num = rownames(.)) %>%
   purrr::pmap_dfr(extract_page_data)
 
-
-# parsing der Orte Verbessern :-)  maybe seperate 
+# parsing der Orte Verbessern :-) maybe seperate can help
 
