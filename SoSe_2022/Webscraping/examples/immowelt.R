@@ -24,5 +24,5 @@ data %<>%
   purrr::pmap_dfr(extract_page_data)
 
 
-# parsing der Orte Verbessern :-)   
+# parsing der Orte Verbessern :-)  maybe seperate 
 
