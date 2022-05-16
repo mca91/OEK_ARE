@@ -77,13 +77,12 @@ get_company_data <- function(company, num_pages){
   return(df)
 }
 
-# https://www.trustpilot.com/review/ebay.com
 companies <-setNames(c("www.amazon.com", "www.ebay.com"), 
                      c("Amazon", "ebay"))
 
 
 # The second argument specifies how many pages are scraped for each company. 
-data <- map2_dfr(companies, c(2, 2), get_company_data, .id = "company") 
+data <- map2_dfr(companies, c(1, 1), get_company_data , .id = "company") 
 
 #
 data %>% 

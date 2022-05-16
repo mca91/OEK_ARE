@@ -32,7 +32,7 @@ get_links<- function(locations, num_pages){
 
 # title 
 get_title <- function(html){
-  html |>
+  html %>%
     html_nodes('h1') %>% 
     html_text() %>%
     str_trim()
