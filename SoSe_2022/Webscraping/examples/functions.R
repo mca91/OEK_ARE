@@ -1,11 +1,15 @@
 ########## functions
 
 
-extract_links <- function(url){
+extract_links <- function(location, i){
+  url <- paste0('https://www.immowelt.de/liste/' , location,
+         '/wohnungen/mieten?d=true&sd=DESC&sf=RELEVANCE&sp=', i)
+#  print(url)
   
   tibble(url = read_html(url) %>%
            html_elements('.noProject-eaed4') %>%
-           html_attr('href')
+           html_attr('href'), 
+         city = location,
   )
 }
 
@@ -13,17 +17,15 @@ get_links<- function(locations, num_pages){
   i <- 1
   repeat{
     if(i == 1){
-      df <- extract_links(paste0('https://www.immowelt.de/liste/' , locations,
-                                 '/wohnungen/mieten?d=true&sd=DESC&sf=RELEVANCE&sp=', i))
+      df <- extract_links(locations, i)
       print(paste(locations, i))
     } else {
-      temp_df <- extract_links(paste0('https://www.immowelt.de/liste/' , locations,
-                                      '/wohnungen/mieten?d=true&sd=DESC&sf=RELEVANCE&sp=', i))
+      temp_df <- extract_links(locations, i)
       if(any(duplicated(rbind(df, temp_df)))) break
       df <- rbind(df, temp_df)
       print(paste(locations, i))
-      if(i == num_pages) break
     }
+    if(i >= num_pages) break
     i <- i + 1
     Sys.sleep(sample(2:10, 1))
   }
@@ -39,21 +41,14 @@ get_title <- function(html){
 }
 
 ### locations (zipcode)
-get_location <- function(html){
-  df <- html %>%
+get_zipcode <- function(html){
+  html %>%
     html_nodes('#exposeAddress div') %>%
     html_text() %>%
     str_trim() %>%
-    str_split(' ') %>%
-    unlist() %>%
-    str_replace_all("\\(|\\)", "") %>%
-    matrix(nrow = 1) %>%
-    as_tibble() %>%
-    dplyr::rename('zipcode' = 1, 
-                  'city' = 2,
-                  'district' = 3
-    )
-  return(df)
+    .[1] %>%
+    readr::parse_number(locale = locale(decimal_mark = ",", 
+                                        grouping_mark = "."))
 }
 
 
@@ -138,7 +133,7 @@ get_heating.cost.included <- function(html){
       str_trim() %>%
       as_tibble() %>%
       separate(value, into = c('class', 'value'), sep = "(?<=[a-zA-Z])\\s*(?=[0-9])") %>%
-      dplyr::filter(str_detect(class, 'Heizkosten in Warmmiete enthalten')) %>%
+      dplyr::filter(str_detect(class, 'Heizkosten in Warmmiete enthalten|Heizkosten')) %>%
       dplyr::mutate(value = readr::parse_number(value, 
                                                 locale = locale(decimal_mark = ",", 
                                                                 grouping_mark = "."))) %>%
@@ -223,13 +218,12 @@ get_energy.information <- function(html){
 }
 
 
-
-
 # extracting data per side 
-extract_page_data <- function(url, row_num, ...){ #  row_num,
+extract_page_data <- function(url, city, row_num, ...){ #  row_num,
   html <- read_html(url) 
   df <-  tibble(title = get_title(html),
-                get_location(html),
+                zipcode = get_zipcode(html),
+                city = city,
                 cold_rent = get_cold.rent(html),
                 heating_cost_excluded = get_heating.cost.excluded(html),
                 heating_cost_included = get_heating.cost.included(html),
@@ -242,7 +236,7 @@ extract_page_data <- function(url, row_num, ...){ #  row_num,
   )
   print(paste(row_num, "of", nrow(data)))
   
-  Sys.sleep(sample(2:7, 1))
+  Sys.sleep(sample(2:5, 1))
   return(df)
 }
 
