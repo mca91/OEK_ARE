@@ -1,134 +1,88 @@
 # packages 
 library(tidyverse)  
-library(rvest)    
 library(stringr)   
 library(lubridate)
 library(magrittr)
 
-
 # load data
 load(here::here('SoSe_2022/Webscraping/examples/immo_data.RData'))
+load(here::here('SoSe_2022/Webscraping/examples/immo_data_big.RData'))
 #
+
+data <- data_592
+
 names(data)
+str(data)
+# drooping url
+data %<>%
+  dplyr::select(-c(url, building_type))
 
+data_essen <- data %>%
+  filter(city == 'essen',
+         !is.na(warm_rent))  %>%
+  dplyr::slice_sample(n = 150)
 
-# filter problems out
+data_bochum <- data %>%
+  filter(city == 'bochum', 
+         !is.na(warm_rent)) %>%
+  dplyr::slice_sample(n = 150)
 
-problemetic_data <- data %>%
-  dplyr::filter(!is.na(V4) | !is.na(V5))
-
-# problematic with backslashes 
-
-url_1 <- 'https://www.immowelt.de/expose/25pp95e'
-url <- 'https://www.immowelt.de/expose/25tux5c'
-html <- read_html(url)
-html_1 <- read_html(url_1)
-
-###############
-#### tries ####
-###############
-
-html %>%
-  html_nodes('#exposeAddress div') %>% #  #exposeAddress div
-  html_text() %>%
-  str_trim() %>%
-  .[1] %>%
-  readr::parse_number(locale = locale(decimal_mark = ",", 
-                                      grouping_mark = "."))
+data <- data_essen %>%
+  bind_rows(data_bochum)
   
 
-html_1 %>%
-  html_nodes('#exposeAddress div:nth-child(1)') %>% #  #exposeAddress div
-  html_text() %>%
-  str_trim() %>%
-  .[1] %>%
-  readr::parse_number(locale = locale(decimal_mark = ",", 
-                                      grouping_mark = "."))
+######################################################################################
+#################################### actual tasks ####################################
+######################################################################################
 
-### subort
-
-html_1 %>%
-  html_nodes('#exposeAddress div:nth-child(1)') %>% #  #exposeAddress div
-  html_text() %>%
-  str_trim()
-
-html %>%
-  html_nodes('#exposeAddress div') %>% #  #exposeAddress div
-  html_text() %>%
-  str_trim() %>%
-  str_replace_all("\\(|\\)|\\/", "") %>%
-  matrix(nrow = 1) %>%
-  as_tibble() %>%
-  unite(V1, V2)
-
-
-html_1 %>%
-  html_nodes('#exposeAddress div') %>% #  #exposeAddress div
-  html_text() %>%
-  str_trim() %>%
-  str_replace_all("\\(|\\)|\\/|[0-9]+", "") %>%
-  str_replace_all("\\-", " ") %>%
-  str_replace_all('Bochum|Essen', '') %>%
-  str_trim() %>%
-  matrix(nrow = 1) %>%
-  as_tibble() %>%
-  tidyr::unite(a, everything())
-
-
-%>%
-  unite(V1, V2)
-
-  tibble::as_tibble_row(.name_repair = 'unique') %>%
-  unite(...1, ...2)
-
-
-
-  
-  readr::parse_character()
-
-
-
-
-html_1 %>%
-  html_nodes('#exposeAddress div:nth-child(1)') %>% #  #exposeAddress div
-  html_text() %>%
-  str_trim() 
-
-html %>%
-  html_nodes('#exposeAddress div:nth-child(1)') %>% #  #exposeAddress div
-  html_text() %>%
-  str_trim() %>%
-  str_replace_all("\\(|\\)|\\/", "")
-
-
-
-#%>%
-  
-  readr::parse_number(locale = locale(decimal_mark = ",", 
-                                      grouping_mark = "."))
-
-
-  
-  .[1] %>%
-  str_replace_all("\\(|\\)|\\/", "") %>%
-  str_split(' ') %>%
-  unlist() %>%
-
-  
-  
-  
-  
-  readr::parse_number(value, 
-                      locale = locale(decimal_mark = ",", 
-                                      grouping_mark = ".")
-                      
-                      
-                      
-                      
-  matrix(nrow = 1) %>%
-  as_tibble() %>%
-  dplyr::rename('zipcode' = 1, 
-                'city' = 2,
-                'district' = 3
+# changing format 
+data %<>%
+  dplyr::mutate(zipcode = factor(zipcode), 
+                city = factor(city),
+                building_year = as.numeric(building_year),
+                efficiency_class = factor(efficiency_class, levels = c('A+', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'))
   )
-return(df)
+
+# sqr meter
+
+data %<>%
+  dplyr::mutate(cold_rent_per_sqm = cold_rent / square_meter,
+                warm_rent_per_sqm = warm_rent / square_meter)
+
+
+# boxplot cold rent and warm rent wann was? 
+data %>%
+  tidyr::pivot_longer(cols = c(cold_rent, warm_rent), names_to = 'class', values_to = 'value') %>%
+  ggplot2::ggplot(aes(x = city, y = value)) +
+  ggplot2::geom_boxplot() +
+  ggplot2::facet_wrap(~class)
+
+data %>%
+  tidyr::pivot_longer(cols = c(cold_rent_per_sqm, warm_rent_per_sqm), names_to = 'class', values_to = 'value') %>%
+  ggplot2::ggplot(aes(x = city, y = value)) +
+  ggplot2::geom_boxplot() +
+  ggplot2::facet_wrap(~class)
+
+
+# boxplot efficiency classes cold rents   
+
+data %>%
+  tidyr::pivot_longer(cols = c(cold_rent_per_sqm, warm_rent_per_sqm), names_to = 'class', values_to = 'value') %>%
+  ggplot2::ggplot(aes(x = efficiency_class, y = value)) +
+  ggplot2::geom_boxplot() +
+  ggplot2::facet_wrap(~class)
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
