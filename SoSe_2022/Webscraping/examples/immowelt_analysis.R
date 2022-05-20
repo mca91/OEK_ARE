@@ -1,5 +1,5 @@
 # packages 
-library(tidyverse)  
+library(tidyverse)
 library(stringr)   
 library(lubridate)
 library(magrittr)
@@ -29,7 +29,10 @@ data_bochum <- data %>%
 
 data <- data_essen %>%
   bind_rows(data_bochum)
-  
+
+immowelt <- data
+
+save(immowelt, file = here::here('SoSe_2022/Webscraping/examples/rent_advertisments.RData'))
 
 ######################################################################################
 #################################### actual tasks ####################################
@@ -199,16 +202,18 @@ names(metro)
 str(metro)
 class(metro$date_time)
 
-
 ### database  
-  
-library(dplyr)
-  con <- DBI::dbConnect(
-    drv = RSQLite::SQLite(),
-    dbname = here::here('SoSe_2022/databases/Metro_Interstate_Traffic_Volume.sqlite3'), 
-  )  
 
-  DBI::dbWriteTable(con,
+library(dplyr)
+con <- DBI::dbConnect(
+  drv = RSQLite::SQLite(),
+  dbname = here::here('SoSe_2022/databases',"assignment_1.sqlite3"), 
+)
+
+DBI::dbListTables(con)
+
+
+DBI::dbWriteTable(con,
                     name = "metro", 
                     value = metro)
   str(metro)
