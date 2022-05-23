@@ -40,7 +40,7 @@ class: title-slide title-index
 <ol start = "6">
   <li> Advanced R Programming </li>
   <ul>
-    <li> Advanced Concepts</li>
+    <li> <a href="Advanced R concepts/Advanced.html">Advanced Concepts</a></li>
     <li> Functional Programming</li>
     <li> Object Oriented Programming</li>
   </ul>
