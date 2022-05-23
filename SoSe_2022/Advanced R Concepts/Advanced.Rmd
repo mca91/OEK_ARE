@@ -138,7 +138,7 @@ a <- b = 1
 
 .smaller[
 
-- For consistency we use `<-` for binding and `=` for assigning function arguments.
+- For consistency we use `<-` for binding and `=` for assigning objects to function arguments.
 
 - Note, however, that there are reasonable [proposals](http://www.win-vector.com/blog/2016/12/the-case-for-using-in-r/comment-page-1/) for using other conventions.
 
@@ -186,7 +186,7 @@ var_GE
 
 - If `<<-` does not find a corresponding binding in the enclosing environment, it looks in the parent environment and works it's way up towards to global environment (GE)
 
-- If the binding does not exist in the GE, it will be created there
+- If the binding does not exist in the **GE**, it will be created there
 
 ---
 ## Bindings
@@ -208,7 +208,7 @@ var_GE
   ![:image 40%](img/binding-2.png)
   ![:source 2019](Wickham)
 ]
-.pull-right[.code60[
+.pull-right[.code80[
   ```{r}
   x <- c(1, 2, 3)
   ```
@@ -246,11 +246,11 @@ ref(x, character = TRUE)
 
 .font90[
 
-R's copy-on-modify behavior is blessing and curse: 
+R's copy-on-modify behavior is both blessing and curse: 
 
-- We may use references without the risk of breaking existing code.
+- We may use references without the risk of breaking existing code (convenient).
 
-- _modifying_ a reference may trigger a copy of the value.
+- _modifying_ a reference may trigger a copy of the value (unfavourable).
 
 .blockquote.exercise[
 #### `r desktop` Example: copy-on-modify
@@ -392,11 +392,11 @@ untracemem(x)
 
 ???
 
-- **`f(x)`**: `f()` binds `a` to the same memory location `x` points to *during execution*. In Contrast to the previous slide, a copy is made since `f()` modifies `a`.
+- **`f(x)`**: `f()` binds `a` to the same memory location `x` points to *during execution*. In Contrast to the previous slide, a copy *is* made since `f()` modifies `a`.
 
 - **`z<-f(x)`**: as above. `z` is a binding the same location as `a` (no additional copy made).
 
-- **Q**: What would happen if we'd super assign to `x` inside of `f()`. 
+- **Q**: What would happen if we'd super assign to `x` *inside* of `f()`? 
     **A**: no additional reference to `x`, so calling `f()` would not trigger a copy.
 
 ---
@@ -404,13 +404,12 @@ untracemem(x)
 
 .font90[.code90[
 
-Lists are special: **list elements are references to values**.
+Lists are special: **list elements are *references* to values**.
 
-<br>
 .content-box-white[
 **Task:** 
 
-Which statement generates the result shown in each diagram? What is special about the bottom one?
+Which (sequentially called) statement generate the results shown in each diagram? What is special about the bottom one?
 
 .pull-left[
   ![:image 35%](img/list.png)
@@ -454,17 +453,18 @@ ref(l1, l2)
 
 
 
-A _data frame_ is a list object whose elements point to column vectors. 
+A _data frame_ is essentially a list whose elements point to vectors. 
 
 .blockquote.exercise[
 #### `r desktop` Example: `data.frame()`
 
 .pull-left[
 ![:image 40%](img/dataframe.png)
+![:source 2019](Wickham)
 ]
 .pull-right[
 ```r
-d1 <- data.frame(
+df <- data.frame(
   x = c(1, 5, 6), 
   y = c(2, 4, 3)
 )
@@ -479,10 +479,10 @@ Explain why modifying rows is generally more costly than modifying columns for d
 
 ???
 
-**A**: modifying a data frame row implicates modifying *all* columns (this cannot be tracked by `tracemem()` but can be seen using `lobstr::ref()`)
+**A**: modifying a single row implicates modifying *all* columns (this cannot be tracked by `tracemem()` but can be seen using `lobstr::ref()`)
 
 ```r
-df[1,] <- c(42, 42)
+df[1, ] <- c(42, 42)
 ref(d1)
 # vs.
 df$x <- c(7, 7, 7)
@@ -514,7 +514,7 @@ ref(d1)
 
 ???
 
-1. `1:10` is no binding so there's no point in asking for its value.
+1. `1:10` is no binding so there's no point in tracing a value.
 
 2. Here `x` is an integer vector (`x` has `double` type as defined on Slide 11). Replacing `3L` with `4`, i.e. integer with double, triggers coercion of `x` to `double`. This always results in a copy.
 
@@ -558,13 +558,13 @@ obj_addr(v)
 
 ???
 
-- **Q**: Running this code in RStudio will trigger a copy. Why?
+- **Q**: Running this code in _RStudio_ will trigger a copy. Why?
 
     **A**: An entry in the Environment tab is a binding, i.e., there are more than one (two) references to `v` which triggers a copy!
 
-     You need to run the code in the RGUI for reproducing the results.
+     You need to run the code in the GUI version of R for reproducing the results.
     
-    (using the RGUI for this purpose is generally a good practice!)    
+    (using the R-GUI for this purpose is generally a good practice!)    
 
 - Note that `tracemem()` does not play well with `knitr`
 
@@ -589,7 +589,7 @@ x <- data.frame(
          ncol = 5)
   )
 
-medians <- vapply(x, median, numeric(1))
+medians <- vapply(X = x, FUN = median, FUN.VALUE = numeric(1))
 
 tracemem(x)
 
@@ -776,7 +776,7 @@ lobstr::ref(x)
 
 - The the old memory location of `x` has no binding anymore but is referenced within `x`
 
-- Note that lists are always copied on modification. The copy is, however, shallow.
+- Note that lists are always copied on modification. The copy is, however, ** *shallow* **.
 
 ---
 ## Garbage Collection
@@ -827,6 +827,9 @@ rm(x)
 ```
 ]]]]
 
+???
+
+(b) stresses why it's wrong to think of `x` to 'store' anything different than an address.
 
 ---
 ## Garbage Collection &mdash; Quick Facts
@@ -835,7 +838,7 @@ rm(x)
 
 - R uses a **tracing Garbage Collector** (GC): it keeps track of objects in the global environment and references therein.
 
-- The GC runs automatically if space is needed for creating new objects. There is *no need to actively force garbage collection*. You can, however, do so by calling `gc()` with the side effect of info on memory occupation (there's also a button in RStudio for this).
+- The GC runs automatically if space is needed for creating new objects. There is *no need to actively force garbage collection*. You can, however, do so by calling `gc()` with the side effect of obtaining info on memory occupation (there's also a button in *RStudio* for this).
 
 - You may run `gcinfo(TRUE)` if you wish to be informed when the GC runs
 
@@ -883,7 +886,7 @@ Everything that happens is a function call.
 - **Primitives** are special `base` R functions that call C code
 
 .blockquote.exercise[
-#### `r desktop` Example: primitives vs. regular functions
+#### `r desktop` Example: regular functions vs. primitives
 
 .medium[
 .pull-left[
@@ -891,7 +894,7 @@ Everything that happens is a function call.
 typeof(lm)
 environment(lm)
 names(formals(lm))[1:4]
-# body(lm)
+# body(lm) # too large, feel free to check!
 ```
 ]
 .pull-right[
@@ -908,7 +911,7 @@ body(sum)
 
 .smaller[
 
-R functions are **objects**! We may do stuff that may seem exotic when compared to  languages like _C_ and _Python_ that demand very explicit definitions.
+*R functions are **objects**!* This means we may do stuff that may seem exotic when compared to languages like _C_ and _Python_ that demand very explicit definitions and are much more restrictive.
 
 .blockquote.exercise[
 #### `r desktop` Example: fun with _anonymous functions_
@@ -1034,7 +1037,7 @@ f(x)                     # 4. dynamic lookup
 
 .smaller[
 
-Lazy evaluation allows R functions to behave quite differently than functions in most other languages and it s important to understand what is special about that.
+Lazy evaluation allows R functions to behave quite differently than functions in most other languages and it's important to understand what is special about that.
 
 - A **promise** consists of an expression along with an environment and a value which is computed and cached the first time the promise is accessed
 
@@ -1044,8 +1047,8 @@ Lazy evaluation allows R functions to behave quite differently than functions in
 #### `r desktop` Example: outside evaluation
 
 ```{r}
-f1 <- function(x) { y <- 5; x + 1 }
-f1(y <- 6)
+f1 <- function(x) { y <<- 5; x + 1 }
+f1(x = y <- 6)
 y
 ```
 
@@ -1053,9 +1056,11 @@ y
 
 ???
 
+- Explanation: `f()` evaluates its argument `x` when it's needed: at runtime, `y<-5` is bound _outside_ of `f()` in the GE. Once `x+1` needs to be computed, `y<-6` is evaluated (which overwrites `y` in GE).
+
 - Loading a data set using `data()` uses a promise. See, e.g., `data(AirPassengers)`.
 
-- The style shown in the example used by many base R function but it's not recommended since it's hard to understand what's going on.
+- The style shown in the example used by many base R function but it's not recommended since its hard to understand what's going on.
 
 ---
 ## Lazy Evaluation
@@ -1066,7 +1071,7 @@ y
 
 ```{r, message=T}
 double <- function(x) { 
-  message("Calculating...")
+  message("Computing...")
   x * 2
 }
 
@@ -1081,7 +1086,7 @@ clone(double(20))
 
 ???
 
-We see that `double(20)` is evaluated only once when `c()` inside of `clone()` looks for `x` for the first time.
+We see that `double(20)` is evaluated only once: there's only _one_ message printed. This is when `c()` inside of `clone()` looks for `x` for the first time.
 
 
 ---
@@ -1115,7 +1120,7 @@ f()
 
 - Although we do not recommend this style, it reflects great flexibility due to lazy evaluation
 
-- Note that this is very useful when a default argument is computationally expensive to evaluate and not needed in every call to `f()`
+- Note that this approach may be useful when a default argument is computationally expensive to evaluate and not needed in every call to `f()` (this usually happens when the argument is a more complex function call than `'+'()`)
 
 ---
 ## Lazy Evaluation
@@ -1124,7 +1129,7 @@ f()
 .content-box-white[
 **Task:** 
 
-`ls()` lists objects in the environment where it's called. Explain the results below. 
+`ls()` lists objects in the environment where it is called. Explain the results below. 
 
 ```{r, echo=-1}
 rm(list=setdiff(ls(), "desktop"))
@@ -1142,7 +1147,7 @@ f(ls())
 
 - Due to lazy evaluation, the evaluation environment for *default arguments* is the function environment
 
-- User supplied arguments are evaluated in the parent (i.e. the global) environment
+- User supplied arguments are evaluated in the parent environment (GE here)
 
 ---
 ## Lazy Evaluation
@@ -1166,9 +1171,11 @@ if (!is.null(x) && x > 0) {
 
 ???
 
-1. Without lazy evaluation this statement would throw an error because `x > 0` evaluates to a logical value of length zero (you cannot compare `NULL` to `double`)
+- `NULL` represents the null object in R. `NULL` is used mainly to represent a list with zero length, and is often returned by expressions and functions whose value is _undefined_.
 
-2. The second statement would be evaluated only if the first is true (but is is false)
+- Without lazy evaluation this statement would throw an error because `x > 0` evaluates to a logical value of length zero (you cannot compare `NULL` to `double`)
+
+- Control flow stops after evaluating the first part of the condition in `if()`: the second statement would be evaluated only if the first is `TRUE` (here it is `FALSE`)
 
 
 ---
@@ -1196,7 +1203,7 @@ if (!is.null(x) && x > 0) {
 
 ???
 
-1. Lazy evaluation applies only at function definition, not invocation: R looks for `z` in the global environment because `x` is not `z^2` by default, like below.
+1. Lazy evaluation happens at function definition, _not invocation_: R looks for `z` in the global environment because `x` is not `z^2` by default, like in the fixed version below.
     ```{r, eval = F}
     f <- function(x = z^2, z) {
       z + x^2
@@ -1207,9 +1214,9 @@ if (!is.null(x) && x > 0) {
     
     `with(list(z = 2), f(x = z^2, z))`
 
-2. `...` enables us to pass arguments (to other functions) which do not have to be prespecified.
+2. `...` enables us to pass arguments the body of `f()` (to other functions!) which do not have to be specified at definition of `f()`.
 
-    Here, `f()` is a simple wrapper that returns names of list elements as passed to the `...` argument.
+    Here, `f()` is a simple _wrapper_ that returns names of list elements as passed to the `...` argument.
 
 ---
 ## Function Forms
@@ -1231,7 +1238,9 @@ if (!is.null(x) && x > 0) {
 
 ???
 
-@ infix forms: user defined operators (which always begin and end with `%`) belong to this class.
+- @infix forms: user defined operators (which always begin and end with `%`) belong to this class.
+
+- NB: is doesn't matter whether one uses ` `` ` or `''` in prefix form
 
 ---
 ## Function Forms
@@ -1241,11 +1250,15 @@ if (!is.null(x) && x > 0) {
 #### `r desktop` Example: rewrite special and infix as prefix
 
 ```{r}
+# addition
 1 + 2
 `+`(1, 2)
 
-x <- `:`(1, 10); x
+# integer sequence generation
+x <- `:`(1, 10)
+x
 
+# evaluation
 `(`(x)
 ```
 
@@ -1257,7 +1270,7 @@ x <- `:`(1, 10); x
 It's straightforward to write your own operators in infix form.
 
 .blockquote.exercise[
-#### `r desktop` Example: `paste0` as infix
+#### `r desktop` Example: `paste0()` as infix
 
 ```{r}
 `%+%` <- function(a, b) paste0(a, b)
@@ -1272,14 +1285,14 @@ It's straightforward to write your own operators in infix form.
 Replacement functions have the form shown below.
 
 ```r
-`name<-` <- function(x, value) {
-  <do something>
+`some_name<-` <- function(x, value) {
+  <do something (i.e, modify x)>
   return(x)
 } 
 ```
 
 .blockquote.exercise[
-#### `r desktop` Example: replacement of last vector element
+#### `r desktop` Example: replacement of the last vector element
 
 ```{r}
 `last<-` <- function(x, value) {
@@ -1288,7 +1301,8 @@ Replacement functions have the form shown below.
 }
 
 x <- c(1, 2, 3)
-last(x) <- 99; x
+last(x) <- 99
+x
 ```
 
 ]
@@ -1299,18 +1313,12 @@ last(x) <- 99; x
 
 - Additional arguments may be passed between `x` and `value`
 
-
-- `tracemem()` reports two copies. This is because `x` is copied inside of `last<-` and R runs
-    ```r
-    x <- `last<-`(x, 420)
-    ```
-    under the hood.
-
-
 ---
 ## Function Forms &mdash; Replacement Functions
 
-Replacement functions are very convenient but there is no free lunch: replacements *always* trigger a copy.
+Replacement functions are very convenient but there is no free lunch: 
+
+Replacements *always* trigger copies!
 
 .blockquote.exercise[
 #### `r desktop` Example: replacement of last vector element &mdash; ctd.
@@ -1334,6 +1342,16 @@ x
 ```
 
 ]
+
+???
+
+`tracemem()` reports two copies: the first occurs because `last<-` creates a copy inside its own environment before modification and R runs
+
+```r
+x <- `last<-`(x, 420)
+```
+under the hood.
+
 
 ---
 class: segue-red
