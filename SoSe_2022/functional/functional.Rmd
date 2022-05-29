@@ -72,60 +72,67 @@ To become significantly more reliable, code must become more transparent. In par
 ---
 ## FAQs
 
-<style>
-  strong {
-    color:#e64626;
-  }
-  
-</style>
+.font90[
 
 ```{r, eval = FALSE}
 # Packages needed
 library(dplyr)
 library(purrr)
 library(readr)
-# or simply attach the tidyverse
+# (or simply attach the tidyverse!)
 ```
 
-**What is a functional programming language?**
+<br>
 
-- Simply put: a language which is centered on problem solving using functions!
+**What is a functional programming (FP) language?**
 
-- There are two common threads:
+- Simply put: a language which is centered on problem-solving using functions!
+
+- There are two common threads in FP:
 
     1. A functional language has **first-class functions** which behave like any other data type. In R this means we may treat function like variables (i.e. assign them, store them in a list or pass them as arguments to other functions)
     
     2. Many functional languages require **pure** functions only. These are functions which have no side-effects: they do not interfere with anything outside their scope and produce output which depends only on the input.
 
+]
+
 ???
 
-1. R has first-class functions.
+1. *R* has first-class functions.
 
 2. Does R allow for pure functions only? No: e.g. `print()` has side-effects. Obviously all functions which return pseudo-random numbers are not pure functions.
+
 ---
 ## FAQs
-    
-**Is R a functional programming language?**
 
-- R is not a functional programming language but we may adopt a *functional style* of programming.
+.font90[
+    
+**Is *R* a FP language?**
+
+- *R* is not a FP language but we may adopt a *functional style* of programming.
 
 - **Functionals** are functions which take functions as input and produce, e.g. vector output
 
 **Why should I use functional style programming?**
 
-- Functional programming is often space efficient, very comprehensible and easily adopted to new situations
+- FP is often space efficient, very comprehensible and easily adopted to new situations
 
-- Functionals are easily analysed in isolation and thus are often straightforward to optimize and parallelise
+- Functionals are easily analysed in isolation and thus are often straightforward to optimise and parallelise
 
     (We'll discuss functionals in a minute)
 
+]
+
 ???
+
 You've probably used functionals already: `lapply()` and `integrate()` are prominent examples.
 
 ---
 ## FAQs
 
-**What does 'functional programming style' even mean?**
+.font90[
+
+**What does 'FP style' even mean?**
 
 It’s hard to describe exactly what a functional style is, but generally we will refer to the following definition:  
 
@@ -135,27 +142,39 @@ Functional programming style means decomposing a big problem into smaller pieces
 .right[&mdash; <cite>Hadley Wickham</cite>]
 </blockquote>
 
+]
+
 ---
 ## FAQs
 
-We will briefly discuss key techniques in functional R programming which are best summarized be the table below. We will focus on `purrr` functionals and applications of function factories.  
+.font90[
+
+We will briefly discuss key techniques in functional *R* programming which are best summarised by the table below. We will focus on `purrr` functionals and applications of function factories.  
 
 <br>
 <br>
+<center>
 ![:image 35%](img/fp.png)
-
 ![:source 2019](Wickham)
+
+]
 
 ---
 ## Functionals
 
+.font90[
+
 A **functional** takes a function as an input and returns a vector as output.
+
+<br>
 
 ```{r}
 randomise <- function(f) f(rnorm(1e3))
 randomise(mean)
 randomise(sum)
 ```
+
+]
 
 ???
 
@@ -164,7 +183,9 @@ Functionals can also produce other data structures, e.g., data frames as output.
 ---
 ## Functionals
 
-.smaller[
+<br>
+
+.font90[
 
 - Functionals are often used as alternatives to loops. Not because loops are inherently slow (which is common wisdom), but because loops 
 
@@ -172,11 +193,11 @@ Functionals can also produce other data structures, e.g., data frames as output.
 
     - are prone to typos that are difficult to identify
 
-    - can be *overly flexible*: loops convey that an iteration is done, but not what should be done with the results.
+    - can be *overly flexible*: loops convey that an iteration is done, but may make it relatively hard to grasp _what is done_ and what should be done with the results.
     
 - Functionals are tailored to specific tasks which immediately convey *why* they are being used and what output format they produce.
     
-- Switching from loops to functionals doesn't necessarily mean that we must write our own functionals: the `purrr` package provides functionals which are very concise and also fast as they are written in C.
+- Switching from loops to functionals doesn't necessarily mean that we must write our own functionals: the `purrr` package provides functionals which are very easy to apply and also fast as they are written in _C_.
 
 ]
 
@@ -184,7 +205,7 @@ Functionals can also produce other data structures, e.g., data frames as output.
 
 - With functionals we don't need to worry about indexing, brackets, curly braces etc. 
 
-- Of course, flexibility isn't bad. They idea of a functional programming is to use functionals that perform a specific iteration which returns a specific output format.
+- Of course, flexibility isn't bad. They idea of a FP is to use functionals that perform a specific iteration which returns a specific output format.
 
 - Others are likely to be puzzled by looking at your code if it uses a lot of loops. Functionals immediately convey which iteration is done and which output is returned.
 
@@ -193,7 +214,7 @@ Functionals can also produce other data structures, e.g., data frames as output.
 ---
 ## Functionals &mdash; `purrr::map()`
 
-.smaller[
+.font90[
 
 `map()` is the `purrr` version of `lapply()`. 
 
@@ -206,6 +227,8 @@ Functionals can also produce other data structures, e.g., data frames as output.
 ]
 
 .pull-right[
+<br>
+<br>
 .blockquote.exercise[
 #### `r desktop` Example: `map()`
 
@@ -223,11 +246,13 @@ Obviously `map()` returns a list.
 ---
 ## `purrr::map_*()` &mdash; Producing Atomic Vectors
 
-.smaller[
+.font90[
 
 - There are helper functions which are more convenient if simpler data structures are required: `map_lgl()`, `map_int()`, `map_dbl()`, and `map_chr()` return an atomic vector of the specified type
 
-- Base R equivalents are `sapply()` and `vapply()`
+- Base *R* equivalents are `sapply()` and `vapply()`
+
+<br>
 
 .blockquote.exercise[
 #### `r desktop` Example: `map_*()`
@@ -258,11 +283,13 @@ map_int(mtcars, n_unique)
 ---
 ## `purrr::map_*()` &mdash; Producing Atomic Vectors
 
-.smaller[
+.font90[
 
-- The *twiddle operator* `~` allows to use anonymous functions in a less verbose manner. It conveys that the subsequent expression is a formula.
+- The ***twiddle operator `~`*** allows to write anonymous functions in a less verbose manner. It conveys that the subsequent expression is a formula.
 
-- A good rule of thumb is that if a function spans lines or uses `{...}`, we should give it a name.
+- **A good rule of thumb:** if a function spans lines or uses `{...}`, we should give it a name.
+
+<br>
 
 .blockquote.exercise[
 #### `r desktop` Example: `map_*()` with inline anonymous function
@@ -280,11 +307,14 @@ map_dbl(mtcars, ~ length(unique(.x)))
 ---
 ## `purrr::map_*()` &mdash; Producing Atomic Vectors
 
-.smaller[
+.font90[
 
 The `map_*()` functions are  useful for selecting elements from lists by name, position or both.
 
+<br>
+
 .blockquote.exercise[
+
 #### `r desktop` Example: element extraction with `map_*()`
 
 ```{r}
@@ -303,7 +333,7 @@ map_dbl(x, 1)     # select by position
 
 ???
 
-In base R we'd have to write a function that iterates through `x` or use `sapply()`.
+In base *R* we'd have to write a function that iterates through `x` or use `sapply()`.
 
 ---
 ## `purrr::map_*()` &mdash; Producing Atomic Vectors
@@ -334,11 +364,14 @@ sapply(x, "[[", 1)
 ---
 ## `purrr::map_*()` &mdash; Producing Atomic Vectors
 
-.smaller[
-.blockquote.exercise[
-#### `r desktop` Example: element extraction with `map_*()`
+.font90[
 
 Note that components must exist in all lists. 
+
+<br>
+
+.blockquote.exercise[
+#### `r desktop` Example: element extraction with `map_*()`
 
 ```{r, error=TRUE}
 map_chr(x, "z")   # z doesn't exist in x[[3]]
@@ -358,13 +391,14 @@ Keep in mind that this requires your subsequent code to work with `NA`s.
 ---
 ## `purrr::map_*()` &mdash; Producing Atomic Vectors
 
-.smaller[
-.blockquote.exercise[
-#### `r desktop` Example: mapping with additional arguments &mdash; ctd.
+.font90[
 
 Additional arguments to the mapping function may be passed *after* the function name. But think about evaluation!
 
 <br>
+
+.blockquote.exercise[
+#### `r desktop` Example: mapping with additional arguments &mdash; ctd.
 
 .pull-left[
   <br>
@@ -394,13 +428,14 @@ Arguments passed to an anonymous function are evaluated in every iteration. The 
 ---
 ## `purrr::map_*()` &mdash; Producing Atomic Vectors
 
-.smaller[
-.blockquote.exercise[
-#### `r desktop` Example: mapping with additional arguments &mdash; ctd.
+.font90[
 
 Additional arguments are *not decomposed*: `map_*()` is only vectorised over the data passed as the first argument. Vector arguments are passed along.
 
 <br>
+
+.blockquote.exercise[
+#### `r desktop` Example: mapping with additional arguments &mdash; ctd.
 
 .pull-left[
 <br>
@@ -418,10 +453,12 @@ map(1:3, rnorm, mean = c(100, 10, 1))
 ---
 ## `purrr::map_*()` &mdash; Producing Atomic Vectors
 
-.medium[
+<br>
 
 .blockquote.exercise[
 #### `r desktop` Example: mapping over a different argument
+
+.font80[
 
 Assume you'd like to investigate the impact of different amounts of trimming when computing the sample mean of observations from a heavy-tailed distribution.
 
@@ -456,6 +493,10 @@ map_dbl(trims, function(trim) mean(x, trim = trim))
 ---
 ## `purrr::map_*()` &mdash; Exercises
 
+<br>
+
+.font90[
+
 1. `map(1:3, ~ runif(2))` is a useful pattern for generating random numbers, but `map(1:3, runif(2))` is not. Why not? Can you explain why it returns the result that it does?
 
 2. The following code simulates the performance of a t-test for non-normal data. Extract the p-value from each test, then visualise.
@@ -471,6 +512,8 @@ map_dbl(trims, function(trim) mean(x, trim = trim))
        mpg ~ I(1 / disp) + wt
     )
     ```
+
+]
 
 ???
 
@@ -496,11 +539,11 @@ map_dbl(trims, function(trim) mean(x, trim = trim))
 ---
 ## Case Study: Model Fitting with `purrr`
 
-.smaller[
+.font90[
 
 Tired of `mtcars`? We're too... let's use `cars2018`, a dataset on fuel efficiency of real cars of today from a US Department of Energy instead! 🚗🚗🚗
 
-We will now take a quick look at how `purrr` functions can be used to fit a regression model to subgroups of data, extract estimates and then compare the approach to base R approaches.
+We will now take a look at how `purrr` functions can be used to fit a regression model to subgroups of data, extract estimates and then compare the approach to base R approaches.
 
 **Instructions**
 
@@ -581,9 +624,9 @@ exclude: true
 ---
 ## Map Variants
 
-.smaller[
+.font90[
 
-In total there are 23 variants of `map()` which are easily understood as variants of the following functions:
+There are 23 variants of `map()` which are easily understood as variants of the following functions:
 
 - Output same type as input: **`modify()`**
 
@@ -595,7 +638,6 @@ In total there are 23 variants of `map()` which are easily understood as variant
 
 - Iterate over any number of inputs: **`pmap()`**
 
-<br>
 
 |    	                   | List          |	Atomic       | Same type     | Nothing      |
 | ---------------------- | ------------- | ------------- | ------------- | ------------ |
@@ -613,9 +655,11 @@ The table shows input (rows) and output types (columns).
 ---
 ## `purrr::modify()`
 
-.smaller[
+.font90[
 
 The `modify()` function works on the input *components* and returns an object of the same type as the input.
+
+<br>
 
 .blockquote.exercise[
 #### `r desktop` Example: `data.frame` in / `data.frame` out
@@ -640,9 +684,11 @@ df <- modify(df, ~ .x * 2)
 ---
 ## `purrr::map2()`
 
-.smaller[
+.font90[
 
 `map2()` is vectorised over two arguments.
+
+<br>
 
 .blockquote.exercise[
 #### `r desktop` Example: weighted mean using `map2()`
@@ -675,9 +721,11 @@ map2_dbl(xs, ws, weighted.mean)
 ---
 ## `purrr::map2()`
 
-.smaller[
+.font90[
 
 Additional arguments may be passed just as with `map()`.
+
+<br>
 
 .blockquote.exercise[
 #### `r desktop` Example: weighted mean using `map2()` &mdash; ctd.
@@ -690,7 +738,7 @@ Additional arguments may be passed just as with `map()`.
 .pull-right[
 
 ```{r}
-# Passing na.rm = TRUE
+# passing na.rm = TRUE
 map2_dbl(xs, ws, weighted.mean, na.rm = TRUE)
 ```
 
@@ -699,9 +747,11 @@ map2_dbl(xs, ws, weighted.mean, na.rm = TRUE)
 ---
 ## `purrr::map2()`
 
-.smaller[
+.font90[
 
-Note that `map2()` also recycles inputs to make sure they are the same length.
+Note that `map2()` also recycles inputs to ensure that they are the same length.
+
+<br>
 
 .blockquote.exercise[
 #### `r desktop` Example: weighted mean using `map2()` &mdash; ctd.
@@ -722,11 +772,11 @@ map2_dbl(1:6, 1, ~ .x + .y)
 ---
 ## `purrr::walk()`
 
-.smaller[
+.font90[
 
 - `walk()` ignores the return value of `.f` and returns `.x` invisibly. This is useful for functions that are called for their side-effects.
 
-- There is no base R equivalent but wrapping `lapply()` with `invisible()` comes close
+- There is no base *R* equivalent but wrapping `lapply()` with `invisible()` comes close
 
 .blockquote.exercise[
 #### `r desktop` Example: assigning and passing objects
@@ -751,7 +801,7 @@ Assignment to an environment is a side-effect.
 ---
 ## `purrr::walk()`
 
-.smaller[
+.font90[
 
 `walk2()` is a convenient alternative which is vectorised over two arguments. 
 
@@ -779,7 +829,7 @@ A common side-effect which needs two arguments (object and path) is writing to d
 ---
 ## `purrr::imap()`
 
-.smaller[
+.font90[
 
 - `map(.x, .f)` is essentially an analog to `for(x in xs)`
 
@@ -809,9 +859,11 @@ A common side-effect which needs two arguments (object and path) is writing to d
 ---
 ## `purrr::pmap()`
 
-.smaller[
+.font90[
 
 `pmap()` generalises `map()` and `map2()` to `p` vectorised arguments. Thus `pmap(list(x, y), f)` is the same as `map2(x, y, f)`.
+
+<br>
 
 .blockquote.exercise[
 #### `r desktop` Example: weighted mean with `pmap()`
@@ -837,9 +889,11 @@ pmap_dbl(list(xs, ws), weighted.mean)
 ---
 ## `purrr::pmap()`
 
-.smaller[
+.font90[
 
 As before, additional arguments may be passed after `.f` and they are recycled, if necessary.
+
+<br>
 
 .blockquote.exercise[
 #### `r desktop` Example: weighted mean with `pmap()` &mdash; ctd.
@@ -854,7 +908,8 @@ As before, additional arguments may be passed after `.f` and they are recycled, 
 Now with the additional argument `na.rm = TRUE`:
 
 ```{r}
-pmap_dbl(list(xs, ws), weighted.mean, 
+pmap_dbl(list(xs, ws), 
+         weighted.mean, 
          na.rm = TRUE)
 ```
 ]]]
@@ -862,8 +917,11 @@ pmap_dbl(list(xs, ws), weighted.mean,
 ---
 ## `purrr::pmap()`
 
-.smaller[
-Note that `pmap()` gives much finer control over argument matching due to the possibility to use named lists. This is very convenient for working with complex objects of type list.
+.font90[
+
+Note that `pmap()` gives much finer control over argument matching as we may use _named_ lists. This is very convenient for working with complex list objects.
+
+<br>
 
 .blockquote.exercise[
 #### `r desktop` Example: argument matching using named list
@@ -893,8 +951,12 @@ pmap_dbl(list(trim = trims), mean, x = x)
 
 ---
 ## `purrr::pmap()`
-.smaller[
+
+.font90[
+
 Remember that a data frame is a list and thus can be passed as a collection of inputs to `pmap()`. 
+
+<br>
 
 .blockquote.exercise[
 #### `r desktop` Example: `pmap()` with data.frame as input
@@ -932,6 +994,10 @@ pmap(params, runif)
 ---
 ## `purrr::pmap()` &mdash; Exercises
 
+.font90[
+
+<br>
+
 1. Explain the results of `modify(cars2018, 1)`
 
 2. Explain how the following code transforms a data frame using functions stored in a list.
@@ -949,6 +1015,8 @@ pmap(params, runif)
     ```{r, eval=F}
     mtcars[nm] <- map(nm, ~ trans[[.x]](cars2018[[.x]]))
     ```
+
+]
 
 ???
 
@@ -1066,9 +1134,11 @@ Function Factories
 ---
 ## Function Factories
 
-.smaller[
+.font90[
 
-A function factory is a function that makes functions.
+A function factory is a function that *produces* functions.
+
+<br>
 
 .blockquote.exercise[
 #### `r desktop` Example: function factory
@@ -1089,8 +1159,11 @@ cube_root(8)
 ---
 ## Function Factories
 
-.smaller[
+.font90[
+
 The enclosing environment of the manufactured function is an **execution environment** of the function factory.
+
+<br>
 
 .blockquote.exercise[
 #### `r desktop` Example: function factory &mdash; ctd.
@@ -1111,9 +1184,11 @@ rlang::fn_env(cube_root)$n      # retrieve from enclosing environment
 ---
 ## Function Factories
 
-.smaller[
+.font90[
 
-Remember lazy evaluation!
+Remember **lazy evaluation**?
+
+<br>
 
 .blockquote.exercise[
 #### `r desktop` Example: function factory &mdash; ctd.
@@ -1122,7 +1197,7 @@ Remember lazy evaluation!
 n <- 2
 sq <- nth_root(n)
 n <- 16
-sq(64)             # should evaluate to 8?!
+sq(64)             # Wait... this should evaluate to 8!
 ```
 
 ]]
@@ -1138,9 +1213,11 @@ sq(64)             # should evaluate to 8?!
 ---
 ## Function Factories
 
-.smaller[
+.font90[
 
-Remember lazy evaluation!
+Remember **lazy evaluation**?
+
+<br>
 
 .blockquote.exercise[
 #### `r desktop` Example: function factory &mdash; ctd.
@@ -1180,8 +1257,12 @@ f1 <- function(n) {
 ---
 ## Function Factories &mdash; Stateful Functions
 
-.smaller[
-Function factories allow us to create functions with a memory.
+.font90[
+
+Function factories allow us to create *functions with a memory*.
+
+<br>
+
 .blockquote.exercise[
 #### `r desktop` Example: counter
 
@@ -1207,6 +1288,7 @@ replicate(5, counter_two())
 Should be used with moderation. The S6 system is more suitable if your manufactured functions are to manage multiple variables.
 
 ---
+exclude: true
 ## Case Study: Maximum Likelihood Estimation
 
 Consider the problem of finding the MLE for $\lambda$ when modelling data $\mathbb{x} = (x_1, x_2, \dots, x_n)$ using the Poisson distribution. We have
