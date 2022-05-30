@@ -1,6 +1,5 @@
 ########## functions
 
-
 extract_links <- function(location, i){
   url <- paste0('https://www.immowelt.de/liste/' , location,
          '/wohnungen/mieten?d=true&sd=DESC&sf=RELEVANCE&sp=', i)
