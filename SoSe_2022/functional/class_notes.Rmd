@@ -1,5 +1,7 @@
 ---
-title: "Functional Programming --- Notes and Examples"
+title: "Advanced R for Econometrician Summer 2022"
+subtitle: "Functional Programming --- Notes and Examples"
+author: "Martin Arnold"
 output: pdf_document
 ---
 

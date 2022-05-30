@@ -90,7 +90,7 @@ library(readr)
 
 - There are two common threads in FP:
 
-    1. A functional language has **first-class functions** which behave like any other data type. In R this means we may treat function like variables (i.e. assign them, store them in a list or pass them as arguments to other functions)
+    1. A functional language has **first-class functions** which behave like any other data type. In R this means we may treat function like variables (i.e., assign them, store them in a `list` or pass them as arguments to other functions)
     
     2. Many functional languages require **pure** functions only. These are functions which have no side-effects: they do not interfere with anything outside their scope and produce output which depends only on the input.
 
@@ -165,6 +165,8 @@ We will briefly discuss key techniques in functional *R* programming which are b
 .font90[
 
 A **functional** takes a function as an input and returns a vector as output.
+
+Let's do something that might seem strange at first sight:
 
 <br>
 
@@ -241,7 +243,9 @@ map(1:3, triple)
 
 ???
 
-Obviously `map()` returns a list.
+- Do the example using `lapply()`: `lapply(1:3, function(x) x * 3)`
+
+- Obviously `map()` returns a list, too.
 
 ---
 ## `purrr::map_*()` &mdash; Producing Atomic Vectors
@@ -252,7 +256,11 @@ Obviously `map()` returns a list.
 
 - Base *R* equivalents are `sapply()` and `vapply()`
 
+]
+
 <br>
+
+.font80[
 
 .blockquote.exercise[
 #### `r desktop` Example: `map_*()`
@@ -265,6 +273,9 @@ Obviously `map()` returns a list.
 .pull-right[
 .smaller[
 ```{r}
+# check class of mtcars data
+class(mtcars)
+
 map_lgl(mtcars, is.double)
 
 n_unique <- function(x) length(unique(x))
@@ -309,7 +320,7 @@ map_dbl(mtcars, ~ length(unique(.x)))
 
 .font90[
 
-The `map_*()` functions are  useful for selecting elements from lists by name, position or both.
+`map_*()` is useful for selecting elements from a `list` by name, position, or both.
 
 <br>
 
@@ -345,7 +356,7 @@ In base *R* we'd have to write a function that iterates through `x` or use `sapp
 .content-box-white[
 **Task:** 
 
-Write short Base R code which works on `x` from the previous slide and returns 
+Write short Base *R* code which works on `x` from the previous slide and returns 
 
   1. all entries named `'x'` and 
   
@@ -366,7 +377,7 @@ sapply(x, "[[", 1)
 
 .font90[
 
-Note that components must exist in all lists. 
+Note that components must exist in all entries of the object we iterate over (here a _nested_ list). 
 
 <br>
 
@@ -393,12 +404,14 @@ Keep in mind that this requires your subsequent code to work with `NA`s.
 
 .font90[
 
-Additional arguments to the mapping function may be passed *after* the function name. But think about evaluation!
+- Additional arguments to the mapping function may be passed *after* the function name. 
+
+- We need to be careful with **evaluation**!
 
 <br>
 
 .blockquote.exercise[
-#### `r desktop` Example: mapping with additional arguments &mdash; ctd.
+#### `r desktop` Example: mapping with additional arguments
 
 .pull-left[
   <br>
@@ -430,7 +443,7 @@ Arguments passed to an anonymous function are evaluated in every iteration. The 
 
 .font90[
 
-Additional arguments are *not decomposed*: `map_*()` is only vectorised over the data passed as the first argument. Vector arguments are passed along.
+Additional arguments are *not decomposed*: `map_*()` is only vectorised over (the data passed as) the first argument. Further (vector) arguments are passed along.
 
 <br>
 
@@ -450,6 +463,12 @@ map(1:3, rnorm, mean = c(100, 10, 1))
 ```
 ]]]
 
+???
+
+Question to students:
+
+Explain the outcomes of `map(1:4, rnorm, mean = c(100, 10, 1))`
+
 ---
 ## `purrr::map_*()` &mdash; Producing Atomic Vectors
 
@@ -460,7 +479,7 @@ map(1:3, rnorm, mean = c(100, 10, 1))
 
 .font80[
 
-Assume you'd like to investigate the impact of different amounts of trimming when computing the sample mean of observations from a heavy-tailed distribution.
+Assume you'd like to investigate the impact of different amounts of trimming when computing the mean of observations sampled from a heavy-tailed distribution.
 
 .pull-left[
   <br>
@@ -626,7 +645,7 @@ exclude: true
 
 .font90[
 
-There are 23 variants of `map()` which are easily understood as variants of the following functions:
+There are 23 variants of `map*()` which are easily understood as variants of the following functions:
 
 - Output same type as input: **`modify()`**
 
@@ -673,7 +692,7 @@ df <- data.frame(
 modify(df, ~ .x * 2)
 ```
 
-Note that `modify()` does not modify in-place but creates a copy which must be assigned if changing the input is required.
+Note that `modify()` never modifies in-place but creates a copy, which must be (re)assigned.
 
 ```{r}
 df <- modify(df, ~ .x * 2)
@@ -831,7 +850,7 @@ A common side-effect which needs two arguments (object and path) is writing to d
 
 .font90[
 
-- `map(.x, .f)` is essentially an analog to `for(x in xs)`
+- `map(.x, .f)` is essentially an analog to `for(x in xs) <apply .f to x and assign to list>`
 
 - `for(i in seq_along(xs))` and `for(nm in names(xs))` are analogous to `imap()`: 
 
@@ -850,11 +869,11 @@ A common side-effect which needs two arguments (object and path) is writing to d
 
 ???
 
-- When using the formula shortcut, the first argument `.x` is the value, and the second `.y` is the position
+- When using the formula shortcut, the first argument `.x` is the value, and the second `.y` is the position/name
 
 - `cars2018 %>% select_if(is.numeric)` returns a list so `.y` is a name and `.x` the value
 
-- Character vectors index by name, numeric vectors index by position
+- `character` vectors index by name, `numeric` vectors index by position
 
 ---
 ## `purrr::pmap()`
@@ -919,7 +938,7 @@ pmap_dbl(list(xs, ws),
 
 .font90[
 
-Note that `pmap()` gives much finer control over argument matching as we may use _named_ lists. This is very convenient for working with complex list objects.
+Note that `pmap()` gives much finer control over argument matching as we may use **_named_ `list`**. This is very convenient for working with complex `list` objects.
 
 <br>
 
@@ -935,7 +954,7 @@ Note that `pmap()` gives much finer control over argument matching as we may use
 
 .pull-right[
 
-We reconsider the trimmed mean example from before.
+We look at the trimmed mean example again.
 
 ```{r}
 trims <- c(0, 0.1, 0.2, 0.5)
@@ -954,7 +973,7 @@ pmap_dbl(list(trim = trims), mean, x = x)
 
 .font90[
 
-Remember that a data frame is a list and thus can be passed as a collection of inputs to `pmap()`. 
+Remember that a `data.frame` is a `list` and thus can be passed to `pmap()` as a _collection of inputs_. 
 
 <br>
 
@@ -1000,7 +1019,7 @@ pmap(params, runif)
 
 1. Explain the results of `modify(cars2018, 1)`
 
-2. Explain how the following code transforms a data frame using functions stored in a list.
+2. Explain how the following code transforms a `data.frame` using functions stored in a `list`.
     ```{r, eval=F}
     trans <- list(
       Displacement = function(x) x * 0.0163871,
@@ -1022,7 +1041,9 @@ pmap(params, runif)
 
 1. `modify()` is a shortcut for `x[[i]] <- f(x[[i]]); return(x)`. So every row is filled with it's first value.
 
-2.
+2. Too lenghty, see class notes
+
+3. As above
     
 ---
 exclude: true
@@ -1177,9 +1198,9 @@ rlang::fn_env(cube_root)$n      # retrieve from enclosing environment
 
 ???
 
-- Remember that in execution environments are ephemeral in general: they are destroyed if the function has run.
+- Remember that execution environments are _ephemeral_ in general: they are destroyed once the function has run.
 
-- Here the enclosing environment of `cube_root()` was the execution environment of `nth_root()` &mdash; a mechanism which makes function factories possible.
+- This is different here: the enclosing environment of `cube_root()` was the execution environment of `nth_root()`&mdash;a mechanism which makes function factories possible.
 
 ---
 ## Function Factories
@@ -1208,7 +1229,7 @@ sq(64)             # Wait... this should evaluate to 8!
 
 - `x` is lazily evaluated when `sq()` is run, not when `nth_root()` is run. We thus need to force evaluation.
 
-- This is likely to happen rarely but it's a good practice to avoid such a bug by using `force()` in your factories
+- This is likely to happen so it's a good practice to avoid such a bug by using `force()` in your factories!
 
 ---
 ## Function Factories
@@ -1240,7 +1261,7 @@ sq(64)             # better :-)
 
 ???
 
-- To students: why `force(x)` and not just `x`? (check def. of `force()`
+- Question to students: why `force(x)` and not just `x`? (check def. of `force()`
 
 - Note on Garbage Collection:
     
@@ -1267,6 +1288,7 @@ Function factories allow us to create *functions with a memory*.
 #### `r desktop` Example: counter
 
 ```{r}
+# factory for a counter
 new_counter <- function() {
   i <- 0
   function() {
@@ -1285,7 +1307,14 @@ replicate(5, counter_two())
 
 ???
 
-Should be used with moderation. The S6 system is more suitable if your manufactured functions are to manage multiple variables.
+- Should be used with moderation. The _S6_ system is more suitable if your manufactured functions are to manage multiple variables.
+
+- The "state" (`i` here) is tracked in the execution environment. This is a _different_ environment for each function produced by the factory.
+
+    ```r
+    rlang::env_print(counter_one)
+    rlang::env_print(counter_two)
+    ```
 
 ---
 exclude: true

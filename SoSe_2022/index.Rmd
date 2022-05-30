@@ -41,7 +41,7 @@ class: title-slide title-index
   <li> Advanced R Programming </li>
   <ul>
     <li> <a href="Advanced R concepts/Advanced.html">Advanced Concepts</a></li>
-    <li> Functional Programming</li>
+    <li> <a href="functional/functional.html">Functional Programming</a></li>
     <li> Object Oriented Programming</li>
   </ul>
   <li> Performance </li> 
