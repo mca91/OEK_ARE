@@ -5,7 +5,7 @@
     <meta charset="utf-8" />
     <meta name="author" content="Martin C. Arnold" />
     <meta name="author" content="Jens Klenke" />
-    <meta name="date" content="2022-05-23" />
+    <meta name="date" content="2022-05-31" />
     <script src="Advanced_files/header-attrs/header-attrs.js"></script>
     <link href="Advanced_files/remark-css/default.css" rel="stylesheet" />
     <script src="Advanced_files/clipboard/clipboard.min.js"></script>
@@ -187,7 +187,7 @@ Find out what `-&gt;` does and think of an application where it might be useful.
 
 - `-&gt;` is the right-assignment operator
 
-- The precedence relation is `-&gt;` &gt;&gt; `&lt;-` &gt;&gt; `=` so `x &lt;- 1 -&gt; b` is another working alternative to the last line on the previous slide
+- The precedence relation is `-&gt;` &gt;&gt; `&lt;-` &gt;&gt; `=` so `x &lt;- 1 -&gt; b` is another working alternative to the last line on the previous slide.
 
 ---
 ## Assignment Operators
@@ -281,11 +281,11 @@ ref(x, character = TRUE)
 ```
 
 ```
-## █ [1:0x1342539c8] &lt;chr&gt; 
-## ├─[2:0x147ae3cc8] &lt;string: "a"&gt; 
-## ├─[2:0x147ae3cc8] 
-## ├─[3:0x1106f4108] &lt;string: "abc"&gt; 
-## └─[4:0x1178e04e0] &lt;string: "d"&gt;
+## █ [1:0x10900f248] &lt;chr&gt; 
+## ├─[2:0x12b2ced78] &lt;string: "a"&gt; 
+## ├─[2:0x12b2ced78] 
+## ├─[3:0x10495fc88] &lt;string: "abc"&gt; 
+## └─[4:0x12b505670] &lt;string: "d"&gt;
 ```
 ]]]
 
@@ -329,7 +329,7 @@ obj_addr(x)
 ```
 
 ```
-## [1] "0x13560fcc8"
+## [1] "0x10900fbf8"
 ```
 
 ```r
@@ -337,7 +337,7 @@ obj_addr(y)
 ```
 
 ```
-## [1] "0x145031658"
+## [1] "0x109a51258"
 ```
 ]]
 ]]]
@@ -512,15 +512,15 @@ ref(l1, l2)
 ```
 
 ```
-## █ [1:0x136c206b8] &lt;list&gt; 
-## ├─[2:0x1421c39e8] &lt;dbl&gt; 
-## ├─[3:0x1421c3a20] &lt;dbl&gt; 
-## └─[4:0x1421c3a58] &lt;dbl&gt; 
+## █ [1:0x13b0c5768] &lt;list&gt; 
+## ├─[2:0x106033f20] &lt;dbl&gt; 
+## ├─[3:0x106033ee8] &lt;dbl&gt; 
+## └─[4:0x106033eb0] &lt;dbl&gt; 
 ##  
-## █ [5:0x10740a7a8] &lt;list&gt; 
-## ├─[2:0x1421c39e8] 
-## ├─[3:0x1421c3a20] 
-## └─[6:0x1421c3b38] &lt;dbl&gt;
+## █ [5:0x13b3404a8] &lt;list&gt; 
+## ├─[2:0x106033f20] 
+## ├─[3:0x106033ee8] 
+## └─[6:0x106033dd0] &lt;dbl&gt;
 ```
 
 ]
@@ -853,15 +853,15 @@ lobstr::ref(x)
 .pull-right[
 
 ```
-## █ [1:0x144ce2db0] &lt;list&gt; 
-## └─[2:0x135639c48] &lt;int&gt;
+## █ [1:0x109555ad0] &lt;list&gt; 
+## └─[2:0x109b1d780] &lt;int&gt;
 ```
 
 ```
-## █ [1:0x14401b348] &lt;list&gt; 
-## ├─[2:0x135639c48] &lt;int&gt; 
-## └─█ [3:0x144ce2db0] &lt;list&gt; 
-##   └─[2:0x135639c48]
+## █ [1:0x13b38a248] &lt;list&gt; 
+## ├─[2:0x109b1d780] &lt;int&gt; 
+## └─█ [3:0x109555ad0] &lt;list&gt; 
+##   └─[2:0x109b1d780]
 ```
 ]]]
 
@@ -1087,9 +1087,9 @@ lobstr::ref(funs)
 ```
 
 ```
-## █ [1:0x1421efac8] &lt;list&gt; 
-## ├─[2:0x130c1d1f8] &lt;fn&gt; 
-## └─[3:0x130c1d2a0] &lt;fn&gt;
+## █ [1:0x109a1bf88] &lt;list&gt; 
+## ├─[2:0x1058bc0b8] &lt;fn&gt; 
+## └─[3:0x1058bbfd8] &lt;fn&gt;
 ```
 
 ```r

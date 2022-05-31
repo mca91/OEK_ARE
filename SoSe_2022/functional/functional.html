@@ -169,7 +169,7 @@ randomise(mean)
 ```
 
 ```
-## [1] 0.01067155
+## [1] -0.031783
 ```
 
 ```r
@@ -177,7 +177,7 @@ randomise(sum)
 ```
 
 ```
-## [1] 17.98681
+## [1] 14.57701
 ```
 
 ]
@@ -552,13 +552,13 @@ map(1:3, rnorm, mean = c(100, 10, 1))
 
 ```
 ## [[1]]
-## [1] 99.31686
+## [1] 98.7415
 ## 
 ## [[2]]
-## [1] 100.13788  10.42081
+## [1] 100.467999   9.485596
 ## 
 ## [[3]]
-## [1] 100.400949  10.334571   1.197781
+## [1] 100.169561   9.844475  -1.502419
 ```
 ]]]
 
@@ -603,7 +603,7 @@ map_dbl(trims, ~ mean(x, trim = .x))
 ```
 
 ```
-## [1] -3.62166228 -0.02238374 -0.00219079 -0.02972790
+## [1] 2.89431086 0.02793236 0.04534637 0.10683597
 ```
 
 This is equivalent to:
@@ -614,7 +614,7 @@ map_dbl(trims, function(trim) mean(x, trim = trim))
 ```
 
 ```
-## [1] -3.62166228 -0.02238374 -0.00219079 -0.02972790
+## [1] 2.89431086 0.02793236 0.04534637 0.10683597
 ```
 
 ]]]
@@ -710,10 +710,8 @@ by_drive %&gt;%
 ```
 
 ```
-## 2-Wheel Drive, Front  2-Wheel Drive, Rear        4-Wheel Drive 
-##            -3.749006            -1.467226            -1.816750 
-##      All Wheel Drive 
-##            -1.582750
+## 2-Wheel Drive, Front  2-Wheel Drive, Rear        4-Wheel Drive      All Wheel Drive 
+##            -3.749006            -1.467226            -1.816750            -1.582750
 ```
 
 ---
@@ -731,10 +729,8 @@ vapply(models, function(x) coef(x)[[2]], double(1))
 ```
 
 ```
-## 2-Wheel Drive, Front  2-Wheel Drive, Rear        4-Wheel Drive 
-##            -3.749006            -1.467226            -1.816750 
-##      All Wheel Drive 
-##            -1.582750
+## 2-Wheel Drive, Front  2-Wheel Drive, Rear        4-Wheel Drive      All Wheel Drive 
+##            -3.749006            -1.467226            -1.816750            -1.582750
 ```
 
 **`for()` loop**
@@ -1443,7 +1439,7 @@ rlang::env_print(cube_root)     # inspect enclosing environment
 ```
 
 ```
-## &lt;environment: 0x1205cd7a8&gt;
+## &lt;environment: 0x12adb6d20&gt;
 ## Parent: &lt;environment: global&gt;
 ## Bindings:
 ## • n: &lt;dbl&gt;

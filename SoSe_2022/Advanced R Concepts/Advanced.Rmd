@@ -155,7 +155,7 @@ Find out what `->` does and think of an application where it might be useful.
 
 - `->` is the right-assignment operator
 
-- The precedence relation is `->` >> `<-` >> `=` so `x <- 1 -> b` is another working alternative to the last line on the previous slide
+- The precedence relation is `->` >> `<-` >> `=` so `x <- 1 -> b` is another working alternative to the last line on the previous slide.
 
 ---
 ## Assignment Operators
