@@ -180,7 +180,7 @@ cars2018 %>%
 2. This a a good example of a quite complex operation which is relatively easy to comprehend by only looking at the code.
     ```{r}
     nm <- names(trans)
-    mtcars[nm] <- map2(trans, cars2018[nm], function(f, var) f(var))
+    cars2018[nm] <- map2(trans, cars2018[nm], function(f, var) f(var))
     ```
 
     - The functions in `trans` are intended to modify certain columns in `cars2018` (column names are provided as entry names in `trans`)
@@ -201,7 +201,7 @@ cars2018 %>%
     
     - We could've also used the formula interface in `map2()` (which is even more compact) but the result looks rather cryptic:
       ```{r}
-      mtcars[nm] <- map2(nm, mtcars[nm], ~ .x(.y))
+      cars2018[nm] <- map2(nm, cars2018[nm], ~ .x(.y))
       ```
     
     - You should decide what you consider the most comprehensible!

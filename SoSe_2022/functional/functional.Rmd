@@ -1027,12 +1027,12 @@ pmap(params, runif)
     )
     
     nm <- names(trans)
-    mtcars[nm] <- map2(trans, cars2018[nm], function(f, var) f(var))
+    cars2018[nm] <- map2(trans, cars2018[nm], function(f, var) f(var))
     ```
 
 3. Compare and contrast the `map2()` approach to this `map()` approach:
     ```{r, eval=F}
-    mtcars[nm] <- map(nm, ~ trans[[.x]](cars2018[[.x]]))
+    cars2018[nm] <- map(nm, ~ trans[[.x]](cars2018[[.x]]))
     ```
 
 ]
