@@ -71,6 +71,40 @@ plot.prime <- function(x = list(), coord, ...) {
 
 plot(x, coord = "polar", pch = 19, cex = 0.5, col = "red")
 
+summary.prime <- function(x) {
+  if(class(x)  == "prime") {
+    x <- unlist(x)
+    out <- list(
+      name = quote(x),
+      n = length(x),
+      min = min(x),
+      max = max(x)
+    )
+    class(out) <- "summary.prime"
+    return(out)
+  } else {
+    message("Object not of class prime!")
+  }
+}
+
+my_primes <- new_prime(c(3L, 5L, 7L))
+
+summary(my_primes)
+
+# 3-2
+print.summary.prime <- function(x) {
+  if(class(x)  == "summary.prime") {
+    cat(
+      "summary for", x$name, ":\n\n",
+      x$n, "prime numbers between", x$min, "to", x$max
+    )
+  } else {
+    message("Object not of class summary.prime!")
+  }
+}
+
+# now with print method
+summary(my_primes)
 
 
 

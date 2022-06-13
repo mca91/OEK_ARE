@@ -81,12 +81,69 @@ s3_methods_class("table")
 Interestingly, the table class has a number of methods designed to help plotting with base graphics.
 
 
+### 3.
+```{r}
+prime <- function(x = integer()) {
+  validate_prime(new_prime(x))
+}
 
+validate_prime <- function(x = list()) {
+  sapply(
+    unique(unlist(x)), function(z) {
+      if(!all(z==2 || z %% 2:(z-1) > 0)) {
+        stop('Input contains non-prime number(s)!', call. = F)
+      }
+    } 
+  )
+  x
+}
 
+new_prime <- function(x = integer()) {
+  stopifnot(is.integer(x))
+  x <- list(x)
+  class(x) <- 'prime'
+  x
+}
+```
 
+```{r}
+summary.prime <- function(x) {
+  if(class(x)  == "prime") {
+    x <- unlist(x)
+    out <- list(
+        name = quote(x),
+        n = length(x),
+        min = min(x),
+        max = max(x)
+        )
+    class(out) <- "summary.prime"
+    return(out)
+  } else {
+    message("Object not of class prime!")
+  }
+}
 
+my_primes <- new_prime(c(3L, 5L, 7L))
 
+summary(my_primes)
+```
+# 3-2
 
+```{r}
+print.summary.prime <- function(x) {
+  if(class(x)  == "summary.prime") {
+    cat(
+      "summary for", x$name, ":\n\n",
+      x$n, "prime numbers between", x$min, "to", x$max
+    )
+  } else {
+    message("Object not of class summary.prime!")
+  }
+}
+
+# now with print method
+summary(my_primes)
+```
 
 
 
