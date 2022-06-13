@@ -116,7 +116,20 @@ data %>%
   ggplot2::facet_wrap(~class)
 
 
+immowelt %>%
+  group_by(efficiency_class) %>%
+#  summarise(N = n()) %>%
+  ggplot(aes(x = efficiency_class)) +
+  geom_bar() +
+  theme_minimal()
+
 # regressions
+
+
+immowelt %>%
+  mutate(efficiency_class = as.numeric(efficiency_class)) %>%
+  filter(!is.na(efficiency_class), !is.na(building_year)) %>%
+  summarize(correlation = cor(efficiency_class, building_year, method = 'spearman'))
 
 str(data)
 data_lm <- data %>%
@@ -130,7 +143,7 @@ lm(cold_rent ~ zipcode + efficiency_class + rooms + building_year + square_meter
 summary(lm(cold_rent ~ zipcode  + efficiency_class + rooms + building_year + square_meter + service_charges, data_lm))
 summary(lm(cold_rent ~ city + efficiency_class + rooms + building_year + square_meter + service_charges, data_lm))
 
-
+lm(cold_rent ~ zipcode  + efficiency_class + rooms + building_year + square_meter + service_charges, immowelt)
 
 ### --- sql data bank 
 appointments <- readr::read_csv(here::here('SoSe_2022/datasets/appointments.csv'))
@@ -239,8 +252,7 @@ metro_db %>%
 # own function for theme 
 # function for theme 
 
-day_levels = c('Monday', 'Tuesday', 'Wednesday', 
-               'Thursday', 'Friday', 'Saturday', 'Sunday')   
+ 
 
 try <- metro_db %>%
   dplyr::mutate(date_time = as_datetime(date_time),
@@ -263,4 +275,40 @@ metro %>%
 # Jahres vergleich
 
 
+Sys.setlocale("LC_TIME", "English")
 
+A <- metro_db %>%
+  mutate(date_time = as_datetime(date_time)) %>%
+  mutate(weekday = factor(weekdays(.$date_time),
+                   levels = day_levels))
+
+factor(weekdays(metro_db$date_time)),levels = day_levels)
+
+
+Dienstag Donnerstag Freitag Mittwoch Montag Samstag Sonntag
+
+"Monday"    "Tuesday"   "Wednesday" "Thursday"  "Friday"    "Saturday"  "Sunday"  
+
+
+
+A_1 <- A %>%
+  slice_sample(n = 1000)
+
+A_1 %>%
+  ggplot(aes(x = rain_1h, y = traffic_volume)) +
+  geom_point() +
+  facet_grid(~weekday)
+  
+A_1 %>%
+  ggscatt(x = 'rain_1h', y = 'traffic_volume') 
+
+
+
+names(A)
+
+
+
+con <- DBI::dbConnect(
+  drv = RSQLite::SQLite(),
+  dbname = 'data/assignment_1.sqlite3'
+) 

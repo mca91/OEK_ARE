@@ -33,6 +33,14 @@ htmltools::tagList(
 )
 ```
 
+```{r moon_reader, include=FALSE, eval = FALSE}
+# setup for moon reader
+# copy it to console
+options(servr.interval = 0.5)
+xaringan::inf_mr()
+```
+
+
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = FALSE, warning=FALSE, message=FALSE)
 options(htmltools.dir.version = FALSE)
@@ -98,6 +106,10 @@ class: left, top
     
 - We will elaborate key principles in OOP with R, thereby focusing on S3
 ]
+
+???
+S4 already encountered?
+RC implementiert gekapselte Objektorientierung
 
 ---
 class: left, top
@@ -700,7 +712,7 @@ plot(x, coord = "polar", pch = 19, cex = 0.5, col = "red")
 ```
 
 ---
-class: left, top
+class: left, top, exercise_slide
 ## Exercises
 
 1. Read the source code for `t()` and `t.test()` and confirm that `t.test()` is an S3 generic and not an S3 method. What happens if you create an object with class `test` and call `t()` with it? Why?
@@ -712,7 +724,7 @@ class: left, top
   1. A `summary()` method should do some computations and return an object of class `summary_print` but *not* print the results
   
   2. A separate `print()` method for `summary_prime` objects should output the results in an appealing format
-  
+
 ---
 class: left, top
 ## S3 Inheritance

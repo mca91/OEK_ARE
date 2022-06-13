@@ -5,7 +5,7 @@
     <meta charset="utf-8" />
     <meta name="author" content="Martin C. Arnold" />
     <meta name="author" content="Jens Klenke" />
-    <meta name="date" content="2022-03-22" />
+    <meta name="date" content="2022-06-12" />
     <script src="OOP_files/header-attrs/header-attrs.js"></script>
     <link href="OOP_files/remark-css/default.css" rel="stylesheet" />
     <script src="OOP_files/clipboard/clipboard.min.js"></script>
@@ -33,6 +33,9 @@
   </head>
   <body>
     <textarea id="source">
+
+
+
 
 
 
@@ -90,6 +93,10 @@ class: left, top
     
 - We will elaborate key principles in OOP with R, thereby focusing on S3
 ]
+
+???
+S4 already encountered?
+RC implementiert gekapselte Objektorientierung
 
 ---
 class: left, top
@@ -528,7 +535,7 @@ s3_get_method(print.lm)
 ##     cat("\n")
 ##     invisible(x)
 ## }
-## &lt;bytecode: 0x0000000021422248&gt;
+## &lt;bytecode: 0x0000018b076da488&gt;
 ## &lt;environment: namespace:stats&gt;
 ```
 ]]
@@ -569,10 +576,9 @@ class: left, top
   ```
   
   ```
-  ##  [1] coefficients  residuals     effects       rank          fitted.values
-  ##  [6] assign        qr            df.residual   xlevels       call         
-  ## [11] terms         model        
-  ## &lt;0 rows&gt; (or 0-length row.names)
+  ##  [1] coefficients  residuals     effects       rank          fitted.values assign       
+  ##  [7] qr            df.residual   xlevels       call          terms         model        
+  ## &lt;0 Zeilen&gt; (oder row.names mit Länge 0)
   ```
   
 ---
@@ -665,14 +671,6 @@ prime &lt;- function(x = integer()) {
 (x &lt;- prime(c(3L, 5L, 7L, 11L)))
 ```
 
-```
-## [[1]]
-## [1]  3  5  7 11
-## 
-## attr(,"class")
-## [1] "prime"
-```
-
 
 ```
 ## [1] "prime"
@@ -693,7 +691,7 @@ class: left, top
   ```
   ## function (x, ...) 
   ## UseMethod("mean")
-  ## &lt;bytecode: 0x0000000016945c58&gt;
+  ## &lt;bytecode: 0x0000018b736331c0&gt;
   ## &lt;environment: namespace:base&gt;
   ```
   

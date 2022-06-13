@@ -1,0 +1,41 @@
+---
+title: "Exercise Solutions Introduction"
+author: 'Jens Klenke' 
+output: 
+  html_document:
+   css: ["../assets/ude_fonts.css", "../assets/ude.css", "../assets/title_slides.css", "../assets/custom.css"]
+---
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
+```
+
+```{r xaringanExtra-clipboard_2, echo=FALSE}
+# copy button styles mainly in ude.css 
+# https://github.com/gadenbuie/xaringanExtra
+htmltools::tagList(
+  xaringanExtra::use_clipboard(
+    button_text = "<i class=\"fa fa-clipboard\"></i>",
+    success_text = "<i class=\"fa fa-check\" style=\"color: #00ff00\"></i>",
+    error_text = "<i class=\"fa fa-times-circle\" style=\"color: #F94144\"></i>"),
+  rmarkdown::html_dependency_font_awesome() 
+  )
+```
+
+# Slide 18
+
+### 1. 
+  Because of S3’s generic.class() naming scheme, both functions may initially look similar, while they are in fact unrelated.
+
+t.test() is a generic function that performs a t-test.
+t.data.frame() is a method that gets called by the generic t() to transpose data frame input.
+Due to R’s S3 dispatch rules, t.test() would also get called when t() is applied to an object of class test
+
+### 2.
+
+It returns an object of the class ecdf (empirical cumulative distribution function) with the superclasses stepfun and function. The ecdf object is built on the base type closure (a function). The expression, which was used to create it (rpois(100, 10)), is stored in the call attribute.
+
+### 3.
+
+This code returns a table object, which is built upon the integer type. The attribute dimnames is used to name the elements of the integer vector.
+
+
