@@ -5,7 +5,7 @@
     <meta charset="utf-8" />
     <meta name="author" content="Martin C. Arnold" />
     <meta name="author" content="Jens Klenke" />
-    <meta name="date" content="2022-03-22" />
+    <meta name="date" content="2022-06-20" />
     <script src="MeasuringProfiling_files/header-attrs/header-attrs.js"></script>
     <link href="MeasuringProfiling_files/remark-css/default.css" rel="stylesheet" />
     <script src="MeasuringProfiling_files/clipboard/clipboard.min.js"></script>
@@ -52,7 +52,7 @@ class: title-slide title-measuring center middle
 
 - Measuring Performance: Profiling and Microbenchmarking
 
-- (Why) is R slow?
+- (Why) is `R` slow?
 
 **Remaining classes:**
 
@@ -76,7 +76,7 @@ library(bench)
 
 - **Profiling** means measuring run time of our code *line-by-line* using realistic inputs in order to identify *bottlenecks*.
 
-- After identifying bottlenecks we experiment with equivalent alternatives of code and find the fastest using a **microbenchmark**.
+- After identifying bottlenecks we experiment with alternatives and find the fastest using a **microbenchmark**.
 
 - We will use the packages `profvis` and `bench` for profiling and benchmarking. 
 
@@ -95,9 +95,9 @@ It’s tempting to think you just know where the bottlenecks in your code are. I
 
 .smaller[
 
-- `Rprof()` is a build-in *sampling profiler*. It keeps track of the *function call stack* at regularly sampled intervals.
+- `Rprof()` is a build-in **sampling profiler**. It keeps track of the **function call stack** at regularly sampled intervals.
 
-- Note: results are *stochastic* &amp;mdash; we never run a function under the same conditions twice (memory usage, CPU load etc.) 
+- Note: results are *stochastic*&amp;mdash;we never run a function under the same conditions twice (think memory usage, CPU load, etc.) 
 
 .blockquote.exercise[
 #### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example: profiling a call of `replicate()`
@@ -125,6 +125,8 @@ writeLines(readLines(tmp))
 ---
 ## Visualising profiles: `profvis::profvis()`
 
+&lt;br&gt;
+
 .smaller[
 .blockquote.exercise[
 #### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Exercise: profiling nested functions
@@ -133,7 +135,7 @@ Profile a call of `f()` and visualise the results using `profvis::profvis()`.
 
 
 ```r
-# define some nested example functions
+# define some (nested) example functions
 f &lt;- function() {
   pause(0.1)
   g()
@@ -166,6 +168,8 @@ h &lt;- function() {
 
 ---
 ## Visualising profiles: `profvis::profvis()`
+
+&lt;br&gt;
 
 .smaller[
 .blockquote.exercise[
@@ -206,10 +210,12 @@ background-size: 650px
 ---
 ## Memory Profiling
 
+&lt;br&gt;
+
 .blockquote.exercise[
 #### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Exercise: extensive garbage collection
 
-The following code generates a large number of short-lived objects by *copy-on-modification*.
+The following code generates a large number of short-lived objects by **copy-on-modification**.
 
 What does `profvis()` reveal?
 
@@ -240,6 +246,8 @@ profvis({
 
 Sometimes code statements seem fairly innocent but are very inefficient both when it comes to memory and speed.
 
+&lt;br&gt;
+
 .blockquote.exercise[
 #### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Exercise: coercion to another type
 
@@ -266,13 +274,15 @@ background-size: 650px
 ---
 ## Profiling &amp;mdash; some notes and hints
 
-- C/C++ (or other compiled) code cannot be profiled
+&lt;br&gt;
 
-- We also cannot profile what happens *inside* primitive functions, e.g., `sum()` and `sqrt()` (these functions are written in C or FORTRAN).
+- `C`/`C++` (or other compiled) code cannot be profiled
 
-  We thus cannot use profiling to see whether the code is slow due because something further down the call stack is slow.
+- We also cannot profile what happens *inside* *primitive functions*, e.g., `sum()` and `sqrt()` (these functions are written in `C` or `FORTRAN`).
+
+  We thus cannot use profiling to see whether the code is slow because something further down the call stack is slow.
   
-- Profiling is just another reason to **break your code into functions** so that the profiler can give useful information about where time is being spent
+- Profiling is another good reason to **break your code into functions** so that the profiler can give useful information about where time is being spent
 
 ---
 class: segue-red
@@ -282,9 +292,8 @@ class: segue-red
 ## What is a Microbenchmark?
 
 &lt;br&gt;
-&lt;br&gt;
 
-*A microbenchmark is a program designed to test a very small snippets of code for a specific task. Microbenchmarks are always artificial and they are not intended to represent normal use.*
+*"A microbenchmark is a program designed to test a very small snippets of code for a specific task. Microbenchmarks are always artificial and they are not intended to represent normal use."*
 
 - We usually speak of milliseconds (ms), microseconds (µs), or nanoseconds (ns) here. 
 
@@ -296,10 +305,12 @@ class: segue-red
   
   A deep understanding of quantum physics is not very helpful when baking cookies.
   
-- There are several R packages for microbenchmarking. We will rely on the `bench` package by Hester (2019) which has the most accurate timer function currently available in R.
+- There are several R packages for microbenchmarking. We will rely on the `bench` package by Hester (2022) which has the most accurate timer function currently available in `R`.
 
 ---
 ## Microbenchmarking &amp;mdash; the `bench` package
+
+&lt;br&gt;
 
 - `bench` is part of the `tidyerse`. It uses the highest precision APIs available for the common operating system (often nanoseconds-level!)
 
@@ -309,7 +320,7 @@ class: segue-red
 
 - Benchmarking across a grid of input values with `bench::press()` is possible
 
-- The package also has methods for neat visualization of the results using `ggplot2::autoplot()` (default plot type is [beeswarm](https://flowingdata.com/2016/09/08/beeswarm-plot-in-r-to-show-distributions/)) 
+- The package also has methods for neat visualisation of the results using `ggplot2::autoplot()` (default plot type is [beeswarm](https://flowingdata.com/2016/09/08/beeswarm-plot-in-r-to-show-distributions/)) 
 
 ---
 ## Microbenchmarking &amp;mdash; `bench::mark()`
@@ -328,11 +339,11 @@ x &lt;- runif(100)
 ```
 
 ```
-## # A tibble: 2 x 6
+## # A tibble: 2 × 6
 ##   expression      min   median `itr/sec` mem_alloc `gc/sec`
 ##   &lt;bch:expr&gt; &lt;bch:tm&gt; &lt;bch:tm&gt;     &lt;dbl&gt; &lt;bch:byt&gt;    &lt;dbl&gt;
-## 1 sqrt(x)       300ns    400ns  1758118.      848B        0
-## 2 x^0.5         2.3us    2.4us   378411.      848B        0
+## 1 sqrt(x)       123ns    164ns  4033369.      848B        0
+## 2 x^0.5         902ns    984ns   888343.      848B        0
 ```
 
 
@@ -347,11 +358,7 @@ plot(lb)
 .blockquote.exercise[
 #### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example: "the fastest square root"
 
-
-```r
-# hab hier die eval ausgeschaltet, da es bei mir nicht lief!
-plot(lb)
-```
+&lt;img src="MeasuringProfiling_files/figure-html/unnamed-chunk-10-1.png" style="display: block; margin: auto;" /&gt;
 
 ]
 
@@ -395,20 +402,25 @@ Use `check = FALSE` to disable checking of consistent results.
 ---
 ## Microbenchmarking &amp;mdash; `bench::press()`
 
-Sometimes it is useful to benchmark against a grid of parameters. This can be done using `bench::press()`.
+Sometimes it is useful to benchmark against a parameter grid. This can be done using `bench::press()`.
+
+&lt;br&gt;
 
 .smaller[
 .blockquote.exercise[
 #### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; **Exercise: benchmark against parameter grid**
 
-Benchmark `create_df()` for combination of `rows = c(10000, 100000)` and `cols = c(10, 100)`.
+Benchmark subsetting functions for dataframes generated by `create_df()` for combination of `rows = c(10000, 100000)` and `cols = c(10, 100)`.
 
 
 ```r
 create_df &lt;- function(rows, cols) {
-  as.data.frame(matrix(
+  as.data.frame(
+    matrix(
       unlist(replicate(cols, runif(rows, 1, 1000), simplify = FALSE)),
-      nrow = rows, ncol = cols))
+      nrow = rows, ncol = cols
+      )
+    )
 }
 ```
 
@@ -428,7 +440,7 @@ create_df &lt;- function(rows, cols) {
 
   How do the estimates from `system.time()` compare to those from `bench::mark()`? Why are they different?
 
-2. Here are two other ways to compute the square root of a vector. Which do you think will be fastest? Use microbenchmarking to test your answers.
+2. Here are two other ways to compute the square root of a numeric vector. Which do you think will be fastest? Use microbenchmarking to verify.
 
 ```r
     x^(1/2)
@@ -436,6 +448,7 @@ create_df &lt;- function(rows, cols) {
 ```
 
 ---
+class: segue-red
 ### (Why) is R slow?
 
 ---
@@ -443,9 +456,9 @@ create_df &lt;- function(rows, cols) {
 
 Think of R as both the definition of a language and its implementation.
 
-**`R` language**
+**The `R` language**
 
-- The R language defines meaning of code statements and how they work (*very abstract*) 
+- The `R` language defines meaning of code statements and how they work (*very abstract*) 
 
 - R is an extremely dynamic language, i.e., you have *a lot* freedom in modifying objects after they have been created
 
@@ -468,7 +481,7 @@ But:
 ```r
 x &lt;- 0L
 for (i in 1:1e6) {
-  x &lt;- x + 1
+  x &lt;- x + 1L
 }
 ```
 
@@ -477,9 +490,9 @@ for (i in 1:1e6) {
 ---
 ## (Why) is R slow?
 
-**Implementation**
+**The `R` Implementation**
 
-- Processes R code and computes results; commonly base R (*GNU-R*) from [cran.r-project.org](https://cran.r-project.org/src/base/R-3/)
+- Processes `R` code and computes results; commonly base R (*GNU-R*) from [cran.r-project.org](https://cran.r-project.org/src/base/R-3/)
 
 - R (written in *FORTRAN*, *R*, and *C*) is more than 20 years old was not intended for super fast computations
 
@@ -493,18 +506,22 @@ for (i in 1:1e6) {
 ---
 ## (Why) is R slow? &amp;mdash; Name Look-up with Mutable Environments
 
+&lt;br&gt;
+
 **Remember Lexical Scoping:**
 
 *"Values of variables are searched for in the environment the function belongs to."*
 
-- If a value is not found in the environment in which a function was defined, search steps-up to the *parent environment*
+- If a value is not found in the environment in which a function was defined, the search steps-up to the *parent environment*
 
 - This continues down the sequence of parent environments until the top-level environment (usually the *global environment* or a package namespace) is reached
 
-- After the top-level environment, the search continues down the *search list* until we hit the *empty environment*.
+- After reaching the top-level environment, the search continues down the *search list* until we hit the *empty environment*.
 
 ---
 ## (Why) is R slow? &amp;mdash; Name Look-up with Mutable Environments
+
+&lt;br&gt;
 
 .smaller[
 .blockquote.exercise[
@@ -537,6 +554,8 @@ search()
 
 ---
 ## (Why) is R slow? &amp;mdash; Name Look-up with Mutable Environments
+
+&lt;br&gt;
 
 .smaller[
 .blockquote.exercise[
@@ -602,6 +621,8 @@ bench::mark(g(x), h(x), i(x))
 ---
 ## (Why) is R slow? &amp;mdash; Look-up with Mutable Environments
 
+&lt;br&gt;
+
 .smaller[
 .blockquote.exercise[
 #### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example: function calls in nested environments
@@ -632,6 +653,8 @@ f4 &lt;- set_env(f, random_env(environment(f3)))
 ---
 ## (Why) is R slow? &amp;mdash; Look-up with Mutable Environments
 
+&lt;br&gt;
+
 .smaller[
 .blockquote.exercise[
 #### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example: function calls in nested environments &amp;mdash; ctd.
@@ -659,6 +682,8 @@ Each additional environment between `f()` and the global environment where `+` a
 ## (Why) is R slow? &amp;mdash; Lazy Evaluation Overhead
 
 Remember that function arguments are lazy &amp;mdash; they are only evaluated when actually needed. 
+
+&lt;br&gt;
 
 .blockquote.exercise[
 #### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example: lazy evaluation
@@ -689,6 +714,8 @@ f1(stop("My dog speaks Chinese"))
 
 Promises are very convenient but should be avoided if speed is crucial.
 
+&lt;br&gt;
+
 .blockquote.exercise[
 #### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example: lazy evaluation &amp;mdash; ctd.
 
@@ -700,11 +727,11 @@ bench::mark(f1(), f2())
 ```
 
 ```
-## # A tibble: 2 x 6
+## # A tibble: 2 × 6
 ##   expression      min   median `itr/sec` mem_alloc `gc/sec`
 ##   &lt;bch:expr&gt; &lt;bch:tm&gt; &lt;bch:tm&gt;     &lt;dbl&gt; &lt;bch:byt&gt;    &lt;dbl&gt;
-## 1 f1()              0    100ns  4848670.        0B        0
-## 2 f2()          200ns    400ns  2062026.        0B        0
+## 1 f1()              0     41ns 10628917.        0B        0
+## 2 f2()          123ns    164ns  4164116.        0B        0
 ```
 
 Arguments trigger promises each time the function is *called*. Superfluous arguments thus lead to avoidable overhead.
@@ -722,9 +749,9 @@ Arguments trigger promises each time the function is *called*. Superfluous argum
 
 - We are (mostly) happy to accept the slower speed for the time saved from not having to reinvent the wheel each time we want to implement a new function that, e.g., computes a test statistic.
 
-    (meanwhile there are 18966 packages available on [CRAN](https://cran.r-project.org/) with many useful functions waiting to be discovered by you!)
+    (meanwhile (2022-06-20) there are 18425 packages available on [CRAN](https://cran.r-project.org/) with many useful functions waiting to be discovered by you!)
 
-- We cannot overcome the circumstances described in this section. However, there are a few things to keep in mind when you want to write high performance code. We'll discuss these in the next chapter.
+- We cannot overcome the idiosyncrasies of `R` described in this section. However, there are a few things and tricks to keep in mind if you want to write performant code. We'll discuss these in the next Lecture.
 
 ---
 class: segue-red
@@ -785,6 +812,19 @@ if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
     deleted = true;
   });
 })();
+// add `data-at-shortcutkeys` attribute to <body> to resolve conflicts with JAWS
+// screen reader (see PR #262)
+(function(d) {
+  let res = {};
+  d.querySelectorAll('.remark-help-content table tr').forEach(tr => {
+    const t = tr.querySelector('td:nth-child(2)').innerText;
+    tr.querySelectorAll('td:first-child .key').forEach(key => {
+      const k = key.innerText;
+      if (/^[a-z]$/.test(k)) res[k] = t;  // must be a single letter (key)
+    });
+  });
+  d.body.setAttribute('data-at-shortcutkeys', JSON.stringify(res));
+})(document);
 (function() {
   "use strict"
   // Replace <script> tags in slides area to make them executable

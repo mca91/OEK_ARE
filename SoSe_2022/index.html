@@ -5,8 +5,8 @@
     <meta charset="utf-8" />
     <meta name="author" content="Martin Arnold" />
     <meta name="author" content="Jens Klenke" />
-    <meta name="date" content="2022-06-13" />
-    <script src="libs/header-attrs-2.13/header-attrs.js"></script>
+    <meta name="date" content="2022-06-20" />
+    <script src="libs/header-attrs-2.14/header-attrs.js"></script>
     <link href="libs/remark-css-0.0.1/default.css" rel="stylesheet" />
     <meta name="robots" content="noindex">
     <link rel="stylesheet" href="assets/ude_fonts.css" type="text/css" />
@@ -45,7 +45,7 @@ class: title-slide title-index
   &lt;/ul&gt;
   &lt;li&gt; Performance &lt;/li&gt; 
   &lt;ul&gt;
-    &lt;li&gt; Profiling and Benchmarking&lt;/li&gt; 
+    &lt;li&gt; &lt;a href="measuring and profiling/MeasuringProfiling.html"&gt;Profiling and Benchmarking&lt;/a&gt;&lt;/li&gt; 
     &lt;li&gt; Improving Performance&lt;/li&gt;
     &lt;li&gt; Rcpp&lt;/li&gt;
     &lt;li&gt; RcppArmadillo&lt;/li&gt;
@@ -113,6 +113,19 @@ if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
     deleted = true;
   });
 })();
+// add `data-at-shortcutkeys` attribute to <body> to resolve conflicts with JAWS
+// screen reader (see PR #262)
+(function(d) {
+  let res = {};
+  d.querySelectorAll('.remark-help-content table tr').forEach(tr => {
+    const t = tr.querySelector('td:nth-child(2)').innerText;
+    tr.querySelectorAll('td:first-child .key').forEach(key => {
+      const k = key.innerText;
+      if (/^[a-z]$/.test(k)) res[k] = t;  // must be a single letter (key)
+    });
+  });
+  d.body.setAttribute('data-at-shortcutkeys', JSON.stringify(res));
+})(document);
 (function() {
   "use strict"
   // Replace <script> tags in slides area to make them executable

@@ -35,8 +35,11 @@ htmltools::tagList(
 ```
 
 ```{r setup, include=FALSE}
-options(htmltools.dir.version = F)
-knitr::opts_chunk$set(warning = F, message = F)
+#options(htmltools.dir.version = F)
+#knitr::opts_chunk$set(warning = F, message = F)
+knitr::opts_chunk$set(warning=FALSE, message=FALSE)
+options(htmltools.dir.version = FALSE)
+
 
 # packages needed
 library(microbenchmark)
@@ -65,7 +68,7 @@ class: title-slide title-measuring center middle
 
 - Measuring Performance: Profiling and Microbenchmarking
 
-- (Why) is R slow?
+- (Why) is `R` slow?
 
 **Remaining classes:**
 
@@ -88,7 +91,7 @@ library(bench)
 
 - **Profiling** means measuring run time of our code *line-by-line* using realistic inputs in order to identify *bottlenecks*.
 
-- After identifying bottlenecks we experiment with equivalent alternatives of code and find the fastest using a **microbenchmark**.
+- After identifying bottlenecks we experiment with alternatives and find the fastest using a **microbenchmark**.
 
 - We will use the packages `profvis` and `bench` for profiling and benchmarking. 
 
@@ -107,9 +110,9 @@ It’s tempting to think you just know where the bottlenecks in your code are. I
 
 .smaller[
 
-- `Rprof()` is a build-in *sampling profiler*. It keeps track of the *function call stack* at regularly sampled intervals.
+- `Rprof()` is a build-in **sampling profiler**. It keeps track of the **function call stack** at regularly sampled intervals.
 
-- Note: results are *stochastic* &mdash; we never run a function under the same conditions twice (memory usage, CPU load etc.) 
+- Note: results are *stochastic*&mdash;we never run a function under the same conditions twice (think memory usage, CPU load, etc.) 
 
 .blockquote.exercise[
 #### `r desktop` Example: profiling a call of `replicate()`
@@ -136,6 +139,8 @@ sample.interval=100000
 ---
 ## Visualising profiles: `profvis::profvis()`
 
+<br>
+
 .smaller[
 .blockquote.exercise[
 #### `r desktop` Exercise: profiling nested functions
@@ -143,7 +148,7 @@ sample.interval=100000
 Profile a call of `f()` and visualise the results using `profvis::profvis()`.
 
 ```{r}
-# define some nested example functions
+# define some (nested) example functions
 f <- function() {
   pause(0.1)
   g()
@@ -176,6 +181,8 @@ h <- function() {
 
 ---
 ## Visualising profiles: `profvis::profvis()`
+
+<br>
 
 .smaller[
 .blockquote.exercise[
@@ -215,10 +222,12 @@ background-size: 650px
 ---
 ## Memory Profiling
 
+<br>
+
 .blockquote.exercise[
 #### `r desktop` Exercise: extensive garbage collection
 
-The following code generates a large number of short-lived objects by *copy-on-modification*.
+The following code generates a large number of short-lived objects by **copy-on-modification**.
 
 What does `profvis()` reveal?
 
@@ -248,6 +257,8 @@ profvis({
 
 Sometimes code statements seem fairly innocent but are very inefficient both when it comes to memory and speed.
 
+<br>
+
 .blockquote.exercise[
 #### `r desktop` Exercise: coercion to another type
 
@@ -273,13 +284,15 @@ background-size: 650px
 ---
 ## Profiling &mdash; some notes and hints
 
-- C/C++ (or other compiled) code cannot be profiled
+<br>
 
-- We also cannot profile what happens *inside* primitive functions, e.g., `sum()` and `sqrt()` (these functions are written in C or FORTRAN).
+- `C`/`C++` (or other compiled) code cannot be profiled
 
-  We thus cannot use profiling to see whether the code is slow due because something further down the call stack is slow.
+- We also cannot profile what happens *inside* *primitive functions*, e.g., `sum()` and `sqrt()` (these functions are written in `C` or `FORTRAN`).
+
+  We thus cannot use profiling to see whether the code is slow because something further down the call stack is slow.
   
-- Profiling is just another reason to **break your code into functions** so that the profiler can give useful information about where time is being spent
+- Profiling is another good reason to **break your code into functions** so that the profiler can give useful information about where time is being spent
 
 ---
 class: segue-red
@@ -289,9 +302,8 @@ class: segue-red
 ## What is a Microbenchmark?
 
 <br>
-<br>
 
-*A microbenchmark is a program designed to test a very small snippets of code for a specific task. Microbenchmarks are always artificial and they are not intended to represent normal use.*
+*"A microbenchmark is a program designed to test a very small snippets of code for a specific task. Microbenchmarks are always artificial and they are not intended to represent normal use."*
 
 - We usually speak of milliseconds (ms), microseconds (µs), or nanoseconds (ns) here. 
 
@@ -303,10 +315,12 @@ class: segue-red
   
   A deep understanding of quantum physics is not very helpful when baking cookies.
   
-- There are several R packages for microbenchmarking. We will rely on the `bench` package by Hester (2019) which has the most accurate timer function currently available in R.
+- There are several R packages for microbenchmarking. We will rely on the `bench` package by Hester (2022) which has the most accurate timer function currently available in `R`.
 
 ---
 ## Microbenchmarking &mdash; the `bench` package
+
+<br>
 
 - `bench` is part of the `tidyerse`. It uses the highest precision APIs available for the common operating system (often nanoseconds-level!)
 
@@ -316,7 +330,7 @@ class: segue-red
 
 - Benchmarking across a grid of input values with `bench::press()` is possible
 
-- The package also has methods for neat visualization of the results using `ggplot2::autoplot()` (default plot type is [beeswarm](https://flowingdata.com/2016/09/08/beeswarm-plot-in-r-to-show-distributions/)) 
+- The package also has methods for neat visualisation of the results using `ggplot2::autoplot()` (default plot type is [beeswarm](https://flowingdata.com/2016/09/08/beeswarm-plot-in-r-to-show-distributions/)) 
 
 ---
 ## Microbenchmarking &mdash; `bench::mark()`
@@ -344,8 +358,7 @@ plot(lb)
 .blockquote.exercise[
 #### `r desktop` Example: "the fastest square root"
 
-```{r, echo=T, eval =F, fig.width=14, fig.height=5.5, fig.align='center'}
-# hab hier die eval ausgeschaltet, da es bei mir nicht lief!
+```{r, echo=F, eval=T, fig.width=14, fig.height=6, fig.align='center'}
 plot(lb)
 ```
 
@@ -389,19 +402,24 @@ Use `check = FALSE` to disable checking of consistent results.
 ---
 ## Microbenchmarking &mdash; `bench::press()`
 
-Sometimes it is useful to benchmark against a grid of parameters. This can be done using `bench::press()`.
+Sometimes it is useful to benchmark against a parameter grid. This can be done using `bench::press()`.
+
+<br>
 
 .smaller[
 .blockquote.exercise[
 #### `r desktop` **Exercise: benchmark against parameter grid**
 
-Benchmark `create_df()` for combination of `rows = c(10000, 100000)` and `cols = c(10, 100)`.
+Benchmark subsetting functions for dataframes generated by `create_df()` for combination of `rows = c(10000, 100000)` and `cols = c(10, 100)`.
 
 ```{r, eval=F}
 create_df <- function(rows, cols) {
-  as.data.frame(matrix(
+  as.data.frame(
+    matrix(
       unlist(replicate(cols, runif(rows, 1, 1000), simplify = FALSE)),
-      nrow = rows, ncol = cols))
+      nrow = rows, ncol = cols
+      )
+    )
 }
 ```
 
@@ -420,13 +438,14 @@ create_df <- function(rows, cols) {
 
   How do the estimates from `system.time()` compare to those from `bench::mark()`? Why are they different?
 
-2. Here are two other ways to compute the square root of a vector. Which do you think will be fastest? Use microbenchmarking to test your answers.
+2. Here are two other ways to compute the square root of a numeric vector. Which do you think will be fastest? Use microbenchmarking to verify.
 ```{r, eval=F}
     x^(1/2)
     exp(log(x)/2)
 ```
 
 ---
+class: segue-red
 ### (Why) is R slow?
 
 ---
@@ -434,15 +453,15 @@ create_df <- function(rows, cols) {
 
 Think of R as both the definition of a language and its implementation.
 
-**`R` language**
+**The `R` language**
 
-- The R language defines meaning of code statements and how they work (*very abstract*) 
+- The `R` language defines meaning of code statements and how they work (*very abstract*) 
 
 - R is an extremely dynamic language, i.e., you have *a lot* freedom in modifying objects after they have been created
 
 - This dynamism is comfortable because is allows you to iterate your code and alter objects &mdash; there's no need to start from scratch when something doesn't work out!
 
-`r emo::ji('lightning')` Changes for improving speed without breaking existing code are problematic. 
+`r emoji::emoji("lightning")` Changes for improving speed without breaking existing code are problematic. 
 
 ---
 ## (Why) is R slow? &mdash; Slow Code Interpretation
@@ -458,7 +477,7 @@ But:
 ```{r, echo=TRUE, rx =T}
 x <- 0L
 for (i in 1:1e6) {
-  x <- x + 1
+  x <- x + 1L
 }
 ```
 
@@ -467,13 +486,13 @@ for (i in 1:1e6) {
 ---
 ## (Why) is R slow?
 
-**Implementation**
+**The `R` Implementation**
 
-- Processes R code and computes results; commonly base R (*GNU-R*) from [cran.r-project.org](https://cran.r-project.org/src/base/R-3/)
+- Processes `R` code and computes results; commonly base R (*GNU-R*) from [cran.r-project.org](https://cran.r-project.org/src/base/R-3/)
 
 - R (written in *FORTRAN*, *R*, and *C*) is more than 20 years old was not intended for super fast computations
 
-- `r emo::ji('bolt')` tweaking for speed improvements is easier (done by R-core team) but not feasible for end users like us. <br><br> Some alternatives address specific issues:
+- `r emoji::emoji('bolt')` tweaking for speed improvements is easier (done by R-core team) but not feasible for end users like us. <br><br> Some alternatives address specific issues:
 
   - "pretty quick R" [pqR](http://www.pqr-project.org/) (parallelisation of core functions)
   
@@ -483,18 +502,22 @@ for (i in 1:1e6) {
 ---
 ## (Why) is R slow? &mdash; Name Look-up with Mutable Environments
 
+<br>
+
 **Remember Lexical Scoping:**
 
 *"Values of variables are searched for in the environment the function belongs to."*
 
-- If a value is not found in the environment in which a function was defined, search steps-up to the *parent environment*
+- If a value is not found in the environment in which a function was defined, the search steps-up to the *parent environment*
 
 - This continues down the sequence of parent environments until the top-level environment (usually the *global environment* or a package namespace) is reached
 
-- After the top-level environment, the search continues down the *search list* until we hit the *empty environment*.
+- After reaching the top-level environment, the search continues down the *search list* until we hit the *empty environment*.
 
 ---
 ## (Why) is R slow? &mdash; Name Look-up with Mutable Environments
+
+<br>
 
 .smaller[
 .blockquote.exercise[
@@ -517,6 +540,8 @@ search()
 
 ---
 ## (Why) is R slow? &mdash; Name Look-up with Mutable Environments
+
+<br>
 
 .smaller[
 .blockquote.exercise[
@@ -571,6 +596,8 @@ bench::mark(g(x), h(x), i(x))
 ---
 ## (Why) is R slow? &mdash; Look-up with Mutable Environments
 
+<br>
+
 .smaller[
 .blockquote.exercise[
 #### `r desktop` Example: function calls in nested environments
@@ -600,6 +627,8 @@ f4 <- set_env(f, random_env(environment(f3)))
 ---
 ## (Why) is R slow? &mdash; Look-up with Mutable Environments
 
+<br>
+
 .smaller[
 .blockquote.exercise[
 #### `r desktop` Example: function calls in nested environments &mdash; ctd.
@@ -616,6 +645,8 @@ Each additional environment between `f()` and the global environment where `+` a
 ## (Why) is R slow? &mdash; Lazy Evaluation Overhead
 
 Remember that function arguments are lazy &mdash; they are only evaluated when actually needed. 
+
+<br>
 
 .blockquote.exercise[
 #### `r desktop` Example: lazy evaluation
@@ -644,6 +675,8 @@ f1(stop("My dog speaks Chinese"))
 
 Promises are very convenient but should be avoided if speed is crucial.
 
+<br>
+
 .blockquote.exercise[
 #### `r desktop` Example: lazy evaluation &mdash; ctd.
 
@@ -668,9 +701,9 @@ Arguments trigger promises each time the function is *called*. Superfluous argum
 
 - We are (mostly) happy to accept the slower speed for the time saved from not having to reinvent the wheel each time we want to implement a new function that, e.g., computes a test statistic.
 
-    (meanwhile there are `r nrow(available.packages(repos = "http://cran.us.r-project.org"))` packages available on [CRAN](https://cran.r-project.org/) with many useful functions waiting to be discovered by you!)
+    (meanwhile (`r Sys.Date()`) there are `r nrow(available.packages(repos = "http://cran.us.r-project.org"))` packages available on [CRAN](https://cran.r-project.org/) with many useful functions waiting to be discovered by you!)
 
-- We cannot overcome the circumstances described in this section. However, there are a few things to keep in mind when you want to write high performance code. We'll discuss these in the next chapter.
+- We cannot overcome the idiosyncrasies of `R` described in this section. However, there are a few things and tricks to keep in mind if you want to write performant code. We'll discuss these in the next Lecture.
 
 ---
 class: segue-red

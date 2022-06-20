@@ -5,7 +5,7 @@
     <meta charset="utf-8" />
     <meta name="author" content="Martin C. Arnold" />
     <meta name="author" content="Jens Klenke" />
-    <meta name="date" content="2022-06-13" />
+    <meta name="date" content="2022-06-20" />
     <script src="OOP_files/header-attrs/header-attrs.js"></script>
     <link href="OOP_files/remark-css/default.css" rel="stylesheet" />
     <script src="OOP_files/clipboard/clipboard.min.js"></script>
@@ -535,7 +535,7 @@ s3_get_method(print.lm)
 ##     cat("\n")
 ##     invisible(x)
 ## }
-## &lt;bytecode: 0x0000000020baba40&gt;
+## &lt;bytecode: 0x121a2e858&gt;
 ## &lt;environment: namespace:stats&gt;
 ```
 ]]
@@ -576,10 +576,9 @@ class: left, top
   ```
   
   ```
-  ##  [1] coefficients  residuals     effects       rank          fitted.values
-  ##  [6] assign        qr            df.residual   xlevels       call         
+  ##  [1] coefficients  residuals     effects       rank          fitted.values assign        qr            df.residual   xlevels       call         
   ## [11] terms         model        
-  ## &lt;0 Zeilen&gt; (oder row.names mit Länge 0)
+  ## &lt;0 rows&gt; (or 0-length row.names)
   ```
   
 ---
@@ -700,7 +699,7 @@ class: left, top
   ```
   ## function (x, ...) 
   ## UseMethod("mean")
-  ## &lt;bytecode: 0x00000000156ee6e8&gt;
+  ## &lt;bytecode: 0x110b4ff20&gt;
   ## &lt;environment: namespace:base&gt;
   ```
   
@@ -731,16 +730,18 @@ class: left, top
   ```
   
   ```
-  ## # A tibble: 7 x 4
+  ## # A tibble: 9 × 4
   ##   generic class      visible source             
   ##   &lt;chr&gt;   &lt;chr&gt;      &lt;lgl&gt;   &lt;chr&gt;              
-  ## 1 mean    Date       TRUE    base               
-  ## 2 mean    default    TRUE    base               
-  ## 3 mean    difftime   TRUE    base               
-  ## 4 mean    POSIXct    TRUE    base               
-  ## 5 mean    POSIXlt    TRUE    base               
-  ## 6 mean    quosure    FALSE   registered S3method
-  ## 7 mean    vctrs_vctr FALSE   registered S3method
+  ## 1 mean    bench_time FALSE   registered S3method
+  ## 2 mean    Date       TRUE    base               
+  ## 3 mean    default    TRUE    base               
+  ## 4 mean    difftime   TRUE    base               
+  ## 5 mean    integer64  FALSE   registered S3method
+  ## 6 mean    POSIXct    TRUE    base               
+  ## 7 mean    POSIXlt    TRUE    base               
+  ## 8 mean    quosure    FALSE   registered S3method
+  ## 9 mean    vctrs_vctr FALSE   registered S3method
   ```
 ]
 
@@ -758,7 +759,7 @@ head(
 ```
 
 ```
-## # A tibble: 10 x 4
+## # A tibble: 10 × 4
 ##    generic       class visible source
 ##    &lt;chr&gt;         &lt;chr&gt; &lt;lgl&gt;   &lt;chr&gt; 
 ##  1 -             Date  TRUE    base  
