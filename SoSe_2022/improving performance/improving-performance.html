@@ -5,7 +5,7 @@
     <meta charset="utf-8" />
     <meta name="author" content="Martin C. Arnold" />
     <meta name="author" content="Jens Klenke" />
-    <meta name="date" content="2022-03-22" />
+    <meta name="date" content="2022-06-27" />
     <script src="improving-performance_files/header-attrs/header-attrs.js"></script>
     <link href="improving-performance_files/remark-css/default.css" rel="stylesheet" />
     <script src="improving-performance_files/clipboard/clipboard.min.js"></script>
@@ -54,16 +54,15 @@ class: left
 
 ```r
 # packages needed
-library(tidyverse) # for bench package
+library(tidyverse) # for `bench` package
+library(furrr)
 library(parallel)
-library(MonteCarlo)
 ```
 
 &lt;style&gt;
   strong {
     color:#e64626;
   }
-  
 &lt;/style&gt;
 
 &lt;blockquote style ="margin-top:10%;"&gt;
@@ -74,7 +73,7 @@ We should forget about small efficiencies, say about 97% of the time: premature 
 ---
 ## Improving Performance &amp;mdash; Overview
 
-Once profiling has revealed a bottleneck, we need to make it faster. In the following we will discuss some techniques that are broadly useful:
+We already learned how to identify bottlenecks in our code. In the following, we will discuss some techniques that are broadly useful for resolving them:
 
 1. **Look for existing solutions.**
 
@@ -82,7 +81,7 @@ Once profiling has revealed a bottleneck, we need to make it faster. In the foll
 
 2. **Do as little as possible. Be precise.**
 
-    Using optimized functions tailored for specific tasks often makes a big difference.
+    Using optimised functions tailored for specific tasks often makes a big difference.
 
 3. **Vectorise your code.**
 
@@ -90,12 +89,12 @@ Once profiling has revealed a bottleneck, we need to make it faster. In the foll
 
 4. **Parallelise (if possible).**
 
-    Using multiple CPU cores in parallel is enormously helpful when the computation involves a large number of tasks that may be solved independently.
+    Using multiple CPU(s)/cores/threads in parallel is enormously helpful when the computation involves a large number of tasks that may be solved independently.
 
 ---
 ## 1. Look for Existing Solutions
 
-There's a good chance that someone has already tackled the same problem.
+There is a good chance that someone has already tackled the same problem.
 
 - Find out if there is a [Cran Task View](https://cran.rstudio.com/web/views/) related to your problem and search the packages listed there
 
@@ -107,7 +106,7 @@ There's a good chance that someone has already tackled the same problem.
 
 **Record all solutions that you find not just those that immediately appear to be faster!**
 
-- Some solutions might be initially slower but are are easier to optimize and thus end up being faster. 
+- Some solutions might be initially slower but are are easier to optimise and thus end up being faster. 
 
 - Sometimes combining the fastest parts from different approaches is helpful. 
 
@@ -120,16 +119,22 @@ Before we continue, we introduce a rule we have already followed implicitly: the
 
   ***(Lovelace and Gillespie, 2016)***
 
+&lt;center&gt;
 ![:image 30%](../img/goldenR.png)
+&lt;/center&gt;
 
-The techniques discussed next follow this paradigm. If this is not enough, we still may rewrite (some of) the code in C++ using the Rcpp package (discussed in the next chapter).
+The techniques discussed next follow this paradigm. If this is not enough, we still may rewrite (some of) the code in `C++` using the `Rcpp` package (discussed in the next chapter).
 
 ---
 ## 2. Do as Little as Possible
 
 .smaller[
 
+&lt;br&gt;
+
 If you cannot find existing solutions, start by reducing your code to the bare essentials.
+
+&lt;br&gt;
 
 .blockquote.exercise[
 #### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Exercise: coercion of inputs / robustness checks
@@ -155,9 +160,13 @@ apply(Y, 1, sum)
 
 .smaller[
 
-A function is faster if it has less to do &amp;mdash; obvious but often neglected! 
+&lt;br&gt;
+
+A function is faster than an alternativeif it has less to do &amp;mdash; obvious but often neglected! 
 
 **Use functions tailored to specific input and output types / specific problems!**
+
+&lt;br&gt;
 
 .blockquote.exercise[
 #### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Exercise: coercion of inputs / robustness checks &amp;mdash; ctd.
@@ -175,16 +184,19 @@ apply(X, 1, sum)
 ---
 ## 2. Do as Little as Possible
 
+.vcenter[
 .smaller[
 .blockquote.exercise[
 #### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Exercise: searching a vector
 
 What is the fastest way to check if `10` is an element of `1:100`?
 
-]]
+]]]
 
 ---
 ## 2. Do as Little as Possible
+
+&lt;br&gt;
 
 .smaller[
 .blockquote.exercise[
@@ -219,6 +231,8 @@ b &lt;- function() {
 
 Be as explicit as possible.
 
+&lt;br&gt;
+
 .blockquote.exercise[
 #### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example: method dispatch takes time
 
@@ -233,11 +247,11 @@ bench::mark(
 ```
 
 ```
-## # A tibble: 2 x 6
+## # A tibble: 2 × 6
 ##   expression           min   median `itr/sec` mem_alloc `gc/sec`
 ##   &lt;bch:expr&gt;      &lt;bch:tm&gt; &lt;bch:tm&gt;     &lt;dbl&gt; &lt;bch:byt&gt;    &lt;dbl&gt;
-## 1 mean(x)            1.9us    2.2us   433725.    22.7KB     43.4
-## 2 mean.default(x)    900ns      1us   875128.        0B      0
+## 1 mean(x)           1.07µs   1.23µs   767221.    22.7KB       0 
+## 2 mean.default(x) 532.95ns 656.12ns  1427178.        0B     143.
 ```
 ]]
 
@@ -245,7 +259,11 @@ bench::mark(
 ## 2. Do as Little as Possible
 
 .smaller[
+
 Benchmark against alternatives that rely on primitive functions.
+
+&lt;br&gt;
+
 .blockquote.exercise[
 #### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example: primitives are faster
 
@@ -257,11 +275,11 @@ bench::mark(
 ```
 
 ```
-## # A tibble: 2 x 6
+## # A tibble: 2 × 6
 ##   expression            min   median `itr/sec` mem_alloc `gc/sec`
 ##   &lt;bch:expr&gt;       &lt;bch:tm&gt; &lt;bch:tm&gt;     &lt;dbl&gt; &lt;bch:byt&gt;    &lt;dbl&gt;
-## 1 mean.default(x)     900ns      1us   755040.        0B     75.5
-## 2 sum(x)/length(x)    300ns    400ns  2196981.        0B      0
+## 1 mean.default(x)     533ns    615ns  1478512.        0B     148.
+## 2 sum(x)/length(x)    205ns    287ns  3311793.        0B       0
 ```
 ]]
 
@@ -269,6 +287,7 @@ bench::mark(
 ## 2. Do as Little as Possible &amp;mdash; Exercises
 
 .smaller[
+
 1. Can you come up with an even faster implementation of `b()` in the linear regression example?
 
 
@@ -294,28 +313,6 @@ bench::mark(
 ]
 
 ---
-## 2. Do as Little as Possible &amp;mdash; Case Study
-
-.smaller[
-
-Imagine you want to compute the bootstrap distribution of a sample correlation coefficient using `cor_df()` and the data in the example below. 
-
-Given that you want to run this many times, how can you make this code faster? 
-
-
-```r
-n &lt;- 1e6
-df &lt;- data.frame(a = rnorm(n), b = rnorm(n))
-    
-cor_df &lt;- function(df, n) {
-  i &lt;- sample(seq(n), n, replace = TRUE)
-  cor(df[i, , drop = FALSE])[2, 1]
-}
-```
-
-]
-
----
 ## 3. Vectorise your code
 
 .smaller[
@@ -337,7 +334,7 @@ cor_df &lt;- function(df, n) {
 ---
 ## 3. Vectorise your code
 
-.smaller[
+.font90[
 
 **Why is vectorisation efficient? &amp;mdash; ctd.** 
 
@@ -352,7 +349,7 @@ Disregarding these patterns by writing code which operates on `\(1\times1\)` vec
 ---
 ## 3. Vectorise your code
 
-.smaller[
+.font90[
 **Why is vectorisation efficient? &amp;mdash; ctd. **
 
 .blockquote.exercise[
@@ -375,18 +372,20 @@ Disregarding these patterns by writing code which operates on `\(1\times1\)` vec
 
 ???
 
-Aagain, less related to R itself but to what the CPU does.
+Again, less related to R itself but to what the CPU does.
 
 
 ---
 ## 3. Vectorise your code
 
 .smaller[
-**What does it mean to write 'vectorised' code in R?**
+**What does it mean to write 'vectorised' code in `R`?**
 
-Remember that there are no 'real' scalars in R. Everything that looks like a scalar is actually a `\(1\times1\)` vector.
+Remember that there are no 'real' scalars in `R`. Everything that looks like a scalar is actually a `\(1\times1\)` vector.
 
+&lt;center&gt;
 ![:image 23%](../img/atomic_vectors.png)
+&lt;/center&gt;
 
 
 ```r
@@ -405,9 +404,11 @@ Thus 'scalar' operations work on vector *elements* which is (often) needlessly c
 
 .smaller[
 
-**What does it mean to write 'vectorised' code in R?**
+**What does it mean to write 'vectorised' code in `R`?**
 
 By 'vectorised' we mean that the function works on vectors, i.e., performs vector arithmetic and calls functions which work on vectors.
+
+&lt;br&gt;
 
 .blockquote.exercise[
 #### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example: scalar vs. vectorised computation of euclidean norm
@@ -445,9 +446,11 @@ L2_vec &lt;- function(x) {
 
 .smaller[
 
-**What does it mean to write 'vectorised' code in R?**
+**What does it mean to write 'vectorised' code in `R`?**
 
 By 'vectorised' we mean that the function works on vectors, i.e., performs vector arithmetic and calls functions which work on vectors.
+
+&lt;br&gt;
 
 .blockquote.exercise[
 #### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example: scalar vs. vectorised computation of euclidean norm
@@ -460,11 +463,11 @@ bench::mark(
 ```
 
 ```
-## # A tibble: 2 x 6
+## # A tibble: 2 × 6
 ##   expression              min   median `itr/sec` mem_alloc `gc/sec`
 ##   &lt;bch:expr&gt;         &lt;bch:tm&gt; &lt;bch:tm&gt;     &lt;dbl&gt; &lt;bch:byt&gt;    &lt;dbl&gt;
-## 1 L2_scalar(1:10000)  410.4us    423us     2350.    55.8KB      0  
-## 2 L2_vec(1:10000)      23.8us     26us    35413.    78.2KB     49.6
+## 1 L2_scalar(1:10000)  296.3µs  299.1µs     3305.    56.1KB      0  
+## 2 L2_vec(1:10000)      25.5µs   30.6µs    31854.    78.2KB     47.9
 ```
 ]]
 
@@ -475,11 +478,11 @@ bench::mark(
 
 - **Do not torture the interpreter**
 
-    Vectorisation reduces the amount of intepreting R has to do: Validating that `x &lt;- 1L` and `y &lt;- 1:100L` are of type `integer` is equally expensive. Checking that each element of `y` is an integer is not!   
+    Vectorisation reduces the amount of intepreting `R` has to do: Validating that `x &lt;- 1L` and `y &lt;- 1:100L` are of type `integer` is equally expensive. Checking that each element of `y` is an integer is not!   
 
 - **Use functions from base R that work on vectors**
 
-    Vectorisation may avoid loops in R. Loops in many 'vectorised' R functions are carried out in C and thus are much faster. 
+    Vectorisation may avoid loops in `R`. Loops in many 'vectorised' R functions are carried out in *C* and thus are much faster. 
 
     The following functions are prominent examples:
 
@@ -487,7 +490,7 @@ bench::mark(
 
 - **Use matrix algebra**
 
-    Most matrix operations that involve loops are executed by highly optimized external Fortran and C libraries. See, e.g., [BLAS](https://en.wikipedia.org/wiki/Basic_Linear_Algebra_Subprograms).
+    Most matrix operations that involve loops are executed by highly optimised external *Fortran* and *C* libraries. See, e.g., [BLAS](https://en.wikipedia.org/wiki/Basic_Linear_Algebra_Subprograms).
 
 ]
 
@@ -508,9 +511,9 @@ bench::mark(
     
     Getting used to `*apply()` is a good practice as it prevents us from doing silly stuff like the above.
     
-**What if I need to use `for` / how to properly write a `for` loop?**
+**What if I need to use `for()` / how to properly write a loop?**
 
-Allocate the required storage before the loop and *fill* the object!
+Allocate the required storage before the loop and *fill* (*do not grow!*) the object.
 
 ]
 
@@ -528,6 +531,8 @@ Allocate the required storage before the loop and *fill* the object!
 
 ---
 ## 3. Vectorise your code
+
+&lt;br&gt;
 
 .blockquote.exercise[
 #### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example: good and bad `for()` loops
@@ -554,6 +559,8 @@ rw_bad &lt;- function(N) {
 
 ---
 ## 3. Vectorise your code
+
+&lt;br&gt;
 
 .blockquote.exercise[
 #### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example: good and bad `for()` loops
@@ -583,6 +590,8 @@ rw_good &lt;- function(N) {
 ---
 ## 3. Vectorise your code
 
+&lt;br&gt;
+
 .blockquote.exercise[
 #### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example: good and bad `for()` loops
 
@@ -592,11 +601,11 @@ bench::mark(rw_good(1e4),
 ```
 
 ```
-## # A tibble: 2 x 6
+## # A tibble: 2 × 6
 ##   expression          min   median `itr/sec` mem_alloc `gc/sec`
 ##   &lt;bch:expr&gt;     &lt;bch:tm&gt; &lt;bch:tm&gt;     &lt;dbl&gt; &lt;bch:byt&gt;    &lt;dbl&gt;
-## 1 rw_good(10000)   10.8ms   14.6ms     71.9     24.5MB     43.9
-## 2 rw_bad(10000)    99.8ms  102.4ms      9.67   406.3MB    101.
+## 1 rw_good(10000)   8.63ms   13.1ms     81.8     24.5MB     48.7
+## 2 rw_bad(10000)  122.39ms  127.5ms      7.79   406.3MB     77.9
 ```
 ]
 
@@ -604,6 +613,8 @@ bench::mark(rw_good(1e4),
 ## 3. Vectorise your code
 
 **Are `for()` loops slower than the `*apply()` functions?**
+
+&lt;br&gt;
 
 .blockquote.exercise[
 #### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example: `for()` vs. `apply()`
@@ -628,6 +639,8 @@ colmax &lt;- function(x) {
 
 **Are `for()` loops slower than the `*apply()` functions?**
 
+&lt;br&gt;
+
 .blockquote.exercise[
 #### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example: `for()` vs. `apply()` &amp;mdash; ctd. 
 
@@ -639,18 +652,20 @@ bench::mark(
 ```
 
 ```
-## # A tibble: 2 x 6
+## # A tibble: 2 × 6
 ##   expression            min   median `itr/sec` mem_alloc `gc/sec`
 ##   &lt;bch:expr&gt;       &lt;bch:tm&gt; &lt;bch:tm&gt;     &lt;dbl&gt; &lt;bch:byt&gt;    &lt;dbl&gt;
-## 1 colmax(X)          4.84ms   5.15ms      194.     152KB     113.
-## 2 apply(X, 2, max)   8.06ms   8.53ms      113.     313KB     117.
+## 1 colmax(X)          2.94ms   3.03ms      317.     135KB     57.4
+## 2 apply(X, 2, max)   4.32ms   4.49ms      217.     313KB     54.3
 ```
 ]
 
 ---
 ## 3. Vectorise your code &amp;mdash; Exercises
 
-1. Compare the speed of `apply(X, 1, sum)` with the vectorised `rowSums(X)` for varying sizes of the square matrix `X` using `bench::mark()`. Consider the dimensions `1`, `1e1`, `1e2`, `1e3`, `0.5e4` and `1e5`. Visualize the results using a violin plot.
+&lt;br&gt;
+
+1. Compare the speed of `apply(X, 1, sum)` with the vectorised `rowSums(X)` for varying sizes of the square matrix `X` using `bench::mark()`. Consider the dimensions `1`, `1e1`, `1e2`, `1e3`, `0.5e4` and `1e5`. Visualise the results using a violin plot.
 
 2. 
 
@@ -660,47 +675,7 @@ bench::mark(
 
     (c) Compare performance of the approaches in (a) and (b)
 
-3.  Find an approach to compute column maxima of a numeric matrix `X` using a `*apply()`-function which outperforms `apply(X, 2, max)`.
-
----
-## 3. Vectorise your code &amp;mdash; Case Study
-
-.smaller[
-**Case Study: Monte Carlo Integration**
-
-Suppose you are interested in computing `$$A = \int_0^1 x^2 \mathrm{d}x$$` using Monte Carlo (MC) integration. Consider the following algorithm which operates on `\(1\times 1\)` vectors in a `for()` loop:
-
-1. *initialize `counts`*
-
-2. `for i in 1:N`
-
-    *Generate `\(\ U_i \sim i.i.d. \mathcal{U}(0,1);\ i=1,2\)`.*
-    
-    *If `\(\ U_2 &lt; U_1^2\)`, then* `counts = counts + 1`
-
-3. *end* `for`
-
-4. *Estimate `\(A\)` by* `counts/N`
-]
-
----
-## 3. Vectorise your code &amp;mdash; Case Study
-
-**Case Study: Monte Carlo Integration**
-
-1. 
-    
-    (a) Implement the algorithm in a function `A_loop(N)`. A should use a loop to compute the MC estimate of `\(A\)` with `N` MC iterations.
-    
-    (b) Estimate `\(A\)` using `A_loop(N)` with 5e5 MC iterations.
-
-2. 
-
-    (a) Define a function `A_vec(N)` which implements the MC algorithm using a vectorised approach.
-    
-    (b) Compare `A_vec(N)` and `A_loop(N)` in a microbenchmark for `N = 5e5` iterations.
-    
-    (c) How does the difference in performance relate to `N`?
+3.  Find an approach to compute column maxima of a numeric matrix `X` using an `*apply()` function which outperforms `apply(X, 2, max)`.
 
 ---
 ## 4. Parallelisation &amp;mdash; FAQs
@@ -711,16 +686,16 @@ Suppose you are interested in computing `$$A = \int_0^1 x^2 \mathrm{d}x$$` using
 
 - In the following we refer to parallelisation as the distribution of computing tasks over several CPUs in a shared memory system (a system where multiple CPUs access the same memory).
 
-**Does R perform parallelisation by default?**
+**Does `R` perform parallelisation by default?**
 
-No. The 'stock' R version on CRAN is a single-threaded program, i.e., R does not benefit from modern multi-threaded CPUs, multiple cores let alone multiple CPUs.
+No. The 'stock' `R` version on `CRAN` is a single-threaded program, i.e., `R` does not benefit from modern multi-threaded CPUs, multiple cores let alone multiple CPUs.
 
 ---
 ## 4. Parallelisation &amp;mdash; FAQs
 
 **Is it complicated to parallelise code?**
 
-- In general, yes. Fortunately, there are R packages for the most common platforms that do the work for us. These packages facilitate the process *substantially*. 
+- In general, yes. Fortunately, there are `R` packages for the most common platforms that do the work for us. These packages facilitate the process *substantially*. 
 
 - In most cases, we don't even have to adjust our code in order for it to be executable in parallel.
 
@@ -737,24 +712,24 @@ No. The cost of managing the computations (the *overhead*) may offset or even su
 ---
 ## 4. Parallelisation &amp;mdash; the `parallel` package
 
-The `parallel` package (comes with base R) is a good starting point for parallel computing.
+The `parallel` package (comes with base `R`) is a good starting point for parallel computing.
 
 
 ```r
-# detect numer of cores (including logical cores)
+# detect number of cores (including logical cores)
 library(parallel)
 detectCores()
 ```
 
 ```
-## [1] 20
+## [1] 10
 ```
 
-The notebook used to run this script has a 2,3 GHz Intel Core i5 processor with 4 physical CPUs and supports hyper-threading, i.e., each CPU has 2 logical cores.
+The notebook used to compile this script has an Apple M1 processor with 10 physical CPUs:
 
 
 ```r
-# detect numer of physical cores
+# detect number of physical cores
 detectCores(logical = F)
 ```
 
@@ -765,7 +740,7 @@ detectCores(logical = F)
 Note that the behavior of `detectCores()` is platform specific and not always reliable, see `?detectCores()`.
 
 ---
-## 4. Parallelisation - `parallel::mclapply()`
+## 4. Parallelisation &amp;mdash; `parallel::mclapply()`
 
 .smaller[
 .blockquote.exercise[
@@ -775,7 +750,10 @@ Note that the behavior of `detectCores()` is platform specific and not always re
 r &lt;- mclapply(1:8, function(i) Sys.sleep(20), mc.cores = 7)
 ```
 
+&lt;center&gt;
 ![:image 50%](../img/cpumonitor.png)
+&lt;/center&gt;
+
 ]]
 
 ---
@@ -786,7 +764,7 @@ r &lt;- mclapply(1:8, function(i) Sys.sleep(20), mc.cores = 7)
 #### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example: send them cores to sleep (on MacOS) &amp;mdash; ctd.
 What happened?
 
-- The R session (the main Process) opened 8 sub-processes, so-called *forks* (labeled `rsession` in the activity monitor)
+- The `R` session (the main process) opened 8 sub-processes, so-called *forks* (labeled `rsession` in the activity monitor)
 
 - The forks operate independently from the main process (but they 'know' about each other). Each fork operates on a separate core.
 
@@ -808,7 +786,7 @@ An alternative on Windows is to use `parallel::parLapply()`. The setup is somewh
 ```r
 # set number of cores to be used
 cores &lt;- detectCores(logical = TRUE) - 1
-# initialize cluster
+# initialise cluster
 cl &lt;- makeCluster(cores)
 # run lapply in parallel
 parLapply(cl, 1:8, function(i) Sys.sleep(20))
@@ -823,93 +801,16 @@ stopCluster(cl)
 
 **"Embarrassingly parallel operations"**
 
+&lt;center&gt;
 ![:image 80%](../img/parallelization.png)
+&lt;/center&gt;
+
 ![:source_url](https://bit.ly/2OX6e3e)
 
 ---
 ## 4. Parallelisation
 
-.blockquote.exercise[
-#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example: parallelised bootstrapping
-
-Remember the function `cor_df()` from the case study in *2. Do as Little as Possible*. A faster approach, `cor_df2()`, is given  below.
-
-
-```r
-n &lt;- 1e4
-df &lt;- data.frame(a = rnorm(n), b = rnorm(n))
-
-cor_df2 &lt;- function(x, n) {
-  i &lt;- sample.int(n, n, replace = T)
-  cor(df$a[i], df$b[i])
-}
-```
-]
-
-???
-
-`cor_df2()` would be even faster if `df` was a `matrix` object.
-
-```
-function(df, n) {
-  i &lt;- sample(1:n, n, replace = T)
-  m &lt;- df[i,]
-  cor(m)[2, 1]
-}
-```
-
----
-## 4. Parallelisation
-
-.blockquote.exercise[
-#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example: parallelised bootstrapping &amp;mdash; ctd.
-
-Calling `cor_df2()` a large number of times is time consuming. 
-
-
-```r
-# serial computation
-s_ser &lt;- system.time(
-  r_ser &lt;- lapply(1:1e5, function(x) cor_df2(df, n))
-)
-s_ser
-```
-
-```
-##     
-##   user  system  elapsed 
-## 41.258   7.497  48.835
-```
-]
-
----
-## 4. Parallelisation
-
-.blockquote.exercise[
-#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example: parallelised bootstrapping &amp;mdash; ctd.
-
-Luckily, it is straightforward to bootstrap in parallel using `mclapply()`.
-
-
-```r
-# parallel computation
-s_par &lt;- system.time(
-  r_par &lt;- mclapply(1:1e5, function(x) cor_df2(df, n), mc.cores = 8)
-)
-s_par
-```
-
-```
-##     
-##   user  system  elapsed 
-## 38.343   7.995   16.343
-```
-
-Note that using 8 cores in my case is (only) ~5 times faster than the serial approach due to overhead. 
-]
-
----
-## 4. Parallelisation
+&lt;br&gt;
 
 .smaller[
 .blockquote.exercise[
@@ -945,327 +846,6 @@ system.time(lapply(1:1e5, sqrt))
 
 This is because the cost of the individual computations is low, and additional work is needed to send the computation to the different cores and to collect the results: The overhead exceeds the time savings. 
 ]]
-
----
-## 4. The `MonteCarlo` Package
-
-**Why is worthwhile to get used to such packages? **
-
-- Running MC simulations is an everyday task in econometrics: simulations are routinely used for approximating quantities which cannot be derived analytically, e.g., finite sample properties of a test statistic.
-
-- MC simulation is also an essential tool in statistical programming because we often write functions that expect random input and/or produce random output 
-
-    *Testing whether the impementation is correct amounts to checking if the statistical properties of the output are as expected, using a large number of samples*
-
-- Often, the effort to write the simulation exceeds the effort to implement the function by a multiple
-
----
-## 4. The `MonteCarlo` Package
-
-The `MonteCarlo` package streamlines the process of writing MC simulations. 
-
-Useful features are:
-
-- Simulation over a user-defined parameter grid
-
-- Automatic parallelisation using the `snow` package
-
-- Compilation of the results in an array. Generation of customisable LaTeX tables is possible.
-
-The package is available on `CRAN`. 
-
-Development version @ https://github.com/FunWithR/MonteCarlo
-
----
-## 4. The `MonteCarlo` Package
-
-.smaller[
-.blockquote.exercise[
-#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example: Unit Root test
-Consider the DGP `$$y_t = \rho y_{t-1} + \epsilon_t, \ \ \epsilon_t\sim N(0,1)$$` with `\(y_0 = 0\)` and `\(\rho = 1.\)` It is a well known result that the limit of the `\(t\)`-ratio `$$t = \frac{\hat\rho-1}{SE(\hat\rho)}$$` can be written as a functional of [Wiener processes](https://en.wikipedia.org/wiki/Wiener_process),
-
-$$ t \Rightarrow \frac{[W(1)]^2 -1}{2\sqrt{\int_0^1[W(r)]^2 dr}}.$$
-
-The asymptotic distribution of `\(t\)` is non-normal and its quantiles cannot be derived analytically.
-]]
-
----
-## 4. The `MonteCarlo` Package
-
-.smaller[
-.blockquote.exercise[
-#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example: Unit Root test &amp;mdash; ctd.
-We use the `MonteCarlo` package to simulate the limit distribution of `\(t\)`.
-
-
-```r
-library(MonteCarlo)
-```
-
-
-```r
-sim &lt;- function(rho, Time) {
-  Y &lt;- matrix(NA_real_, ncol = 1, nrow = Time); Y[1,1] &lt;- rnorm(1)
-  
-  for(t in 2:Time) { Y[t, 1] &lt;- rho * Y[t-1, 1] + rnorm(1) }
-
-  y &lt;- Y[-1, , drop = FALSE]
-  ylag &lt;- Y[-Time, , drop = FALSE]
-  
-  fit &lt;- lm.fit(ylag, y)
-  rho &lt;- fit$coefficients
-  res &lt;- fit$residuals
-  sigma &lt;- sqrt(1/(Time-2) * t(res) %*% res * 1/ (t(ylag) %*% ylag))
-
-  return( list("t" = (rho[[1]] - 1)/sigma) )
-
-}
-```
-]]
-
----
-## 4. The `MonteCarlo` Package
-
-.smaller[
-.blockquote.exercise[
-#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example: Unit Root test &amp;mdash; ctd.
-
-
-```r
-# setup list of parameters
-params &lt;- list("rho" = 1, 
-               "Time" = 1000)
-
-# run parallelised MC simulation over parameter grid
-r &lt;- MonteCarlo(
-  sim,
-  nrep = 50000,
-  param_list = params, 
-  ncpus = parallel::detectCores()
-)
-```
-We transform the simulated test statistics to a vector.
-
-```r
-t_sim &lt;- apply(r$result$t, 3, c)
-```
-]]
-
----
-## 4. The `MonteCarlo` Package
-
-.smaller[
-.blockquote.exercise[
-#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example: Unit Root test &amp;mdash; ctd.
-
-Estimates of the finite sample quantiles are close to the quantiles of the corresponding asymptotic Dickey-Fuller distribution
-
-
-```r
-quantile(t_sim, c(0.05, 0.1, 0.5, 0.9, 0.95))
-```
-
-```
-##         5%        10%        50%        90%        95% 
-## -1.9436386 -1.6143556 -0.4949464  0.8888825  1.2793936
-```
-
-```r
-fUnitRoots::qunitroot(c(0.05, 0.1, 0.5, 0.9, 0.95), trend = "nc")
-```
-
-```
-## [1] -1.9408468 -1.6167526 -0.4999276  0.8877673  1.2836012
-```
-
-We compare with the Gaussian distribution.
-
-
-```r
-plot(density(t_sim), main = "Dickey-Fuller Distribution")
-curve(dnorm(x), from = -4, to = 4, add = T, lty = 2, col = "red")
-```
-]]
-
----
-## 4. The `MonteCarlo` Package
-
-.smaller[
-.blockquote.exercise[
-#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example: Unit Root test &amp;mdash; ctd.
-&lt;img src="improving-performance_files/figure-html/unnamed-chunk-41-1.png" style="display: block; margin: auto;" /&gt;
-]]
-
----
-## 4. The `MonteCarlo` Package
-.smaller[
-It is a great benefit to work with the package if you want to run the simulation for several parameter combinations. 
-
-.blockquote.exercise[
-#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example: Power of DF-Test
-
-We write a simple wrapper for `sim()` which returns a logical value for rejection at 5% using the asymptotic critical value.
-
-
-```r
-# asymptotic 5% critical value of the corresponding DF-distribution
-crit &lt;- fUnitRoots::qunitroot(0.05, trend = "nc")
-
-# rejection?
-sim_pow &lt;- function(rho, Time) {
-  return(
-   list("t" = sim(rho, Time)[[1]] &lt; crit)   
-  )
-}
-```
-]]
-
----
-## 4. The `MonteCarlo` Package
-
-.smaller[
-.blockquote.exercise[
-#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example: Power of DF-Test &amp;mdash; ctd.
-
-We consider all combination for a sequence of alternatives and three different sample sizes.
-
-
-```r
-# setup list of parameters (yielding 33 parameter constellations)
-params &lt;- list("rho" = seq(0.75, 1, 0.025), 
-               "Time" = c(50, 100, 200))
-
-# run parallelised MC simulation over parameter grid
-r &lt;- MonteCarlo(
-  sim_pow,
-  nrep = 5000,
-  param_list = params, 
-  ncpus = parallel::detectCores())
-```
-]]
-
----
-## 4. The `MonteCarlo` Package
-
-.smaller[
-.blockquote.exercise[
-#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example: Power of DF-Test &amp;mdash; ctd.
-Content of a `MonteCarlo` object is easily transformed and visualised using `tidyverse` functions.
-
-
-```r
-library(dplyr)
-library(ggplot2)
-
-tbl &lt;- r %&gt;% MakeFrame() %&gt;% tbl_df() %&gt;% 
-  group_by(rho, Time) %&gt;% summarise(power = mean(t))
-
-ggplot(tbl) + 
-  geom_line(aes(x = rho, y = power, col = factor(Time)))
-```
-]]
-
----
-## 4. The `MonteCarlo` Package
-
-.smaller[
-.blockquote.exercise[
-#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example: Power of DF-Test &amp;mdash; ctd.
-&lt;img src="improving-performance_files/figure-html/unnamed-chunk-45-1.png" width="60%" style="display: block; margin: auto;" /&gt;
-]]
-
----
-## 4. The `MonteCarlo` Package
-
-.smaller[
-.blockquote.exercise[
-#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example: Power of DF-Test &amp;mdash; ctd.
-Conversion of the results into a `\(\LaTeX\)` table is particularly useful.
-
-```r
-# generate LaTeX table from simulation results
-MakeTable(r, rows = "Time", "rho")
-```
-![:image 80%](../img/latex_MakeTable.png)
-]]
-
-&lt;!-- --- --&gt;
-&lt;!-- ## Asynchronous Programming --&gt;
-
-&lt;!-- ![:image 60%](../img/futures.jpg) --&gt;
-
-&lt;!-- --- --&gt;
-&lt;!-- ## Futures --&gt;
-
-&lt;!-- **What are futures?** --&gt;
-
-&lt;!-- - A *future* or *promise* is a construct which describes an object that acts as a proxy for some value which will be available at some point in the future. --&gt;
-
-&lt;!-- - A future allows execution of code until the point where its value is actually needed.  --&gt;
-
-&lt;!-- **Why are they useful?** --&gt;
-
-&lt;!-- - Futures can by evaluated asynchronously in a separate process (possibly on a different core/CPU), i.e. they do not block the 'main' process which is available for further processing so that other computations can run in the meantime --&gt;
-
-&lt;!-- - Futures thus allow faster and more efficient code. They are a simple yet powerful construct for parallel computing and distributed processing. --&gt;
-
-&lt;!-- **Is it difficult to work with futures?** --&gt;
-
-&lt;!-- It depends. We will restrict ourselves to functions which have been *futurised*, i.e. (re)implemented using functions from the `future` package. --&gt;
-
-&lt;!-- --- --&gt;
-&lt;!-- ## The `future.apply` Package --&gt;
-
-&lt;!-- ```{r} --&gt;
-&lt;!-- library(future.apply) --&gt;
-&lt;!-- ``` --&gt;
-
-&lt;!-- The `future.apply` package provides a *futurised* version of the base R `*apply()` function family. --&gt;
-
-&lt;!-- &lt;br&gt; --&gt;
-
-&lt;!-- Function             | Description --&gt;
-&lt;!-- -------------------- | ------------- --&gt;
-&lt;!-- `future_apply()`     | apply function over array margin --&gt;
-&lt;!-- `future_lapply()`    | apply function over list or vector --&gt;
-&lt;!-- `future_sapply()`    | apply function over list or vector --&gt;
-&lt;!-- `future_replicate()` | apply function over list or vector --&gt;
-&lt;!-- `future_mapply()`    | apply function to multiple list or vector arguments --&gt;
-&lt;!-- `future_Map()`       | apply function to multiple list or vector arguments --&gt;
-
-&lt;!-- &lt;br&gt; --&gt;
-
-&lt;!-- These functions operate sequentially by default but parallel computation is easily set up...  --&gt;
-
-&lt;!-- --- --&gt;
-&lt;!-- ## The `future.apply` Package --&gt;
-
-&lt;!-- How to run in parallel: set `plan(multiprocess)` --&gt;
-
-&lt;!-- &lt;br&gt; --&gt;
-
-&lt;!-- ![:image 85%](../img/future_apply.png) --&gt;
-
-&lt;!-- --- --&gt;
-&lt;!-- ## The `future.apply()` Package --&gt;
-
-&lt;!-- **Example: many normal sample means** --&gt;
-
-&lt;!-- ```{r, cache=T} --&gt;
-&lt;!-- tictoc::tic() --&gt;
-&lt;!-- invisible( --&gt;
-&lt;!--   sapply(rep(1e5, 10000), function(x) mean(rnorm(x))) --&gt;
-&lt;!-- ) --&gt;
-&lt;!-- tictoc::toc() --&gt;
-&lt;!-- ``` --&gt;
-
-&lt;!-- ```{r, cache=T} --&gt;
-&lt;!-- tictoc::tic() --&gt;
-&lt;!-- invisible( --&gt;
-&lt;!--   future_sapply(rep(1e5, 10000), function(x) mean(rnorm(x))) --&gt;
-&lt;!-- ) --&gt;
-&lt;!-- tictoc::toc() --&gt;
-&lt;!-- ``` --&gt;
 
 ---
 ## References
@@ -1335,6 +915,19 @@ if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
     deleted = true;
   });
 })();
+// add `data-at-shortcutkeys` attribute to <body> to resolve conflicts with JAWS
+// screen reader (see PR #262)
+(function(d) {
+  let res = {};
+  d.querySelectorAll('.remark-help-content table tr').forEach(tr => {
+    const t = tr.querySelector('td:nth-child(2)').innerText;
+    tr.querySelectorAll('td:first-child .key').forEach(key => {
+      const k = key.innerText;
+      if (/^[a-z]$/.test(k)) res[k] = t;  // must be a single letter (key)
+    });
+  });
+  d.body.setAttribute('data-at-shortcutkeys', JSON.stringify(res));
+})(document);
 (function() {
   "use strict"
   // Replace <script> tags in slides area to make them executable

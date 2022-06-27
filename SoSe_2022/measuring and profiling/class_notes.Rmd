@@ -1,5 +1,7 @@
 ---
-title: "Measuring and Profiling --- Notes and Examples"
+title: "Advanced `R` for Econometricians (Summer 2022)"
+subtitle: "Measuring and Profiling --- Notes and Examples"
+author: "Martin Arnold, Jens Klenke"
 output: pdf_document
 ---
 
@@ -9,7 +11,7 @@ knitr::opts_chunk$set(echo = TRUE, eval = FALSE)
 
 ## Slide 6: Profiling - `utils::Rprof()`
 
-- The function call stack is a record of the function currently executing, the function that called the function, and so on (from right to left)
+- The *function call stack* is a record of the function currently executing, the function that called the function, and so on (from right to left)
 
 - The default time interval between sampling is 0.02 seconds. If the profiled code executes faster you need to pass an appropriate sampling time to the argument `interval`.
 

@@ -1,51 +1,38 @@
 ---
-title: "Exercise Solutions Introduction"
-author: 'Jens Klenke' 
-output: 
-  html_document:
-   css: ["../assets/ude_fonts.css", "../assets/ude.css", "../assets/title_slides.css", "../assets/custom.css"]
+title: "Advanced `R` for Econometricians (Summer 2022)"
+subtitle: "Object Oriented `R` Programming --- Solutions to Exercises"
+author: 'Jens Klenke, Martin Arnold' 
+output: pdf_document
 ---
+
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
-```
-
-```{r xaringanExtra-clipboard_2, echo=FALSE}
-# copy button styles mainly in ude.css 
-# https://github.com/gadenbuie/xaringanExtra
-htmltools::tagList(
-  xaringanExtra::use_clipboard(
-    button_text = "<i class=\"fa fa-clipboard\"></i>",
-    success_text = "<i class=\"fa fa-check\" style=\"color: #00ff00\"></i>",
-    error_text = "<i class=\"fa fa-times-circle\" style=\"color: #F94144\"></i>"),
-  rmarkdown::html_dependency_font_awesome() 
-  )
-
 library(sloop)
 ```
 
 # Slide 18
 
 ### 1. 
-  Because of S3’s generic.class() naming scheme, both functions may initially look similar, while they are in fact unrelated.
 
-t.test() is a generic function that performs a t-test.
-t.data.frame() is a method that gets called by the generic t() to transpose data frame input.
-Due to R’s S3 dispatch rules, t.test() would also get called when t() is applied to an object of class test
+Because of S3’s `generic.class()`` naming scheme, both functions may initially look similar, while they are in fact unrelated.
+
+`t.test()` is a generic function that performs a t-test. `t.data.frame()` is a method that gets called by the generic `t()` to transpose dataframe input.
+Due to `R`’s S3 dispatch rules, `t.test()` would also get called when `t()` is applied to an object of class test
 
 ### 2.
 
-It returns an object of the class ecdf (empirical cumulative distribution function) with the superclasses stepfun and function. The ecdf object is built on the base type closure (a function). The expression, which was used to create it (rpois(100, 10)), is stored in the call attribute.
+We obtain an object of class `ecdf` (short for empirical cumulative distribution function) with the superclasses `stepfun` and `function`. The `ecdf` object is built on the base type `closure` (a function). The expression which was used to create it (`rpois(100, 10)`), is stored in the `call` attribute.
 
 ### 3.
 
-This code returns a table object, which is built upon the integer type. The attribute dimnames is used to name the elements of the integer vector.
+The code returns a `table` object, which is built upon the integer type. The attribute `dimnames` is used to name the elements of the integer vector.
 
 
-# slide 35 
+# Slide 36 
 
 ### 1.
 
-We can see that t.test() is a generic because it calls UseMethod():
+We see that `t.test()` is a generic because it calls `UseMethod()`:
 
 ```{r}
 t.test
@@ -55,12 +42,12 @@ sloop::ftype(t.test)
 ```
 
 
-Interestingly, R also provides helpers, which list functions that look like methods, but in fact are not:
+Interestingly, `R` also provides helpers, which list functions that look like methods, but in fact are not:
 
 ```{r}
 tools::nonS3methods("stats")
 ```
-When we create an object with class test, t() dispatches to the t.default() method. This happens, because UseMethod() simply searches for functions named paste0("generic", ".", c(class(x), "default")).
+When we create an object with class test, `t()` dispatches to the `t.default()` method. This is because `UseMethod()` simply searches for functions named `paste0("generic", ".", c(class(x), "default"))`.
 
 ```{r}
 x <- structure(1:10, class = "test")
@@ -68,20 +55,21 @@ x <- structure(1:10, class = "test")
 t(x)
 ```
 
-However, in older versions of R (pre R 4.0.0; when Advanced R was written) this behaviour was slightly different. Instead of dispatching to the t.default() method, the t.test() generic was erroneously treated as a method of t() which then dispatched to t.test.default() or (when defined) to t.test.test().
+However, in older versions of `R` (pre 4.0.0) this behaviour was slightly different. Instead of dispatching to the `t.default()` method, the `t.test()` generic was erroneously treated as a method of `t()` which then dispatched to `t.test.default()` or (if defined) to `t.test.test()`.
 
 ### 2.
 
-A: This is a simple application of sloop::s3_methods_class():
+This is a simple application of `sloop::s3_methods_class()`:
 
 ```{r}
 s3_methods_class("table")
 ```
 
-Interestingly, the table class has a number of methods designed to help plotting with base graphics.
+Interestingly, the `table` class has a number of methods designed to help plotting with base graphics.
 
 
 ### 3.
+
 ```{r}
 prime <- function(x = integer()) {
   validate_prime(new_prime(x))
@@ -106,6 +94,8 @@ new_prime <- function(x = integer()) {
 }
 ```
 
+### 3.1
+
 ```{r}
 summary.prime <- function(x) {
   if(class(x)  == "prime") {
@@ -127,7 +117,8 @@ my_primes <- new_prime(c(3L, 5L, 7L))
 
 summary(my_primes)
 ```
-# 3-2
+
+### 3.2
 
 ```{r}
 print.summary.prime <- function(x) {

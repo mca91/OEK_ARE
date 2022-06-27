@@ -23,7 +23,7 @@ bench::mark(
 
 - `apply()` accepts various inputs and outputs which requires coercion which is slow.
 
-- Apply coerces `Y` to matrix which triggers a copy. You can check this using `lobstr::tracemem()`.
+- `apply()` coerces `Y` to matrix which triggers a *copy*. You can check this using `lobstr::tracemem()`.
 
 ## Slide 7: 2. Do as Little as Possible
 
@@ -36,7 +36,9 @@ bench::mark(
 )
 ```
 
-Using `apply()` yields a much longer call stack than `rowSums()` which is much more specific. 
+- Using `apply()` yields a much longer call stack than `rowSums()` which is much more specific and hence faster.
+
+- Also note that `rowSums()` is a wrapper for faster internal functions. This is seen from the source code. 
 
 ## Slide 8: 2. Do as Little as Possible
 
@@ -91,7 +93,7 @@ bench::mark(
 )
 ```
 
-The difference is indeed huge.
+The difference is indeed huge!
 
 ## Slide 12: Exercises
 
@@ -105,9 +107,9 @@ The difference is indeed huge.
     }
     ```
 
-    - `.lm.fit(X, Y)` is a wrapper for the innermost C code of `lm()` which computes OLS using QR decomposition
+    - `.lm.fit(X, Y)` is a 'bare bones wrapper' for the innermost _C_ code of `lm()` which computes OLS using [QR decomposition](https://en.wikipedia.org/wiki/QR_decomposition)
     
-    - Exploiting that `X` is the only regressor allows us to use a more specific formula for $SE(\widehat\beta_1)$ in `d()`
+    - Exploiting that `X` is the only regressor allows us to replace the regressor matrix product and use a more specific approch to compute $SE(\widehat\beta_1)$ in `d()`
     
     ```{r}
     bench::mark(
@@ -117,11 +119,11 @@ The difference is indeed huge.
     )
     ```
     
-    A disadvantage is that the faster approaches `b()` and `d()` are unflexible and error prone: an unexperienced user is likely to supply inputs which will cause the function to crash or return false results. 
+    A disadvantage is that the faster approaches `b()` and `d()` are unflexible and error prone: an unexperienced user is likely to supply inputs which will cause the function to crash or return false results--note that we don't do any checks of the input!
     
 2. What’s the difference between `rowSums()` and `.rowSums()`?
 
-     `rowSums()` is a wrapper for the `.rowSums()`, an internal C function. `rowSums()` does robustness checks and performs coercion before calling `.rowSums()`
+     `rowSums()` is a wrapper for the `.rowSums()`, an internal _C_ function. `rowSums()` does robustness checks and performs coercion before calling `.rowSums()`
 
 3. `rowSums2()` is an alternative implementation of `rowSums()`. Is it faster for the input `df`? Why?
     ```{r}
@@ -144,49 +146,49 @@ The difference is indeed huge.
     )
     ```
 
-    - Note that `rowSums()` converts the data frame to a matrix (ensuring all types are the same) and *handles more than two dimensions* and names.
+    - Note that `rowSums()` converts the data frame to a matrix (ensuring all types are the same) and *handles more than two dimensions* and names
 
-    - For two-dimensional same-type data frames where we don't care about names, rowSums2 will be faster
+    - For two-dimensional dataframes where we don't care about names, `rowSums2()` will be faster than `rowSums()`
 
-## Slide 13: 2. Do as Little as Possible — Case Study
+<!-- ## Slide 13: 2. Do as Little as Possible — Case Study -->
 
-```{r}
-n <- 1e6
-df <- data.frame(a = rnorm(n), b = rnorm(n))
+<!-- ```{r} -->
+<!-- n <- 1e6 -->
+<!-- df <- data.frame(a = rnorm(n), b = rnorm(n)) -->
 
-cor_df <- function(df, n) {
-  i <- sample(seq(n), n, replace = TRUE)
-  cor(df[i, , drop = FALSE])[2, 1]
-}
-```
+<!-- cor_df <- function(df, n) { -->
+<!--   i <- sample(seq(n), n, replace = TRUE) -->
+<!--   cor(df[i, , drop = FALSE])[2, 1] -->
+<!-- } -->
+<!-- ``` -->
 
-**Solution**
+<!-- **Solution** -->
 
-- `:` is a primitive and is faster than `seq()`
+<!-- - `:` is a primitive and is faster than `seq()` -->
 
-- `sample.int(n, n)` is more specific (an thus faster) than `sample()`
+<!-- - `sample.int(n, n)` is more specific (an thus faster) than `sample()` -->
 
-- Passing vectors using `$` is faster than look-up of the correct $[$ method
+<!-- - Passing vectors using `$` is faster than look-up of the correct $[$ method -->
 
-- `cor()` runs faster on vectors than on a matrix
+<!-- - `cor()` runs faster on vectors than on a matrix -->
 
-We thus end up with:
+<!-- We thus end up with: -->
 
-```{r, cache=T}
-cor_df2 <- function(x, n) {
-  i <- sample.int(n, n, replace = T)
-  cor(df$a[i], df$b[i])
-}
+<!-- ```{r, cache=T} -->
+<!-- cor_df2 <- function(x, n) { -->
+<!--   i <- sample.int(n, n, replace = T) -->
+<!--   cor(df$a[i], df$b[i]) -->
+<!-- } -->
 
-bench::mark(
-  cor_df(df, n),
-  cor_df2(df, n),
-  check = F
-)
-```
+<!-- bench::mark( -->
+<!--   cor_df(df, n), -->
+<!--   cor_df2(df, n), -->
+<!--   check = F -->
+<!-- ) -->
+<!-- ``` -->
 
 
-## Slide 22: Vectorise your Code
+## Slide 21: Vectorise your Code
 
 **Example: Avoid growing objects**
 
@@ -205,7 +207,7 @@ vec <- 1:n
 
 Technically this does not directly relate to vectorisation but it yet again demonstrates that growing objects using loops is a bad idea: a vectorised approach is often faster.
 
-## Slide 28: Vectorise your Code --- Exercises
+## Slide 27: Vectorise your Code --- Exercises
 
 **Solutions:**
 
@@ -234,7 +236,7 @@ Technically this does not directly relate to vectorisation but it yet again demo
     plot(b)
     ```
 
-    Note that `apply()` which is not 'vectorised for performance' cannot keep up with `rowSums()`: it is clearly outperformed by the C internals, especially if dimensions are large.
+    Note that `apply()` which is not 'vectorised for performance' cannot keep up with `rowSums()`: it is clearly outperformed by the _C_ internals, especially if dimensions are large. This is because the `rowSums()` and it's internal _C_ functions need less (costly) function calls and is more memory efficient. 
 
 2. 
 
@@ -252,7 +254,9 @@ Technically this does not directly relate to vectorisation but it yet again demo
         ```{r}
         sum(a * w) - crossprod(a, w)[1]
         ```
-    
+        
+        We subset because the return value is a matrix, see`?crossprod`.
+        
     (c) Let's benchmark these guys:
     
         ```{r}
@@ -275,7 +279,9 @@ Technically this does not directly relate to vectorisation but it yet again demo
         )
         ```
         
-        There's a turning point at `dim = 0.5e4` where `crossprod()` takes the lead: this is due to the advantage of vectorized matrix computation done by the internal function used by `crossprod()`.
+        - There's a turning point at `dim = 0.5e4` where `crossprod()` takes the lead: this is due to the advantage of vectorised matrix computation done by the internal function used by `crossprod()`.
+        
+        - Also `sum(a * w)` triggers garbage collection as dimensions increase.
 
 3.
     
@@ -296,83 +302,83 @@ Technically this does not directly relate to vectorisation but it yet again demo
     
     Applying `max()` on list elements is faster than iterating over the columns of a numeric matrix.
 
-## Slide 30: Vectorise your code &mdash; Case Study
+<!-- ## Slide 30: Vectorise your code &mdash; Case Study -->
 
-**Case Study: Monte Carlo Integration**
+<!-- **Case Study: Monte Carlo Integration** -->
 
-1.
+<!-- 1. -->
 
-    (a)
-    
-    ```{r}
-    A_loop <- function(N) {
-      counts <- numeric(N)
-      for(i in 1:N) {
-        U <- runif(2)
-        if(U[2] < U[1]^2) counts[i] <- 1
-      }
-      sum(counts)/N
-    }
-    ```
+<!--     (a) -->
 
-    (b)
-    
-    ```{r}
-    A_loop(5e5)
-    ```
+<!--     ```{r} -->
+<!--     A_loop <- function(N) { -->
+<!--       counts <- numeric(N) -->
+<!--       for(i in 1:N) { -->
+<!--         U <- runif(2) -->
+<!--         if(U[2] < U[1]^2) counts[i] <- 1 -->
+<!--       } -->
+<!--       sum(counts)/N -->
+<!--     } -->
+<!--     ``` -->
 
-2.
+<!--     (b) -->
 
-    (a)
-    
-    ```{r}
-    A_vec <- function(N) {
-      U <- matrix(runif(2 * N), ncol = 2)
-      sum(ifelse(U[,1] < U[,2]^2, 1, 0))/N
-    }
-    ```
+<!--     ```{r} -->
+<!--     A_loop(5e5) -->
+<!--     ``` -->
 
-    (b)
-    
-    ```{r}
-    bench::mark(
-      A_loop(N),
-      A_vec(N),
-      check = F
-    )
-    ```
-    
-    (c)
-    
-    ```{r}
-    res <- bench::press(
-      
-      N = c(1e2, 1e3, 1e4, 1e5),
-      
-      {
-      
-      bench::mark(
-        A_loop(N),
-        A_vec(N),
-        check = F 
-      )
-          
-      }
-      
-    )
-    
-    plot(res)
-    ```
+<!-- 2. -->
 
-    The difference in speed between both approaches does not seem to depend too much on `N`. Furthermore, `A_loop()` turns out to be very inefficient regarding memory usage for large `N`.
-    
-    Note that a more general approach (in terms of interval limits $a$,$b$, $b>a$) for estimating $A=\int_a^b x^2 dx$ is as follows:
-    ```{r}
-    A_vec_2 <- function(N, a, b) {
-      U <- runif(N, min = a, max = b)
-      sum(U^2 * (b-a))/N
-    }
-    
-    A_vec_2(5e4, 0, 3)
-    ```
+<!--     (a) -->
+
+<!--     ```{r} -->
+<!--     A_vec <- function(N) { -->
+<!--       U <- matrix(runif(2 * N), ncol = 2) -->
+<!--       sum(ifelse(U[,1] < U[,2]^2, 1, 0))/N -->
+<!--     } -->
+<!--     ``` -->
+
+<!--     (b) -->
+
+<!--     ```{r} -->
+<!--     bench::mark( -->
+<!--       A_loop(N), -->
+<!--       A_vec(N), -->
+<!--       check = F -->
+<!--     ) -->
+<!--     ``` -->
+
+<!--     (c) -->
+
+<!--     ```{r} -->
+<!--     res <- bench::press( -->
+
+<!--       N = c(1e2, 1e3, 1e4, 1e5), -->
+
+<!--       { -->
+
+<!--       bench::mark( -->
+<!--         A_loop(N), -->
+<!--         A_vec(N), -->
+<!--         check = F  -->
+<!--       ) -->
+
+<!--       } -->
+
+<!--     ) -->
+
+<!--     plot(res) -->
+<!--     ``` -->
+
+<!--     The difference in speed between both approaches does not seem to depend too much on `N`. Furthermore, `A_loop()` turns out to be very inefficient regarding memory usage for large `N`. -->
+
+<!--     Note that a more general approach (in terms of interval limits $a$,$b$, $b>a$) for estimating $A=\int_a^b x^2 dx$ is as follows: -->
+<!--     ```{r} -->
+<!--     A_vec_2 <- function(N, a, b) { -->
+<!--       U <- runif(N, min = a, max = b) -->
+<!--       sum(U^2 * (b-a))/N -->
+<!--     } -->
+
+<!--     A_vec_2(5e4, 0, 3) -->
+<!--     ``` -->
 

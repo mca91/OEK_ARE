@@ -35,19 +35,18 @@ htmltools::tagList(
 ```
 
 ```{r setup, include=FALSE}
-#options(htmltools.dir.version = F)
-#knitr::opts_chunk$set(warning = F, message = F)
-knitr::opts_chunk$set(warning=FALSE, message=FALSE)
+knitr::opts_chunk$set(warning= FALSE, message = FALSE)
 options(htmltools.dir.version = FALSE)
 
 
 # packages needed
 library(microbenchmark)
-library(parallel)
+library(beeswarm)
 library(tictoc)
 library(dplyr)
 library(tidyr)
 library(icons)
+library(emoji)
 
 # pre-define icons
 desktop <- icons::icon_style(icons::fontawesome$solid$desktop, fill = "#004c93")
@@ -87,6 +86,7 @@ class: segue-red
 # packages needed
 library(profvis)
 library(bench)
+library(beeswarm) # for plotting with `bench` package
 ```
 
 - **Profiling** means measuring run time of our code *line-by-line* using realistic inputs in order to identify *bottlenecks*.

@@ -72,6 +72,7 @@ class: segue-red
 # packages needed
 library(profvis)
 library(bench)
+library(beeswarm) # for plotting with `bench` package
 ```
 
 - **Profiling** means measuring run time of our code *line-by-line* using realistic inputs in order to identify *bottlenecks*.
@@ -342,8 +343,8 @@ x &lt;- runif(100)
 ## # A tibble: 2 × 6
 ##   expression      min   median `itr/sec` mem_alloc `gc/sec`
 ##   &lt;bch:expr&gt; &lt;bch:tm&gt; &lt;bch:tm&gt;     &lt;dbl&gt; &lt;bch:byt&gt;    &lt;dbl&gt;
-## 1 sqrt(x)       123ns    164ns  4033369.      848B        0
-## 2 x^0.5         902ns    984ns   888343.      848B        0
+## 1 sqrt(x)       123ns 164.15ns  3232274.      848B        0
+## 2 x^0.5         943ns   1.02µs   864867.      848B        0
 ```
 
 
@@ -543,11 +544,10 @@ search()
 ```
 
 ```
-##  [1] ".GlobalEnv"             "package:icons"          "package:tidyr"         
-##  [4] "package:dplyr"          "package:tictoc"         "package:parallel"      
-##  [7] "package:microbenchmark" "package:stats"          "package:graphics"      
-## [10] "package:grDevices"      "package:utils"          "package:datasets"      
-## [13] "package:methods"        "Autoloads"              "package:base"
+##  [1] ".GlobalEnv"             "package:emoji"          "package:beeswarm"       "package:icons"          "package:tidyr"          "package:dplyr"         
+##  [7] "package:tictoc"         "package:parallel"       "package:microbenchmark" "tools:rstudio"          "package:stats"          "package:graphics"      
+## [13] "package:grDevices"      "package:utils"          "package:datasets"       "package:methods"        "Autoloads"              "org:r-lib"             
+## [19] "package:base"
 ```
 
 ]]
@@ -730,8 +730,8 @@ bench::mark(f1(), f2())
 ## # A tibble: 2 × 6
 ##   expression      min   median `itr/sec` mem_alloc `gc/sec`
 ##   &lt;bch:expr&gt; &lt;bch:tm&gt; &lt;bch:tm&gt;     &lt;dbl&gt; &lt;bch:byt&gt;    &lt;dbl&gt;
-## 1 f1()              0     41ns 10628917.        0B        0
-## 2 f2()          123ns    164ns  4164116.        0B        0
+## 1 f1()              0     82ns 10318877.        0B        0
+## 2 f2()          123ns    205ns  4135334.        0B        0
 ```
 
 Arguments trigger promises each time the function is *called*. Superfluous arguments thus lead to avoidable overhead.
@@ -749,7 +749,7 @@ Arguments trigger promises each time the function is *called*. Superfluous argum
 
 - We are (mostly) happy to accept the slower speed for the time saved from not having to reinvent the wheel each time we want to implement a new function that, e.g., computes a test statistic.
 
-    (meanwhile (2022-06-20) there are 18425 packages available on [CRAN](https://cran.r-project.org/) with many useful functions waiting to be discovered by you!)
+    (meanwhile (2022-06-20) there are 18244 packages available on [CRAN](https://cran.r-project.org/) with many useful functions waiting to be discovered by you!)
 
 - We cannot overcome the idiosyncrasies of `R` described in this section. However, there are a few things and tricks to keep in mind if you want to write performant code. We'll discuss these in the next Lecture.
 
