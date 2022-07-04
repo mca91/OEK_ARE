@@ -22,7 +22,7 @@ knitr::opts_chunk$set(echo = TRUE, eval = FALSE)
 
     **Solution:**
     
-    `x[id]` returns a subview class of `Rcpp::Vector` which is *not* a double. It is important that coercion to another type is not as easily done as in R!
+    `x[id]` returns a subview class of `Rcpp::Vector` which is *not* a double. It is important to note that coercion to another type is not as easily done as in `R`!
 
 - Benchmark the functions below against each other for `x<-rnorm(1e2)`, `x<-rnorm(1e4)` and `x<-rnorm(1e6)`. Comment on the results.
     ```{r, echo = F}

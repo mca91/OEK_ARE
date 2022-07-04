@@ -1,11 +1,19 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<html lang="" xml:lang="">
   <head>
     <title>Advanced R for Econometricians</title>
     <meta charset="utf-8" />
     <meta name="author" content="Martin C. Arnold" />
-    <meta name="date" content="2020-02-09" />
+    <meta name="author" content="Jens Klenke" />
+    <meta name="date" content="2022-07-04" />
+    <script src="SpeedRcpp_files/header-attrs/header-attrs.js"></script>
     <link href="SpeedRcpp_files/remark-css/default.css" rel="stylesheet" />
+    <script src="SpeedRcpp_files/clipboard/clipboard.min.js"></script>
+    <link href="SpeedRcpp_files/xaringanExtra-clipboard/xaringanExtra-clipboard.css" rel="stylesheet" />
+    <script src="SpeedRcpp_files/xaringanExtra-clipboard/xaringanExtra-clipboard.js"></script>
+    <script>window.xaringanExtraClipboard(null, {"button":"<i class=\"fa fa-clipboard\"><\/i>","success":"<i class=\"fa fa-check\" style=\"color: #00ff00\"><\/i>","error":"<i class=\"fa fa-times-circle\" style=\"color: #F94144\"><\/i>"})</script>
+    <link href="SpeedRcpp_files/font-awesome/css/all.css" rel="stylesheet" />
+    <link href="SpeedRcpp_files/font-awesome/css/v4-shims.css" rel="stylesheet" />
     <script type="text/x-mathjax-config">
       MathJax.Hub.Config({
         TeX: { equationNumbers: { autoNumber: "AMS" } },
@@ -18,19 +26,13 @@
       cursor: default;
     }
     </style>
-    
-    <script src="https://code.jquery.com/jquery-3.4.1.min.js"
-      integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
-      crossorigin="anonymous"></script>
-    <link rel="stylesheet" href="../assets/sydney-fonts.css" type="text/css" />
-    <link rel="stylesheet" href="../assets/sydney.css" type="text/css" />
+    <link rel="stylesheet" href="../assets/ude_fonts.css" type="text/css" />
+    <link rel="stylesheet" href="../assets/ude.css" type="text/css" />
     <link rel="stylesheet" href="../assets/title_slides.css" type="text/css" />
-    <link rel="stylesheet" href="../xaringan_files/custom.css" type="text/css" />
+    <link rel="stylesheet" href="../assets/custom.css" type="text/css" />
   </head>
   <body>
     <textarea id="source">
-
-
 
 
 
@@ -39,50 +41,53 @@ class: title-slide title-rcpp center middle
 
 # Advanced R for Econometricians
 ## Speeding Things Up with `Rcpp`
-### Martin C. Arnold
+### Martin C. Arnold, Jens Klenke
 
 ---
 ## `Rcpp` &amp;mdash; FAQs
 
 **What is `Rcpp`?**
 
-The `Rcpp` package easily enables us to implement C++ functions in R by providing a clean and approachable API.
+The `Rcpp` package allows to implement and easily invoke `C++` functions in `R` by providing a clean and approachable API.
 
 **Who should use it?**
 
-Anyone who is interested in eliminating bottlenecks which cannot be sped-up in a vanilla R. 
+Anyone who is interested in eliminating bottlenecks which cannot be sped-up in vanilla `R`. 
 
 **Is `Rcpp` a self-contained language?**
 
-No. To write code using `Rcpp` basically means to write C++ code using special C++ classes that allow interfacing with R.
+No. To write code using `Rcpp` basically means to write `C++` code using special `C++` classes that allow interfacing with `R`.
 
 The official [quick reference](https://cran.r-project.org/web/packages/Rcpp/vignettes/Rcpp-quickref.pdf) has some code snippets which facilitate the start.
 
 ---
 ## `Rcpp` &amp;mdash; FAQs
 
-**Do I need to be fluent in C++? &amp;mdash; ctd.**
+**Do I need to be fluent in `C++`?**
 
-- No. `Rcpp` is easy to use even without deep knowledge of C++. A basic knowledge of C++ syntax and data types is sufficient for a start. 
+- No. `Rcpp` is easy to use, even without deep knowledge of `C++`. A basic knowledge of `C++` syntax and data types is sufficient for a start. 
 
-- The package allows to write C++ code in a style similar to R &amp;mdash; syntactic *sugar*: 
+- The package allows to write C++ code in a style similar to R &amp;mdash; *syntactic sugar*: 
 
     `Rcpp` comes with well tested functions which look and behave very similar to their R equivalent. Sugar versions of arithmetic and logical operators, vector views and many base R functions facilitate the first steps in programming with `Rcpp` tremendously.
 
-- In what follows we won’t spend much time on advanced stuff like OO programming or templates but focus on writing small, self-contained functions.
+- In what follows we will not spend much time on advanced stuff like OO-`C++` programming or templates but focus on writing small, self-contained functions.
 
-    [learnCpp](https://www.learncpp.com/) is a good source for more detailed content. 
+    [learnCpp](https://www.learncpp.com/) is a good source for details on these subjects. 
 
 ---
 ## `Rcpp` &amp;mdash; FAQs
 
-**When is rewriting code using C++ an attractive alternative?**
+**When is rewriting code using `C++` an attractive alternative?**
 
-Typical bottlenecks in R that be addressed using C++ are:
+Typical bottlenecks in `R` that be addressed using `C++` are:
 
 - Loops that can’t be easily vectorised because subsequent iterations depend on previous ones.
+  
+  (e.g., algorithms for Markov chain Monte Carlo in Bayesian models)
 
-- Recursive functions/problems which involve calling functions a large number of times. The overhead of calling functions in C++ is *much* lower than that in R.
+
+- Recursive functions/problems which involve calling functions a large number of times. The overhead of calling functions in `C++` is *much* lower than that in `R`.
 
 ---
 ## `Rcpp` &amp;mdash; FAQs
@@ -93,43 +98,16 @@ Typical bottlenecks in R that be addressed using C++ are:
 
 - The [Rcpp Gallery](https://gallery.rcpp.org/) provides many comprehensive examples and also applications to statistics and econometrics
 
-- [stackoverflow](https://stackoverflow.com/search?q=rcpp+r) has answers to numerous questions that arise in the beginning (more than 2000 question tagged &lt;tt&gt;[rcpp]&lt;/tt&gt; answered). The package authors (especially Dirk Eddelbuettel) often contribute to the discussion.
+- [stackoverflow](https://stackoverflow.com/search?q=rcpp+r) has answers to numerous questions that arise in the beginning (more than 2800 question tagged &lt;tt&gt;[rcpp]&lt;/tt&gt; answered). The package authors (especially Dirk Eddelbuettel) often contribute to the discussion.
 
 - Technical details are well explained in *Seamless R and C++ integration with Rcpp* (Eddelbuettel, 2013)
 
     (PDF freely available on [Springer Link](https://link.springer.com/book/10.1007/978-1-4614-6868-4) via UDE intranet)
 
 ---
-## `Rcpp` &amp;mdash; Popularity
-
-**`Rcpp` is popular**
-
-`Rcpp` is a dependency to ~1500 CRAN packages and an unknown large number of packages on GitHub.
-
-
-```r
-library(pagerank) 
-CRAN &lt;- "http://cloud.r-project.org"
-p_rank &lt;- compute_pagerank(CRAN)
-round(100 * p_rank[1:5], 3)
-```
-
-```
-##    Rcpp ggplot2    MASS   dplyr  Matrix 
-##   2.780   1.404   1.307   0.999   0.751
-```
-
-This puts responsibility on the development team to keep Rcpp performant and reliable.
-
----
-## `Rcpp` &amp;mdash; Popularity
-
-&lt;img src="SpeedRcpp_files/figure-html/unnamed-chunk-3-1.png" width="500px" style="display: block; margin: auto;" /&gt;
-
----
 ## `Rcpp` &amp;mdash; Prerequisites
 
-We need `Rcpp` from CRAN as well as a working C++ compiler. Regarding the latter, installation is OS dependent.
+We need `Rcpp` from CRAN as well as a working `C++` [compiler](https://en.wikipedia.org/wiki/Compiler). Installation is OS-dependent for the latter.
 
 
 ```r
@@ -138,33 +116,33 @@ We need `Rcpp` from CRAN as well as a working C++ compiler. Regarding the latter
 library(Rcpp)
 ```
 
-**Installing a C++ compiler**
+**Installing a `C++` compiler**
 
 - Windows: install [rtools](http://cran.r-project.org/bin/windows/Rtools/)
 
 - Mac: install [Xcode](https://apps.apple.com/de/app/xcode/id497799835?mt=12)
 
-- Linux: install gcc/g++ via &lt;tt&gt;sudo apt-get install r-base-dev&lt;/tt&gt; or similar.
+- Linux: install `gcc/g++` via &lt;tt&gt;sudo apt-get install r-base-dev&lt;/tt&gt; or similar.
 
 ---
 ## `Rcpp` &amp;mdash; Prerequisites
 
 **Some vocabulary**
 
-- A **Pointer** contains the physical address of an data in the memory
+- A **pointer** contains the physical address of an data in the memory
 
-- At the C level, R objects are stored in the **SEXP** (S expression) data type. An SEXP essentially is a pointer.  
+- At the `C` level, `R` objects are stored in the **SEXP** (S expression) data type. An SEXP is essentially a pointer.  
 
 **So how does it work?**
 
-- We use C++ functions which *generate* and *modify* SEXP objects faster than R is able too. 
+- We use `C++` functions which *generate* and *modify* SEXP objects faster than `R` is able to. 
 
-- `Rcpp` allows a seamless transfer between C++ and an SEXP objects with low cost by passing pointers (pass by reference) to C++ functions using special classes which enclose SEXPs (we will introduce these in a bit).
+- `Rcpp` allows a seamless transfer between `C++` and an SEXP objects with low cost by passing pointers (pass by reference) to `C++` functions using special classes which enclose SEXPs (we will introduce these in a bit).
 
 ---
 ## `Rcpp` &amp;mdash; C++ Syntax Basics
 
-**Example: C++ Syntax 1**
+**Example: Syntax in `C++` &amp;mdash; 1**
 
 
 ```cpp
@@ -175,24 +153,24 @@ int one() {
 
 Note that:
 
-- We do not use assignment to create functions in C++
+- We do *not* use assignment to create functions in `C++`!
 
-- One needs to declare the type returned by the function
+- We need to declare the type returned by the function (and also for its arguments)
 
-- Scalars and vectors are different objects. There are differences regarding scalar types: 
+- Scalars and vectors are different objects! There are also differences w.r.t. scalar types: 
 
-    `numeric`, `integer`, `character` and `logical` (R)
+    `numeric`, `integer`, `character` and `logical` (`R`)
     
-    &lt;tt&gt;double&lt;/tt&gt;, &lt;tt&gt;int&lt;/tt&gt;, &lt;tt&gt;string&lt;/tt&gt;, &lt;tt&gt;bool&lt;/tt&gt; (C++)
+    &lt;tt&gt;double&lt;/tt&gt;, &lt;tt&gt;int&lt;/tt&gt;, &lt;tt&gt;string&lt;/tt&gt;, &lt;tt&gt;bool&lt;/tt&gt; (`C++`)
 
-- The &lt;tt&gt;return&lt;/tt&gt; statement *must* be used to return a value
+- The &lt;tt&gt;return&lt;/tt&gt; statement *must* be used to return a value!
 
 - Every statement *must* be followed by a &lt;tt&gt;;&lt;/tt&gt;
 
 ---
 ## `Rcpp` &amp;mdash; C++ Syntax Basics
 
-**Example: C++ Syntax 2**
+**Example: Syntax in `C++` &amp;mdash; 2**
 
 .pull-left[
 
@@ -224,11 +202,11 @@ bool isOdd_cpp(int num = 10) {
 
 - Assignment is done using the &lt;tt&gt;=&lt;/tt&gt; operator
 
-- *Binary* arithmetic and logical operators work as in R. More on this later.
+- *Binary* arithmetic and logical operators work as in `R`. More on this later.
 
 - Default values for arguments may be specified. 
 
-    **Attention**: Default arguments are assigned from right to left. Using a default value requires *all* subsequent arguments to have default values, too.
+    **Important**: Default arguments are assigned from right to left. Using a default value requires *all* subsequent arguments to have default values, too.
 
 ---
 ## `Rcpp` &amp;mdash; Inline Compilation
@@ -239,14 +217,14 @@ Small self-contained functions are easily compiled and linked using `cppFunction
 
 
 ```r
-cppFunction('
+Rcpp::cppFunction('
 bool isOdd_cpp(int num = 10) {
   bool result = (num % 2 == 1);
   return result;
 }')
 ```
 
-`ìsOdd_cpp()` now works like a regular R function.
+`isOdd_cpp()` now works like a regular `R` function.
 
 
 ```r
@@ -260,13 +238,13 @@ isOdd_cpp(42L)
 ---
 ## `Rcpp` &amp;mdash; Inline Compilation
 
-**Example: cppFunction() **
+**Example: `cppFunction()`**
 
 What happened?
 
 - Our function `isOdd_cpp()` is sourced by `Rcpp`.
 
-- `Rcpp` generates a wrapper function in R. It then compiles and links the C++ function to the wrapper. The function is now available in R under its C++ name.
+- `Rcpp` generates a wrapper function in `R`. It then compiles and links the `C++` function to the wrapper. The function is now available in `R` under its `C++` name.
 
 
 ```r
@@ -275,25 +253,28 @@ isOdd_cpp
 
 ```
 ## function (num = 10L) 
-## .Call(&lt;pointer: 0x116b4b770&gt;, num)
+## .Call(&lt;pointer: 0x10533c300&gt;, num)
 ```
 
-We see that `isOdd_cpp()` uses `.call()` to invoke the C++ version of the function which is stored in the specified pointer.
+We see that `isOdd_cpp()` uses `.call()` to invoke the `C++` version of the function which is stored in the specified pointer.
 
 ---
-## `Rcpp` &amp;mdash; Sourcing a .cpp-file via RStudio
+## `Rcpp` &amp;mdash; Sourcing a `.cpp`-file via *RStudio*
 
 &lt;br&gt;
 &lt;br&gt;
+&lt;center&gt;
 ![:image 50%](../img/create_cpp_file.png)
+&lt;/center&gt;
 
 ---
-## `Rcpp` &amp;mdash; Sourcing a .cpp-File via RStudio
+## `Rcpp` &amp;mdash; Sourcing a `.cpp`-File via *RStudio*
 
 You will be prompted with the following file:
 
-.smaller[
-```
+.font80[
+
+```cpp
 #include &lt;Rcpp.h&gt;
 using namespace Rcpp;
 
@@ -311,16 +292,16 @@ NumericVector timesTwo(NumericVector x) {
 // run after the compilation.
 //
 
-/*** R
-timesTwo(42)
-*/
+// /*** R
+// timesTwo(42)
+// */
 ```
 ]
 
 ---
 ## `Rcpp` &amp;mdash; Loops
 
-**Example: Summation **
+**Example: Summation**
 
 .pull-left[
 
@@ -338,7 +319,7 @@ sum_R &lt;- function(x) {
 
 .pull-right[
 
-```r
+```cpp
 double sum_C(NumericVector x) {
   int n = x.size();
   double total = 0;
@@ -352,7 +333,7 @@ double sum_C(NumericVector x) {
 
 
 
-- &lt;b&gt;Indices start at 0!&lt;/b&gt;
+- **Indices start at 0!**
 
 - C++ methods are called with a full stop, e.g. `.size()`
 
@@ -377,12 +358,12 @@ bench::mark(
 ```
 
 ```
-## # A tibble: 3 x 6
+## # A tibble: 3 × 6
 ##   expression      min   median `itr/sec` mem_alloc `gc/sec`
 ##   &lt;bch:expr&gt; &lt;bch:tm&gt; &lt;bch:tm&gt;     &lt;dbl&gt; &lt;bch:byt&gt;    &lt;dbl&gt;
-## 1 sum(x)       1.01µs   1.12µs   756894.        0B        0
-## 2 sum_C(x)     2.32µs    3.9µs   240862.    2.49KB        0
-## 3 sum_R(x)    31.47µs  33.73µs    27773.   99.91KB        0
+## 1 sum(x)       1.56µs   1.64µs   582125.        0B        0
+## 2 sum_C(x)     1.56µs   1.76µs   460865.    2.49KB        0
+## 3 sum_R(x)    14.47µs  15.05µs    65413.   19.74KB        0
 ```
 
 `sum_C()` is competitive with the highly optimised primitive `sum()`. `sum_R()` is considerably slower.
@@ -392,7 +373,7 @@ bench::mark(
 
 **Return type of functions**
 
-- `Rcpp` automatically wraps C++ base types (like `double`, `int`, `string`, `bool`) using classes which can be handled by R
+- `Rcpp` automatically wraps `C++` base types (like `double`, `int`, `string`, `bool`) using classes which can be handled by `R`
 
 - This is different for more complex structures like vector and matrix. `Rcpp` provides special classes for each base type which have to be stated explicitly:
 
@@ -405,11 +386,11 @@ bench::mark(
 ---
 ## `Rcpp` &amp;mdash; Vectors and Matrices
 
-.smaller[
+.font90[
 
-**Example: STL type mapping**
+**Example: STL-type mapping**
 
-The following code is 'pure' C++ and can be handled by R: `Rcpp` maps `std::vector&lt;type&gt;` to `NumericVector`. 
+The following code is 'pure' `C++` and can be handled by `R`: `Rcpp` maps `std::vector&lt;type&gt;` to `NumericVector`. 
 
 (Note that we use `::` to access objects from the `std` namespace)
 
@@ -435,9 +416,9 @@ NumericVector zeros_Rcpp(int N) {
 ---
 ## `Rcpp` &amp;mdash; Vectors and Matrices
 
-.smaller[
+.font90[
 
-**Example: STL type mapping &amp;mdash; ctd.**
+**Example: STL-type mapping &amp;mdash; ctd.**
 
 We compare both functions after sourcing using `cppFunction()`.
 
@@ -465,7 +446,7 @@ bench::mark(
 ---
 ## `Rcpp` &amp;mdash; Vectors and Matrices
 
-It sometimes will be convenient to generate objects using the STL and use wrap before returning them.
+Sometimes it will be convenient to generate objects using the STL and use `wrap()` before returning them.
 
 **Example: `wrap()`**
 
@@ -492,7 +473,7 @@ NumericVector iota(int N) {
 ---
 ## `Rcpp` &amp;mdash; Vectors and Matrices
 
-C++ implementations that heavily rely on loops can often compete with R primitives in terms of speed.
+`C++` implementations that heavily rely on loops can often compete with `R` primitives in terms of speed.
 
 **Example: `rowSumsC()` **
 
@@ -520,9 +501,9 @@ NumericVector rowSumsC(NumericMatrix x) {
 ---
 ## `Rcpp` &amp;mdash; Data frames and Lists
 
-`Rcpp` as classes `List` and `DataFrame` which are most interesting for input to and output of functions.
+`Rcpp` has classes `List` and `DataFrame` which are most interesting for input to and output of functions.
 
-**Example: extract data from `lm` object**
+**Example: extracting data from `lm` object**
 
 The function below extracts the residuals from a linear model of class `lm`.
 
@@ -541,11 +522,11 @@ NumericVector residuals(List mod) {
 ---
 ## `Rcpp` &amp;mdash; Data frames and Lists
 
-**Example: extract data from `lm` object**
+**Example: extract data from `lm` object &amp;mdash; ctd.**
 
-We now show how to return selected entries of an `lm` object in a list 
+We may return selected entries of an `lm` object in a `list` 
 
-(note that the class is `List` with capital `L`)
+(note that the `Rcpp` class is `List` with a capital `L`)
 
 
 ```cpp
@@ -571,66 +552,69 @@ List components(List mod) {
 &lt;br&gt;
 &lt;br&gt;
 &lt;br&gt;
+&lt;center&gt;
 ![:image 60%](../img/pbr_paradigm.gif)
-
+&lt;/center&gt;
 
 ---
 ## `Rcpp` &amp;mdash; Two Paradigms
 
-**Digression: pass by reference vs. pass by copy in C++**
+**Digression: *pass by reference* vs. *pass by value* in `C++`**
 
-In C++ a *pass by value* happens by default. The functions below use return type `void`, i.e., they don't return anything.
+In `C++` a *pass by value* happens by default. 
+
+(The functions below have return type `void`, i.e., they do not return anything.)
 
 
 ```cpp
-void test(int A) {   //A is passed by value
-  int B = A;         //B is a copy of A
-  A = 2 * A;         //A is altered inside the function
+void test(int A) {   // A is passed by value
+  int B = A;         // B is a copy of A
+  A = 2 * A;         // A is altered inside the function
 }
 ```
 *Pass by reference* is invoked using the *address-of operator* `&amp;`.
 
 
 ```cpp
-void test(int &amp;A) {  //A is passed by reference, no copy is created
-  int B = A;         //B is a copy of A
-  A = 2 * A;         //A is altered inside AND outside the function
+void test(int&amp; A) {  // A is passed by reference, no copy is created
+  int B = A;         // B is a copy of A
+  A = 2 * A;         // A is altered inside AND outside the function
 }
 ```
 
 ---
 ## `Rcpp` &amp;mdash; Two Paradigms
 
-**Digression: pass by reference vs. pass by copy in C++**
+**Digression: *pass by reference* vs. *pass by value* in `C++`**
 
-We may protect inputs from being altered inside or outside the function.
+We may protect inputs from being altered inside and outside the function.
 
 
 ```cpp
-void test(const int A) { //A is passed by copy
-  int B = 2 * A;         //and cannot be altered
+void test(const int A) {  // A is passed by value
+  int B = 2 * A;          // and cannot be altered
 }
 ```
 
 ```cpp
-void test(const int &amp;A) { //A is passed by reference
-  int B = 2 * A;          //and cannot be altered
+void test(const int&amp; A) { // A is passed by reference
+  int B = 2 * A;          // and cannot be altered
 }
 ```
 
-Note that it's also admissible to use the address-of operator `&amp;` in variable assignment.
+Note that it is admissible to use the address-of operator `&amp;` in variable assignment.
 
 
 ```cpp
-int&amp; B = A;       //B is a reference to A
+int&amp; B = A;               // B is a reference to A
 ```
 
 ---
 ## `Rcpp` &amp;mdash; Two Paradigms
 
-**Digression: pass by reference vs. pass by copy in `Rcpp`**
+**Digression: *pass by reference* vs. *pass by value* in `Rcpp`**
 
-The behavior is different in `Rcpp`.
+The behavior is somewhat different in `Rcpp`.
 
 
 ```cpp
@@ -655,9 +639,9 @@ void test_reference(NumericVector A) {
 ---
 ## `Rcpp` &amp;mdash; Two Paradigms
 
-**Digression: pass by reference vs. pass by copy in `Rcpp`**
+**Digression: *pass by reference* vs. *pass by value* in `Rcpp`**
 
-&lt;b&gt;Rcpp does not copy an object when passed as an argument to a function or on assignment!&lt;/b&gt;
+**`Rcpp` does not copy an object when passed as an argument to a function or on assignment!**
 
 
 
@@ -676,12 +660,12 @@ test_reference(x)
 ## B: 0.1 0.5 0.3
 ```
 
-The function altered the values of `A` and `B` as expected. But what happened to `x`?
+`test_reference()` alters the values of `A` and `B` as expected. But what happened to `x`?
 
 ---
 ## `Rcpp` &amp;mdash; Two Paradigms
 
-**Digression: pass by reference vs. pass by copy in `Rcpp`**
+**Digression: *pass by reference* vs. *pass by value* in `Rcpp`**
 
 We find that `x` was modified *outside* the function.
 
@@ -703,9 +687,9 @@ What happened?
 ---
 ## `Rcpp` &amp;mdash; Two Paradigms
 
-**Digression: pass by reference vs. pass by copy in `Rcpp`**
+**Digression: *pass by reference* vs. *pass by value* in `Rcpp`**
 
-Using `clone()` we may bypass the reference on assignment and work on `B`.
+Using `clone()` we may bypass the reference on assignment and work with the copy `B`.
 
 
 
@@ -730,7 +714,7 @@ void test_clone(NumericVector A) {
 ---
 ## `Rcpp` &amp;mdash; Two Paradigms
 
-**Digression: pass by reference vs. pass by copy in `Rcpp`**
+**Digression: *pass by reference* vs. *pass by value* in `Rcpp`**
 
 
 ```r
@@ -758,42 +742,44 @@ print(x) # check that x was not modified
 ---
 ## `Rcpp` &amp;mdash; Exercises Part 1
 
-- Find out why the following code gives a compile error:
-    
-    ```cpp
-    #include&lt;Rcpp.h&gt;
-    // [[Rcpp::plugins("cpp11")]]
-    
-    NumericVector x{1, 2, 3, 4, 5};
-    IntegerVector id{1};
-    
-    double y = x[id]; // produces compile error
-    ```
+Find out why the following code gives a compile error:
+
+
+```cpp
+#include&lt;Rcpp.h&gt;
+// [[Rcpp::plugins("cpp11")]]
+
+NumericVector x{1, 2, 3, 4, 5};
+IntegerVector id{1};
+
+double y = x[id]; // produces compile error
+```
 
 ---
 ## `Rcpp` &amp;mdash; Exercises Part 1
 
-- Benchmark the functions below against each other for `x&lt;-rnorm(1e2)`, `x&lt;-rnorm(1e4)` and `x&lt;-rnorm(1e6)`. Comment on the results.
-    
-    ```cpp
-    NumericVector test_clone_return(NumericVector A) {
-      NumericVector B = clone(A);
-      B[1] = 0.5;
-      return B;
-    }
-    ```
-    
-    ```cpp
-    NumericVector test_reference_return(NumericVector A) {
-      A[1] = 0.5;
-      return A;
-    }
-    ```
+Benchmark the functions below against each other for `x&lt;-rnorm(1e2)`, `x&lt;-rnorm(1e4)` and `x&lt;-rnorm(1e6)`. Comment on the results.
+
+
+```cpp
+NumericVector test_clone_return(NumericVector A) {
+  NumericVector B = clone(A);
+  B[1] = 0.5;
+  return B;
+}
+```
+
+```cpp
+NumericVector test_reference_return(NumericVector A) {
+  A[1] = 0.5;
+  return A;
+}
+```
 
 ---
 ## `Rcpp` &amp;mdash; Syntactic Sugar
 
-Another benefit of using `Rcpp` classes is *Rcpp sugar* &amp;mdash; more efficient high-level syntax similar to R. We give simple examples for the most important features.
+Another benefit of using `Rcpp` classes is *Rcpp sugar* &amp;mdash; more efficient high-level syntax similar that is similar to `R`. We give simple examples for the most important features.
 
 See the (unofficial) [list of sugar functions](https://thecoatlessprofessor.com/programming/unofficial-rcpp-api-documentation/) for more examples.
 
@@ -837,16 +823,16 @@ is_false( all(x &lt;= y) );
 bool res = is_false( all(x &lt;= y) );
 ```
 
-- There is no recycling: vectors need to have equal lengths, otherwise the compiler will return an error.
+- There is *no recycling*: vectors need to have equal lengths, otherwise the compiler will return an error.
 
 - Note that the conversion to &lt;tt&gt;bool&lt;/tt&gt; using &lt;tt&gt;is_true()&lt;/tt&gt; or &lt;tt&gt;is_false()&lt;/tt&gt; is *mandatory*. Omission will result in a compiler error.
 
 ---
 ## `Rcpp` &amp;mdash; Syntactic Sugar
 
-**Vector Views**
+**Vector views**
 
-`Rcpp` provides functions which give vector 'views' more efficiently than their R equivalents as they use pointers instead of copies.
+`Rcpp` provides functions which give vector 'views' more efficiently than their `R` equivalents since they use pointers instead of copies.
 
 
 ```cpp
@@ -864,7 +850,7 @@ seq_len(10)
 
 **Mathematics and statistics**
 
-Most functions for mathematical operations, scalar and vector summaries and search algorithms have performant sugar equivalents.
+Most math operations, scalar and vector summaries, and search algorithms have performant sugar equivalents.
 
 
 ```cpp
@@ -894,15 +880,19 @@ NumericVector x = rnorm(100);
 ```
 
 ---
-## `Rcpp` &amp;mdash; Case Study: Simulating `\(\pi\)` in C++
+exclude: true
+## `Rcpp` &amp;mdash; Case Study: Simulating `\(\pi\)` using `C++`
 
 &lt;br&gt;
+&lt;center&gt;
 ![:image 40%](../img/simulate_pi.gif)
+&lt;/center&gt;
 
 ---
-## `Rcpp` &amp;mdash; Case Study: Simulating `\(\pi\)`
+exclude: true
+## `Rcpp` &amp;mdash; Case Study: Simulating `\(\pi\)` using `C++`
 
-Since the area of the unit circle is `\(\pi\)` we use that `$$\frac{1}{N}\sum_{i=1}^N \mathcal{I}_{\left\{x_i^2+y_i^2\leq1\right\}} \xrightarrow{p} \pi/4$$` for `\(x_i, y_i \overset{i.i.d.}{\sim} \mathcal{U}[0,1].\)`
+Since the area of the unit circle is `\(\pi\)` we may use that `$$\frac{1}{N}\sum_{i=1}^N \mathcal{I}_{\left\{x_i^2+y_i^2\leq1\right\}} \xrightarrow{p} \pi/4$$` for `\(x_i, y_i \overset{i.i.d.}{\sim} \mathcal{U}[0,1]\)`, where `\(\mathcal{I}_{\{\cdot\}}\)` is the indicator function.
 
 
 ```r
@@ -925,6 +915,7 @@ sapply(10^(3:6), pi_R)
 ```
 
 ---
+exclude: true
 ## `Rcpp` &amp;mdash; Case Study: Simulating `\(\pi\)`
 
 A compact `Rcpp` version is easily implemented using sugar functions. 
@@ -936,7 +927,7 @@ using namespace Rcpp;
 
 // [[Rcpp::export]]
 double pi_Sugar(const int N) {
-  RNGScope scope; // ensure RNG gets set/reset
+  RNGScope scope; // ensure that the RNG gets set/reset
   NumericVector x = runif(N);
   NumericVector y = runif(N);
   NumericVector d = x*x + y*y;
@@ -957,6 +948,7 @@ sapply(10^(3:6), pi_sugar)
 ```
 
 ---
+exclude: true
 ## `Rcpp` &amp;mdash; Case Study: Gibbs Sampler
 
 Suppose we wish to sample from the bivariate distribution with PDF
@@ -965,9 +957,10 @@ Suppose we wish to sample from the bivariate distribution with PDF
 
 We have `$$f(x\vert y) \propto x^2 \exp\{(y^2-4)x\} \propto \text{Gamma}\left(3, 4 + y^2\right)$$` and 
 `$$f(y\vert x) \propto \exp\{-y^2(x+1)+2y\} \propto \mathcal{N}\left(\frac{1}{x+1}, \frac{1}{2(x+1)}\right).$$`
-Sampling from the conditional distributions is easy in R and C++/Rcpp so we may use a *Gibbs sampler*.
+Sampling from the conditional distributions is easy in `R` and `C++`/`Rcpp` so we may use a *Gibbs sampler*.
 
 ---
+exclude: true
 ## `Rcpp` &amp;mdash; Case Study: Gibbs Sampler
 
 **Gibbs sampler for two variables**
@@ -979,22 +972,23 @@ Sampling from the conditional distributions is easy in R and C++/Rcpp so we may 
 3. At the `\(b^{th}\)` iteration, draw `$$x^{(b)}\text{ from } f(x\vert y^{(b-1)}) \\ y^{(b)} \text{ from } f(y\vert x^{(b)})$$` until the desired number of iterations is obtained
 
 ---
+exclude: true
 ## `Rcpp` &amp;mdash; Case Study: Gibbs Sampler
 
 - We implement the Gibbs algorithm with *thinning* which reduces dependence of the samples
 
-- Thinning is computationally expensive in R because it requires a nested loop
+- Thinning is computationally expensive in `R` because it requires a nested loop
 
 
 ```r
 # base R implementation
 Gibbs_R &lt;- function(N, thin) {
   
-  mat &lt;- matrix(0, ncol = 2, nrow = N)
+  mat &lt;- matrix(NA_real_, ncol = 2, nrow = N)
   x &lt;- 0; y &lt;- 0
   
   for (i in 1:N) {
-    for (j in 1:thin) {
+    for (j in 0:thin) {
       x &lt;- rgamma(1, 3, y*y+4)
       y &lt;- rnorm(1, 1/(x+1), 1/sqrt(2*x+2))
     }
@@ -1007,6 +1001,7 @@ Gibbs_R &lt;- function(N, thin) {
 ```
 
 ---
+exclude: true
 ## `Rcpp` &amp;mdash; Case Study: Gibbs Sampler
 
 Thanks to sugar functions, the `Rcpp` version looks very similar...
@@ -1025,7 +1020,7 @@ NumericMatrix Gibbs_Rcpp(int N, int thin) {
     double x=0, y=0;
 
     for (int i=0; i&lt;N; i++) {
-        for (int j=0; j&lt;thin; j++) {
+        for (int j=0; j&lt;=thin; j++) {
             x = R::rgamma(3.0, 1.0/(y*y+4));
             y = R::rnorm(1.0/(x+1), 1.0/sqrt(2*x+2));
         }
@@ -1038,6 +1033,7 @@ NumericMatrix Gibbs_Rcpp(int N, int thin) {
 ```
 
 ---
+exclude: true
 ## `Rcpp` &amp;mdash; Case Study: Gibbs Sampler
 
 ... but is considerably faster. `Rcpp` really shines here:
@@ -1052,24 +1048,27 @@ bench::mark(
 ```
 
 ```
-## # A tibble: 2 x 4
+## # A tibble: 2 × 4
 ##   expression                 min   median `itr/sec`
 ##   &lt;bch:expr&gt;            &lt;bch:tm&gt; &lt;bch:tm&gt;     &lt;dbl&gt;
-## 1 Gibbs_R(2000, 200)       2.12s    2.12s     0.472
-## 2 Gibbs_Rcpp(2000, 200)  55.72ms  57.33ms    17.4
+## 1 Gibbs_R(2000, 200)       1.22s    1.22s     0.820
+## 2 Gibbs_Rcpp(2000, 200)  36.07ms  36.39ms    27.4
 ```
 
 ---
+exclude: true
 ## `Rcpp` &amp;mdash; Case Study: Gibbs Sampler
 
-**Contours of `\(x^2 \exp(-xy^2 - y^2 + 2y - 4x)\)`**
+**Contours of `\(f(x, y) \propto x^2 \exp(-xy^2 - y^2 + 2y - 4x)\)`**
 
 
 
 &lt;div style="text-align:center"&gt;
+&lt;br&gt;
 &lt;iframe width="700" height="400" frameborder="0" scrolling="no" src="https://www.plot.ly/~mca_unidue/57.embed?showlink=false"&gt;&lt;/iframe&gt;
 &lt;/div&gt;
 ---
+exclude: true
 ## `Rcpp` &amp;mdash; Case Study: Gibbs Sampler
 
 **Contours of kernel density estimate from Gibbs samples**
@@ -1096,7 +1095,7 @@ The following examples show .cpp-files as some require a different header than i
 ---
 ## `Rcpp` &amp;mdash; STL Iterators
 
-Iterator objects come with operators that allow to iterate over a range elements in in a more abstract way than a classic `for()` loop with an indexing variable.
+Iterator objects come with operators that allow to iterate over a range elements in in a more abstract way than a classic `for()` loop does with an indexing variable.
 
 **Example: NumericVector::iterator**
 
@@ -1110,7 +1109,7 @@ double sum_it(NumericVector x) {
   double total = 0;
   
   NumericVector::iterator it;
-  for(it = x.begin(); it != x.end(); ++it) {
+  for(it = x.begin(); it != x.end(); it++) {
     total += *it;
   }
   return total;
@@ -1142,7 +1141,7 @@ double sum_accu(NumericVector x) {
 
 - `accumulate()` is in the &lt;tt&gt;numeric&lt;/tt&gt; STL so we have to include it in the header
 
-- Setting the starting value `0.0` ensures that a double is returned (use `0` for an integer)
+- Setting the starting value `0.0` ensures that a `double` is returned (use `0` for an `integer`)
 
 ---
 ## `Rcpp` &amp;mdash; STL Algorithms
@@ -1151,7 +1150,7 @@ A very useful STL algorithm is `transform()` which applies an operation sequenti
 
 **Example: `std::transform()`**
 
-We use `transform()` to square all elements of a vector.
+We may use `transform()` to square all elements of a vector.
 
 
 ```cpp
@@ -1207,27 +1206,27 @@ bench::mark(
 ```
 
 ```
-## # A tibble: 2 x 6
+## # A tibble: 2 × 6
 ##   expression                 min median `itr/sec` mem_alloc `gc/sec`
 ##   &lt;bch:expr&gt;               &lt;dbl&gt;  &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;
-## 1 nth_partial_sort(x, 100)   1      1        8.68      1        8.68
-## 2 sort(x)                   13.1   10.8      1         4.82     1
+## 1 nth_partial_sort(x, 100)   1      1        10.5      2.62     10.5
+## 2 sort(x)                   12.9   11.8       1        1         1
 ```
 
 ---
 ## `Rcpp` &amp;mdash; Programming Strategy
 
-- Write most of your code in R to take advantage of its high abstraction level
+- Write most of your code in `R` to take advantage of its high abstraction level
 
 - Profile your code, identify bottlenecks and replace those
-sections (by writing entire functions) with C++ for performance improvement. 
+sections (by writing entire functions) with `C++` for performance improvement. 
 
-- Make sure that your C++ routines have the same call signature as their slow R equivalents.
+- Make sure that your `C++` routines have the same call signature as their slow `R` equivalents.
 
 ---
 ## `Rcpp` &amp;mdash; Exercises Part 2
 
-1. Implement the R function below using `Rcpp` for integer input (and output) and benchmark both versions.
+1. Implement the `R` function below using `Rcpp` for integer input (and output) and benchmark both versions.
     
     ```r
     f &lt;- function(n) {
@@ -1246,6 +1245,7 @@ class: segue-red
 ![:image 18%](../assets/pica_roll.gif)
 
 ### Thank You!
+
     </textarea>
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
 <script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
@@ -1300,6 +1300,45 @@ if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
     deleted = true;
   });
 })();
+// add `data-at-shortcutkeys` attribute to <body> to resolve conflicts with JAWS
+// screen reader (see PR #262)
+(function(d) {
+  let res = {};
+  d.querySelectorAll('.remark-help-content table tr').forEach(tr => {
+    const t = tr.querySelector('td:nth-child(2)').innerText;
+    tr.querySelectorAll('td:first-child .key').forEach(key => {
+      const k = key.innerText;
+      if (/^[a-z]$/.test(k)) res[k] = t;  // must be a single letter (key)
+    });
+  });
+  d.body.setAttribute('data-at-shortcutkeys', JSON.stringify(res));
+})(document);
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
 // adds .remark-code-has-line-highlighted class to <pre> parent elements
 // of code chunks containing highlighted lines with class .remark-code-line-highlighted
 (function(d) {
@@ -1317,58 +1356,6 @@ if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
   }
   preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
 })(document);</script>
-<script type="text/x-mathjax-config">
-  
-  function addCopyButtonToCode(){
-    // get all code elements
-    var allCodeBlocksElements = $( ".r" );
-    // For each element, do the following steps
-    allCodeBlocksElements.each(function(ii) {
-      // define a unique id for this element and add it
-      var currentId = "codeblock" + (ii + 1);
-      $(this).attr('id', currentId);
-      
-
-      // add the button just after the text in the code block w/ jquery
-      var clipButton = '<img src="https://image.flaticon.com/icons/svg/54/54662.svg" width="16" alt="Copy to clipboard" onclick=copyToClipboard("#' + currentId + '") style="float:right;cursor:pointer;">';
-      $(this).prepend(clipButton);
-    });
-    
-  }
-
-$(document).ready(function () {
-  // Once the DOM is loaded for the page, attach clipboard buttons
-  addCopyButtonToCode();
-});
-
-
-function copyToClipboard(element) {
-  var $temp = $("<textarea>");
-  $("body").append($temp);
-  
-  let vars = '';
-  
-  $(element).children().each((i, v) => {
-      vars += $(v).text() + '\n'
-    })
-  
-  $temp.val(vars).select();
-  document.execCommand("copy");
-  $temp.remove();
-}
-
-</script>
-
-<script>
-(function() {
-  var links = document.getElementsByTagName('a');
-  for (var i = 0; i < links.length; i++) {
-    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
-      links[i].target = '_blank';
-    }
-  }
-})();
-</script>
 
 <script>
 slideshow._releaseMath = function(el) {
