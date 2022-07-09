@@ -1207,14 +1207,14 @@ sections (by writing entire functions) with `C++` for performance improvement.
 1. Implement the `R` function below using `Rcpp` for integer input (and output) and benchmark both versions.
     ```{r, eval=F}
     f <- function(n) {
-      if(n < 2) return(n)
+      if(n < 3) return(n)
       return(f(n-1) + f(n-2))
     }
     ```
 
-2. Reconsider the function `nth_partial_sort()`. Compare its performance with that of R's `sort()` for large vectors. Explain your findings.
+2. Reconsider the function `nth_partial_sort()`. Compare its performance with that of `R`'s `sort()` for large vectors. Explain your findings.
 
-3. Convert `all()`, `range()` and `var()` into C++. You may assume that the inputs have no missing values.
+3. Convert `all()`, `range()` and `var()` into `C++`. You may assume that the inputs have no missing values.
 
 ---
 class: segue-red

@@ -5,7 +5,7 @@
     <meta charset="utf-8" />
     <meta name="author" content="Martin C. Arnold" />
     <meta name="author" content="Jens Klenke" />
-    <meta name="date" content="2022-07-04" />
+    <meta name="date" content="2022-07-09" />
     <script src="SpeedRcpp_files/header-attrs/header-attrs.js"></script>
     <link href="SpeedRcpp_files/remark-css/default.css" rel="stylesheet" />
     <script src="SpeedRcpp_files/clipboard/clipboard.min.js"></script>
@@ -253,7 +253,7 @@ isOdd_cpp
 
 ```
 ## function (num = 10L) 
-## .Call(&lt;pointer: 0x10533c300&gt;, num)
+## .Call(&lt;pointer: 0x107b5c300&gt;, num)
 ```
 
 We see that `isOdd_cpp()` uses `.call()` to invoke the `C++` version of the function which is stored in the specified pointer.
@@ -1230,14 +1230,14 @@ sections (by writing entire functions) with `C++` for performance improvement.
     
     ```r
     f &lt;- function(n) {
-      if(n &lt; 2) return(n)
+      if(n &lt; 3) return(n)
       return(f(n-1) + f(n-2))
     }
     ```
 
-2. Reconsider the function `nth_partial_sort()`. Compare its performance with that of R's `sort()` for large vectors. Explain your findings.
+2. Reconsider the function `nth_partial_sort()`. Compare its performance with that of `R`'s `sort()` for large vectors. Explain your findings.
 
-3. Convert `all()`, `range()` and `var()` into C++. You may assume that the inputs have no missing values.
+3. Convert `all()`, `range()` and `var()` into `C++`. You may assume that the inputs have no missing values.
 
 ---
 class: segue-red

@@ -5,7 +5,7 @@
     <meta charset="utf-8" />
     <meta name="author" content="Martin C. Arnold" />
     <meta name="author" content="Jens Klenke" />
-    <meta name="date" content="2022-06-27" />
+    <meta name="date" content="2022-07-09" />
     <script src="improving-performance_files/header-attrs/header-attrs.js"></script>
     <link href="improving-performance_files/remark-css/default.css" rel="stylesheet" />
     <script src="improving-performance_files/clipboard/clipboard.min.js"></script>
@@ -162,7 +162,7 @@ apply(Y, 1, sum)
 
 &lt;br&gt;
 
-A function is faster than an alternativeif it has less to do &amp;mdash; obvious but often neglected! 
+A function is faster than an alternative if it has less to do &amp;mdash; obvious but often neglected! 
 
 **Use functions tailored to specific input and output types / specific problems!**
 
@@ -250,8 +250,8 @@ bench::mark(
 ## # A tibble: 2 × 6
 ##   expression           min   median `itr/sec` mem_alloc `gc/sec`
 ##   &lt;bch:expr&gt;      &lt;bch:tm&gt; &lt;bch:tm&gt;     &lt;dbl&gt; &lt;bch:byt&gt;    &lt;dbl&gt;
-## 1 mean(x)           1.07µs   1.23µs   767221.    22.7KB       0 
-## 2 mean.default(x) 532.95ns 656.12ns  1427178.        0B     143.
+## 1 mean(x)           1.15µs   1.27µs   742310.    22.7KB     74.2
+## 2 mean.default(x) 574.16ns 656.12ns  1351616.        0B    135.
 ```
 ]]
 
@@ -278,8 +278,8 @@ bench::mark(
 ## # A tibble: 2 × 6
 ##   expression            min   median `itr/sec` mem_alloc `gc/sec`
 ##   &lt;bch:expr&gt;       &lt;bch:tm&gt; &lt;bch:tm&gt;     &lt;dbl&gt; &lt;bch:byt&gt;    &lt;dbl&gt;
-## 1 mean.default(x)     533ns    615ns  1478512.        0B     148.
-## 2 sum(x)/length(x)    205ns    287ns  3311793.        0B       0
+## 1 mean.default(x)     615ns    697ns   531943.        0B     53.2
+## 2 sum(x)/length(x)    246ns    287ns  3174647.        0B      0
 ```
 ]]
 
@@ -655,8 +655,8 @@ bench::mark(
 ## # A tibble: 2 × 6
 ##   expression            min   median `itr/sec` mem_alloc `gc/sec`
 ##   &lt;bch:expr&gt;       &lt;bch:tm&gt; &lt;bch:tm&gt;     &lt;dbl&gt; &lt;bch:byt&gt;    &lt;dbl&gt;
-## 1 colmax(X)          2.94ms   3.03ms      317.     135KB     57.4
-## 2 apply(X, 2, max)   4.32ms   4.49ms      217.     313KB     54.3
+## 1 colmax(X)          3.19ms   3.24ms      222.     152KB     111.
+## 2 apply(X, 2, max)   4.72ms    5.1ms      138.     313KB     120.
 ```
 ]
 

@@ -302,6 +302,50 @@ Technically this does not directly relate to vectorisation but it yet again demo
     
     Applying `max()` on list elements is faster than iterating over the columns of a numeric matrix.
 
+## Additional Example: Funcational Programming and parallel code execution using `furrr`
+
+Here's an example using functionals from the `furrr` package which allow to easily run `purrr`-based iteration in parallel, making use of [futures](https://medium.com/civis-analytics/programming-with-futures-in-r-401e906db384).
+
+We first setup a plan for multisession computing using `workers = 10` cores (see `?parallel::detectCores()`) for automatic CPU core detection on your machine). This plan allows to distribute computations across ten `R` sessions run in parallel (one per worker).
+
+We also set an option for sane random number generation (one needs to be careful with random number generation in parallel computing). This is not needed in our example but we consider it a good practice.
+
+```{r, eval = F}
+library(furrr)
+library(purrr)
+
+# parallelisation plan
+plan("multisession", workers = 10)
+
+# additional options
+fopts <- furrr_options(
+  seed = TRUE
+)
+```
+
+We are now set to run iteration in parallel. The following is equivalent to the example on Slide 31: `Sys.sleep(20)` keeps `R` busy for 20 seconds. For 10 iterations of this command we thus expect a total execution time of approximately 20 * 10 = 200 seconds. 
+
+```{r, eval=FALSE}
+tictoc::tic()
+walk(1:10, ~ Sys.sleep(20))
+tictoc::toc()
+```
+```
+200.021 sec elapsed
+```
+
+With `Sys.sleep(20)` being executed in 10 parallel using the `future` version of `walk()`, we expect a total computation time of approximately 20 seconds: each workers carries out _one_ call of `Sys.sleep(20)` and the workers run in parallel.
+
+```{r, eval=FALSE}
+tictoc::tic()
+future_walk(1:10, ~ Sys.sleep(20), .options = fopts)
+tictoc::toc()
+```
+20.866 sec elapsed
+
+Computation times will be different on your system as they are hardware- and OS-dependent! Also note that there is some _overhead_ (~.9 seconds) which comes from managing the parallel `R` sessions. This overhead will generally depend on the underlying computation.
+
+
 <!-- ## Slide 30: Vectorise your code &mdash; Case Study -->
 
 <!-- **Case Study: Monte Carlo Integration** -->

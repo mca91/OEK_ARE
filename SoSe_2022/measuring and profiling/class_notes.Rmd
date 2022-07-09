@@ -199,7 +199,7 @@ plot(results)
 
     **Solution:**
 
-    As bench::mark() doesn’t calculate the mean value, we calculate it from the time list-column in the tibble output.
+    As `bench::mark()` doesn’t calculate the mean value, we calculate it from the time list-column in the tibble output.
 
     ```{r, eval=F}
     n <- 1e6
@@ -231,7 +231,7 @@ plot(results)
     #> [1] 1.05e-05
     ```
 
-    Both approaches get the order of magnitude right. The results differ a little and bench::mark() is generally more precise.
+    Both approaches get the order of magnitude right. The results differ a little and `bench::mark()` is generally more precise.
   
 2. Here are two other ways to compute the square root of a vector. Which do you think will be fastest? Use microbenchmarking to test your answers.
 

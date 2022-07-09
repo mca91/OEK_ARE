@@ -172,7 +172,7 @@ apply(Y, 1, sum)
 
 <br>
 
-A function is faster than an alternativeif it has less to do &mdash; obvious but often neglected! 
+A function is faster than an alternative if it has less to do &mdash; obvious but often neglected! 
 
 **Use functions tailored to specific input and output types / specific problems!**
 
