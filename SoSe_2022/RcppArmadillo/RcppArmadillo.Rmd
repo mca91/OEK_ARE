@@ -114,7 +114,7 @@ Armadillo is a templated high-quality linear algebra library for `C++` with good
 
 .font90[
 
-- Again the preferred method for compiling Armadillo code is to use a `C++` file with a modified header. The following lines replace the default header:
+- As for `Rcpp` the preferred method for compiling Armadillo code is to use a `C++` file with a modified header. The following lines replace the default header:
     ```{Rcpp, eval=F}
     #include <RcppArmadillo.h>
     // [[Rcpp::depends(RcppArmadillo)]]
@@ -129,7 +129,7 @@ Armadillo is a templated high-quality linear algebra library for `C++` with good
     using namespace arma;
     ```
 
-- `sourceCpp()` then can be used for sourcing the script (on save) just as for `Rcpp` code.
+- `sourceCpp()` then can be used for sourcing the script (on save), just as for `Rcpp` code.
 
 ]
 
@@ -146,13 +146,13 @@ Armadillo is a templated high-quality linear algebra library for `C++` with good
     
 - There are other classes, e.g. for sparse matrices and high-dimensional arrays
 
-- All classes have attributes and associated methods which can be accessed using [dot syntax](https://www.geeksforgeeks.org/dot-operator-in-c-c/) just as for the `C++` STL.
+- All classes have attributes and associated methods which can be accessed using [dot syntax](https://www.geeksforgeeks.org/dot-operator-in-c-c/), just as for the `C++` STL.
 
     **Example: Attributes and Methods**
-    ```{Rcpp}
-    arma::mat I(10, 10);   //initialize 10x10 matrix
-    int n = I.n_rows();    //get number of rows
-    I.eye();               //transform to identity matrix
+    ```{cpp}
+    arma::mat I(10, 10);   // initialise 10x10 matrix
+    int n = I.n_rows();    // get number of rows
+    I.eye();               // transform to identity matrix
     ```
 
 ]
@@ -169,7 +169,7 @@ Armadillo is a templated high-quality linear algebra library for `C++` with good
 double inner_prod_rcpp(NumericVector x, NumericVector y) {
   int K = x.length();
   double ip = 0;
-  for (int k = 0; k < K; k++) {
+  for(int k = 0; k < K; k++) {
     ip += x(k) * y(k);
   }
   return(ip);
@@ -178,9 +178,9 @@ double inner_prod_rcpp(NumericVector x, NumericVector y) {
 
 (Note that matrix multiplication requires two loops which is even more bulky.)
 
-Here's how to do it with `Armadillo`:
+Here is how to do it with `Armadillo`:
 
-```{Rcpp}
+```{cpp}
 // using RcppArmadillo
 double inner_prod_rcpparma(arma::vec x, arma::vec y) {
   arma::mat out = x.t() * y;
@@ -287,9 +287,13 @@ We recommend a similar procedure as for `Rcpp`:
 
 **Example: fast linear regression**
 
-`Rcpp` input *by reference* / `Rcpp` return
+`Rcpp` input *by reference* / `Rcpp` return:
 
-```{Rcpp}
+- `Rcpp` input will trigger a cast. We explicitly state that the input is not copied to some separate memory for `X` but is passed by reference from the auxiliary (external) memory of `Xr`.
+
+- For the latter to work we pass a pointer as input to the constructor and set `copy_aux_mem = false` (see the [documentation](http://arma.sourceforge.net/docs.html#Mat))
+
+```{cpp}
 #include <RcppArmadillo.h>
 using namespace Rcpp;
 
@@ -297,8 +301,8 @@ using namespace Rcpp;
 List fastReg_TwoCasts(NumericMatrix Xr,  NumericVector yr) {
     int n = X.n_rows, k = X.n_cols;
     
-    arma::mat X(Xr.begin(), n, k, false);
-    arma::colvec y(yr.begin(), yr.size(), false);
+    arma::mat X(Xr.begin(), n, k, false);           // (copy_aux_mem = false)
+    arma::colvec y(yr.begin(), yr.size(), false);   //         ""
         
     arma::colvec coef = arma::solve(X, y);
     arma::colvec res  = y - X * coef;
@@ -318,7 +322,7 @@ List fastReg_TwoCasts(NumericMatrix Xr,  NumericVector yr) {
 
 `Armadillo` input *by value* / `Rcpp` return
 
-```{Rcpp}
+```{cpp}
 #include <RcppArmadillo.h>
 using namespace Rcpp;
 
@@ -344,7 +348,7 @@ List fastReg_OneCast(arma::mat X, arma::colvec y) {
 
 `Armadillo` input *by constant reference* / `Rcpp` return
 
-```{Rcpp}
+```{cpp}
 #include <RcppArmadillo.h>
 using namespace Rcpp;
 
@@ -353,7 +357,7 @@ List fastReg_ConstRef(const arma::mat& X, const arma::colvec& y) {
     int n = X.n_rows, k = X.n_cols;
         
     arma::colvec coef = arma::solve(X, y);
-    arma::colvec res  = y-X*coef;
+    arma::colvec res  = y - X * coef;
 
     return List::create(Named("coefficients") = coef);
 }
@@ -370,7 +374,7 @@ List fastReg_ConstRef(const arma::mat& X, const arma::colvec& y) {
 
 `Armadillo` input *by constant reference* / `Armadillo` return
 
-```{Rcpp}
+```{cpp}
 #include <RcppArmadillo.h>
 using namespace Rcpp;
 
@@ -391,7 +395,7 @@ arma::mat fastReg_NoCast(const arma::mat& X, const arma::vec& y) {
 
 .font90[
 
-**Example: fast regression &mdash; ctd.**
+**Example: fast linear regression &mdash; ctd.**
 
 ```{r, echo=F, warning=F, message=F, cache=T, eval=T}
 cppFunction('

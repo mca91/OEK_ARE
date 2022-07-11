@@ -49,7 +49,7 @@ class: title-slide title-index
     <li> <a href="measuring and profiling/MeasuringProfiling.html">Profiling and Benchmarking</a></li> 
     <li> <a href="improving performance/improving-performance.html">Improving Performance</a></li>
     <li> <a href="Rcpp/SpeedRcpp.html">Rcpp</a></li>
-    <li> RcppArmadillo</li>
+    <li> <a href="RcppArmadillo/RcppArmadillo.html">RcppArmadillo</a></li>
   </ul>
 </ol>
 ]]
