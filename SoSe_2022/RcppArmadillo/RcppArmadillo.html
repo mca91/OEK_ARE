@@ -248,8 +248,8 @@ bench::mark(
 ## # A tibble: 2 × 4
 ##   expression                  min   median `itr/sec`
 ##   &lt;bch:expr&gt;             &lt;bch:tm&gt; &lt;bch:tm&gt;     &lt;dbl&gt;
-## 1 eigen(X)$values           1.01s    1.01s     0.991
-## 2 Eigenvals_Armadillo(X) 285.87ms 285.87ms     3.50
+## 1 eigen(X)$values           1.02s    1.02s     0.984
+## 2 Eigenvals_Armadillo(X) 285.26ms 286.64ms     3.49
 ```
 
 ]
@@ -431,7 +431,7 @@ bench::mark(
 
 **Example: simulating a VAR(1) process**
 
-- A VAR(1) process is given by `$$\mathbf{y}_t = \mathbf{A}\mathbf{y}_{t-1} + \boldsymbol{\varepsilon}_t$$` with `\(K\)` endogenous variables `\(\mathbf{y}_t = (y_{1t}, \dots, y_{kt})\)`, `\(\mathbf{A}\)` a `\(K\times K\)` coefficient matrix and `\(\boldsymbol{\varepsilon}_t\)` a `\(K\)` dimensional error process with `\(E(\boldsymbol{\varepsilon}_t) = \mathbf{0}\)` and `\(E(\boldsymbol{\varepsilon}_t \boldsymbol{\varepsilon}_t') = \boldsymbol{\Sigma}_{\boldsymbol{\varepsilon}}\)`.
+- A VAR(1) process is given by `$$\mathbf{y}_t = \mathbf{A}\mathbf{y}_{t-1} + \boldsymbol{\varepsilon}_t, \quad t=0,\dots,T$$` with `\(K\)` endogenous variables `\(\mathbf{y}_t = (y_{1t}, \dots, y_{Kt})\)`, `\(K\times K\)` coefficient matrix `\(\mathbf{A}\)` and `\(K\)`-dimensional error process `\(\boldsymbol{\varepsilon}_t\)` with `\(E(\boldsymbol{\varepsilon}_t) = \mathbf{0}\)` and `\(E(\boldsymbol{\varepsilon}_t \boldsymbol{\varepsilon}_t') = \boldsymbol{\Sigma}_{\boldsymbol{\varepsilon}}\)`.
 
 - `\(\mathbf{y}_t\)` is a stable process iff `$$\det(\mathbf{I}_K - \mathbf{A}z) \neq 0$$` for `\(\lvert z\rvert \leq 1\)`. An equivalent condition is that all eigenvalues of `\(\mathbf{A}\)` have modulus less than 1.
 
