@@ -5,8 +5,8 @@
     <meta charset="utf-8" />
     <meta name="author" content="Martin C. Arnold" />
     <meta name="author" content="Jens Klenke" />
-    <meta name="date" content="2022-07-11" />
-    <script src="Packages_files/header-attrs-2.13/header-attrs.js"></script>
+    <meta name="date" content="2022-07-12" />
+    <script src="Packages_files/header-attrs-2.14/header-attrs.js"></script>
     <link href="Packages_files/remark-css-0.0.1/default.css" rel="stylesheet" />
     <script src="Packages_files/clipboard-2.0.6/clipboard.min.js"></script>
     <link href="Packages_files/xaringanExtra-clipboard-0.2.6/xaringanExtra-clipboard.css" rel="stylesheet" />
@@ -74,8 +74,8 @@ class: title-slide title-packages center middle
 
 The smallest usable R package consists of 
 
-- an `R/` directory, containing the R Code.
-- a `DESCRIPTION` file containing meta data about the package.
+- an `R/` directory containing the R Code.
+- a `DESCRIPTION` file containing metadata about the package.
 - a `NAMESPACE` file which defines which functions are imported and exported. 
 
 - By running
@@ -91,7 +91,7 @@ The smallest usable R package consists of
 --
 
 .font90[
-- We learnt how to work with Git and we want you to use it for package development, too. 
+- We learnt how to work with Git and want you to use it for package development, too. 
 
     Git is easily initialized with: 
 .blockquote.exercise[
@@ -119,15 +119,15 @@ based on [R packages: The whole game](https://r-pkgs.org/whole-game.html).
 --
 
 .font90[
-Before we start we should think about what our package should do:
+Before we start, we should think about what our package should do:
 
-- Since `factors` in R are often frustrating to work with we could write a package which makes working with `factors` easier. 
+- Since `factors` in R are often frustrating to work with, we could write a package which makes working with `factors` easier. 
 ]
 
 --
 
 .font90[
-- Have you ever tried to combine 2 factors?
+- Have you ever tried to combine two factors?
 ]
 
 .font90.blockquote.exercise[
@@ -151,7 +151,7 @@ Before we start we should think about what our package should do:
 
 --
 
-Lets write a function called `fbind()` that does what one would expect.
+Let us write a function called `fbind()` that does what one would expect.
 
 ???
 
@@ -182,7 +182,7 @@ fbind(a, b)
 ---
 ## Where to save your function? 
 
-- All R code of the package should be in `.R` files in the `R/` directory. Put the function you have just written into the file `R/fbind.R`. 
+- All R codes of the package should be in `.R` files in the `R/` directory. Put the function you have just written into the file `R/fbind.R`. 
 
 - By calling
 .blockquote.exercise[
@@ -193,13 +193,13 @@ fbind(a, b)
 ]
     a file gets automatically created in the correct folder.  
 
-    If you call this function using an existing file in `R\` it will open the corresponding script. 
+    If you call this function using an existing file in `R\`, it will open the corresponding script. 
 ---
 ## Does the function work in the package environment?
 
-- Right now this might seem a bit of an overkill, however, if the package becomes more complicated you should use `load_all()` to make all functions in the `R\` directory available. 
+- Right now, this might seem a bit of an overkill. However, if the package becomes more complicated, you should use `load_all()` to make all functions in the `R\` directory available. 
 
-- `load_all()` simulates the process of building, installing, and attaching the package which makes it easy to test if the function works as expected within the package. The RStudio shortcut for this is `Ctrl + Shift + L`.
+- `load_all()` simulates the building, installing, and attaching of the package making it easy to test if the function works as expected within the package. The RStudio shortcut for this is `Ctrl + Shift + L`.
 
 ---
 ## Check
@@ -210,25 +210,25 @@ Run `check()` to do so.
 
 **Read the output of the check!** Deal with problems early and often. It’s just like incremental development of .R and .Rmd files. The longer you go between full checks that everything works, the harder it becomes to pinpoint and solve issues.
 
-You should see 2 warnings: 
+You should see two warnings: 
 - Non-standard license specification
 - Undocumented code objects: 'fbind'
 
 ---
 ## Description File
 
-- The description file holds the meta data of the package. 
+- The description file holds the metadata of the package. 
 
-    You can change the name and title of the package. There is also room for a little description. Most parts of this file are only relevant when you think about distribute your package e.g. via `CRAN`. 
+    You can change the name and title of the package. There is also room for a description. Most parts of this file are only relevant when you think about distributing  your package, e.g. via `CRAN`. 
 
-- To get rid of the licence warning use `licence: CC0`. This puts your package in the public domain.
+- To get rid of the licence warning, use `licence: CC0`. This puts your package in the public domain.
   
 - More information about licenses can be found here: 
 [License: Who can use your package?](https://r-pkgs.org/license.html)
 
 --
 
-- Another important field is `Imports:` where you have declare which other packages
+- Another important field is `Imports`, where you must declare which other packages
 you use within your package. More about this later. 
 
 
@@ -236,12 +236,12 @@ you use within your package. More about this later.
 ## Documentation
 
 .font90[
-The second warning told us that a documentation for our function is missing. Again, 
-if it is only for private usage this might not be too important. But if the package should be published 
-on CRAN a documentation is required. 
+The second warning informs us that the documentation for our function is missing. Again, 
+if it is only for private usage, this might not be too important. But if the package should be published 
+on CRAN, a documentation is required. 
 
-The documentation is created when a package is build based on the  files in the folder `man/`. For 
-our function `fbind()` we need a file `man/fbind.Rd`. However, we don't need to edit this file yourself.
+The documentation is created when a package is built based on the  files in the folder `man/`. For 
+our function `fbind()`, we need a file `man/fbind.Rd`. However, we don't need to edit this file yourself.
 ]
 
 ### roxygen2
@@ -279,7 +279,7 @@ if you navigate the courser into a function call and click ***Code &gt; Insert r
 ---
 ## `NAMESPACE`
 
-- The call to `devtools::document()` not only creates the documentation but also keeps the `NAMESPACE` file up-to-date. 
+- The call to `devtools::document()` creates the documentation and keeps the `NAMESPACE` file up-to-date. 
 
 - The export directive in `NAMESPACE` is what makes `fbind()` available to a user after attaching `foofactors` via `library(foofactors)`. 
 
@@ -306,7 +306,7 @@ export(fbind)
 ---
 ## Install the package
 
-- Use `check()` again again to see if the warnings are gone and everything runs fine. Then run `install()` to put your package into your library. 
+- Use `check()` again to see if the warnings are gone and everything runs fine. Then run `install()` to put your package into your library. 
 
 - We may now attach the package using `library()`
 .blockquote.exercise[
@@ -319,14 +319,14 @@ library(foofactors)
 ---
 ## Import Packages
 
-- Often we want to use functions from other packages. For this to work we first need to import functions from the namespace of other packages. 
+- Often we want to use functions from other packages. For this to work, we first need to import functions from the namespace of other packages. 
 
     **Exercise:**
     
     Add a function that combines `lm()` and `summary()` to your package. Then run `check`(). What do you notice?  
 
 --
-- Even functions from the (always available) `stats` or `utils` packages should be imported. This important for being able to publish a package on `CRAN`. 
+- Even functions from the (always available) `stats` or `utils` packages should be imported. This is important for being able to publish a package on `CRAN`. 
 
     You must declare your intent to use functions from the `stats` namespace with
 .blockquote.exercise[
@@ -335,9 +335,9 @@ library(foofactors)
 usethis::use_package("stats")
 ```
 ]
-    This will add the stats package to the import field of the `DESCRIPTION` file 
+    This will add the stats package to the import field of the `DESCRIPTION` file. 
 
-- If you want to call a function from that package later use `packagname::function()` 
+- If you want to call a function from that package later, use `packagname::function()` 
 
 ---
 ## More about Namespaces
@@ -351,14 +351,15 @@ What output do you expect for this code?
 library(dplyr)
 library(MASS)
 
-mtcars %*% select(mpg)
+mtcars %&gt;% select(mpg)
 ```
 ]
 
 --
-- The problem here is that both the `dplyr` and the `MASS` package export a function `select()`. The one in the package which was loaded last is used. 
 
-- Use of Namespaces disambiguates which function we want to use. We can tell R to look for the function with the name `select()` exported by the `dplyr` package by calling `dplyr::select()`. 
+- The problem is that both the `dplyr` and the `MASS` package export a function `select()`. The one in the package which was loaded last is used. 
+
+- The use of Namespaces disambiguates which function we want to use. We can tell R to look for the function with the name `select()` exported by the `dplyr` package by calling `dplyr::select()`. 
 
 ---
 ## Imports
@@ -430,6 +431,19 @@ if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
     deleted = true;
   });
 })();
+// add `data-at-shortcutkeys` attribute to <body> to resolve conflicts with JAWS
+// screen reader (see PR #262)
+(function(d) {
+  let res = {};
+  d.querySelectorAll('.remark-help-content table tr').forEach(tr => {
+    const t = tr.querySelector('td:nth-child(2)').innerText;
+    tr.querySelectorAll('td:first-child .key').forEach(key => {
+      const k = key.innerText;
+      if (/^[a-z]$/.test(k)) res[k] = t;  // must be a single letter (key)
+    });
+  });
+  d.body.setAttribute('data-at-shortcutkeys', JSON.stringify(res));
+})(document);
 (function() {
   "use strict"
   // Replace <script> tags in slides area to make them executable
