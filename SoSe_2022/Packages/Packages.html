@@ -5,11 +5,7 @@
     <meta charset="utf-8" />
     <meta name="author" content="Martin C. Arnold" />
     <meta name="author" content="Jens Klenke" />
-<<<<<<< Updated upstream
-    <meta name="date" content="2022-07-12" />
-=======
     <meta name="date" content="2022-07-18" />
->>>>>>> Stashed changes
     <script src="Packages_files/header-attrs-2.14/header-attrs.js"></script>
     <link href="Packages_files/remark-css-0.0.1/default.css" rel="stylesheet" />
     <script src="Packages_files/clipboard-2.0.6/clipboard.min.js"></script>
@@ -72,19 +68,14 @@ class: title-slide title-packages center middle
 ### Martin C. Arnold, Jens Klenke
 
 ---
-## Minimal Package
+## A minimal package
 
 .font90[
 
 a minimal working example of an `R` package consists of 
 
-<<<<<<< Updated upstream
-- an `R/` directory containing the R Code.
-- a `DESCRIPTION` file containing metadata about the package.
-=======
 - an `R/` directory, containing the `R` Code.
 - a `DESCRIPTION` file containing meta data about the package.
->>>>>>> Stashed changes
 - a `NAMESPACE` file which defines which functions are imported and exported. 
 
 - By running
@@ -100,10 +91,6 @@ a minimal working example of an `R` package consists of
 --
 
 .font90[
-<<<<<<< Updated upstream
-- We learnt how to work with Git and want you to use it for package development, too. 
-=======
->>>>>>> Stashed changes
 
 - You already know basics in Git which is very convenient for package development, too.
 
@@ -126,32 +113,13 @@ usethis::create_package(here::here("Packages", "example"))
 ---
 ## Your first package
 
-<<<<<<< Updated upstream
-.font90[
-We start by writing a first little package together. The steps are 
-=======
 We now show how to write a small package. The steps are 
->>>>>>> Stashed changes
 based on [R packages: The whole game](https://r-pkgs.org/whole-game.html). 
-]
 
 --
 
-.font90[
-Before we start, we should think about what our package should do:
+Before we start we should think about what our package should do:
 
-<<<<<<< Updated upstream
-- Since `factors` in R are often frustrating to work with, we could write a package which makes working with `factors` easier. 
-]
-
---
-
-.font90[
-- Have you ever tried to combine two factors?
-]
-
-.font90.blockquote.exercise[
-=======
 - The `factor` class in `R` may be frustrating to work with. We discuss an example package which facilitates dealing with factors.
 
 --
@@ -174,7 +142,6 @@ c(a, b)
 &lt;br&gt;
 
 .blockquote.exercise[
->>>>>>> Stashed changes
 
 ```
 ## [1] character hits      your      eyeballs 
@@ -193,15 +160,9 @@ c(a, b)
 ```
 ]
 
-<<<<<<< Updated upstream
---
-
-Let us write a function called `fbind()` that does what one would expect.
-=======
 &lt;br&gt;
 
 ... let's write a function `fbind()` that does what one would expect.
->>>>>>> Stashed changes
 
 ???
 
@@ -210,9 +171,6 @@ From https://github.com/hadley/pkg-dev/tree/master/fordogs/R
 ---
 ## Your first package
 
-### Main function
-
-.blockquote.exercise[
 
 ```r
 fbind &lt;- function(a, b) {
@@ -227,44 +185,27 @@ fbind(a, b)
 ## [8] counts   
 ## Levels: but character counts eyeballs hits integer where it your
 ```
-]
 
 ---
 ## Where to save your functions? 
 
-<<<<<<< Updated upstream
-- All R codes of the package should be in `.R` files in the `R/` directory. Put the function you have just written into the file `R/fbind.R`. 
-=======
 - All `R` code of the package should be in `.R` files in the `R/` directory. Put the function you have just written into the file `R/fbind.R`. 
->>>>>>> Stashed changes
 
 - By calling
-.blockquote.exercise[
     
     ```r
     usethis::use_r("fbind.R")
     ```
-<<<<<<< Updated upstream
-]
-    a file gets automatically created in the correct folder.  
-
-    If you call this function using an existing file in `R\`, it will open the corresponding script. 
-=======
     a designated `.R` file gets automatically created at the correct location.
 
     If you call this function using an existing file in `R\` it will open the corresponding script. 
     
->>>>>>> Stashed changes
 ---
 ## Does the function work in the package environment?
 
-- Right now, this might seem a bit of an overkill. However, if the package becomes more complicated, you should use `load_all()` to make all functions in the `R\` directory available. 
+- Right now this might seem a bit of an overkill, however, if the package becomes more complicated you should use `load_all()` to make all functions in the `R\` directory available. 
 
-<<<<<<< Updated upstream
-- `load_all()` simulates the building, installing, and attaching of the package making it easy to test if the function works as expected within the package. The RStudio shortcut for this is `Ctrl + Shift + L`.
-=======
 - `load_all()` simulates the process of building, installing, and attaching the package which makes it straightforward to test if the function works as expected within the package. The _RStudio_ shortcut is `Ctrl + Shift + L`.
->>>>>>> Stashed changes
 
 ---
 ## Do the `check()`
@@ -277,58 +218,27 @@ Run `check()` to do so.
 
 You should see 2 warnings for our example package: 
 
-<<<<<<< Updated upstream
-You should see two warnings: 
-=======
->>>>>>> Stashed changes
 - Non-standard license specification
 - Undocumented code objects: 'fbind'
 
 ---
 ## Description file
 
-- The description file holds the metadata of the package. 
+- The description file holds the meta data of the package. 
 
-<<<<<<< Updated upstream
-    You can change the name and title of the package. There is also room for a description. Most parts of this file are only relevant when you think about distributing  your package, e.g. via `CRAN`. 
-=======
     You can change the name and title of the package. There is also some room for description. Most parts of this file are only relevant when you think about distributing your package, e.g., via `CRAN`. 
->>>>>>> Stashed changes
 
-- To get rid of the licence warning, use `licence: CC0`. This puts your package in the public domain.
+- To get rid of the licence warning use `licence: CC0`. This puts your package in the public domain.
   
 - More information about licenses can be found here: 
-[License: Who can use your package?](https://r-pkgs.org/license.html)
+[License: Who can use your package?](http://r-pkgs.had.co.nz/description.html#license)
 
---
-
-<<<<<<< Updated upstream
-- Another important field is `Imports`, where you must declare which other packages
-you use within your package. More about this later. 
-=======
 - Another important field is `Imports` where we have to declare other packages used within your package. More about this later. 
->>>>>>> Stashed changes
 
 
 ---
 ## Documentation
 
-<<<<<<< Updated upstream
-.font90[
-The second warning informs us that the documentation for our function is missing. Again, 
-if it is only for private usage, this might not be too important. But if the package should be published 
-on CRAN, a documentation is required. 
-
-The documentation is created when a package is built based on the  files in the folder `man/`. For 
-our function `fbind()`, we need a file `man/fbind.Rd`. However, we don't need to edit this file yourself.
-]
-
-### roxygen2
-
-.font90[
-`roxygen2` is a package that helps us with the documentation. We basically comment our function definitions with something like the following:  
-]
-=======
 - The second warning tells us that a documentation for our function is missing. Again, this is not critical if the package is only for private usage. Documentation is required, however, if the package should be published 
 on `CRAN`. 
 
@@ -338,9 +248,8 @@ our function `fbind()` we need a file `man/fbind.Rd`. However, you don't need to
 **`roxygen2`**
 
 `roxygen2` is a package that helps us with the documentation. We may comment our function definitions with something like the following:  
->>>>>>> Stashed changes
 
-.code70.blockquote.exercise[
+.code70[
 
 ```r
 #' Bind two factors
@@ -368,52 +277,27 @@ our function `fbind()` we need a file `man/fbind.Rd`. However, you don't need to
 ---
 ## `NAMESPACE`
 
-<<<<<<< Updated upstream
-- The call to `devtools::document()` creates the documentation and keeps the `NAMESPACE` file up-to-date. 
-=======
 - `devtools::document()` not only creates the documentation but also keeps the `NAMESPACE` file updated.
->>>>>>> Stashed changes
 
 - The `@export` directive in the `NAMESPACE` file is what makes `fbind()` available to users after attaching `foofactors` via `library(foofactors)`. 
 
-<<<<<<< Updated upstream
-    We actually told `roxygen` to export `fbind()` by putting
-.blockquote.exercise[
-
-```r
-#' @export
-```
-    ]
-=======
     We actually tell `roxygen` to export `fbind()` by putting 
->>>>>>> Stashed changes
     
+    ```r
+    #' @export
+    ```
     in front of the function call. 
 
---
-
 - Your `NAMESPACE` file should now look like this:
-.blockquote.exercise[
+    
+    ```r
+    # Generated by roxygen2: do not edit by hand
+    export(fbind)
+    ```
 
-```r
-# Generated by roxygen2: do not edit by hand
-export(fbind)
-```
-]
 ---
 ## Install the package
 
-<<<<<<< Updated upstream
-- Use `check()` again to see if the warnings are gone and everything runs fine. Then run `install()` to put your package into your library. 
-
-- We may now attach the package using `library()`
-.blockquote.exercise[
-
-```r
-library(foofactors)
-```
-]
-=======
 - Use `check()` again to see whether the warnings are gone and everything runs fine. Then run `install()` to put your package into your library. 
 
 - We may now attach the package
@@ -421,16 +305,11 @@ library(foofactors)
   ```r
   library(foofactors)
   ```
->>>>>>> Stashed changes
 
 ---
 ## Importing packages
 
-<<<<<<< Updated upstream
-- Often we want to use functions from other packages. For this to work, we first need to import functions from the namespace of other packages. 
-=======
 - When writing packages we use functions from other packages frequently. For this to work seamlessly we need to import these functions from the respective namespaces. 
->>>>>>> Stashed changes
 
     **Exercise:**
     
@@ -439,18 +318,6 @@ library(foofactors)
 --
 - Even functions from the (always available) `stats` or `utils` packages should be imported. This is important for being able to publish a package on `CRAN`. 
 
-<<<<<<< Updated upstream
-    You must declare your intent to use functions from the `stats` namespace with
-.blockquote.exercise[
-
-```r
-usethis::use_package("stats")
-```
-]
-    This will add the stats package to the import field of the `DESCRIPTION` file. 
-
-- If you want to call a function from that package later, use `packagname::function()` 
-=======
     For `lm()` and `summary()` to be available in our package we must declare the intent to use functions from the `stats` namespace with
     
     ```r
@@ -460,7 +327,6 @@ usethis::use_package("stats")
     This will add the `stats` package to the `@imports` field of the `DESCRIPTION` file 
 
 - We generally use `packagname::function()` to call a function from an imported package
->>>>>>> Stashed changes
 
 ---
 ## More on namespaces
@@ -468,7 +334,6 @@ usethis::use_package("stats")
 **Exercise:**
 
 What output do you expect for this code?
-.blockquote.exercise[
 
 ```r
 library(dplyr)
@@ -476,17 +341,11 @@ library(MASS)
 
 mtcars %&gt;% select(mpg)
 ```
-]
 
 --
+- The problem here is that both the `dplyr` and the `MASS` package export a function `select()`. The one in the package which was loaded last is used. 
 
-<<<<<<< Updated upstream
-- The problem is that both the `dplyr` and the `MASS` package export a function `select()`. The one in the package which was loaded last is used. 
-
-- The use of Namespaces disambiguates which function we want to use. We can tell R to look for the function with the name `select()` exported by the `dplyr` package by calling `dplyr::select()`. 
-=======
 - Using namespaces clarifies which function we want to use. We may tell `R` to look for the function with the name `select()` exported by the `dplyr` package by calling `dplyr::select()`. 
->>>>>>> Stashed changes
 
 ---
 ## Imports
@@ -494,9 +353,6 @@ mtcars %&gt;% select(mpg)
 - We already know that packages we import functions from need to be specified in the `@imports` field of the `DESCRIPTION` file. This ensures that these packages are installed if our package is installed and `dplyr::select()` will work _within_ the package. 
 
 - We use `NAMESPACE` to define which functions from other packages we want to use without having to use`::` 
-<<<<<<< Updated upstream
-.blockquote.exercise[
-=======
     
     ```r
     import(dplyr) # import all functions from one package
@@ -515,16 +371,13 @@ mtcars %&gt;% select(mpg)
 &lt;br&gt;
 
 There's much more interesting stuff to learn about `R` packages. We recommend you to take things further with [R packages](https://r-pkgs.org/) by Hadley Wickham! 
->>>>>>> Stashed changes
 
-```r
-import(dplyr) # import all functions from one package
-importFrom(dplyr, select) # import selected functions 
-```
-]
+---
+class: segue-red
 
-    We think it is better too use `::` to make it explicit where a function comes from.
+![:image 18%](../assets/pica_roll.gif)
 
+### Thank You!
     </textarea>
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
 <script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
