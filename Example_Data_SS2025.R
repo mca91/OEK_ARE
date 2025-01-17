@@ -1,13 +1,5 @@
-# R
-## Add R repo
-sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys
-sudo add-apt-repository "deb https://cloud.r-project.org/bin/linux/ubuntu $(lsb_release -cs)-cran40/"
-
-
-# Update Packages
-sudo apt updatelibrary(labelled)
+library(labelled)
 library(tidyverse)
-save(bev_data, file = "bev_data.RData")
 load("bev_data.RData")
 head(bev_data)
 
@@ -37,6 +29,3 @@ apply_labels <- function (x, var.labels = T, val.labels = T)
 
 apply_labels(bev_data)
 
-git remote set-url origin git@github.com:<username>/<repository>.git
-
-sudo apt upgrade
