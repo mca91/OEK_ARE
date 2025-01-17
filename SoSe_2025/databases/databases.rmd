@@ -1,0 +1,452 @@
+---
+title: "Advanced R for Econometricians"
+subtitle: "Databases using R"
+author: 
+  - "Martin C. Arnold"
+  - "Jens Klenke"
+date: "`r Sys.Date()`"
+output:
+  xaringan::moon_reader:
+    css: ["default", "../assets/ude_fonts.css", "../assets/ude.css", "../assets/title_slides.css", "../assets/custom.css"]
+    self_contained: false # if true, fonts will be stored locally
+    seal: false # show a title slide with YAML information
+    includes:
+      in_header: "../assets/mathjax-equation-numbers.html"
+    nature:
+      beforeInit: ["../assets/remark-zoom.js", "../xaringan_files/macros.js", "https://platform.twitter.com/widgets.js"]
+      highlightStyle: github
+      highlightLines: true
+      countIncrementalSlides: false
+      ratio: '16:9' # alternatives '16:9' or '4:3' or others e.g. 13:9
+      navigation:
+        scroll: false # disable slide transitions by scrolling
+---
+class: title-slide title-sqlite center middle
+```{r icons, include=FALSE}
+library(icons)
+
+# pre-define icons
+desktop <- icons::icon_style(icons::fontawesome$solid$desktop, fill = "#004c93")
+checker_green <- icons::icon_style(icons::fontawesome$solid$check, fill = "green")
+times_red <- icons::icon_style(icons::fontawesome$solid$times, fill = "red")
+
+library(keyring)
+```
+
+```{r xaringanExtra_progress-bar, echo = FALSE}
+xaringanExtra::use_progress_bar(color = "#004c93", location = "bottom")
+```
+
+```{r xaringanExtra-clipboard_2, echo=FALSE}
+# copy button styles mainly in ude.css
+htmltools::tagList(
+  xaringanExtra::use_clipboard(
+    button_text = "<i class=\"fa fa-clipboard\"></i>",
+    success_text = "<i class=\"fa fa-check\" style=\"color: #00ff00\"></i>",
+    error_text = "<i class=\"fa fa-times-circle\" style=\"color: #F94144\"></i>"
+  ),
+  rmarkdown::html_dependency_font_awesome()
+)
+```
+
+```{r, include = FALSE, cache = FALSE}
+library(knitr)
+knitr::opts_chunk$set(eval = FALSE)
+
+default_source_hook <- knit_hooks$get("source")
+knit_hooks$set(
+  source = function(x, options) {
+    if(is.null(options$table))
+      default_source_hook(x, options)
+    else {
+      eval(parse(text = x)) %>%
+        kable("html") %>%
+        kable_styling("hover", full_width = F)
+    }
+  }
+)
+```
+
+# `r rmarkdown::metadata$title`
+## `r rmarkdown::metadata$subtitle`
+### `r rmarkdown::metadata$author`
+
+---
+## Memory Limitations of R
+
+- The amount of data you can work with in R is mainly constraint by your computers memory. 
+- In times where data sets with several 100 GB or even TB become more and more common,
+  loading all data into memory is usually not feasable. 
+- Often only a subset or an aggregation of the data is required for the analysis which requires much less memory space.
+- How to subset or aggregate data? &rarr; Use a database!
+
+---
+## (Relational) Databases
+
+.font90[
+- A database is a place where data is stored and can be manipulated.
+- A relational database aims to reduce redundancies by spreading the data over multiple tables and
+  relate them to each other. 
+]
+
+--
+
+.font90[.blockquote.exercise[
+
+#### `r desktop` Example: Redundent Data
+
+```{r, echo = FALSE, eval = TRUE, results = 'asis', message = FALSE}
+library(dplyr)
+set.seed(123)
+cust_names<- c("17" = "Peter", "34" = "Kelly", "108" = "Aleta")
+cust_address<- c("17" = "Carnaby  St.", "34" = "Downing Rd.", "108" = "Berwick St.")
+sells <- tibble(store_id = rep(1:2, each = 4), 
+                    store_location   = rep(c("Baker St.", "Abbey Road"), each = 4),
+                    store_mngr   = rep(c("John", "George"), each = 4),
+                    cust_id      = sample(c(34, 17, 108, 17, 108, 17, 34, 17), 8, replace = TRUE),
+                    cust_address = cust_address[as.character(cust_id)],
+                    cust_name    = cust_names[as.character(cust_id)],
+                    date = sample(seq(as.Date("2019/1/1"), as.Date("2019/3/1"), 
+                               by = "day"), 8),
+                    total = sample(10:20, 8, replace = TRUE)
+                )
+
+knitr::kable(sells, format = "html")
+```
+
+<br>
+]]
+---
+#### Example of Non-Redundent Data 
+
+- The same information would be stored in a relational database like this: 
+
+--
+
+
+```{r, eval = TRUE, echo = FALSE}
+store <- tibble(store_id =  1:2, 
+                store_location = c("Baker St.", "Abbey Road"),
+                store_mngr   = c("John", "George")
+                )
+
+customer <- tibble(cust_id = names(cust_names),
+                   cust_names = cust_names,
+                   cust_address = cust_address)
+
+sells_rel <- sells %>% select(-store_location, -store_mngr, -cust_address, -cust_name) 
+```
+
+.pull-left[
+```{r, echo = FALSE, eval = TRUE}
+knitr::kable(sells_rel, format = "html", caption = "Sell Records")
+```
+]
+.pull-right[
+```{r, echo = FALSE, eval = TRUE}
+knitr::kable(store, format = "html", caption = "Store")
+```
+<br>
+```{r, echo = FALSE, eval = TRUE}
+knitr::kable(customer, format = "html", caption = "Customer")
+```
+]
+
+<br>
+
+--
+- The relationship between the tables is defined by the `id` columns (called keys).
+
+
+
+---
+## R and Databases
+
+- `dplyr` also works with remote on-disk data stored in relational databases.
+- For this to work you need 
+
+--
+
+.blockquote.exercise[
+```{r, eval = FALSE}
+install.packages("dbplyr")
+```
+]
+
+--
+
+- You’ll also need to install a `DBI` backend package. The `DBI` package provides a common interface that allows `dplyr` to work with many different databases using the same code. 
+
+--
+
+- Some commonly used backends are:
+    - `RMariaDB` connects to MySQL and MariaDB.
+    - `RPostgreSQL` connects to Postgres and Redshift.
+    - `RSQLite` embeds a SQLite database.
+    - `bigrquery` connects to Google’s BigQuery.
+
+---
+## Connect to a Database
+
+.font80[
+- To connect to a database authentication information such as 
+  username and password are required (the database admin should provide those). 
+- You also need to specify a driver that makes communication with the database possible.
+- There is a remote MySQL database hosted on the web which we have access to:
+]
+
+--
+
+.font80[.blockquote.exercise[
+
+#### `r desktop` Setup the connection 
+
+```{r, eval = FALSE}
+library(dbplyr)
+library(DBI)
+con <- DBI::dbConnect(
+          drv = RMariaDB::MariaDB(), # MariaDB driver works for MySQL as well
+          username = keyring::key_list('sql_try')[1,2],
+          dbname   = keyring::key_list('sql_try')[1,2], 
+          host     = "sql11.freesqldatabase.com",
+          password = keyring::key_get('sql_try',
+                                      keyring::key_list('sql_try')[1,2]),
+          port     = "3306"
+          )
+```
+]]
+
+```{r, eval = TRUE, echo = FALSE}
+library(dplyr)
+con <- DBI::dbConnect(
+               drv = RMariaDB::MariaDB(), # MariaDB driver works for MySQL as well
+               username = 'sql11460561',
+               dbname   = keyring::key_list('sql_try')[1,2], 
+               host     = 'sql11.freesqldatabase.com',
+               password = keyring::key_get('sql_try',
+                                           keyring::key_list('sql_try')[1,2]),
+               port     = '3306'
+               )
+```
+
+--
+
+
+.font80[.blockquote.exercise[
+
+#### `r desktop` Example: Writing data
+```{r, echo = TRUE, eval = FALSE}
+DBI::dbWriteTable(con, "gapminder", gapminder::gapminder)
+DBI::dbWriteTable(con, "country_codes", gapminder::country_codes)
+```
+
+]]
+???
+
+you can use keyring
+
+
+---
+## Access Data
+
+- When the connection is established we can use the object `con` to communicate with the database.
+- The function `DBI::dbListTables()` tells us which tables are in the database.
+
+.blockquote.exercise[
+
+```{r, eval = TRUE}
+DBI::dbListTables(con)
+```
+]
+
+--
+
+- With `dplyr::tbl()` we can create an object which is a reference to a table in the database. Most `dplyr` functions work on this object as it was as a data frame (or `tibble`).
+
+--
+
+.blockquote.exercise[
+
+#### `r desktop` Example 
+```{r, eval = TRUE}
+gap_db <- tbl(con, "gapminder")
+class(gap_db)
+```
+]
+---
+## Use Standard `dplyr`  Functions on the Database
+
+.font90.blockquote.exercise[
+
+#### `r desktop` Example 
+```{r, message=FALSE, warning=FALSE, eval = TRUE}
+gap_avg_db <- gap_db %>%
+  group_by(continent) %>% 
+  select_if(is.numeric) %>% 
+  select(-year) %>%
+  summarise_all(mean)
+```
+
+]
+
+--
+
+.font90[
+- Even if it seems as if `gap_avg_db` is a data frame it still is only a set of instructions to be performed by the database. 
+- `show_query()` tells us which instructions are sent to the database. 
+]
+
+--
+
+.font90.blockquote.exercise[
+
+#### `r desktop` Example 
+```{r, warning=FALSE, eval = TRUE}
+show_query(gap_avg_db)
+```
+]
+
+???
+
+
+- select_if superseded
+- but dbplyr **do not** support predicate functions, i.e. you can not use where(is.numeric) to select all numeric variables.
+
+
+
+---
+## Use Standard `dplyr` Functions on the Database
+
+.font90[
+When working with databases, `dplyr` tries to be as lazy as possible:
+
+- It never pulls data into R unless you explicitly ask for it.
+- It delays doing any work until the last possible moment: it collects everything you want to do and then sends it to the database in one step.
+- `collect()` actually pulls the data into R.  
+]
+
+--
+
+
+.font90.blockquote.exercise[
+#### `r desktop` Example 
+
+```{r, eval = TRUE}
+gap_avg <- gap_avg_db %>% collect(n = Inf)
+print(gap_avg)
+```
+]
+---
+## Disconnect
+
+- If the connection to the database is no longer needed you should disconnect to free system resources. 
+
+--
+
+.blockquote.exercise[
+```{r, eval = FALSE}
+DBI::dbDisconnect(con)
+rm(con)
+```
+]
+
+---
+
+.font90[
+## Set up an SQLite Database
+
+- SQLite is a very light weighted Database Management System 
+- An SQLite database is contained in a single file. There is no need for a server. 
+- Everything you need is to install the `RSQLite` packages. 
+]
+
+--
+
+.font90[
+#### Create an SQLite Database
+- A new SQLite database is automatically created if you call `DBI::dbConnect()`
+with argument `dbname = "path_to_database"` where `"path_to_database"` is a path to 
+a non-existing file. 
+- In case `"path_to_database"` is an existing SQLite database it 
+connects to that database. 
+]
+
+--
+
+.font90.blockquote.exercise[
+#### `r desktop` Example 
+
+```{r, echo = TRUE, eval = FALSE}
+library(dplyr)
+con <- DBI::dbConnect(
+  drv = RSQLite::SQLite(),
+  dbname = here::here("databases","mtcars.sqlite3"), 
+  )
+```
+]
+
+???
+
+SQLite -> SQLite is a C-language library that implements a small, fast, self-contained, high-reliability, full-featured, SQL database engine.
+
+
+---
+## Write Data to the Database
+
+- we add the data frame `mtcars` as a new table to the database.
+
+--
+
+.font90.blockquote.exercise[
+#### `r desktop` Example 
+```{r, eval = FALSE}
+DBI::dbWriteTable(con,
+                  name = "mtcars_db", 
+                  value = mtcars)
+```
+]
+
+--
+
+- To add data to an existing table we use the additional argument `append = TRUE`.
+
+--
+
+.font90.blockquote.exercise[
+#### `r desktop` Example 
+
+```{r, eval = FALSE}
+new_car <- data.frame(mpg = 1, cyl = 16, disp = 800, hp = 210, 
+                      drat = 5, wt = 6, qsec = 2, vs = 1, am = 0)
+rownames(new_car) <- "Super Car 500"
+
+DBI::dbWriteTable(con, 
+                  name = "mtcars_db", 
+                  value = new_car, 
+                  append = TRUE)
+
+DBI::dbDisconnect(con)
+```
+
+]
+
+???
+with name `mtcars_db` 
+---
+class: exercise_slide
+## Exercises
+
+1. Set up a new SQLite database containing the Boston Crime data. 
+2. Without retrieving the data to R let the database compute the percentage of incidents involving a shooting. 
+
+
+
+
+
+
+
+
+
+
+
+

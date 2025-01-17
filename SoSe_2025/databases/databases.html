@@ -1,0 +1,775 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>Advanced R for Econometricians</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Martin C. Arnold" />
+    <meta name="author" content="Jens Klenke" />
+    <meta name="date" content="2022-04-06" />
+    <script src="databases_files/header-attrs-2.12/header-attrs.js"></script>
+    <link href="databases_files/remark-css-0.0.1/default.css" rel="stylesheet" />
+    <script src="databases_files/xaringanExtra-progressBar-0.0.1/progress-bar.js"></script>
+    <script src="databases_files/clipboard-2.0.6/clipboard.min.js"></script>
+    <link href="databases_files/xaringanExtra-clipboard-0.2.6/xaringanExtra-clipboard.css" rel="stylesheet" />
+    <script src="databases_files/xaringanExtra-clipboard-0.2.6/xaringanExtra-clipboard.js"></script>
+    <script>window.xaringanExtraClipboard(null, {"button":"<i class=\"fa fa-clipboard\"><\/i>","success":"<i class=\"fa fa-check\" style=\"color: #00ff00\"><\/i>","error":"<i class=\"fa fa-times-circle\" style=\"color: #F94144\"><\/i>"})</script>
+    <link href="databases_files/font-awesome-5.1.0/css/all.css" rel="stylesheet" />
+    <link href="databases_files/font-awesome-5.1.0/css/v4-shims.css" rel="stylesheet" />
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        TeX: { equationNumbers: { autoNumber: "AMS" } },
+      });
+    </script>
+    <style>
+    .mjx-mrow a {
+      color: black;
+      pointer-events: none;
+      cursor: default;
+    }
+    </style>
+    <link rel="stylesheet" href="../assets/ude_fonts.css" type="text/css" />
+    <link rel="stylesheet" href="../assets/ude.css" type="text/css" />
+    <link rel="stylesheet" href="../assets/title_slides.css" type="text/css" />
+    <link rel="stylesheet" href="../assets/custom.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+
+class: title-slide title-sqlite center middle
+
+
+<style>.xe__progress-bar__container {
+  bottom:0;
+  opacity: 1;
+  position:absolute;
+  right:0;
+  left: 0;
+}
+.xe__progress-bar {
+  height: 0.25em;
+  background-color: #004c93;
+  width: calc(var(--slide-current) / var(--slide-total) * 100%);
+}
+.remark-visible .xe__progress-bar {
+  animation: xe__progress-bar__wipe 200ms forwards;
+  animation-timing-function: cubic-bezier(.86,0,.07,1);
+}
+@keyframes xe__progress-bar__wipe {
+  0% { width: calc(var(--slide-previous) / var(--slide-total) * 100%); }
+  100% { width: calc(var(--slide-current) / var(--slide-total) * 100%); }
+}</style>
+
+
+
+
+
+# Advanced R for Econometricians
+## Databases using R
+### Martin C. Arnold, Jens Klenke
+
+---
+## Memory Limitations of R
+
+- The amount of data you can work with in R is mainly constraint by your computers memory. 
+- In times where data sets with several 100 GB or even TB become more and more common,
+  loading all data into memory is usually not feasable. 
+- Often only a subset or an aggregation of the data is required for the analysis which requires much less memory space.
+- How to subset or aggregate data? &amp;rarr; Use a database!
+
+---
+## (Relational) Databases
+
+.font90[
+- A database is a place where data is stored and can be manipulated.
+- A relational database aims to reduce redundancies by spreading the data over multiple tables and
+  relate them to each other. 
+]
+
+--
+
+.font90[.blockquote.exercise[
+
+#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example: Redundent Data
+
+&lt;table&gt;
+ &lt;thead&gt;
+  &lt;tr&gt;
+   &lt;th style="text-align:right;"&gt; store_id &lt;/th&gt;
+   &lt;th style="text-align:left;"&gt; store_location &lt;/th&gt;
+   &lt;th style="text-align:left;"&gt; store_mngr &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; cust_id &lt;/th&gt;
+   &lt;th style="text-align:left;"&gt; cust_address &lt;/th&gt;
+   &lt;th style="text-align:left;"&gt; cust_name &lt;/th&gt;
+   &lt;th style="text-align:left;"&gt; date &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; total &lt;/th&gt;
+  &lt;/tr&gt;
+ &lt;/thead&gt;
+&lt;tbody&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 1 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Baker St. &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; John &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 34 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Downing Rd. &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Kelly &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 2019-02-12 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 14 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 1 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Baker St. &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; John &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 34 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Downing Rd. &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Kelly &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 2019-02-06 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 12 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 1 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Baker St. &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; John &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 108 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Berwick St. &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Aleta &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 2019-02-21 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 20 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 1 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Baker St. &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; John &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 17 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Carnaby  St. &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Peter &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 2019-01-14 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 18 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 2 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Abbey Road &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; George &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 108 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Berwick St. &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Aleta &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 2019-02-23 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 18 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 2 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Abbey Road &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; George &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 17 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Carnaby  St. &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Peter &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 2019-01-25 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 18 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 2 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Abbey Road &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; George &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 17 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Carnaby  St. &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Peter &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 2019-01-26 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 12 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 2 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Abbey Road &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; George &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 17 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Carnaby  St. &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Peter &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 2019-01-27 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 17 &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;br&gt;
+]]
+---
+#### Example of Non-Redundent Data 
+
+- The same information would be stored in a relational database like this: 
+
+--
+
+
+
+
+.pull-left[
+&lt;table&gt;
+&lt;caption&gt;Sell Records&lt;/caption&gt;
+ &lt;thead&gt;
+  &lt;tr&gt;
+   &lt;th style="text-align:right;"&gt; store_id &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; cust_id &lt;/th&gt;
+   &lt;th style="text-align:left;"&gt; date &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; total &lt;/th&gt;
+  &lt;/tr&gt;
+ &lt;/thead&gt;
+&lt;tbody&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 1 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 34 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 2019-02-12 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 14 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 1 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 34 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 2019-02-06 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 12 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 1 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 108 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 2019-02-21 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 20 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 1 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 17 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 2019-01-14 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 18 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 2 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 108 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 2019-02-23 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 18 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 2 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 17 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 2019-01-25 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 18 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 2 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 17 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 2019-01-26 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 12 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 2 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 17 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 2019-01-27 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 17 &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+]
+.pull-right[
+&lt;table&gt;
+&lt;caption&gt;Store&lt;/caption&gt;
+ &lt;thead&gt;
+  &lt;tr&gt;
+   &lt;th style="text-align:right;"&gt; store_id &lt;/th&gt;
+   &lt;th style="text-align:left;"&gt; store_location &lt;/th&gt;
+   &lt;th style="text-align:left;"&gt; store_mngr &lt;/th&gt;
+  &lt;/tr&gt;
+ &lt;/thead&gt;
+&lt;tbody&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 1 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Baker St. &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; John &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 2 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Abbey Road &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; George &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;br&gt;
+&lt;table&gt;
+&lt;caption&gt;Customer&lt;/caption&gt;
+ &lt;thead&gt;
+  &lt;tr&gt;
+   &lt;th style="text-align:left;"&gt; cust_id &lt;/th&gt;
+   &lt;th style="text-align:left;"&gt; cust_names &lt;/th&gt;
+   &lt;th style="text-align:left;"&gt; cust_address &lt;/th&gt;
+  &lt;/tr&gt;
+ &lt;/thead&gt;
+&lt;tbody&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; 17 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Peter &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Carnaby  St. &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; 34 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Kelly &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Downing Rd. &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; 108 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Aleta &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Berwick St. &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+]
+
+&lt;br&gt;
+
+--
+- The relationship between the tables is defined by the `id` columns (called keys).
+
+
+
+---
+## R and Databases
+
+- `dplyr` also works with remote on-disk data stored in relational databases.
+- For this to work you need 
+
+--
+
+.blockquote.exercise[
+
+```r
+install.packages("dbplyr")
+```
+]
+
+--
+
+- You’ll also need to install a `DBI` backend package. The `DBI` package provides a common interface that allows `dplyr` to work with many different databases using the same code. 
+
+--
+
+- Some commonly used backends are:
+    - `RMariaDB` connects to MySQL and MariaDB.
+    - `RPostgreSQL` connects to Postgres and Redshift.
+    - `RSQLite` embeds a SQLite database.
+    - `bigrquery` connects to Google’s BigQuery.
+
+---
+## Connect to a Database
+
+.font80[
+- To connect to a database authentication information such as 
+  username and password are required (the database admin should provide those). 
+- You also need to specify a driver that makes communication with the database possible.
+- There is a remote MySQL database hosted on the web which we have access to:
+]
+
+--
+
+.font80[.blockquote.exercise[
+
+#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Setup the connection 
+
+
+```r
+library(dbplyr)
+library(DBI)
+con &lt;- DBI::dbConnect(
+          drv = RMariaDB::MariaDB(), # MariaDB driver works for MySQL as well
+          username = keyring::key_list('sql_try')[1,2],
+          dbname   = keyring::key_list('sql_try')[1,2], 
+          host     = "sql11.freesqldatabase.com",
+          password = keyring::key_get('sql_try',
+                                      keyring::key_list('sql_try')[1,2]),
+          port     = "3306"
+          )
+```
+]]
+
+
+
+--
+
+
+.font80[.blockquote.exercise[
+
+#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example: Writing data
+
+```r
+DBI::dbWriteTable(con, "gapminder", gapminder::gapminder)
+DBI::dbWriteTable(con, "country_codes", gapminder::country_codes)
+```
+
+]]
+???
+
+you can use keyring
+
+
+---
+## Access Data
+
+- When the connection is established we can use the object `con` to communicate with the database.
+- The function `DBI::dbListTables()` tells us which tables are in the database.
+
+.blockquote.exercise[
+
+
+```r
+DBI::dbListTables(con)
+```
+
+```
+## [1] "country_codes" "gapminder"
+```
+]
+
+--
+
+- With `dplyr::tbl()` we can create an object which is a reference to a table in the database. Most `dplyr` functions work on this object as it was as a data frame (or `tibble`).
+
+--
+
+.blockquote.exercise[
+
+#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example 
+
+```r
+gap_db &lt;- tbl(con, "gapminder")
+class(gap_db)
+```
+
+```
+## [1] "tbl_MariaDBConnection" "tbl_dbi"               "tbl_sql"              
+## [4] "tbl_lazy"              "tbl"
+```
+]
+---
+## Use Standard `dplyr`  Functions on the Database
+
+.font90.blockquote.exercise[
+
+#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example 
+
+```r
+gap_avg_db &lt;- gap_db %&gt;%
+  group_by(continent) %&gt;% 
+  select_if(is.numeric) %&gt;% 
+  select(-year) %&gt;%
+  summarise_all(mean)
+```
+
+]
+
+--
+
+.font90[
+- Even if it seems as if `gap_avg_db` is a data frame it still is only a set of instructions to be performed by the database. 
+- `show_query()` tells us which instructions are sent to the database. 
+]
+
+--
+
+.font90.blockquote.exercise[
+
+#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example 
+
+```r
+show_query(gap_avg_db)
+```
+
+```
+## &lt;SQL&gt;
+## SELECT `continent`, AVG(`lifeExp`) AS `lifeExp`, AVG(`pop`) AS `pop`, AVG(`gdpPercap`) AS `gdpPercap`
+## FROM (SELECT `continent`, `lifeExp`, `pop`, `gdpPercap`
+## FROM `gapminder`) `q01`
+## GROUP BY `continent`
+```
+]
+
+???
+
+
+- select_if superseded
+- but dbplyr **do not** support predicate functions, i.e. you can not use where(is.numeric) to select all numeric variables.
+
+
+
+---
+## Use Standard `dplyr` Functions on the Database
+
+.font90[
+When working with databases, `dplyr` tries to be as lazy as possible:
+
+- It never pulls data into R unless you explicitly ask for it.
+- It delays doing any work until the last possible moment: it collects everything you want to do and then sends it to the database in one step.
+- `collect()` actually pulls the data into R.  
+]
+
+--
+
+
+.font90.blockquote.exercise[
+#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example 
+
+
+```r
+gap_avg &lt;- gap_avg_db %&gt;% collect(n = Inf)
+print(gap_avg)
+```
+
+```
+## # A tibble: 5 x 4
+##   continent lifeExp       pop gdpPercap
+##   &lt;chr&gt;       &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;
+## 1 Africa       48.9  9916003.     2194.
+## 2 Americas     64.7 24504795.     7136.
+## 3 Asia         60.1 77038722.     7902.
+## 4 Europe       71.9 17169765.    14469.
+## 5 Oceania      74.3  8874672.    18622.
+```
+]
+---
+## Disconnect
+
+- If the connection to the database is no longer needed you should disconnect to free system resources. 
+
+--
+
+.blockquote.exercise[
+
+```r
+DBI::dbDisconnect(con)
+rm(con)
+```
+]
+
+---
+
+.font90[
+## Set up an SQLite Database
+
+- SQLite is a very light weighted Database Management System 
+- An SQLite database is contained in a single file. There is no need for a server. 
+- Everything you need is to install the `RSQLite` packages. 
+]
+
+--
+
+.font90[
+#### Create an SQLite Database
+- A new SQLite database is automatically created if you call `DBI::dbConnect()`
+with argument `dbname = "path_to_database"` where `"path_to_database"` is a path to 
+a non-existing file. 
+- In case `"path_to_database"` is an existing SQLite database it 
+connects to that database. 
+]
+
+--
+
+.font90.blockquote.exercise[
+#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example 
+
+
+```r
+library(dplyr)
+con &lt;- DBI::dbConnect(
+  drv = RSQLite::SQLite(),
+  dbname = here::here("databases","mtcars.sqlite3"), 
+  )
+```
+]
+
+???
+
+SQLite -&gt; SQLite is a C-language library that implements a small, fast, self-contained, high-reliability, full-featured, SQL database engine.
+
+
+---
+## Write Data to the Database
+
+- we add the data frame `mtcars` as a new table to the database.
+
+--
+
+.font90.blockquote.exercise[
+#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example 
+
+```r
+DBI::dbWriteTable(con,
+                  name = "mtcars_db", 
+                  value = mtcars)
+```
+]
+
+--
+
+- To add data to an existing table we use the additional argument `append = TRUE`.
+
+--
+
+.font90.blockquote.exercise[
+#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example 
+
+
+```r
+new_car &lt;- data.frame(mpg = 1, cyl = 16, disp = 800, hp = 210, 
+                      drat = 5, wt = 6, qsec = 2, vs = 1, am = 0)
+rownames(new_car) &lt;- "Super Car 500"
+
+DBI::dbWriteTable(con, 
+                  name = "mtcars_db", 
+                  value = new_car, 
+                  append = TRUE)
+
+DBI::dbDisconnect(con)
+```
+
+]
+
+???
+with name `mtcars_db` 
+---
+class: exercise_slide
+## Exercises
+
+1. Set up a new SQLite database containing the Boston Crime data. 
+2. Without retrieving the data to R let the database compute the percentage of incidents involving a shooting. 
+
+
+
+
+
+
+
+
+
+
+
+
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script src="../assets/remark-zoom.js"></script>
+<script src="../xaringan_files/macros.js"></script>
+<script src="https://platform.twitter.com/widgets.js"></script>
+<script>var slideshow = remark.create({
+"highlightStyle": "github",
+"highlightLines": true,
+"countIncrementalSlides": false,
+"ratio": "16:9",
+"navigation": {
+"scroll": false
+}
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>

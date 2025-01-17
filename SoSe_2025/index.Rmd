@@ -1,0 +1,68 @@
+---
+title: "Advanced R for Econometricians"
+author: 
+  - "Martin Arnold"
+  - "Jens Klenke"
+date: '`r Sys.Date()`'
+output:
+  xaringan::moon_reader:
+    seal: false
+    includes:
+      in_header: "assets/meta.html"
+    self_contained: false # if true, fonts will be stored locally
+    lib_dir: libs
+    css: ["default", "assets/ude_fonts.css", "assets/ude.css", "assets/custom.css", "assets/title_slides.css"]
+    nature:
+      highlightStyle: github
+      highlightLines: true
+      countIncrementalSlides: false
+      ratio: "16:9"
+---
+class: title-slide title-index 
+.font70[
+# Advanced `R` for Econometricians 
+
+### Outline
+
+.pull-left[
+1. [Introduction](Introduction/Introduction.html)
+2. Prerequisites
+   - [Rmarkdown](Rmarkdown/rmarkdown.html) 
+   - [Git and Github](Git/git_vcs.html)
+3. [Data Visualisation with ggplot](ggplot2/ggplot2.html)
+4. Data Wrangling and Transformation
+   - [dplyr](Wrangling/Wrangling.html)
+   - [Databases](databases/databases.html)
+5. [Web Scraping](Webscraping/webscraping.html)
+]
+
+.pull-right[
+<ol start = "6">
+  <li> Advanced R Programming </li>
+  <ul>
+    <li> <a href="Advanced R concepts/Advanced.html">Advanced Concepts</a></li>
+    <li> <a href="functional/functional.html">Functional Programming</a></li>
+    <li> <a href="OOP/OOP.html">Object Oriented Programming</a></li>
+  </ul>
+  <li> Performance </li> 
+  <ul>
+    <li> <a href="measuring and profiling/MeasuringProfiling.html">Profiling and Benchmarking</a></li> 
+    <li> <a href="improving performance/improving-performance.html">Improving Performance</a></li>
+    <li> <a href="Rcpp/SpeedRcpp.html">Rcpp</a></li>
+    <li> <a href="RcppArmadillo/RcppArmadillo.html">RcppArmadillo</a></li>
+  </ul>
+</ol>
+]]
+
+<br>
+
+.pull-down-small_margin.font70[
+<br>
+### Additional Topics for self-study
+
+<ol start = "8">
+  <li> <a href = Datatable/datatable.html>data.table</a> </li>
+  <li> <a href = Shiny/Shiny.html>Shiny</a> </li>
+  <li> <a href = Packages/Packages.html>Writing Packages</a> </li>
+</ol>
+]

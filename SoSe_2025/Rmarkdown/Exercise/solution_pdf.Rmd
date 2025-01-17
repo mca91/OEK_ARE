@@ -1,0 +1,88 @@
+---
+title: "Solution"
+author: 
+  - "Martin Arnold"
+  - "Jens Klenke"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+output: pdf_document
+---
+
+### Optimize code chunks 
+
+- When a code chunk is time-consuming to run, you may consider caching it via the chunk option `cache = TRUE`. When the `cache` is turned on, knitr will skip the execution of this code chunk if it has been executed before and nothing in the code chunk has changed since then.
+
+### Hide your code chunks by setting a global option 
+````markdown
+`r ''````{r setup, include = FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+````
+
+# Obtain the Crime Incidents Data
+
+
+First, we download the data and import it to R.
+
+```{r, echo = TRUE,  cache = TRUE}
+library(tidyverse)
+library(data.table)
+crime <- readr::read_csv(here::here('SoSe_2022/Rmarkdown/Exercise/crime_boston.csv'))
+#var_exp <- readxl::read_xlsx(here::here("Rmarkdown","Exercises","rmscrimeincidentfieldexplanation.xlsx"))
+crime_description <- readxl::read_xlsx(here::here('SoSe_2022/Rmarkdown/Exercise/rmscrimeincidentfieldexplanation.xlsx'))
+```
+
+Let's have a look at the variable description:
+
+```{r, echo = TRUE, cache = TRUE}
+knitr::kable(crime_description)
+```
+
+# Exploratory data analysis (EDA)
+
+First we want to get an overview of the data.
+
+```{r, echo = TRUE, cache = TRUE}
+glimpse(crime)
+```
+
+As we can see, the dataset consists of `r dim(crime)[1]` Observations in `r dim(crime)[2]` Variables.
+
+Lets focus on the DAY_OC_WEEK.
+
+```{r, echo = TRUE, cache = TRUE}
+# OFFENSE_CODE should be a factor
+crime <- crime %>% mutate(DAY_OF_WEEK = as_factor(DAY_OF_WEEK))
+
+ggplot(crime) +
+  geom_bar(aes(x = DAY_OF_WEEK, fill = DISTRICT))
+
+```
+
+Some districts have more crimes than others and the crime is a little bit lazy on sundays.
+
+## Nested ordered list for LaTeX output
+
+*Hint*
+
+Try to search for nested enumeration latex. 
+
+https://tex.stackexchange.com/questions/78842/nested-enumeration-numbering
+
+
+````markdown
+\renewcommand{\labelenumii}{\theenumii}
+\renewcommand{\theenumii}{\theenumi.\arabic{enumii}.}
+````
+
+\renewcommand{\labelenumii}{\theenumii}
+\renewcommand{\theenumii}{\theenumi.\arabic{enumii}.}
+
+
+\begin{enumerate}
+  \item Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum.
+  \begin{enumerate}
+    \item Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum.
+  \end{enumerate}
+  \item Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum.
+\end{enumerate}
+

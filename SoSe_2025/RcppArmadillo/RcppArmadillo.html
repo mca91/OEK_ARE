@@ -1,0 +1,772 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>Advanced R for Econometricians</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Martin C. Arnold" />
+    <meta name="author" content="Jens Klenke" />
+    <meta name="date" content="2022-07-11" />
+    <script src="RcppArmadillo_files/header-attrs/header-attrs.js"></script>
+    <link href="RcppArmadillo_files/remark-css/default.css" rel="stylesheet" />
+    <script src="RcppArmadillo_files/clipboard/clipboard.min.js"></script>
+    <link href="RcppArmadillo_files/xaringanExtra-clipboard/xaringanExtra-clipboard.css" rel="stylesheet" />
+    <script src="RcppArmadillo_files/xaringanExtra-clipboard/xaringanExtra-clipboard.js"></script>
+    <script>window.xaringanExtraClipboard(null, {"button":"<i class=\"fa fa-clipboard\"><\/i>","success":"<i class=\"fa fa-check\" style=\"color: #00ff00\"><\/i>","error":"<i class=\"fa fa-times-circle\" style=\"color: #F94144\"><\/i>"})</script>
+    <link href="RcppArmadillo_files/font-awesome/css/all.css" rel="stylesheet" />
+    <link href="RcppArmadillo_files/font-awesome/css/v4-shims.css" rel="stylesheet" />
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        TeX: { equationNumbers: { autoNumber: "AMS" } },
+      });
+    </script>
+    <style>
+    .mjx-mrow a {
+      color: black;
+      pointer-events: none;
+      cursor: default;
+    }
+    </style>
+    <link rel="stylesheet" href="../assets/ude_fonts.css" type="text/css" />
+    <link rel="stylesheet" href="../assets/ude.css" type="text/css" />
+    <link rel="stylesheet" href="../assets/title_slides.css" type="text/css" />
+    <link rel="stylesheet" href="../assets/custom.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+
+
+
+
+
+class: title-slide title-rcpparmadillo center middle
+
+# Advanced R for Econometricians
+## First Steps with `RcppArmadillo`
+### Martin C. Arnold, Jens Klenke
+
+---
+class: center, middle
+
+![:image 50%](../img/armadillo.png)
+
+---
+## Armadillo &amp;mdash; FAQs
+
+.font90[
+**What is Armadillo?**
+
+Armadillo is a templated high-quality linear algebra library for `C++` with good balance between speed and ease of use
+
+**Why use it?**
+
+- Matrix multiplication, inversion and decomposition are indispensible in econometrics and statistics
+
+- `C++` (and `Rcpp`) do not provide suitable classes and methods. In fact, there isn't even a method for matrix multiplication in `Rcpp`! Coding such algorithms by hand is tedious and error prone.
+
+- Armadillo provides well tested matrix classes for integer, floating point and complex numbers and fast methods
+
+**Do I need advanced `C++` skills?**
+
+- No. Armadillo uses an easy syntax which is close to that of MATLAB.
+
+- The Armadillo library has a very good documentation at [sourceforge](http://arma.sourceforge.net/docs.html).
+
+]
+
+---
+## `RcppArmadillo` &amp;mdash; Prerequisites
+
+.font90[
+
+- `RcppArmadillo` provides an interface from and to Armadillo which is based on the `C++`/`R` interface implemented in `Rcpp`
+
+- The package requires a development toolchain which should be already setup if `C++` integration with `Rcpp` works fine. Setting up `RcppArmadillo` then boils down to installing the package from `CRAN`
+    
+    ```r
+    install.packages('RcppArmadillo')
+    library(RcppArmadillo)
+    ```
+
+- It is straighfowrd to verify if it works by setting `'RcppArmadillo'` as a dependency in `Rcpp::cppFunction()` or `Rcpp::evalCpp()`.
+    
+    ```r
+    Rcpp::evalCpp("1 + 1", depends = 'RcppArmadillo')
+    #&gt; [1] 2
+    ```
+
+]
+
+---
+## `RcppArmadillo` &amp;mdash; `sourceCpp()`
+
+.font90[
+
+- As for `Rcpp` the preferred method for compiling Armadillo code is to use a `C++` file with a modified header. The following lines replace the default header:
+    
+    ```cpp
+    #include &lt;RcppArmadillo.h&gt;
+    // [[Rcpp::depends(RcppArmadillo)]]
+    ```
+    
+    This ensures that the `C++` library headers `Rcpp.h` and `Armadillo.h` are included and adds `RcppArmadillo` onto the compiler's search path.
+
+- In what follows we refer explicitly to Armadillo functions by prefixing the namespace. This avoids overlapping of function names. 
+
+    We may, however, specify that the Armadillo package namespace is used by default.
+    
+    ```cpp
+    using namespace arma;
+    ```
+
+- `sourceCpp()` then can be used for sourcing the script (on save), just as for `Rcpp` code.
+
+]
+
+---
+## `RcppArmadillo` &amp;mdash; Classes
+
+.font90[
+
+- The most important Armadillo classes store elements as `double`:
+    
+    ```cpp
+    arma::mat, arma::vec (arma::colvec, arma::rowvec)
+    ```
+    Other types are available, e.g. `arma::uvec` and `arma::umat` which store unsigned integers.
+    
+- There are other classes, e.g. for sparse matrices and high-dimensional arrays
+
+- All classes have attributes and associated methods which can be accessed using [dot syntax](https://www.geeksforgeeks.org/dot-operator-in-c-c/), just as for the `C++` STL.
+
+    **Example: Attributes and Methods**
+    
+    ```cpp
+    arma::mat I(10, 10);   // initialise 10x10 matrix
+    int n = I.n_rows();    // get number of rows
+    I.eye();               // transform to identity matrix
+    ```
+
+]
+    
+---
+## `RcppArmadillo` &amp;mdash; some examples
+
+.font90[
+
+**Example: inner vector product**
+
+
+```cpp
+// using Rcpp
+double inner_prod_rcpp(NumericVector x, NumericVector y) {
+  int K = x.length();
+  double ip = 0;
+  for(int k = 0; k &lt; K; k++) {
+    ip += x(k) * y(k);
+  }
+  return(ip);
+}
+```
+
+(Note that matrix multiplication requires two loops which is even more bulky.)
+
+Here is how to do it with `Armadillo`:
+
+
+```cpp
+// using RcppArmadillo
+double inner_prod_rcpparma(arma::vec x, arma::vec y) {
+  arma::mat out = x.t() * y;
+  return(out(0));
+}
+```
+
+]
+
+---
+## `RcppArmadillo` &amp;mdash; some examples
+
+.font90[
+
+**Example: inner vector product &amp;mdash; ctd.**
+
+The `RcppArmadillo` version is faster:
+
+
+
+
+```r
+x &lt;- rnorm(1e4); y &lt;- rnorm(1e4)
+
+bench::mark(
+  t(x) %*% y,       
+  inner_prod_rcpp(x, y),
+  inner_prod_rcpparma(x, y),
+  check = F,
+  relative = T
+)[, 1:5]
+```
+
+```
+## # A tibble: 3 × 5
+##   expression                  min median `itr/sec` mem_alloc
+##   &lt;bch:expr&gt;                &lt;dbl&gt;  &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;
+## 1 t(x) %*% y                 3.11   3.14      1         31.4
+## 2 inner_prod_rcpp(x, y)      2.48   2.36      1.35       1  
+## 3 inner_prod_rcpparma(x, y)  1      1         2.18       1
+```
+
+]
+
+---
+## `RcppArmadillo` &amp;mdash; some examples
+
+.font90[
+
+**Example: eigenvalues of real symmetric matrix**
+
+
+
+
+```cpp
+arma::vec Eigenvals_Armadillo(arma::mat A) {
+  return arma::eig_sym(A);
+}
+```
+
+
+```r
+X &lt;- rnorm(1000); X &lt;- X %*% t(X)
+bench::mark(
+  eigen(X)$values,
+  Eigenvals_Armadillo(X),
+  check = F
+)[, 1:4]
+```
+
+```
+## # A tibble: 2 × 4
+##   expression                  min   median `itr/sec`
+##   &lt;bch:expr&gt;             &lt;bch:tm&gt; &lt;bch:tm&gt;     &lt;dbl&gt;
+## 1 eigen(X)$values           1.01s    1.01s     0.987
+## 2 Eigenvals_Armadillo(X) 286.23ms 286.25ms     3.49
+```
+
+]
+
+---
+## `RcppArmadillo` &amp;mdash; Programming Strategy
+
+.font90[
+
+We recommend a similar procedure as for `Rcpp`: 
+
+- Start by writing your code in `R` and divide it into functions such that bottlenecks are easier to identify
+
+- Profile your code, identify bottlenecks, benchmark and finally replace slow parts (writing entire functions) using `Armadillo`/`C++` for performance improvement. 
+
+- The replacements should have the same call signature as their `R` equivalents
+
+- **New**: Try to keep the number of _casts_ between `RcppArmadillo`, `Rcpp` and `R` data types to a minimum
+
+    Remember: type casting will require deep copies and copies are generally _bad_ if we opt for performance
+
+]
+
+---
+## `RcppArmadillo` 
+
+.font90[
+
+**Example: fast linear regression**
+
+`Rcpp` input *by reference* / `Rcpp` return:
+
+- `Rcpp` input will trigger a cast. We explicitly state that the input is not copied to some separate memory for `X` but is passed by reference from the auxiliary (external) memory of `Xr`.
+
+- For the latter to work we pass a pointer as input to the constructor and set `copy_aux_mem = false` (see the [documentation](http://arma.sourceforge.net/docs.html#Mat))
+
+
+```cpp
+#include &lt;RcppArmadillo.h&gt;
+using namespace Rcpp;
+
+// [[Rcpp::export]]
+List fastReg_TwoCasts(NumericMatrix Xr,  NumericVector yr) {
+    int n = X.n_rows, k = X.n_cols;
+    
+    arma::mat X(Xr.begin(), n, k, false);           // (copy_aux_mem = false)
+    arma::colvec y(yr.begin(), yr.size(), false);   //         ""
+        
+    arma::colvec coef = arma::solve(X, y);
+    arma::colvec res  = y - X * coef;
+
+    return List::create(Named("coefficients") = coef);
+}
+```
+
+]
+
+---
+## `RcppArmadillo` 
+
+.font90[
+
+**Example: fast linear regression &amp;mdash; ctd.**
+
+`Armadillo` input *by value* / `Rcpp` return
+
+
+```cpp
+#include &lt;RcppArmadillo.h&gt;
+using namespace Rcpp;
+
+// [[Rcpp::export]]
+List fastReg_OneCast(arma::mat X, arma::colvec y) {
+    int n = X.n_rows, k = X.n_cols;
+
+    arma::colvec coef = arma::solve(X, y);
+    arma::colvec res  = y - X * coef;
+
+    return List::create(Named("coefficients") = coef);
+}
+```
+
+]
+
+---
+## `RcppArmadillo` 
+
+.font90[
+
+**Example: fast linear regression &amp;mdash; ctd.**
+
+`Armadillo` input *by constant reference* / `Rcpp` return
+
+
+```cpp
+#include &lt;RcppArmadillo.h&gt;
+using namespace Rcpp;
+
+// [[Rcpp::export]]
+List fastReg_ConstRef(const arma::mat&amp; X, const arma::colvec&amp; y) {
+    int n = X.n_rows, k = X.n_cols;
+        
+    arma::colvec coef = arma::solve(X, y);
+    arma::colvec res  = y - X * coef;
+
+    return List::create(Named("coefficients") = coef);
+}
+```
+
+]
+
+---
+## `RcppArmadillo` 
+
+.font90[
+
+**Example: fast linear regression &amp;mdash; ctd.**
+
+`Armadillo` input *by constant reference* / `Armadillo` return
+
+
+```cpp
+#include &lt;RcppArmadillo.h&gt;
+using namespace Rcpp;
+
+// [[Rcpp::export]]
+arma::mat fastReg_NoCast(const arma::mat&amp; X, const arma::vec&amp; y) {  
+ arma::vec b_hat;  
+ 
+ beta_hat = (X.t() * X).i() * X.t() * y;  
+ 
+ return(beta_hat);  
+}
+```
+
+]
+
+---
+## `RcppArmadillo` 
+
+.font90[
+
+**Example: fast linear regression &amp;mdash; ctd.**
+
+
+
+]
+
+
+```r
+k &lt;- 4; N &lt;- 1e4
+X &lt;- cbind(1,matrix(rnorm(N), ncol = k))
+Y &lt;- X %*% c(1, runif(k)) + rnorm(N/k)
+
+bench::mark(
+    lm(Y ~ X - 1), solve(t(X) %*% X) %*% t(X) %*% Y, lm.fit(X, Y),
+    fastReg_TwoCasts(X, Y), fastReg_OneCast(X, Y),
+    fastReg_ConstRef(X, Y), fastReg_NoCast(X, Y),
+    check = F, relative = T, iterations = 500)[, 1:4]
+```
+
+```
+## # A tibble: 7 × 4
+##   expression                         min median `itr/sec`
+##   &lt;bch:expr&gt;                       &lt;dbl&gt;  &lt;dbl&gt;     &lt;dbl&gt;
+## 1 lm(Y ~ X - 1)                     7.32   8.21      1   
+## 2 solve(t(X) %*% X) %*% t(X) %*% Y  3.94   4.18      1.98
+## 3 lm.fit(X, Y)                      2.80   2.97      2.80
+## 4 fastReg_TwoCasts(X, Y)            1.76   1.77      4.63
+## 5 fastReg_OneCast(X, Y)             1.80   1.82      4.45
+## 6 fastReg_ConstRef(X, Y)            1.76   1.76      4.65
+## 7 fastReg_NoCast(X, Y)              1      1         8.16
+```
+
+---
+## `RcppArmadillo` &amp;mdash; Case Study: VAR(1) Process
+
+.font90[
+
+**Example: simulating a VAR(1) process**
+
+- A VAR(1) process is given by `$$\mathbf{y}_t = \mathbf{A}\mathbf{y}_{t-1} + \boldsymbol{\varepsilon}_t, \quad t=0,\dots,T$$` with `\(K\)` endogenous variables `\(\mathbf{y}_t := (y_{1t}, \dots, y_{Kt})'\)`, `\(K\times K\)` coefficient matrix `\(\mathbf{A}\)` and `\(K\)`-dimensional error process `\(\boldsymbol{\varepsilon}_t\)` with `\(E(\boldsymbol{\varepsilon}_t) = \mathbf{0}\)` and `\(E(\boldsymbol{\varepsilon}_t \boldsymbol{\varepsilon}_t') =: \boldsymbol{\Sigma}_{\boldsymbol{\varepsilon}}\)`.
+
+- `\(\mathbf{y}_t\)` is a stable process iff `$$\det(\mathbf{I}_K - \mathbf{A}z) \neq 0$$` for `\(\lvert z\rvert \leq 1\)`. An equivalent condition is that all eigenvalues of `\(\mathbf{A}\)` have modulus less than 1.
+
+- We consider a DGP for `\(K=2\)` variables where `\(\boldsymbol{\varepsilon}_t\)` is bivariate standard Gaussian and `$$\mathbf{A} = \begin{pmatrix}0.8 &amp; 0.15\\ 0.15 &amp; 0.8\end{pmatrix}$$` 
+
+]
+
+---
+## `RcppArmadillo` &amp;mdash; Case Study: VAR(1) Process
+
+.font90[
+
+**Example: simulating a VAR(1) process &amp;mdash; ctd.**
+
+Let's check that the DGP generates stable processes.
+
+
+```r
+A &lt;- matrix(c(0.8, 0.15, 0.15, 0.8), ncol = 2)
+all(Eigenvals_Armadillo(A) &lt; 1)
+```
+
+```
+## [1] TRUE
+```
+
+We write the DGP as an `R` function of the coefficient matrix and the error process.
+
+
+```r
+VARSim_R &lt;- function(A, epsilon) {
+   out &lt;- matrix(0, nrow(epsilon), ncol(epsilon))
+   for (i in 2:nrow(epsilon)) {
+      out[i,] &lt;- A %*% out[i-1,] + epsilon[i,]
+   }
+   return(out)
+}
+```
+
+]
+
+---
+## `RcppArmadillo` &amp;mdash; Case Study: VAR(1) Process
+
+.font90[
+
+**Example: simulating a VAR(1) process &amp;mdash; ctd.**
+
+An `Armadillo` version is readily implemented.
+
+
+```cpp
+#include &lt;RcppArmadillo.h&gt;
+// [[Rcpp::depends(RcppArmadillo)]]
+
+// [[Rcpp::export]]
+arma::mat VARSim_Rcpp(arma::mat coef, arma::mat epsilon) {
+  int m = epsilon.n_rows; int n = epsilon.n_cols;
+  arma::mat out(m, n, arma::fill::zeros);
+  for (int i=1; i&lt;m; i++) {
+    out.row(i) = out.row(i-1) * coef.t() + epsilon.row(i);
+  }
+  return out;
+}
+```
+
+
+
+]
+
+---
+## `RcppArmadillo` &amp;mdash; Case Study: VAR(1) Process
+
+.font90[
+
+**Example: simulating a VAR(1) process &amp;mdash; ctd.**
+
+
+```r
+epsilon &lt;- matrix(rnorm(500), ncol = 2)
+df &lt;- data.frame(VARSim_Rcpp(A, epsilon)) %&gt;% 
+  mutate(time = row_number()) %&gt;% 
+  gather(key = "var", value = "y", -time) 
+
+ggplot(df) + geom_line(aes(x=time, y=y, color = var))
+```
+
+&lt;img src="RcppArmadillo_files/figure-html/unnamed-chunk-24-1.png" style="display: block; margin: auto;" /&gt;
+
+]
+
+---
+## `RcppArmadillo` &amp;mdash; Case Study: VAR(1) Process
+
+.font90[
+
+**Example: simulating a VAR(1) process &amp;mdash; ctd.**
+
+
+```r
+bench::mark(
+  VARSim_R(A, epsilon),
+  VARSim_Rcpp(A, epsilon),
+  relative = T)[, 1:4]
+```
+
+```
+## # A tibble: 2 × 4
+##   expression                min median `itr/sec`
+##   &lt;bch:expr&gt;              &lt;dbl&gt;  &lt;dbl&gt;     &lt;dbl&gt;
+## 1 VARSim_R(A, epsilon)     28.4   28.2       1  
+## 2 VARSim_Rcpp(A, epsilon)   1      1        27.2
+```
+
+]
+
+---
+exclude: true
+## `RcppArmadillo` &amp;mdash; Case Study: EM Algorithm
+
+.font90[
+
+**Gaussian mixture model**
+
+A mixture of two univariate Gaussians can be written as
+`\begin{align*}
+  f(x)=&amp;\sum_{z}f(x,z) = \sum_{z} f(z) f(x\vert z) \\
+      =&amp;\pi \mathcal{N}(x\vert\mu_1, \sigma_1)+(1-\pi) \mathcal{N}(x\vert\mu_2, \sigma_2)
+\end{align*}`
+where `\(z\)` is a latent (i.e. unobserved) binary random variable stating whether `\(x\)` is generated from `\(\mathcal{N}(x\vert\mu_1, \sigma_1)\)` or `\(\mathcal{N}(x\vert\mu_2, \sigma_2)\)`, `$$f(z) = \pi^{z}\cdot(1-\pi)^{1-z}.$$`
+
+The unknown parameters `\(\pi, \mu_1,\mu_2,\sigma_1,\sigma_2\)` are estimated as maximisers of
+`\begin{align*}
+\log L(x\vert \pi, \mu_1,\mu_2,\sigma_1,\sigma_2) = \sum_{i=1}^N\log\left\{\pi \mathcal{N}(x_i\vert\mu_1, \sigma_1)+(1-\pi) \mathcal{N}(x_i\vert\mu_2, \sigma_2)\right\}.
+\end{align*}`
+*Expectation-Maximization* (EM) algorithms are a popular choice.
+]
+
+---
+exclude: true
+## `RcppArmadillo` &amp;mdash; Case Study: EM Algorithm
+
+.font90[
+
+**Gaussian mixture model**
+
+Using the posterior probabilities
+`\begin{align*}
+  P(z_i=1\vert x_i) =&amp; \gamma_{1i} = \frac{\pi\mathcal{N}(x_i\vert \mu_1, \sigma_1)}{\pi\mathcal{N}(x_i\vert \mu_1, \sigma_1) + (1-\pi)\mathcal{N}(x_i\vert \mu_2,\sigma_2)},\\
+  P(z_i=0\vert x_i) =&amp; \gamma_{2i} = 1 - \gamma_{1i},
+\end{align*}`
+rearranging the first order conditions gives
+`\begin{align*}
+  \pi =&amp; \frac{1}{n}\sum_{i=1}^n \gamma_{1i}\\
+  \mu_1 =&amp; \frac{1}{n}\sum_{i=1}^n\gamma_{1i}x_i/\pi, \quad \mu_2=(\overline{x} - \pi\mu_1)/(1-\pi),\\
+  \sigma_1^2 =&amp; \frac{1}{n}\sum_{i=1}^n\gamma_{1i}(x_i-\mu_1)^2, \quad \sigma_2^2 = \frac{1}{n}\sum_{i=1}^n\gamma_{2i}(x_i-\mu_2)^2.
+\end{align*}`
+This suggests an iterative procedure where we compute compute `\(\gamma_{1i}\)` and `\(\gamma_{2i}\)` and then update the parameters.
+]
+
+---
+exclude: true
+## `RcppArmadillo` &amp;mdash; Case Study: EM Algorithm
+
+**EM for two-component univariate Gaussian mixture model**
+
+1. Initialize `\(\pi\)`, `\(\mu_1\)`, `\(\mu_2\)`, `\(\sigma_1\)`, `\(\sigma_2\)` and compute the log-likelihood.
+
+2. Evaluate `\(\gamma_{1i}\)` and `\(\gamma_{2i}\)` (*E step*)
+
+3. Re-estimate `\(\pi\)`, `\(\mu_1\)`, `\(\mu_2\)`, `\(\sigma_1\)`, `\(\sigma_2\)` as shown on the previous slide (*M step*)
+
+4. Evaluate the likelihood and check for convergence using the likelihood (check if difference in log-likelihood between iterations is smaller than some prespecified `\(\epsilon&gt;0\)`. Return to 2. if the convergence criterion is not met.
+
+---
+## `RcppArmadillo` &amp;mdash; Case Study: EM Algorithm
+
+.font90[
+
+**Complete the following tasks:**
+
+1. Implement an R function which estimates the parameters of a two-component univariate Gaussian mixture model. The function should allow the user to specify the maximum number of iterations and a tolerance for checking convergence of the log-likelihood.
+
+2. Identify bottlenecks of your function and rewrite it using `Rcpp`/`RcppArmadillo`. Benchmark against the R implementation.
+
+3. Use the function for estimating a two-component mixture model of your choice. Visualise the the results.
+
+]
+
+---
+class: segue-red
+
+![:image 18%](../assets/pica_roll.gif)
+
+### Thank You!
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script src="../assets/remark-zoom.js"></script>
+<script src="../xaringan_files/macros.js"></script>
+<script src="https://platform.twitter.com/widgets.js"></script>
+<script>var slideshow = remark.create({
+"highlightStyle": "github",
+"highlightLines": true,
+"countIncrementalSlides": false,
+"ratio": "16:9",
+"navigation": {
+"scroll": false
+}
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+// add `data-at-shortcutkeys` attribute to <body> to resolve conflicts with JAWS
+// screen reader (see PR #262)
+(function(d) {
+  let res = {};
+  d.querySelectorAll('.remark-help-content table tr').forEach(tr => {
+    const t = tr.querySelector('td:nth-child(2)').innerText;
+    tr.querySelectorAll('td:first-child .key').forEach(key => {
+      const k = key.innerText;
+      if (/^[a-z]$/.test(k)) res[k] = t;  // must be a single letter (key)
+    });
+  });
+  d.body.setAttribute('data-at-shortcutkeys', JSON.stringify(res));
+})(document);
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>

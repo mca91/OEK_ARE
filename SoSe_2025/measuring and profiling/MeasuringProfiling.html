@@ -1,0 +1,903 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>Advanced R for Econometricians</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Martin C. Arnold" />
+    <meta name="author" content="Jens Klenke" />
+    <meta name="date" content="2022-06-20" />
+    <script src="MeasuringProfiling_files/header-attrs/header-attrs.js"></script>
+    <link href="MeasuringProfiling_files/remark-css/default.css" rel="stylesheet" />
+    <script src="MeasuringProfiling_files/clipboard/clipboard.min.js"></script>
+    <link href="MeasuringProfiling_files/xaringanExtra-clipboard/xaringanExtra-clipboard.css" rel="stylesheet" />
+    <script src="MeasuringProfiling_files/xaringanExtra-clipboard/xaringanExtra-clipboard.js"></script>
+    <script>window.xaringanExtraClipboard(null, {"button":"<i class=\"fa fa-clipboard\"><\/i>","success":"<i class=\"fa fa-check\" style=\"color: #00ff00\"><\/i>","error":"<i class=\"fa fa-times-circle\" style=\"color: #F94144\"><\/i>"})</script>
+    <link href="MeasuringProfiling_files/font-awesome/css/all.css" rel="stylesheet" />
+    <link href="MeasuringProfiling_files/font-awesome/css/v4-shims.css" rel="stylesheet" />
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        TeX: { equationNumbers: { autoNumber: "AMS" } },
+      });
+    </script>
+    <style>
+    .mjx-mrow a {
+      color: black;
+      pointer-events: none;
+      cursor: default;
+    }
+    </style>
+    <link rel="stylesheet" href="../assets/ude_fonts.css" type="text/css" />
+    <link rel="stylesheet" href="../assets/ude.css" type="text/css" />
+    <link rel="stylesheet" href="../assets/title_slides.css" type="text/css" />
+    <link rel="stylesheet" href="../assets/custom.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+
+
+
+
+
+
+class: title-slide title-measuring center middle
+
+# Advanced R for Econometricians
+## Measuring Performance and Profiling
+### Martin C. Arnold, Jens Klenke
+
+---
+## What's up next? &amp;mdash; Overview
+
+**Now:**
+
+- Measuring Performance: Profiling and Microbenchmarking
+
+- (Why) is `R` slow?
+
+**Remaining classes:**
+
+- Improving Performance
+
+- How to speed things up using `Rcpp` (and hopefully `RcppArmadillo`) 
+
+---
+class: segue-red
+### Profiling
+
+---
+## Prerequisites
+
+
+```r
+# packages needed
+library(profvis)
+library(bench)
+library(beeswarm) # for plotting with `bench` package
+```
+
+- **Profiling** means measuring run time of our code *line-by-line* using realistic inputs in order to identify *bottlenecks*.
+
+- After identifying bottlenecks we experiment with alternatives and find the fastest using a **microbenchmark**.
+
+- We will use the packages `profvis` and `bench` for profiling and benchmarking. 
+
+---
+class: left
+
+&lt;br&gt;
+&lt;br&gt;
+&lt;blockquote style ="margin-top:15%;"&gt;
+It’s tempting to think you just know where the bottlenecks in your code are. I mean, after all, you write it! But trust me, I can’t tell you how many times I’ve been surprised at where exactly my code is spending all its time. The reality is that profiling is better than guessing. 
+.right[&amp;mdash; &lt;cite&gt;Roger D. Peng&lt;/cite&gt;]
+&lt;/blockquote&gt;
+
+---
+## Profiling &amp;mdash; `utils::Rprof()`
+
+.smaller[
+
+- `Rprof()` is a build-in **sampling profiler**. It keeps track of the **function call stack** at regularly sampled intervals.
+
+- Note: results are *stochastic*&amp;mdash;we never run a function under the same conditions twice (think memory usage, CPU load, etc.) 
+
+.blockquote.exercise[
+#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example: profiling a call of `replicate()`
+
+```r
+tmp &lt;- tempfile()
+
+Rprof(tmp, interval = 0.1)       # start the profiler
+replicate(5, mean(rnorm(1e6)))
+Rprof(NULL)                      # stop profiling
+
+writeLines(readLines(tmp))
+```
+
+```
+## 
+## sample.interval=100000
+## "rnorm" "mean" "FUN" "lapply" "sapply" "replicate" 
+## "rnorm" "mean" "FUN" "lapply" "sapply" "replicate" 
+## "rnorm" "mean" "FUN" "lapply" "sapply" "replicate"
+```
+
+]]
+
+---
+## Visualising profiles: `profvis::profvis()`
+
+&lt;br&gt;
+
+.smaller[
+.blockquote.exercise[
+#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Exercise: profiling nested functions
+
+Profile a call of `f()` and visualise the results using `profvis::profvis()`.
+
+
+```r
+# define some (nested) example functions
+f &lt;- function() {
+  pause(0.1)
+  g()
+  h()
+}
+
+g &lt;- function() {
+  pause(0.1)
+  h()
+}
+
+h &lt;- function() {
+  pause(0.1)
+}
+```
+
+]]
+
+&lt;!-- --- --&gt;
+&lt;!-- background-image: url(../img/profiling.png) --&gt;
+&lt;!-- background-position: 50% 85% --&gt;
+&lt;!-- background-size: 600px --&gt;
+
+&lt;!-- ## Visualising profiles: `profvis::profvis()` --&gt;
+
+&lt;!-- --- --&gt;
+&lt;!-- background-image: url(../img/profiling_data_tab.png) --&gt;
+&lt;!-- background-position: 50% 85% --&gt;
+&lt;!-- background-size: 500px --&gt;
+
+---
+## Visualising profiles: `profvis::profvis()`
+
+&lt;br&gt;
+
+.smaller[
+.blockquote.exercise[
+#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example: profiling linear regression
+
+
+```r
+profvis({
+  
+  dat &lt;- data.frame(
+    x = rnorm(5e4),
+    y = rnorm(5e4)
+  )
+
+  plot(x ~ y, data = dat)
+  m &lt;- lm(x ~ y, data = dat)
+  abline(m, col = "red")
+
+})
+```
+
+]]
+
+---
+background-image: url(../img/profiling_regression_1.png)
+background-position: 50% 80%
+background-size: 650px
+## Visualising profiles: `profvis::profvis()`
+**Example: profiling linear regression**
+
+---
+background-image: url(../img/profiling_regression_2.png)
+background-position: 50% 80%
+background-size: 650px
+## Visualising profiles: `profvis::profvis()`
+**Example: profiling linear regression**
+
+---
+## Memory Profiling
+
+&lt;br&gt;
+
+.blockquote.exercise[
+#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Exercise: extensive garbage collection
+
+The following code generates a large number of short-lived objects by **copy-on-modification**.
+
+What does `profvis()` reveal?
+
+
+```r
+profvis({
+  
+  x &lt;- integer()
+  
+  for (i in 1:1e4) {
+    x &lt;- c(x, i)
+  }
+  
+})
+```
+
+]
+
+&lt;!-- --- --&gt;
+&lt;!-- background-image: url(../img/profiling_gc.png) --&gt;
+&lt;!-- background-position: 50% 70% --&gt;
+&lt;!-- background-size: 650px --&gt;
+
+---
+## Memory Profiling
+
+.smaller[
+
+Sometimes code statements seem fairly innocent but are very inefficient both when it comes to memory and speed.
+
+&lt;br&gt;
+
+.blockquote.exercise[
+#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Exercise: coercion to another type
+
+Can you explain why execution of the third line needs 762.9MB memory?
+
+
+```r
+profvis({
+  x &lt;- matrix(nrow = 1e4, ncol = 1e4)
+  x[1, 1] &lt;- 0
+  x[1:3, 1:3] 
+})
+```
+
+]]
+
+---
+background-image: url(../img/profiling_coercion.png)
+background-position: 50% 90%
+background-size: 650px
+## Memory Profiling
+**Exercise: coercion to another type**
+
+---
+## Profiling &amp;mdash; some notes and hints
+
+&lt;br&gt;
+
+- `C`/`C++` (or other compiled) code cannot be profiled
+
+- We also cannot profile what happens *inside* *primitive functions*, e.g., `sum()` and `sqrt()` (these functions are written in `C` or `FORTRAN`).
+
+  We thus cannot use profiling to see whether the code is slow because something further down the call stack is slow.
+  
+- Profiling is another good reason to **break your code into functions** so that the profiler can give useful information about where time is being spent
+
+---
+class: segue-red
+### Microbenchmarking
+
+---
+## What is a Microbenchmark?
+
+&lt;br&gt;
+
+*"A microbenchmark is a program designed to test a very small snippets of code for a specific task. Microbenchmarks are always artificial and they are not intended to represent normal use."*
+
+- We usually speak of milliseconds (ms), microseconds (µs), or nanoseconds (ns) here. 
+
+- **Important**: 
+
+    microbenchmarks can rarely be generalised to 'real' code: the observed differences in microbenchmarks will typically be dominated by **higher-order effects** in real code.
+
+  Think of it this way:
+  
+  A deep understanding of quantum physics is not very helpful when baking cookies.
+  
+- There are several R packages for microbenchmarking. We will rely on the `bench` package by Hester (2022) which has the most accurate timer function currently available in `R`.
+
+---
+## Microbenchmarking &amp;mdash; the `bench` package
+
+&lt;br&gt;
+
+- `bench` is part of the `tidyerse`. It uses the highest precision APIs available for the common operating system (often nanoseconds-level!)
+
+- `mark()` is the working horse of the `bench` package and measures both memory allocation and computation time.
+
+- By default, a human-readable statistical summary on the distributions of memory load and timings based on 1e4 iterations is returned which also reports on garbage collections
+
+- Benchmarking across a grid of input values with `bench::press()` is possible
+
+- The package also has methods for neat visualisation of the results using `ggplot2::autoplot()` (default plot type is [beeswarm](https://flowingdata.com/2016/09/08/beeswarm-plot-in-r-to-show-distributions/)) 
+
+---
+## Microbenchmarking &amp;mdash; `bench::mark()`
+
+.blockquote.exercise[
+#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example: "the fastest square root"
+
+
+```r
+x &lt;- runif(100)
+
+(lb &lt;- bench::mark(
+  sqrt(x),
+  x^0.5
+))
+```
+
+```
+## # A tibble: 2 × 6
+##   expression      min   median `itr/sec` mem_alloc `gc/sec`
+##   &lt;bch:expr&gt; &lt;bch:tm&gt; &lt;bch:tm&gt;     &lt;dbl&gt; &lt;bch:byt&gt;    &lt;dbl&gt;
+## 1 sqrt(x)       123ns 164.15ns  3232274.      848B        0
+## 2 x^0.5         943ns   1.02µs   864867.      848B        0
+```
+
+
+```r
+plot(lb)
+```
+]
+
+---
+## Microbenchmarking &amp;mdash; `bench::mark()`
+
+.blockquote.exercise[
+#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example: "the fastest square root"
+
+&lt;img src="MeasuringProfiling_files/figure-html/unnamed-chunk-10-1.png" style="display: block; margin: auto;" /&gt;
+
+]
+
+---
+## Microbenchmarking &amp;mdash; `bench::mark()`
+
+.smaller[
+.blockquote.exercise[
+#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example: non-equivalent code
+
+
+```r
+set.seed(42)
+
+dat &lt;- data.frame(
+  x = runif(10000, 1, 1000),
+  y = runif(10000, 1, 1000)
+  )
+
+bench::mark(
+  dat[dat$x &gt; 500, ],
+  dat[which(dat$x &gt; 499), ],
+  subset(dat, x &gt; 500)
+  )
+```
+
+
+```
+## 
+## Error: Each result must equal the first result:
+##   `dat$x &gt; 500` does not equal `which(dat$x &gt; 499)` Each result must 
+##   equal the first result:
+##   `` does not equal ``
+## 
+```
+
+Use `check = FALSE` to disable checking of consistent results.
+
+]]
+
+---
+## Microbenchmarking &amp;mdash; `bench::press()`
+
+Sometimes it is useful to benchmark against a parameter grid. This can be done using `bench::press()`.
+
+&lt;br&gt;
+
+.smaller[
+.blockquote.exercise[
+#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; **Exercise: benchmark against parameter grid**
+
+Benchmark subsetting functions for dataframes generated by `create_df()` for combination of `rows = c(10000, 100000)` and `cols = c(10, 100)`.
+
+
+```r
+create_df &lt;- function(rows, cols) {
+  as.data.frame(
+    matrix(
+      unlist(replicate(cols, runif(rows, 1, 1000), simplify = FALSE)),
+      nrow = rows, ncol = cols
+      )
+    )
+}
+```
+
+]]
+
+---
+## Microbenchmarking &amp;mdash; Exercises
+
+1. Instead of using `bench::mark()`, you could use the built-in function `system.time()` which is, however, much less precise, so you’ll need to repeat each operation many times with a loop, and then divide to find the average time of each operation, as in the code below.
+    
+    ```r
+    x &lt;- runif(100)
+    n &lt;- 1e6
+    system.time(for (i in 1:n) sqrt(x)) / n
+    system.time(for (i in 1:n) x ^ 0.5) / n
+    ```
+
+  How do the estimates from `system.time()` compare to those from `bench::mark()`? Why are they different?
+
+2. Here are two other ways to compute the square root of a numeric vector. Which do you think will be fastest? Use microbenchmarking to verify.
+
+```r
+    x^(1/2)
+    exp(log(x)/2)
+```
+
+---
+class: segue-red
+### (Why) is R slow?
+
+---
+## (Why) is R slow?
+
+Think of R as both the definition of a language and its implementation.
+
+**The `R` language**
+
+- The `R` language defines meaning of code statements and how they work (*very abstract*) 
+
+- R is an extremely dynamic language, i.e., you have *a lot* freedom in modifying objects after they have been created
+
+- This dynamism is comfortable because is allows you to iterate your code and alter objects &amp;mdash; there's no need to start from scratch when something doesn't work out!
+
+⚡ Changes for improving speed without breaking existing code are problematic. 
+
+---
+## (Why) is R slow? &amp;mdash; Slow Code Interpretation
+
+But:
+
+`R` is an interpreted language. Its dynamism causes code interpretation to be relatively time consuming.
+
+.smaller[
+.blockquote.exercise[
+#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example: extreme dynamism
+
+
+```r
+x &lt;- 0L
+for (i in 1:1e6) {
+  x &lt;- x + 1L
+}
+```
+
+]]
+
+---
+## (Why) is R slow?
+
+**The `R` Implementation**
+
+- Processes `R` code and computes results; commonly base R (*GNU-R*) from [cran.r-project.org](https://cran.r-project.org/src/base/R-3/)
+
+- R (written in *FORTRAN*, *R*, and *C*) is more than 20 years old was not intended for super fast computations
+
+- 🔩 tweaking for speed improvements is easier (done by R-core team) but not feasible for end users like us. &lt;br&gt;&lt;br&gt; Some alternatives address specific issues:
+
+  - "pretty quick R" [pqR](http://www.pqr-project.org/) (parallelisation of core functions)
+  
+  - [Microsoft R Open](https://mran.microsoft.com/open) (some fast extensions for machine learning)
+
+
+---
+## (Why) is R slow? &amp;mdash; Name Look-up with Mutable Environments
+
+&lt;br&gt;
+
+**Remember Lexical Scoping:**
+
+*"Values of variables are searched for in the environment the function belongs to."*
+
+- If a value is not found in the environment in which a function was defined, the search steps-up to the *parent environment*
+
+- This continues down the sequence of parent environments until the top-level environment (usually the *global environment* or a package namespace) is reached
+
+- After reaching the top-level environment, the search continues down the *search list* until we hit the *empty environment*.
+
+---
+## (Why) is R slow? &amp;mdash; Name Look-up with Mutable Environments
+
+&lt;br&gt;
+
+.smaller[
+.blockquote.exercise[
+#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example: have you seen z?
+
+The interpreter asks: which environment does the value of `z` come from?
+
+
+```r
+f &lt;- function(x, y) {
+  x + y / z
+}
+```
+
+
+```r
+# print search list
+search()
+```
+
+```
+##  [1] ".GlobalEnv"             "package:emoji"          "package:beeswarm"       "package:icons"          "package:tidyr"          "package:dplyr"         
+##  [7] "package:tictoc"         "package:parallel"       "package:microbenchmark" "tools:rstudio"          "package:stats"          "package:graphics"      
+## [13] "package:grDevices"      "package:utils"          "package:datasets"       "package:methods"        "Autoloads"              "org:r-lib"             
+## [19] "package:base"
+```
+
+]]
+
+---
+## (Why) is R slow? &amp;mdash; Name Look-up with Mutable Environments
+
+&lt;br&gt;
+
+.smaller[
+.blockquote.exercise[
+#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example: have you seen z? &amp;mdash; ctd.
+
+Interpreter asks: which environment does the value of `z` come from?
+
+
+```r
+z &lt;- 1                 # global environment
+
+f &lt;- function() {      # f() is parent to g()
+  print(z)
+  g &lt;- function() {
+    z &lt;- 3
+    print(z)
+  }
+  z &lt;- 2
+  print(z)
+  g() 
+}
+f()
+```
+
+Name look-up is done every time we call `print(z)`!
+
+]]
+
+---
+## (Why) is R slow? &amp;mdash; Look-up with Mutable Environments
+
+.smaller[
+
+Even more problematic: most operations are lexically scoped function calls. This includes `+` and `-` but also (sometimes "recklessly" used) *operators* like `(` and `{`.
+
+.blockquote.exercise[
+#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example: excessive usage of parenthesis
+
+(or: a good example of poorly written code)
+
+
+```r
+g &lt;- function(x) x = (1/(1 + x))
+h &lt;- function(x) x = ((1/(1 + x)))
+i &lt;- function(x) x = (((1/(1 + x))))
+
+x &lt;- sample(1:100, 100, replace = TRUE)
+
+bench::mark(g(x), h(x), i(x))
+```
+
+```
+## # A tibble: 3 x 6
+##   expression      min   median `itr/sec` mem_alloc `gc/sec`
+##   &lt;bch:expr&gt; &lt;bch:tm&gt; &lt;bch:tm&gt;     &lt;dbl&gt; &lt;bch:byt&gt;    &lt;dbl&gt;
+## 1 g(x)          500ns    700ns  1076771.      848B    108. 
+## 2 h(x)          500ns    700ns  1039037.      848B      0  
+## 3 i(x)          500ns    700ns   925182.      848B     92.5
+```
+
+]]
+
+---
+## (Why) is R slow? &amp;mdash; Look-up with Mutable Environments
+
+&lt;br&gt;
+
+.smaller[
+.blockquote.exercise[
+#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example: function calls in nested environments
+
+
+```r
+f &lt;- function(x, y) {
+  (x + y) ^ 2
+}
+
+random_env &lt;- function(parent = globalenv()) {
+  letter_list &lt;- setNames(as.list(runif(26)), LETTERS)
+  list2env(letter_list, envir = new.env(parent = parent))
+}
+
+set_env &lt;- function(f, e) {
+  environment(f) &lt;- e
+  f
+}
+
+f2 &lt;- set_env(f, random_env())
+f3 &lt;- set_env(f, random_env(environment(f2)))
+f4 &lt;- set_env(f, random_env(environment(f3)))
+```
+
+]]
+
+---
+## (Why) is R slow? &amp;mdash; Look-up with Mutable Environments
+
+&lt;br&gt;
+
+.smaller[
+.blockquote.exercise[
+#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example: function calls in nested environments &amp;mdash; ctd.
+
+
+```r
+bench::mark(f(1, 2), f2(1, 2), f3(1, 2), f4(1, 2))
+```
+
+```
+## # A tibble: 4 x 6
+##   expression      min   median `itr/sec` mem_alloc `gc/sec`
+##   &lt;bch:expr&gt; &lt;bch:tm&gt; &lt;bch:tm&gt;     &lt;dbl&gt; &lt;bch:byt&gt;    &lt;dbl&gt;
+## 1 f(1, 2)       300ns    400ns  1568554.        0B       0 
+## 2 f2(1, 2)      500ns    700ns  1071876.        0B     107.
+## 3 f3(1, 2)      500ns    700ns  1149359.        0B       0 
+## 4 f4(1, 2)      600ns    700ns  1230237.        0B     123.
+```
+
+Each additional environment between `f()` and the global environment where `+` and `^` are defined increases computation time.
+
+]]
+
+---
+## (Why) is R slow? &amp;mdash; Lazy Evaluation Overhead
+
+Remember that function arguments are lazy &amp;mdash; they are only evaluated when actually needed. 
+
+&lt;br&gt;
+
+.blockquote.exercise[
+#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example: lazy evaluation
+
+
+```r
+f1 &lt;- function(a) {
+  force(a) # why not simply write 'a'?
+  NULL
+  }
+
+f1(stop("My dog speaks Chinese"))
+```
+
+vs.
+
+
+```r
+f1 &lt;- function(a) NULL
+
+f1(stop("My dog speaks Chinese"))
+```
+
+]
+
+---
+## (Why) is R slow? &amp;mdash; Lazy Evaluation Overhead
+
+Promises are very convenient but should be avoided if speed is crucial.
+
+&lt;br&gt;
+
+.blockquote.exercise[
+#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example: lazy evaluation &amp;mdash; ctd.
+
+
+```r
+f1 &lt;- function(a) NULL
+f2 &lt;- function(a = 1, b = 2, c = 4, d = 4, e = 5) NULL
+bench::mark(f1(), f2())
+```
+
+```
+## # A tibble: 2 × 6
+##   expression      min   median `itr/sec` mem_alloc `gc/sec`
+##   &lt;bch:expr&gt; &lt;bch:tm&gt; &lt;bch:tm&gt;     &lt;dbl&gt; &lt;bch:byt&gt;    &lt;dbl&gt;
+## 1 f1()              0     82ns 10318877.        0B        0
+## 2 f2()          123ns    205ns  4135334.        0B        0
+```
+
+Arguments trigger promises each time the function is *called*. Superfluous arguments thus lead to avoidable overhead.
+
+]
+
+---
+## (Why) is R slow? &amp;mdash; Summary
+
+- R is not slow *per se* &amp;mdash; but it is slow compared to other languages:
+
+    Speed isn't its strongest suit but accessability and compatibility are. R was designed to make life easier for you, not for your computer!
+
+    More technically: R is an easy-to-use high level programming language. It provides a flexible and extensible toolkit for data analysis and statistics.
+
+- We are (mostly) happy to accept the slower speed for the time saved from not having to reinvent the wheel each time we want to implement a new function that, e.g., computes a test statistic.
+
+    (meanwhile (2022-06-20) there are 18244 packages available on [CRAN](https://cran.r-project.org/) with many useful functions waiting to be discovered by you!)
+
+- We cannot overcome the idiosyncrasies of `R` described in this section. However, there are a few things and tricks to keep in mind if you want to write performant code. We'll discuss these in the next Lecture.
+
+---
+class: segue-red
+
+![:image 30%](pikaball.gif)
+### Thank You! 
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script src="../assets/remark-zoom.js"></script>
+<script src="../xaringan_files/macros.js"></script>
+<script src="https://platform.twitter.com/widgets.js"></script>
+<script>var slideshow = remark.create({
+"highlightStyle": "github",
+"highlightLines": true,
+"countIncrementalSlides": false,
+"ratio": "16:9",
+"navigation": {
+"scroll": false
+}
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+// add `data-at-shortcutkeys` attribute to <body> to resolve conflicts with JAWS
+// screen reader (see PR #262)
+(function(d) {
+  let res = {};
+  d.querySelectorAll('.remark-help-content table tr').forEach(tr => {
+    const t = tr.querySelector('td:nth-child(2)').innerText;
+    tr.querySelectorAll('td:first-child .key').forEach(key => {
+      const k = key.innerText;
+      if (/^[a-z]$/.test(k)) res[k] = t;  // must be a single letter (key)
+    });
+  });
+  d.body.setAttribute('data-at-shortcutkeys', JSON.stringify(res));
+})(document);
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>

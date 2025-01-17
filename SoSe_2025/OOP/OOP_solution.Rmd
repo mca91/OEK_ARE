@@ -1,0 +1,141 @@
+---
+title: "Advanced `R` for Econometricians (Summer 2022)"
+subtitle: "Object Oriented `R` Programming --- Solutions to Exercises"
+author: 'Jens Klenke, Martin Arnold' 
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
+library(sloop)
+```
+
+# Slide 18
+
+### 1. 
+
+Because of S3’s `generic.class()`` naming scheme, both functions may initially look similar, while they are in fact unrelated.
+
+`t.test()` is a generic function that performs a t-test. `t.data.frame()` is a method that gets called by the generic `t()` to transpose dataframe input.
+Due to `R`’s S3 dispatch rules, `t.test()` would also get called when `t()` is applied to an object of class test
+
+### 2.
+
+We obtain an object of class `ecdf` (short for empirical cumulative distribution function) with the superclasses `stepfun` and `function`. The `ecdf` object is built on the base type `closure` (a function). The expression which was used to create it (`rpois(100, 10)`), is stored in the `call` attribute.
+
+### 3.
+
+The code returns a `table` object, which is built upon the integer type. The attribute `dimnames` is used to name the elements of the integer vector.
+
+
+# Slide 36 
+
+### 1.
+
+We see that `t.test()` is a generic because it calls `UseMethod()`:
+
+```{r}
+t.test
+
+# or simply call
+sloop::ftype(t.test)
+```
+
+
+Interestingly, `R` also provides helpers, which list functions that look like methods, but in fact are not:
+
+```{r}
+tools::nonS3methods("stats")
+```
+When we create an object with class test, `t()` dispatches to the `t.default()` method. This is because `UseMethod()` simply searches for functions named `paste0("generic", ".", c(class(x), "default"))`.
+
+```{r}
+x <- structure(1:10, class = "test")
+
+t(x)
+```
+
+However, in older versions of `R` (pre 4.0.0) this behaviour was slightly different. Instead of dispatching to the `t.default()` method, the `t.test()` generic was erroneously treated as a method of `t()` which then dispatched to `t.test.default()` or (if defined) to `t.test.test()`.
+
+### 2.
+
+This is a simple application of `sloop::s3_methods_class()`:
+
+```{r}
+s3_methods_class("table")
+```
+
+Interestingly, the `table` class has a number of methods designed to help plotting with base graphics.
+
+
+### 3.
+
+```{r}
+prime <- function(x = integer()) {
+  validate_prime(new_prime(x))
+}
+
+validate_prime <- function(x = list()) {
+  sapply(
+    unique(unlist(x)), function(z) {
+      if(!all(z==2 || z %% 2:(z-1) > 0)) {
+        stop('Input contains non-prime number(s)!', call. = F)
+      }
+    } 
+  )
+  x
+}
+
+new_prime <- function(x = integer()) {
+  stopifnot(is.integer(x))
+  x <- list(x)
+  class(x) <- 'prime'
+  x
+}
+```
+
+### 3.1
+
+```{r}
+summary.prime <- function(x) {
+  if(class(x)  == "prime") {
+    x <- unlist(x)
+    out <- list(
+        name = quote(x),
+        n = length(x),
+        min = min(x),
+        max = max(x)
+        )
+    class(out) <- "summary.prime"
+    return(out)
+  } else {
+    message("Object not of class prime!")
+  }
+}
+
+my_primes <- new_prime(c(3L, 5L, 7L))
+
+summary(my_primes)
+```
+
+### 3.2
+
+```{r}
+print.summary.prime <- function(x) {
+  if(class(x)  == "summary.prime") {
+    cat(
+      "summary for", x$name, ":\n\n",
+      x$n, "prime numbers between", x$min, "to", x$max
+    )
+  } else {
+    message("Object not of class summary.prime!")
+  }
+}
+
+# now with print method
+summary(my_primes)
+```
+
+
+
+

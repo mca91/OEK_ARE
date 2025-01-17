@@ -1,0 +1,1294 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>Advanced R for Econometricians</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Martin C. Arnold" />
+    <meta name="author" content="Jens Klenke" />
+    <meta name="date" content="2022-06-20" />
+    <script src="OOP_files/header-attrs/header-attrs.js"></script>
+    <link href="OOP_files/remark-css/default.css" rel="stylesheet" />
+    <script src="OOP_files/clipboard/clipboard.min.js"></script>
+    <link href="OOP_files/xaringanExtra-clipboard/xaringanExtra-clipboard.css" rel="stylesheet" />
+    <script src="OOP_files/xaringanExtra-clipboard/xaringanExtra-clipboard.js"></script>
+    <script>window.xaringanExtraClipboard(null, {"button":"<i class=\"fa fa-clipboard\"><\/i>","success":"<i class=\"fa fa-check\" style=\"color: #00ff00\"><\/i>","error":"<i class=\"fa fa-times-circle\" style=\"color: #F94144\"><\/i>"})</script>
+    <link href="OOP_files/font-awesome/css/all.css" rel="stylesheet" />
+    <link href="OOP_files/font-awesome/css/v4-shims.css" rel="stylesheet" />
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        TeX: { equationNumbers: { autoNumber: "AMS" } },
+      });
+    </script>
+    <style>
+    .mjx-mrow a {
+      color: black;
+      pointer-events: none;
+      cursor: default;
+    }
+    </style>
+    <link rel="stylesheet" href="../assets/ude_fonts.css" type="text/css" />
+    <link rel="stylesheet" href="../assets/ude.css" type="text/css" />
+    <link rel="stylesheet" href="../assets/title_slides.css" type="text/css" />
+    <link rel="stylesheet" href="../assets/custom.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+
+
+
+
+
+
+
+class: title-slide title-oop center middle
+
+# Advanced R for Econometricians
+## Object Oriented Programming in R
+### Martin C. Arnold, Jens Klenke
+
+---
+class: left, top
+## Introduction
+
+.smaller[
+- Object oriented programming (OOP) is a widespread philosophy: it's the cornerstone of popular languages like Java, Python and C++. 
+
+- The concepts of class and method are central to any OOP system:
+
+    - A **class** defines an object's properties and how it relates to other objects. Every object is an instance of a class.
+    
+    - A **method** is a function associated with a particular type of object
+
+- While R supports a mixture of OOP and functional programming, the latter is relatively more important than OOP in everyday R usage: 
+
+    We solve complex problems by decomposing them into simple *functions* rather than objects!
+
+- Nonetheless, being familiar with R's widely used OOP systems is important for 
+
+    - a more general understanding of the language
+    
+    - being able to understand and expand on object oriented code from other authors 
+]
+
+---
+class: left, top
+## Introduction
+
+.smaller[
+- R's most important OOP systems are **S3**, **S4**, **R6** and **RC**
+
+    - S3 is R's oldest OO system. It's minimal but elegant. 
+    
+    - S4 is similar but more formal than S3
+    
+    - R6 builds on environments
+    
+    - RC implements encapsulated object orientation
+
+- Engaging with OOP in R is challenging due to 
+    
+    - differences to the OOP systems used by other languages
+
+    - disagreement over the realtive importance of the available OOP systems
+    
+- We will elaborate key principles in OOP with R, thereby focusing on S3
+]
+
+???
+S4 already encountered?
+RC implementiert gekapselte Objektorientierung
+
+---
+class: left, top
+## The `sloop` Package
+
+.smaller[
+We 'sail the seas of OOP' using the `sloop` package. It provides helper functions which facilitate the handling of OOP objects.
+
+
+```r
+## install.packages('sloop')
+library('sloop')
+```
+    
+
+```r
+otype(base::abs)
+```
+
+```
+## [1] "base"
+```
+
+```r
+otype(3:1)
+```
+
+```
+## [1] "base"
+```
+
+```r
+otype(lm(area ~ poptotal, data = ggplot2::midwest))
+```
+
+```
+## [1] "S3"
+```
+]
+
+---
+class: left, top
+## Base Types vs OO Objects
+
+.smaller[
+&lt;br&gt;
+&lt;blockquote&gt;
+Everything that exists in R is an object. 
+.right[&amp;mdash; &lt;cite&gt;John Chambers&lt;/cite&gt;]
+&lt;/blockquote&gt;
+&lt;br&gt;
+
+Thus far we have used the term 'object' somewhat sloppily &amp;mdash; not every R object is *object-oriented*:
+
+&lt;br&gt;
+
+![:image 35%](../img/oo-venn.png)
+![:source 2019](Wickham)
+]
+
+---
+class: left, top
+## Base Types vs OO Objects
+
+.smaller[
+`is.object()` and `sloop::otype()` are useful for identifying objects in the wild.
+
+
+```r
+# base object
+is.object(1L)
+```
+
+```
+## [1] FALSE
+```
+
+```r
+otype(1L)
+```
+
+```
+## [1] "base"
+```
+
+```r
+# OO object
+is.object(ggplot2::diamonds)
+```
+
+```
+## [1] TRUE
+```
+
+```r
+otype(ggplot2::diamonds)
+```
+
+```
+## [1] "S3"
+```
+]
+
+---
+class: left, top
+## Base Types vs OO Objects
+
+**Only OO objects have a `class` attribute.**
+
+
+```r
+attr(1L, "class")
+```
+
+```
+## NULL
+```
+
+```r
+attr(ggplot2::diamonds, "class")
+```
+
+```
+## [1] "tbl_df"     "tbl"        "data.frame"
+```
+
+---
+class: left, top
+## Base Types vs OO Objects
+
+.smaller[
+- There are alternate functions for checking the `class` argument
+    
+    ```r
+    s3_class(ggplot2::diamonds)
+    ```
+    
+    ```
+    ## [1] "tbl_df"     "tbl"        "data.frame"
+    ```
+    
+    ```r
+    class(ggplot2::diamonds)
+    ```
+    
+    ```
+    ## [1] "tbl_df"     "tbl"        "data.frame"
+    ```
+
+- Be careful with `class()`
+    
+    ```r
+    class(1L)
+    ```
+    
+    ```
+    ## [1] "integer"
+    ```
+]
+
+???
+
+- `class()` can be misleading when used with base objects which is why we use `sloop::s3_class()`
+
+- `sloop::s3_class()` works safely with base, S3 and S4 objects. 
+
+    (returns the implicit class used by the respective system)
+
+---
+class: left, top
+## Base Types 
+
+**Every R object has a base type** of which there are 25.
+
+Important types are `NULL`, `logical`, `integer`, `double` , `complex`, `character`, `list` and `closure`
+
+
+```r
+typeof(1L)
+```
+
+```
+## [1] "integer"
+```
+
+```r
+typeof(ggplot2::diamonds)
+```
+
+```
+## [1] "list"
+```
+
+```r
+typeof(lm)
+```
+
+```
+## [1] "closure"
+```
+
+---
+class: left, top
+## Base Types &amp;mdash; `numeric` type
+
+The definition of the `numeric` type is inconsistent:
+
+- `numeric` is sometimes used as an alias for the `double` type
+- `numeric` is an alias for `integer` and `double` types in S3/S4
+- `base::is.numeric()` checks if the object behaves like a number
+
+Let's run the following expressions and comment on the results.
+
+
+```r
+is.numeric(3.14159)
+is.numeric(1L)
+typeof(factor('x'))
+is.numeric(factor('x'))
+```
+
+---
+class: left, top
+## S3 &amp;mdash; Basics
+
+.smaller[
+
+**What is S3?**
+
+- C++ and Java use *message-passing style* where objects **encapsulate** data and functions that may modify the data. 
+  
+    A typical function call looks like `object.method(argument)`.
+
+- S3 implements a *functional style* where the associated functions (called **generics**) live *outside* the object. A generic decides which method to call based on the object passed. 
+
+    A typical function call looks like `generic(object, argument)`.
+
+**Why discussing S3?**
+
+- S3 is simple but flexible and will likely be sufficient for your OO code projects. 
+
+- It's used in `base` and `stats` and is the most commonly used system on CRAN.
+
+- This sections provides you with a working knowledge of the system and its limitations. Being familiar with S3 is a good starting point for engaging with the other systems, if necessary for your work.
+]
+
+---
+class: left, top
+## S3 &amp;mdash; Basics
+
+.medium[
+Every S3 object has a base type and at least one class.
+.blockquote.exercise[
+#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example: class and type of factor object
+
+
+```r
+f &lt;- structure(1:3, class = "factor", levels = c("a", "b", "c"))
+```
+
+We check S3 membership, base type and the class of `f`.
+
+
+```r
+otype(f)
+```
+
+```
+## [1] "S3"
+```
+
+```r
+typeof(f)
+```
+
+```
+## [1] "integer"
+```
+
+```r
+class(f)
+```
+
+```
+## [1] "factor"
+```
+]]
+
+???
+
+Check that `class` is simply an `attribute` of `f` using `attribute()`.
+
+---
+class: left, top
+## S3 &amp;mdash; Generics
+
+- A generic function (**generic**) is an interface. It behaves dependent on the class of the passed S3 object. 
+
+  This concept is called **polymorphism** (many shapes).
+
+- The behavior when a S3 object is passed to a generic may be very different from the underlying base type: class-specific methods may do weird stuff!
+
+- The process of looking for a class-specific implementation (**method**) upon a generic function call is called **method dispatch**
+
+
+---
+class: left, top
+## S3 &amp;mdash; Generics
+
+.smaller[
+.blockquote.exercise[
+#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example: `print()`
+
+Executing `f` calls a generic (`print`) with specific behavior for objects of class `factor`.
+
+
+```r
+ftype(print)
+```
+
+```
+## [1] "S3"      "generic"
+```
+
+```r
+print(f) # Or simply `f`
+```
+
+```
+## [1] a b c
+## Levels: a b c
+```
+
+```r
+# Integer behaviour
+print(unclass(f))
+```
+
+```
+## [1] 1 2 3
+## attr(,"levels")
+## [1] "a" "b" "c"
+```
+]]
+
+???
+
+unclass(f) + unclass(f)
+
+---
+class: left, top
+## S3 &amp;mdash; Method Dispatch
+
+.smaller[
+- S3 methods follow the name convention `generic.class()`
+
+- We may use `s3_dispatch()` to investigate the process of method dispatch for an S3 object
+  
+  ```r
+  s3_dispatch(print(f))
+  ```
+  
+  ```
+  ## =&gt; print.factor
+  ##  * print.default
+  ```
+  
+    `=&gt;` indicates the method used  
+    `*` idicates that the method is defined (but not used)
+      
+- Methods are sometimes exported from the package namespace (like `print.factor()`) but generally should not be used directly
+  
+  ```r
+  ftype(print.factor) # check if method 
+  ```
+  
+  ```
+  ## [1] "S3"     "method"
+  ```
+]
+
+---
+class: left, top
+## S3 &amp;mdash; Method Dispatch
+
+.smaller[
+Use `s3_get_method()` to see the source code of a method which is not exported.
+
+.blockquote.exercise[
+#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example: `lm.print()`
+
+
+```r
+mod &lt;- lm(price ~ carat, data = ggplot2::diamonds)
+typeof(mod)
+```
+
+```
+## [1] "list"
+```
+
+```r
+class(mod)
+```
+
+```
+## [1] "lm"
+```
+]]
+
+---
+class: left, top
+## S3 Basics &amp;mdash; Method Dispatch
+
+.smaller[
+.blockquote.exercise[
+#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example: `lm.print()` &amp;mdash; ctd.
+
+
+```r
+# Inspect hidden print method for lm objects
+s3_get_method(print.lm)
+```
+
+```
+## function (x, digits = max(3L, getOption("digits") - 3L), ...) 
+## {
+##     cat("\nCall:\n", paste(deparse(x$call), sep = "\n", collapse = "\n"), 
+##         "\n\n", sep = "")
+##     if (length(coef(x))) {
+##         cat("Coefficients:\n")
+##         print.default(format(coef(x), digits = digits), print.gap = 2L, 
+##             quote = FALSE)
+##     }
+##     else cat("No coefficients\n")
+##     cat("\n")
+##     invisible(x)
+## }
+## &lt;bytecode: 0x121a2e858&gt;
+## &lt;environment: namespace:stats&gt;
+```
+]]
+
+---
+class: left, top
+## S3 Basics &amp;mdash; Exercises
+
+1. Describe the difference between `t.test()` and `t.data.frame()`. When is each function called?
+
+2. What class of object does the following code return? What base type is it built on? What attributes does it use?
+  
+  ```r
+  x &lt;- ecdf(rpois(100, 10))
+  x
+  ```
+  
+3. What class of object does the following code return? What base type is it built on? What attributes does it use?
+  
+  ```r
+  x &lt;- table(rpois(100, 5))
+  x
+  ```
+  
+---
+class: left, top
+## S3 Classes
+
+- Part of S3's simplicity is due to lack of formal definition what a class is. For the largest part, this is up to the programmer.
+
+    We have already seen how to generate an OO object using a base type and a class with `structure()`.
+    
+- We may use `class()` to change the class of existing objects. There are no checks if objects of the same class share the same structure!
+  
+  ```r
+  class(mod) &lt;- "data.frame"
+  mod
+  ```
+  
+  ```
+  ##  [1] coefficients  residuals     effects       rank          fitted.values assign        qr            df.residual   xlevels       call         
+  ## [11] terms         model        
+  ## &lt;0 rows&gt; (or 0-length row.names)
+  ```
+  
+---
+class: left, top
+## S3 Classes &amp;mdash; Robust Implementation
+
+We recommended to follow the following conventions when creating your own classes:
+
+- Avoid `.` in class names to prevent confusion with generics
+
+- Provide a **constructor** function, `new_classname()`, which generates objects with the desired structure
+
+- Use a **validator** function, `validate_classname()` to check that objects of your class have correct values
+
+- "Sharing is caring": provide a user-friendly **helper**, `classname()`, which makes it easy for others to generate objects of your class
+
+---
+class: left, top
+## Case Study &amp;mdash; An S3 Class for Prime Numbers
+
+We now demonstrate how to implement a simple S3 class for prime numbers.
+
+.blockquote.exercise[
+#### S3 &amp;mdash; constructur function for `prime` class
+
+Let's start with a constructor function which accepts integer input and returns an object with classes 'data frame' and 'prime'.
+
+
+```r
+new_prime &lt;- function(x = integer()) {
+  
+  stopifnot(is.integer(x))
+  
+  x &lt;- list(x)
+  
+  class(x) &lt;- 'prime'
+  
+  x
+}
+```
+]
+
+---
+class: left, top
+## Case Study &amp;mdash; An S3 Class for Prime Numbers
+
+.smaller[
+.blockquote.exercise[
+#### S3 &amp;mdash; validator function for `prime` class
+
+The validator function should check whether the values of a `prime` object are indeed prime numbers.
+
+Note that the integer `\(z&gt;2\)` is a prime number if `$$z\,\text{mod}\,y &gt; 0 \, \forall \, y\in[2,3,...,z-1].$$`
+
+
+```r
+validate_prime &lt;- function(x = list()) {
+  sapply(
+    unique(unlist(x)), function(z) {
+      if(!all(z==2 || z %% 2:(z-1) &gt; 0)) {
+        stop('Input contains non-prime number(s)!', call. = F)
+      }
+    } 
+  )
+  x
+}
+```
+
+]]
+
+---
+class: left, top
+## Case Study &amp;mdash; An S3 Class for Prime Numbers
+
+.smaller[
+.blockquote.exercise[
+#### S3 &amp;mdash; helper function for `prime` class
+
+At last we provide a user-friendly helper function which generates and validates `prime` objects.
+
+
+```r
+prime &lt;- function(x = integer()) {
+    validate_prime(new_prime(x))
+}
+```
+
+
+```r
+(x &lt;- prime(c(3L, 5L, 7L, 11L)))
+```
+
+```
+## [[1]]
+## [1]  3  5  7 11
+## 
+## attr(,"class")
+## [1] "prime"
+```
+
+
+```
+## [1] "prime"
+```
+]]
+
+---
+class: left, top
+## S3 Generics and Methods
+
+.smaller[
+- Many prominent R functions are generics, e.g. `mean()`. Method dispatch is done by `UseMethod()`.
+  
+  ```r
+  mean
+  ```
+  
+  ```
+  ## function (x, ...) 
+  ## UseMethod("mean")
+  ## &lt;bytecode: 0x110b4ff20&gt;
+  ## &lt;environment: namespace:base&gt;
+  ```
+  
+- Let's see the dispatch for `mean(x)` if `x` has class `Date`:
+  
+  ```r
+  x &lt;- Sys.Date
+  s3_dispatch(mean(x))
+  ```
+  
+  ```
+  ##    mean.function
+  ## =&gt; mean.default
+  ```
+]
+
+---
+class: left, top
+## S3 Generics and Methods
+
+.smaller[
+- Note that the pseudo-class `default` for standard fallback could be used for `Date` objects but there is a specific method `mean.Date()` which is called instead
+
+- Use `s3_methods_generic()` to see all available methods of a generic
+  
+  ```r
+  s3_methods_generic('mean')
+  ```
+  
+  ```
+  ## # A tibble: 9 × 4
+  ##   generic class      visible source             
+  ##   &lt;chr&gt;   &lt;chr&gt;      &lt;lgl&gt;   &lt;chr&gt;              
+  ## 1 mean    bench_time FALSE   registered S3method
+  ## 2 mean    Date       TRUE    base               
+  ## 3 mean    default    TRUE    base               
+  ## 4 mean    difftime   TRUE    base               
+  ## 5 mean    integer64  FALSE   registered S3method
+  ## 6 mean    POSIXct    TRUE    base               
+  ## 7 mean    POSIXlt    TRUE    base               
+  ## 8 mean    quosure    FALSE   registered S3method
+  ## 9 mean    vctrs_vctr FALSE   registered S3method
+  ```
+]
+
+---
+class: left, top
+## S3 Generics and Methods
+
+`s3_method_class()` provides all registered methods for a given class.
+
+
+```r
+head(
+  s3_methods_class('Date'), 10
+)
+```
+
+```
+## # A tibble: 10 × 4
+##    generic       class visible source
+##    &lt;chr&gt;         &lt;chr&gt; &lt;lgl&gt;   &lt;chr&gt; 
+##  1 -             Date  TRUE    base  
+##  2 [             Date  TRUE    base  
+##  3 [[            Date  TRUE    base  
+##  4 [&lt;-           Date  TRUE    base  
+##  5 +             Date  TRUE    base  
+##  6 as.character  Date  TRUE    base  
+##  7 as.data.frame Date  TRUE    base  
+##  8 as.list       Date  TRUE    base  
+##  9 as.POSIXct    Date  TRUE    base  
+## 10 as.POSIXlt    Date  TRUE    base
+```
+
+---
+class: left, top
+## S3 Generics and Methods
+
+.smaller[
+.blockquote.exercise[
+#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example: How to write a generic
+
+Writing your own generic is straightforward
+
+```r
+my_generic &lt;- function(x) {
+  UseMethod('my_generic')
+}
+```
+  
+`UseMethod()` dispatches based on `x` by default. Dispatch based on a second argument is optional.
+
+Let's define methods for default behavior and `my_class`
+
+```r
+my_generic.default &lt;- function(x) {
+  x
+}
+
+my_generic.my_class &lt;- function(x) {
+  cat("Output for class 'my_class':\n", x)
+}
+```
+]]
+
+???
+
+comment on rules for creating methods (CH 13.4.3 in Advanced R)
+
+---
+class: left, top
+## S3 Generics and Methods
+
+.smaller[
+.blockquote.exercise[
+#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example: How to write a generic &amp;mdash; ctd.
+
+We next check that method dispatch works as desired:
+
+
+```r
+y &lt;- structure(x&lt;-1, class = 'my_class')
+s3_dispatch(my_generic(x))
+```
+
+```
+##    my_generic.double
+##    my_generic.numeric
+## =&gt; my_generic.default
+```
+
+```r
+s3_dispatch(my_generic(y))
+```
+
+```
+## =&gt; my_generic.my_class
+##  * my_generic.default
+```
+]]
+
+---
+class: left, top
+## S3 Generics and Methods
+
+.smaller[
+.blockquote.exercise[
+#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example: How to write a generic &amp;mdash; ctd.
+
+We next check that method dispatch works as desired:
+
+
+```r
+y &lt;- structure(x&lt;-1, class = 'my_class')
+my_generic(x)
+```
+
+```
+## [1] 1
+```
+
+```r
+my_generic(y)
+```
+
+```
+## Output for class 'my_class':
+##  1
+```
+
+]]
+
+---
+class: left, top
+## Case Study &amp;mdash; A Plot Method for `prime` Objects
+
+&lt;img src="OOP_files/figure-html/unnamed-chunk-32-1.png" width="50%" style="display: block; margin: auto;" /&gt;
+
+---
+class: left, top
+## Case Study &amp;mdash; A Plot Method for `prime` Objects
+
+- The image from the previous slide is inspired by [this](https://math.stackexchange.com/questions/885879/meaning-of-rays-in-polar-plot-of-prime-numbers/885894) mathexchange post. 
+
+- Make sure to checkout 3Blue1Brown's [video](https://www.youtube.com/watch?v=EK32jo7i5LQ&amp;t=418s) for a nice explanation of what's going on. 🙃👍🏼
+
+&lt;br&gt;
+&lt;div style="margin:auto;width:50%;"&gt;
+&lt;iframe width="720" height="326" src="https://www.youtube.com/embed/EK32jo7i5LQ" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen&gt;&lt;/iframe&gt;
+&lt;/div&gt;
+
+---
+class: left, top
+## Case Study &amp;mdash; A Plot Method for `prime` Objects
+
+Let's write a method for objects of class `prime` for the generic `plot()`. The method should 
+
+- take objects of class prime and all additional arguments which can be passed to `plot()`
+
+- be able to visualise a prime number `\(p\)` in Cartesian and polar coordinates 
+
+&lt;br&gt;
+![:image 40%](../img/polar.gif)
+
+![:source_url](http://www.maths.usyd.edu.au/)
+
+---
+class: left, top
+## Case Study &amp;mdash; A Plot Method for `prime` Objects
+
+
+```r
+plot.prime &lt;- function(x = list(), coord, ...) {
+  
+  x &lt;- unlist(x)
+  
+  if(missing(coord)) {
+    
+    d &lt;- data.frame(x = x, y = x)
+    
+  } else if(coord == "polar") {
+    
+    d &lt;- data.frame(x = cos(x * 180/pi) * x, y = sin(x * 180/pi) * x)
+    
+  } 
+  
+  plot(d, ...)
+}
+```
+
+Note that we may pass additional arguments to `plot()` using `...`
+
+---
+class: left, top
+## Case Study &amp;mdash; A Plot Method for `prime` Objects
+
+
+```r
+# Subset of all prime numbers in 2,...,1e4
+x &lt;- 2:1e4
+x &lt;- x[sapply(unique(x), function(z) all(z %% 2:(z-1) &gt; 0))]
+
+# Assign 'prime' class
+x &lt;- prime(x)
+```
+
+Let's check the method dispatch for `plot(x)`
+
+
+```r
+s3_dispatch(plot(x))
+```
+
+```
+## =&gt; plot.prime
+##  * plot.default
+```
+
+---
+class: left, top
+## Case Study &amp;mdash; A Plot Method for `prime` Objects
+
+
+```r
+plot(x, coord = "polar", pch = 19, cex = 0.5, col = "red")
+```
+
+&lt;img src="OOP_files/figure-html/unnamed-chunk-36-1.png" width="40%" style="display: block; margin: auto;" /&gt;
+
+---
+class: left, top, exercise_slide
+## Exercises
+
+1. Read the source code for `t()` and `t.test()` and confirm that `t.test()` is an S3 generic and not an S3 method. What happens if you create an object with class `test` and call `t()` with it? Why?
+
+2. What generics does the `table` class have methods for?
+
+3. Implement a `summary()` method for objects of class `prime`. Use the following strategy:
+
+  1. A `summary()` method should do some computations and return an object of class `summary_print` but *not* print the results
+  
+  2. A separate `print()` method for `summary_prime` objects should output the results in an appealing format
+
+---
+class: left, top
+## S3 Inheritance
+
+- In OOP, the concept of **Inheritance** allows us to derive a new class (child) from an existing one (parent).
+
+- Using inheritance we don't need to start from scratch: the parent may share data, methods etc. with the child 
+
+- Inheritance in S3 boils down to a proper assignment of classes (and proper definitions of corresponding methods)
+
+---
+class: left, top
+## S3 Inheritance
+
+- Note that we may assign multiple classes to an S3 object
+    
+    ```r
+    class(x) &lt;- c('A', 'B')
+    class(x) &lt;- c('B', 'A')
+    ```
+
+- Method dispatch *always* starts with the first element of the class vector and proceeds with subsequent classes if a method is not found.
+
+  This clarifies the informality of the S3 system: there is no formal definition of how classes relate to each other.
+
+---
+class: left, top
+## S3 Inheritance
+
+
+```r
+# New generic
+g &lt;- function(x) UseMethod("g", x)
+
+# Methods for classes 'A' and 'B'
+g.A &lt;- function(x) "A"; g.B &lt;- function(x) "B"
+
+# Two objects with different inheritance hierachies
+ab &lt;- structure(1, class = c("A", "B")); ba &lt;- structure(1, class = c("B", "A"))
+g(ab)
+```
+
+```
+## [1] "A"
+```
+
+```r
+g(ba)
+```
+
+```
+## [1] "B"
+```
+
+---
+class: left, top
+## S3 Inheritance
+
+It's possible to force delegation to the method of the subsequent class (if defined) using `NextMethod()`. This provides a simple inheritance mechanism:
+
+
+```r
+g.C &lt;- function(x) NextMethod()
+ca &lt;- structure(1, class = c("C", "A"))
+cb &lt;- structure(1, class = c("C", "B"))
+g(ca)
+```
+
+```
+## [1] "A"
+```
+
+```r
+g(cb)
+```
+
+```
+## [1] "B"
+```
+
+Notice that inheritance depends on how we define the class vector:
+
+- 'For object `ca`, class `C` inherits its `g()` method from class `A`'
+- 'For object `cb`, class `C` inherits its `g()` method from class `B`'
+
+---
+class: left, top
+## S3 Inheritance
+
+.smaller[
+We may use these mechanics to implement 2 (child) classes which inherit (parts of) their `print()` method from the `prime` class.
+
+.blockquote.exercise[
+#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example: Inheritance of `print()` method
+
+
+```r
+print.prime &lt;- function(x) {
+     x[[1]]
+}
+```
+
+
+```r
+print.mersenne &lt;- function(x) {
+  cat('Mersenne primes:', NextMethod(x))
+}
+
+print.fermat &lt;- function(x) {
+  cat('Fermat primes:', NextMethod(x))
+}
+```
+
+]
+]
+
+---
+class: left, top
+## S3 Inheritance
+
+.smaller[
+.blockquote.exercise[
+#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example: Inheritance of `print()` method  &amp;mdash; ctd.
+
+
+```r
+x &lt;- prime(c(3L, 7L, 31L))
+class(x) &lt;- c('mersenne', class(x))
+
+y &lt;- prime(c(3L, 5L, 17L, 257L))
+class(y) &lt;- c('fermat', class(y))
+
+x
+```
+
+```
+## Mersenne primes: 3 7 31
+```
+
+```r
+y
+```
+
+```
+## Fermat primes: 3 5 17 257
+```
+
+]]
+
+---
+class: left, top
+## S3 Inheritance
+
+.smaller[
+.blockquote.exercise[
+#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example: Inheritance of `print()` method  &amp;mdash; ctd.
+
+```r
+s3_dispatch(print(x))
+```
+
+```
+## =&gt; print.mersenne
+## -&gt; print.prime
+##  * print.default
+```
+
+```r
+s3_dispatch(print(y))
+```
+
+```
+## =&gt; print.fermat
+## -&gt; print.prime
+##  * print.default
+```
+
+`-&gt;` indicates the method the call to the original method has been delegated to. 
+]]
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script src="../assets/remark-zoom.js"></script>
+<script src="../xaringan_files/macros.js"></script>
+<script src="https://platform.twitter.com/widgets.js"></script>
+<script>var slideshow = remark.create({
+"highlightStyle": "github",
+"highlightLines": true,
+"countIncrementalSlides": false,
+"ratio": "16:9",
+"navigation": {
+"scroll": false
+}
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>

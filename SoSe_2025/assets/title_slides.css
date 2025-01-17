@@ -1,0 +1,113 @@
+.title-rintro {
+    background-image: url(../assets/ude_logo.png), url(../assets/rlogo.png);
+    background-position: 7% 10%, 90% 90%;
+    background-size: 220px, 180px;
+    color: rgba(255, 255, 255, 0.68);
+}
+
+.title-git {
+    background-image: url(../assets/ude_logo.png), url(../assets/gitlogo.png);
+    background-position: 7% 10%, 90% 90%;
+    background-size: 220px, 180px;
+}
+
+.title-ggplot2 {
+    background-image: url(../assets/ude_logo.png), url(../assets/ggplot2.png);
+    background-position: 7% 10%, 90% 90%;
+    background-size: 220px, 180px;
+}
+
+.title-rmarkdown {
+    background-image: url(../assets/ude_logo.png), url(../assets/rmarkdown.png);
+    background-position: 7% 10%, 90% 90%;
+    background-size: 220px, 180px;
+}
+
+.title-oop {
+    background-image: url(../assets/ude_logo.png), url(../assets/oop.png);
+    background-position: 7% 10%, 90% 90%;
+    background-size: 220px, 180px;
+}
+
+.title-wrangling {
+    background-image: url(../assets/ude_logo.png), url(../assets/dplyr_new.png);
+    background-position: 7% 10%, 90% 90%;
+    background-size: 220px, 180px;
+}
+
+.title-purrr {
+    background-image: url(../assets/ude_logo.png), url(../assets/purrr.png);
+    background-position: 7% 10%, 90% 90%;
+    background-size: 220px, 180px;
+}
+
+.title-rvest {
+    background-image: url(../assets/ude_logo.png), url(../assets/rvest.png);
+    background-position: 7% 10%, 90% 90%;
+    background-size: 220px, 180px;
+}
+
+.title-sqlite {
+    background-image: url(../assets/ude_logo.png), url(../assets/sqlite.png);
+    background-position: 7% 10%, 90% 90%;
+    background-size: 220px, 180px;
+}
+
+.title-datatable {
+    background-image: url(../assets/ude_logo.png), url(../assets/datatable.png);
+    background-position: 7% 10%, 90% 90%;
+    background-size: 220px, 180px;
+}
+
+.title-shiny {
+    background-image: url(../assets/ude_logo.png), url(../assets/shiny.png);
+    background-position: 7% 10%, 90% 90%;
+    background-size: 220px, 180px;
+}
+
+.title-measuring {
+    background-image: url(../assets/ude_logo.png), url(../assets/measuring.png);
+    background-position: 7% 10%, 90% 90%;
+    background-size: 264px, 216px;
+}
+
+.title-performance {
+    background-image: url(../assets/ude_logo.png), url(../assets/speed.png);
+    background-position: 7% 10%, 90% 90%;
+    background-size: 264px, 216px;
+}
+
+.title-rcpp {
+    background-image: url(../assets/ude_logo.png), url(../assets/rcpp.png);
+    background-position: 7% 10%, 90% 90%;
+    background-size: 264px, 216px;
+}
+
+.title-rcpparmadillo {
+    background-image: url(../assets/ude_logo.png), url(../assets/armadillologo.png);
+    background-position: 7% 10%, 90% 90%;
+    background-size: 180px, 180px;
+}
+
+.title-packages{
+    background-image: url(../assets/ude_logo.png), url(../assets/roxygen2.png);
+    background-position: 7% 10%, 90% 90%;
+    background-size: 264px, 216px;
+}
+
+.title-index {
+    background-image: url(../assets/signet_ude_rgb_neg.png), url(../assets/rlogo.png);
+    background-position: 90% 90%, 90% 10%;
+    background-size: 100px, 100px;
+    color: rgba(255, 255, 255, 0.68);
+}
+
+.title-slide a {
+    color: rgba(255, 255, 255, 0.68) !important;
+  }
+
+.title-index a:hover {
+    color: rgba(255, 255, 255, 1) !important;
+    font-weight: 600 !important;
+  }
+
