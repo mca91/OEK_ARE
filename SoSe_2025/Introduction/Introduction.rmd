@@ -3,7 +3,7 @@ title: "Advanced R for Econometricians"
 subtitle: "Introduction"
 author: 
   - "Martin C. Arnold"
-  - "Jens Klenke"
+  - "Martin Schmelzer"
 date: "`r Sys.Date()`"
 output:
   xaringan::moon_reader:
@@ -66,7 +66,7 @@ times_red <- icons::icon_style(icons::fontawesome$solid$times, fill = "red")
 .pull-left-1[**Contact Information:**  ]
 
 .pull-right-2[
-<p> <span style="margin-bottom: -7px;">Jens Klenke </span><span><a href = "mailto: Jens.Klenke@vwl.uni-due.de">Jens.Klenke@vwl.uni-due.de</a></span></p> 
+<p> <span style="margin-bottom: -7px;">Martin Schmelzer </span><span><a href = "mailto: martin.schmelzer@outlook.com">Jmartin.schmelzer@outlook.com</a></span></p> 
 
 <p style="margin: 25px;"></p>
 
@@ -364,7 +364,7 @@ class(num_matrix)
 is.numeric(num_matrix)
 
 
-plus <- function(a, b){
+plus <- function(a, b) {
   if(!is.numeric(a)) stop("a is not numeric")
   if(!is.numeric(b)) stop("b is not numeric")
   a + b
@@ -423,7 +423,7 @@ Use drop = FALSE if you are subsetting a matrix, array, or data frame and you wa
 m1 <- matrix(1:4, nrow = 2)
 m2 <- matrix(1:4, nrow = 2)
 
-matrix_prod <- function(A, B){
+matrix_prod <- function(A, B) {
   B %*% t(A)
 }
 
@@ -512,7 +512,7 @@ class: top, left
 ```{r}
 f1 <- function() x
 x  <- "global"
-f2 <- function(){
+f2 <- function() {
   x <- "local_f2"
   f1()
 }
@@ -557,7 +557,7 @@ square_1()
 
 ```{r}
 x <- 3
-square_2 <- function(){ 
+square_2 <- function() { 
   x   <- 2
   foo <- function() x^2
   foo()
@@ -585,13 +585,13 @@ Exmaple two -> x will be overwritten in the function
 ```{r}
 x <- 3
 
-square_2 <- function(){ 
+square_2 <- function() { 
   x   <- 2
   foo <- function() x^2
   foo()
 }
 
-square_3 <- function(x){
+square_3 <- function(x) {
   square_2 <- 5
   square_2()
 }
@@ -613,7 +613,7 @@ square_3()
 
 ```{r}
 x <- 2
-square_4 <- function(){
+square_4 <- function() {
   (x <- x^2)
 }
 
@@ -655,7 +655,7 @@ f1()
 
 #### `r desktop` What could cause an error here?
 ```{r}
-lazy_function <- function(x){
+lazy_function <- function(x) {
   10
 }
 
@@ -678,7 +678,7 @@ Why does this not induce an error?
 #### `r desktop` Function arguments are lazily evaluated; they’re only evaluated if accessed.
 
 ```{r, eval = FALSE}
-lazy_function <- function(x){
+lazy_function <- function(x) {
   x
 }
 
@@ -1022,11 +1022,11 @@ paste("The number of apples is", i)
 ```{r}
 df <- mtcars
 
-lin_mod <- function(){
+lin_mod <- function() {
   lm(y ~ . ,data = df)
 }
 
-simple_lin_mod <- function(data, y, x){
+simple_lin_mod <- function(data, y, x) {
   df <- data[ ,c(y, x)]
   names(df) <- c("y", "x")
   fast_lm()
