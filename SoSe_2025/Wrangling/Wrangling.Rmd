@@ -3,7 +3,7 @@ title: "Advanced R for Econometricians"
 subtitle: "Data Wrangling"
 author: 
   - "Martin C. Arnold"
-  - "Jens Klenke"
+  - "Martin Schmelzer"
 date: "`r Sys.Date()`"
 output:
   xaringan::moon_reader:

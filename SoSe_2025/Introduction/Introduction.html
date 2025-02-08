@@ -4,17 +4,17 @@
     <title>Advanced R for Econometricians</title>
     <meta charset="utf-8" />
     <meta name="author" content="Martin C. Arnold" />
-    <meta name="author" content="Jens Klenke" />
-    <meta name="date" content="2022-05-30" />
-    <script src="Introduction_files/header-attrs-2.13/header-attrs.js"></script>
+    <meta name="author" content="Martin Schmelzer" />
+    <meta name="date" content="2025-01-23" />
+    <script src="Introduction_files/header-attrs-2.29/header-attrs.js"></script>
     <link href="Introduction_files/remark-css-0.0.1/default.css" rel="stylesheet" />
     <script src="Introduction_files/xaringanExtra-progressBar-0.0.1/progress-bar.js"></script>
     <script src="Introduction_files/clipboard-2.0.6/clipboard.min.js"></script>
     <link href="Introduction_files/xaringanExtra-clipboard-0.2.6/xaringanExtra-clipboard.css" rel="stylesheet" />
     <script src="Introduction_files/xaringanExtra-clipboard-0.2.6/xaringanExtra-clipboard.js"></script>
     <script>window.xaringanExtraClipboard(null, {"button":"<i class=\"fa fa-clipboard\"><\/i>","success":"<i class=\"fa fa-check\" style=\"color: #00ff00\"><\/i>","error":"<i class=\"fa fa-times-circle\" style=\"color: #F94144\"><\/i>"})</script>
-    <link href="Introduction_files/font-awesome-5.1.0/css/all.css" rel="stylesheet" />
-    <link href="Introduction_files/font-awesome-5.1.0/css/v4-shims.css" rel="stylesheet" />
+    <link href="Introduction_files/font-awesome-6.5.2/css/all.min.css" rel="stylesheet" />
+    <link href="Introduction_files/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet" />
     <script type="text/x-mathjax-config">
       MathJax.Hub.Config({
         TeX: { equationNumbers: { autoNumber: "AMS" } },
@@ -66,14 +66,14 @@ class: title-slide title-rintro center middle
 
 #  Advanced R for Econometricians
 ## Introduction
-### Martin C. Arnold, Jens Klenke
+### Martin C. Arnold, Martin Schmelzer
 ---
 ## Preliminaries
 
 .pull-left-1[**Contact Information:**  ]
 
 .pull-right-2[
-&lt;p&gt; &lt;span style="margin-bottom: -7px;"&gt;Jens Klenke &lt;/span&gt;&lt;span&gt;&lt;a href = "mailto: Jens.Klenke@vwl.uni-due.de"&gt;Jens.Klenke@vwl.uni-due.de&lt;/a&gt;&lt;/span&gt;&lt;/p&gt; 
+&lt;p&gt; &lt;span style="margin-bottom: -7px;"&gt;Martin Schmelzer &lt;/span&gt;&lt;span&gt;&lt;a href = "mailto: martin.schmelzer@outlook.com"&gt;Jmartin.schmelzer@outlook.com&lt;/a&gt;&lt;/span&gt;&lt;/p&gt; 
 
 &lt;p style="margin: 25px;"&gt;&lt;/p&gt;
 
@@ -223,7 +223,7 @@ class: top, left
 #### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example
 
 
-```r
+``` r
 install.packages("broom")
 library(broom)
 vignette("broom")
@@ -405,7 +405,7 @@ You should also be familiar with the basic data types (character, double, intege
 
 
 
-```r
+``` r
 object.size(1:1000)
 object.size(as.numeric(1:1000))
 
@@ -419,7 +419,7 @@ class(num_matrix)
 is.numeric(num_matrix)
 
 
-plus &lt;- function(a, b){
+plus &lt;- function(a, b) {
   if(!is.numeric(a)) stop("a is not numeric")
   if(!is.numeric(b)) stop("b is not numeric")
   a + b
@@ -473,12 +473,12 @@ list_a$a
 Use drop = FALSE if you are subsetting a matrix, array, or data frame and you want to preserve the original dimensions. You should almost always use it when subsetting inside a function.
 
 
-```r
+``` r
 ## Drop
 m1 &lt;- matrix(1:4, nrow = 2)
 m2 &lt;- matrix(1:4, nrow = 2)
 
-matrix_prod &lt;- function(A, B){
+matrix_prod &lt;- function(A, B) {
   B %*% t(A)
 }
 
@@ -505,7 +505,7 @@ The basic control flows are conditionals (choices) and loops.
 1. What is the difference between `if` and `ifelse()`?
 2. What will be the value of `y` in the following code if `x` is `TRUE`? What if `x` is `FALSE`? What if `x` is `NA`?
     
-    ```r
+    ``` r
     y &lt;- if(x) 3
     ```
 3. Name three kind of loops that can be implemented in R! How do they differ?
@@ -514,7 +514,7 @@ The basic control flows are conditionals (choices) and loops.
 ???
 
 
-```r
+``` r
 if("2") 3
 if(2) 3
 
@@ -566,10 +566,10 @@ class: top, left
 
 .code90[
 
-```r
+``` r
 f1 &lt;- function() x
 x  &lt;- "global"
-f2 &lt;- function(){
+f2 &lt;- function() {
   x &lt;- "local_f2"
   f1()
 }
@@ -597,7 +597,7 @@ Explaniation on the following slides
 
 #### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example: What happens here?
 
-```r
+``` r
 x &lt;- 3
 square_1 &lt;- function() x^2
 square_1()
@@ -614,9 +614,9 @@ square_1()
 #### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example: And here?
 
 
-```r
+``` r
 x &lt;- 3
-square_2 &lt;- function(){ 
+square_2 &lt;- function() { 
   x   &lt;- 2
   foo &lt;- function() x^2
   foo()
@@ -642,16 +642,16 @@ Exmaple two -&gt; x will be overwritten in the function
 #### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example: Let's make things more confusing. Can you predict the result?   
 
 
-```r
+``` r
 x &lt;- 3
 
-square_2 &lt;- function(){ 
+square_2 &lt;- function() { 
   x   &lt;- 2
   foo &lt;- function() x^2
   foo()
 }
 
-square_3 &lt;- function(x){
+square_3 &lt;- function(x) {
   square_2 &lt;- 5
   square_2()
 }
@@ -672,9 +672,9 @@ square_3()
 #### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example: What is the result of the first call to `square_4()`? What will happen the second time?
 
 
-```r
+``` r
 x &lt;- 2
-square_4 &lt;- function(){
+square_4 &lt;- function() {
   (x &lt;- x^2)
 }
 
@@ -696,7 +696,7 @@ square_4()
 #### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example: Predict the result of the two calls to `f1()`. Compare it to the main rule of lexical scoping. 
 
 
-```r
+``` r
 x  &lt;- 1
 f1 &lt;- function() x
 f1()
@@ -717,8 +717,8 @@ f1()
 
 #### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; What could cause an error here?
 
-```r
-lazy_function &lt;- function(x){
+``` r
+lazy_function &lt;- function(x) {
   10
 }
 
@@ -741,8 +741,8 @@ Why does this not induce an error?
 #### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Function arguments are lazily evaluated; they’re only evaluated if accessed.
 
 
-```r
-lazy_function &lt;- function(x){
+``` r
+lazy_function &lt;- function(x) {
   x
 }
 
@@ -772,7 +772,7 @@ lazy_function()
 #### &lt;svg viewBox="0 0 512 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:green;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M173.898 439.404l-166.4-166.4c-9.997-9.997-9.997-26.206 0-36.204l36.203-36.204c9.997-9.998 26.207-9.998 36.204 0L192 312.69 432.095 72.596c9.997-9.997 26.207-9.997 36.204 0l36.203 36.204c9.997 9.997 9.997 26.206 0 36.204l-294.4 294.401c-9.998 9.997-26.207 9.997-36.204-.001z"&gt;&lt;/path&gt;&lt;/svg&gt; Good
 
 
-```r
+``` r
 day_one
 day_1
 ```
@@ -787,7 +787,7 @@ day_1
 #### &lt;svg viewBox="0 0 352 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:red;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M242.72 256l100.07-100.07c12.28-12.28 12.28-32.19 0-44.48l-22.24-22.24c-12.28-12.28-32.19-12.28-44.48 0L176 189.28 75.93 89.21c-12.28-12.28-32.19-12.28-44.48 0L9.21 111.45c-12.28 12.28-12.28 32.19 0 44.48L109.28 256 9.21 356.07c-12.28 12.28-12.28 32.19 0 44.48l22.24 22.24c12.28 12.28 32.2 12.28 44.48 0L176 322.72l100.07 100.07c12.28 12.28 32.2 12.28 44.48 0l22.24-22.24c12.28-12.28 12.28-32.19 0-44.48L242.72 256z"&gt;&lt;/path&gt;&lt;/svg&gt; Bad
 
 
-```r
+``` r
 # Bad
 first_day_of_the_month
 dayone
@@ -811,7 +811,7 @@ mean &lt;- function(x) sum(x)
 
 #### &lt;svg viewBox="0 0 512 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:green;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M173.898 439.404l-166.4-166.4c-9.997-9.997-9.997-26.206 0-36.204l36.203-36.204c9.997-9.998 26.207-9.998 36.204 0L192 312.69 432.095 72.596c9.997-9.997 26.207-9.997 36.204 0l36.203 36.204c9.997 9.997 9.997 26.206 0 36.204l-294.4 294.401c-9.998 9.997-26.207 9.997-36.204-.001z"&gt;&lt;/path&gt;&lt;/svg&gt; Good
 
-```r
+``` r
 average &lt;- mean(feet / 12 + inches, na.rm = TRUE)
 ```
 ]]]
@@ -821,7 +821,7 @@ average &lt;- mean(feet / 12 + inches, na.rm = TRUE)
 #### &lt;svg viewBox="0 0 352 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:red;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M242.72 256l100.07-100.07c12.28-12.28 12.28-32.19 0-44.48l-22.24-22.24c-12.28-12.28-32.19-12.28-44.48 0L176 189.28 75.93 89.21c-12.28-12.28-32.19-12.28-44.48 0L9.21 111.45c-12.28 12.28-12.28 32.19 0 44.48L109.28 256 9.21 356.07c-12.28 12.28-12.28 32.19 0 44.48l22.24 22.24c12.28 12.28 32.2 12.28 44.48 0L176 322.72l100.07 100.07c12.28 12.28 32.2 12.28 44.48 0l22.24-22.24c12.28-12.28 12.28-32.19 0-44.48L242.72 256z"&gt;&lt;/path&gt;&lt;/svg&gt; Bad
 
 
-```r
+``` r
 average&lt;-mean(feet/12+inches,na.rm=TRUE)
 ```
 ]]]
@@ -838,7 +838,7 @@ average&lt;-mean(feet/12+inches,na.rm=TRUE)
 
 #### &lt;svg viewBox="0 0 512 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:green;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M173.898 439.404l-166.4-166.4c-9.997-9.997-9.997-26.206 0-36.204l36.203-36.204c9.997-9.998 26.207-9.998 36.204 0L192 312.69 432.095 72.596c9.997-9.997 26.207-9.997 36.204 0l36.203 36.204c9.997 9.997 9.997 26.206 0 36.204l-294.4 294.401c-9.998 9.997-26.207 9.997-36.204-.001z"&gt;&lt;/path&gt;&lt;/svg&gt; Good
 
-```r
+``` r
 x &lt;- 1:10
 base::get
 ```
@@ -849,7 +849,7 @@ base::get
 #### &lt;svg viewBox="0 0 352 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:red;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M242.72 256l100.07-100.07c12.28-12.28 12.28-32.19 0-44.48l-22.24-22.24c-12.28-12.28-32.19-12.28-44.48 0L176 189.28 75.93 89.21c-12.28-12.28-32.19-12.28-44.48 0L9.21 111.45c-12.28 12.28-12.28 32.19 0 44.48L109.28 256 9.21 356.07c-12.28 12.28-12.28 32.19 0 44.48l22.24 22.24c12.28 12.28 32.2 12.28 44.48 0L176 322.72l100.07 100.07c12.28 12.28 32.2 12.28 44.48 0l22.24-22.24c12.28-12.28 12.28-32.19 0-44.48L242.72 256z"&gt;&lt;/path&gt;&lt;/svg&gt; Bad
 
 
-```r
+``` r
 x &lt;- 1 : 10
 base :: get
 ```
@@ -867,7 +867,7 @@ base :: get
 #### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example
 
 
-```r
+``` r
 list(
   total = a + b + c, 
   mean  = (a + b + c) / n
@@ -885,7 +885,7 @@ list(
 
 #### &lt;svg viewBox="0 0 512 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:green;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M173.898 439.404l-166.4-166.4c-9.997-9.997-9.997-26.206 0-36.204l36.203-36.204c9.997-9.998 26.207-9.998 36.204 0L192 312.69 432.095 72.596c9.997-9.997 26.207-9.997 36.204 0l36.203 36.204c9.997 9.997 9.997 26.206 0 36.204l-294.4 294.401c-9.998 9.997-26.207 9.997-36.204-.001z"&gt;&lt;/path&gt;&lt;/svg&gt; Good
 
-```r
+``` r
 if (debug) do(x)
 diamonds[5, ]
 ```
@@ -895,7 +895,7 @@ diamonds[5, ]
 
 #### &lt;svg viewBox="0 0 352 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:red;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M242.72 256l100.07-100.07c12.28-12.28 12.28-32.19 0-44.48l-22.24-22.24c-12.28-12.28-32.19-12.28-44.48 0L176 189.28 75.93 89.21c-12.28-12.28-32.19-12.28-44.48 0L9.21 111.45c-12.28 12.28-12.28 32.19 0 44.48L109.28 256 9.21 356.07c-12.28 12.28-12.28 32.19 0 44.48l22.24 22.24c12.28 12.28 32.2 12.28 44.48 0L176 322.72l100.07 100.07c12.28 12.28 32.2 12.28 44.48 0l22.24-22.24c12.28-12.28 12.28-32.19 0-44.48L242.72 256z"&gt;&lt;/path&gt;&lt;/svg&gt; Bad
 
-```r
+``` r
 if ( debug ) do(x)  # No spaces around debug
 x[1,]   # Needs a space after the comma
 x[1 ,]  # Space goes after comma not before
@@ -914,7 +914,7 @@ x[1 ,]  # Space goes after comma not before
 #### &lt;svg viewBox="0 0 512 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:green;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M173.898 439.404l-166.4-166.4c-9.997-9.997-9.997-26.206 0-36.204l36.203-36.204c9.997-9.998 26.207-9.998 36.204 0L192 312.69 432.095 72.596c9.997-9.997 26.207-9.997 36.204 0l36.203 36.204c9.997 9.997 9.997 26.206 0 36.204l-294.4 294.401c-9.998 9.997-26.207 9.997-36.204-.001z"&gt;&lt;/path&gt;&lt;/svg&gt;  Good
 
 
-```r
+``` r
 if (y &lt; 0 &amp;&amp; debug) {
   message("Y is negative")
 }
@@ -933,7 +933,7 @@ if (y == 0) {
 
 #### &lt;svg viewBox="0 0 352 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:red;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M242.72 256l100.07-100.07c12.28-12.28 12.28-32.19 0-44.48l-22.24-22.24c-12.28-12.28-32.19-12.28-44.48 0L176 189.28 75.93 89.21c-12.28-12.28-32.19-12.28-44.48 0L9.21 111.45c-12.28 12.28-12.28 32.19 0 44.48L109.28 256 9.21 356.07c-12.28 12.28-12.28 32.19 0 44.48l22.24 22.24c12.28 12.28 32.2 12.28 44.48 0L176 322.72l100.07 100.07c12.28 12.28 32.2 12.28 44.48 0l22.24-22.24c12.28-12.28 12.28-32.19 0-44.48L242.72 256z"&gt;&lt;/path&gt;&lt;/svg&gt;  Bad
 
-```r
+``` r
 if (y &lt; 0 &amp;&amp; debug) {
 message("Y is negative") }
 
@@ -956,7 +956,7 @@ if (y == 0) {
 #### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example
 
 
-```r
+``` r
 if (y &lt; 0 &amp;&amp; debug) message("Y is negative")
 ```
 ]]
@@ -977,7 +977,7 @@ if (y &lt; 0 &amp;&amp; debug) message("Y is negative")
 #### &lt;svg viewBox="0 0 512 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:green;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M173.898 439.404l-166.4-166.4c-9.997-9.997-9.997-26.206 0-36.204l36.203-36.204c9.997-9.998 26.207-9.998 36.204 0L192 312.69 432.095 72.596c9.997-9.997 26.207-9.997 36.204 0l36.203 36.204c9.997 9.997 9.997 26.206 0 36.204l-294.4 294.401c-9.998 9.997-26.207 9.997-36.204-.001z"&gt;&lt;/path&gt;&lt;/svg&gt; Good
 
 
-```r
+``` r
 x &lt;- 5
 ```
 ]]]
@@ -986,7 +986,7 @@ x &lt;- 5
 #### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Bad
 
 
-```r
+``` r
 x = 5
 ```
 ]]]
@@ -1006,7 +1006,7 @@ x = 5
 #### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example
 
 
-```r
+``` r
 # Load data ---------------------------
 
 # Plot data ---------------------------
@@ -1022,7 +1022,7 @@ class: exercise_slide
 &lt;li&gt; Combine all elements of &lt;code&gt;df_list&lt;/code&gt; to one data frame. The result should be only a single line of code. &lt;/li&gt;
 &lt;/ol&gt;
 
-```r
+``` r
 df_list &lt;- lapply(0:4, function(j) data.frame(c1 = (1:5) + 5 * j,
                                               c2 = letters[(1:5) + 5 * j]
                                               )
@@ -1033,7 +1033,7 @@ df_list &lt;- lapply(0:4, function(j) data.frame(c1 = (1:5) + 5 * j,
 &lt;li&gt; Fix each of the following common data frame subsetting errors: &lt;/li&gt;
 &lt;/ol&gt;
 
-```r
+``` r
 mtcars[mtcars$cyl = 4, ]
 mtcars[-1:4, ]
 mtcars[mtcars$cyl &lt;= 5]
@@ -1057,7 +1057,7 @@ class: exercise_slide
 &lt;li&gt;Write a &lt;code&gt;while&lt;/code&gt; and a &lt;code&gt;repeat&lt;/code&gt; loop doing the same as &lt;/li&gt; 
 &lt;/ol&gt;
 
-```r
+``` r
 for(i in LETTERS[1:10]){
   print(i)
 }
@@ -1067,7 +1067,7 @@ for(i in LETTERS[1:10]){
 &lt;/ol&gt;
 
 
-```r
+``` r
 count &lt;- 0
 repeat{
   x     &lt;- sample(1:6, 1)
@@ -1089,7 +1089,7 @@ class: exercise_slide
 
 .code80[
 
-```r
+``` r
 # Number of apples
 i &lt;- 100
 for (i in 1:3) {} 
@@ -1101,14 +1101,14 @@ paste("The number of apples is", i)
 &lt;/ol&gt;
 .code80[
 
-```r
+``` r
 df &lt;- mtcars
 
-lin_mod &lt;- function(){
+lin_mod &lt;- function() {
   lm(y ~ . ,data = df)
 }
 
-simple_lin_mod &lt;- function(data, y, x){
+simple_lin_mod &lt;- function(data, y, x) {
   df &lt;- data[ ,c(y, x)]
   names(df) &lt;- c("y", "x")
   fast_lm()
@@ -1171,6 +1171,19 @@ if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
     deleted = true;
   });
 })();
+// add `data-at-shortcutkeys` attribute to <body> to resolve conflicts with JAWS
+// screen reader (see PR #262)
+(function(d) {
+  let res = {};
+  d.querySelectorAll('.remark-help-content table tr').forEach(tr => {
+    const t = tr.querySelector('td:nth-child(2)').innerText;
+    tr.querySelectorAll('td:first-child .key').forEach(key => {
+      const k = key.innerText;
+      if (/^[a-z]$/.test(k)) res[k] = t;  // must be a single letter (key)
+    });
+  });
+  d.body.setAttribute('data-at-shortcutkeys', JSON.stringify(res));
+})(document);
 (function() {
   "use strict"
   // Replace <script> tags in slides area to make them executable

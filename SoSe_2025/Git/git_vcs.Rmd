@@ -3,7 +3,7 @@ title: "Advanced R for Econometricians"
 subtitle: "Version Control with Git"
 author: 
   - "Martin C. Arnold"
-  - "Jens Klenke"
+  - "Martin Schmelzer"
 date: "`r Sys.Date()`"
 output:
   xaringan::moon_reader:
@@ -96,7 +96,7 @@ knitr::include_graphics("git2.PNG")
 - Git can tell you what changed in each version.
 - Git helps to synchronize different variants of a version. 
 - Git makes collaborating safer since it prevents overwriting each other and helps to solve conflicts (you might know the problem from e.g. Dropbox).
-- Git reminds you to document your changes so others or your future you knows why you did something.
+- Git reminds you to document your changes so others or your "future you" knows why you did something.
 ]
 
 ---
@@ -630,16 +630,15 @@ Automatic merge failed; fix conflicts and then commit the result.
 ---
 ## Solving conflicts
 
-- Instead of solving the conflict, Git will prepare the file in a way that makes it easy for you to solve the conflict yourself. Look for everything starting with `<<<<<<< HEAD` and ending with   
+- Instead of solving the conflict, Git will prepare the file in a way that makes it easy for you to solve the conflict yourself. Look for everything starting with `<<<<<<< HEAD` and ending with `>>>>>>> refs/...`.  
 
 .blockquote.exercise[
-`>>>>>>> refs/...`. 
 
 ```terminal
 <<<<<<< HEAD
 Hello Git,
 
-How are you? I think I shoudld work on this file.  
+How are you? I think I should work on this file.  
 =======
 Hello Git!
 How are you? I hope you don't run into too many conflicts. 

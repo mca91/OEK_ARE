@@ -3,7 +3,7 @@ title: "Advanced R for Econometricians"
 subtitle: "Reproducible Research with R Markdown"
 author:
   - "Martin C. Arnold"
-  - "Jens Klenke"
+  - "Martin Schmelzer"
 date: "`r Sys.Date()`"
 output:
   xaringan::moon_reader:
@@ -20,6 +20,8 @@ output:
       ratio: '16:9' # alternatives '16:9' or '4:3' or others e.g. 13:9
       navigation:
         scroll: false # disable slide transitions by scrolling
+editor_options: 
+  chunk_output_type: console
 ---
 class: title-slide title-rmarkdown center middle
 ```{r moon_reader, include=FALSE, eval = FALSE}
@@ -49,6 +51,8 @@ htmltools::tagList(
 knitr::opts_chunk$set(echo=FALSE, warning=FALSE, message=FALSE)
 options(htmltools.raw.version = FALSE)
 def.chunk.hook  <- knitr::knit_hooks$get("chunk")
+
+library(dplyr)
 
 # pre-define icons
 desktop <- icons::icon_style(icons::fontawesome$solid$desktop, fill = "#004c93")
@@ -573,100 +577,202 @@ Tables can be created as follows:
 
 <br>
 
-In general, however, tables should be produced by your code.
+In general, however, tables will be produced programmatically.
 The following slides show some examples. 
 
 
 
 ---
 class: left, top
-## `kable`
+## `gt`
 
-- `knitr::kable()` is probably the easiest way to transform a matrix or a data frame into a table.
+- `gt::gt()` is probably the easiest way to transform a matrix or a data frame into a table.
 
+.pull-left[
 .blockquote.exercise[
 #### `r desktop` Example
-
 ````markdown
 `r ''````{r}
-result        <- data.frame(rbind(rep(12,4), rep(123, 4), rep(1,4)))
-names(result) <- c("Right", "Left", "Default", "Center")
-knitr::kable(result, align = c("r", "l", "l", "c"), format = "html")
+gtobj <- citizens %>%
+  mutate(
+    isGerman = Citizenship1 == "German"
+  ) %>%
+  group_by(District) %>%
+  summarise(isNotGerman = sum(!isGerman),
+            isGerman = sum(isGerman)) %>%
+  gt()
 ```
 ````
-]
+]]
 
 
 --
 
-<br>
 
+
+```{r, echo = F}
+library(gt)
+load("../../OEK_ARE.RData")
+```
+
+.pull-right[
 ```{r}
-result        <- data.frame(rbind(rep(12,4), rep(123, 4), rep(1,4)))
-names(result) <- c("Right", "Left", "Default", "Center")
-knitr::kable(result, align = c("r", "l", "l", "c"), format = "html")
+gtobj <- citizens %>%
+  mutate(isGerman = Citizenship1 == "German") %>%
+  group_by(District) %>%
+  summarise(isNotGerman = sum(!isGerman),
+            isGerman = sum(isGerman)) %>%
+  gt()
+
+gtobj 
 ```
+]
+
+
 
 ---
 class: left, top
-## `kableExtra`
+## `gt`
 
-- The appearance of a table (not only produced by `knitr::kable()`) depends on the underlying `css` (in case of an HTML document) or the generated $\LaTeX{}$ code. 
-- The package `kableExtra` allows to format your `knitr::kable()` table without the use of `css` or $\LaTeX{}$
 
---
+- Following the philosophy of dplyr, gt is a powerful and flexible tool that offers good readability and extensibility, though it may result in slightly longer code.
 
-.blockquote.exercise[
-#### `r desktop` Example
+- A gt table consists of the elements shown below, which can all be customized as needed.
 
-````markdown
-`r ''````{r}
-library(magrittr)
-library(kableExtra)
-knitr::kable(result, 
-             align = c("r", "l", "l", "c"), 
-             format = "html") %>%  
-  kableExtra::kable_styling(bootstrap_options = "bordered")
-```
-````
+.center[
+![](gt_table_elements.png)
 ]
 
---
 
-- Have a look at the [kableExtra vignette](https://cran.r-project.org/web/packages/kableExtra/vignettes/awesome_table_in_html.html)
-for examples. 
+
+
+
+
+
+
 
 ---
 class: left, top
-## `xtable`
+## `gt`
 
-.font90[
-- `xtable` provides more functionality than kable but is a bit more difficult to use.
-- If your code produces raw HTML or $\LaTeX{}$ e.g. for a table then you have to set `results='asis'`  in the  chunk options, otherwise it gets formatted and will not work as intended.
-]
 
---
 
 .font90.blockquote.exercise[
 #### `r desktop` Example
-````markdown
-`r ''````{r, echo=FALSE, results='asis'}
-library(xtable)
 
-my_xtable <- xtable(result, align = c("r", "r", "l", "l", "c"))
-print.xtable(my_xtable, type  = "html", include.rownames = FALSE)
+```{r, echo = TRUE, eval = T}
+load("../../OEK_ARE.RData")
+gtobj <- citizens %>%
+  mutate(isGerman = Citizenship1 == "German") %>%
+  group_by(District) %>%
+  summarise(isNotGerman = sum(!isGerman),
+            isGerman = sum(isGerman)) %>%
+  gt() %>%
+  tab_header(
+    title =  "Population of Gelsenkirchen", subtitle = "by District and German Nationality"
+  ) %>%
+  grand_summary_rows(
+    columns = 2:3, 
+    fns = list(label = "TOTALS", fn = "sum"), 
+    fmt = ~ fmt_number(., sep_mark = ".", decimals = 0, dec_mark = ","),
+    missing_text = ""
+  ) %>%
+  cols_label(
+    District = "District",
+    isGerman = "German",
+    isNotGerman = "Non-German"
+  ) 
 ```
-````
 ]
---
 
-.font90[
-```{r, echo=FALSE, results='asis'}
-library(xtable)
-my_xtable <- xtable(result, align = c("r", "r", "l", "l", "c"))
-print.xtable(my_xtable, type  = "html", include.rownames = FALSE)
+
+---
+class: left, top
+## `gt`
+
+
+.font90.blockquote.exercise[
+#### `r desktop` Example
+
+```{r, echo = TRUE, eval = T}
+gtobj <- gtobj %>%
+  tab_footnote(
+    footnote = "Source: City of Gelsenkirchen, Statistics & Monitoring"
+  ) %>%
+  fmt_number(
+    columns = c(isGerman, isNotGerman), sep_mark = ".", decimals = 0
+  ) %>%
+  gt::opt_all_caps() %>%
+  tab_options(
+    table.font.size = "small",
+    table.border.top.style = "none",
+    table.border.bottom.color = "#215E8F",
+    heading.border.bottom.color = "#215E8F", 
+    column_labels.border.bottom.style = "none",
+    table.background.color = "#e8f4fc",
+    row.striping.background_color = "#d7ecf8",
+    table.width = pct(40),
+    heading.align = "left"
+  )
 ```
 ]
+
+
+---
+class: left, top
+## `gt`
+
+
+.font90.blockquote.exercise[
+#### `r desktop` Example
+
+```{r, echo = TRUE, eval = T}
+gtobj <- gtobj %>%
+  tab_style(
+    style = cell_text(weight = "bold", align = "center"),
+    locations = cells_column_labels()
+  ) %>%
+  tab_style(
+    style = cell_text(align = "right"), location = cells_column_labels()
+  ) %>%
+  tab_style(
+    style = cell_text(weight = "bold"), locations = cells_stub_grand_summary()
+  ) %>%
+  tab_style(
+    style = cell_text(font = google_font("Newsreader")), 
+    locations = list(cells_title(), cells_footnotes())
+  ) %>%
+  tab_style(
+    style = cell_text(size = "x-large"), locations = cells_title(groups = "title")
+  )
+```
+]
+
+
+
+
+---
+class: left, top
+## `gt`
+
+```{r, echo = F, eval = T}
+gtobj %>%
+  gt:::dt_options_set_value(data = ., option = "table_id", value ="gtexample") %>%
+  tab_options(table.additional_css = "#gtexample .gt_row.gt_right { background-color: #e8f4fc; }")
+```
+
+
+---
+class: left, top
+## `gtsummary`
+
+- `gtsummary` offers functions to print table for model objects
+
+
+
+
+
+
 ---
 class: left, top
 ## `stargazer`

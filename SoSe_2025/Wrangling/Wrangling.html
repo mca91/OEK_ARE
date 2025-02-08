@@ -4,8 +4,8 @@
     <title>Advanced R for Econometricians</title>
     <meta charset="utf-8" />
     <meta name="author" content="Martin C. Arnold" />
-    <meta name="author" content="Jens Klenke" />
-    <meta name="date" content="2022-05-08" />
+    <meta name="author" content="Martin Schmelzer" />
+    <meta name="date" content="2025-02-08" />
     <script src="Wrangling_files/header-attrs/header-attrs.js"></script>
     <link href="Wrangling_files/remark-css/default.css" rel="stylesheet" />
     <script src="Wrangling_files/xaringanExtra-progressBar/progress-bar.js"></script>
@@ -13,8 +13,8 @@
     <link href="Wrangling_files/xaringanExtra-clipboard/xaringanExtra-clipboard.css" rel="stylesheet" />
     <script src="Wrangling_files/xaringanExtra-clipboard/xaringanExtra-clipboard.js"></script>
     <script>window.xaringanExtraClipboard(null, {"button":"<i class=\"fa fa-clipboard\"><\/i>","success":"<i class=\"fa fa-check\" style=\"color: #00ff00\"><\/i>","error":"<i class=\"fa fa-times-circle\" style=\"color: #F94144\"><\/i>"})</script>
-    <link href="Wrangling_files/font-awesome/css/all.css" rel="stylesheet" />
-    <link href="Wrangling_files/font-awesome/css/v4-shims.css" rel="stylesheet" />
+    <link href="Wrangling_files/font-awesome/css/all.min.css" rel="stylesheet" />
+    <link href="Wrangling_files/font-awesome/css/v4-shims.min.css" rel="stylesheet" />
     <script type="text/x-mathjax-config">
       MathJax.Hub.Config({
         TeX: { equationNumbers: { autoNumber: "AMS" } },
@@ -65,7 +65,7 @@ class: title-slide title-wrangling center middle
 
 # Advanced R for Econometricians
 ## Data Wrangling
-### Martin C. Arnold, Jens Klenke
+### Martin C. Arnold, Martin Schmelzer
 
 ---
 class: top, left
@@ -80,7 +80,7 @@ Tibbles are the main data structure used in the `tidyverse` and can be viewed as
 
 .blockquote.exercise.font90[
 
-```r
+``` r
     library(tidyverse)
     new_tibble &lt;- tibble(x = 1:3, y = letters[1:3])
 ```
@@ -94,7 +94,7 @@ Tibbles are the main data structure used in the `tidyverse` and can be viewed as
 
 .blockquote.exercise.font90[
 
-```r
+``` r
     a_data.frame &lt;- data.frame(x = 1:3, y = letters[1:3])
     a_tibble     &lt;- as_tibble(a_data.frame)
 ```
@@ -108,7 +108,7 @@ Tibbles are the main data structure used in the `tidyverse` and can be viewed as
 ]
 .blockquote.exercise.font90[
 
-```r
+``` r
 class(a_tibble)
 ```
 
@@ -125,7 +125,7 @@ class: top, left
 
 .blockquote.exercise.font90[
 
-```r
+``` r
 data(mtcars) 
 mtcars_tibble &lt;- as_tibble(mtcars)
 ```
@@ -137,7 +137,7 @@ mtcars_tibble &lt;- as_tibble(mtcars)
 
 .blockquote.exercise.font90[
 
-```r
+``` r
 print(mtcars)
 print(mtcars_tibble)
 ```
@@ -151,7 +151,7 @@ print(mtcars_tibble)
 #### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example
 
 
-```r
+``` r
 mtcars[ ,1:2] # returns a data.frame
 mtcars[ ,1]   # returns a vector 
 mtcars_tibble[ ,1:2] # returns a tibble
@@ -167,7 +167,7 @@ mtcars_tibble[ ,1]   # returns a tibble
 .blockquote.exercise[
 #### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example
 
-```r
+``` r
 data.frame(x = 1:3, y = x^2) # not working
 tibble(x = 1:3, y = x^2)
 ```
@@ -180,7 +180,7 @@ tibble(x = 1:3, y = x^2)
 .blockquote.exercise[
 #### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example
 
-```r
+``` r
 data_df  &lt;- data.frame(days = 1:3,
                        data = list(mtcars)) # not working
 
@@ -226,7 +226,7 @@ First, we look at functions that work on a single table.
 
 .blockquote.exercise[
 
-```r
+``` r
 filter(mtcars_tibble, hp &gt;= 100 &amp; mpg &gt;= 20)
 ```
 ]
@@ -237,7 +237,7 @@ filter(mtcars_tibble, hp &gt;= 100 &amp; mpg &gt;= 20)
 
 .blockquote.exercise[
 
-```r
+``` r
 slice(mtcars_tibble, 10:15)
 ```
 ]
@@ -248,7 +248,7 @@ slice(mtcars_tibble, 10:15)
 
 .blockquote.exercise[
 
-```r
+``` r
 select(mtcars_tibble, cyl, hp)
 ```
 ]
@@ -261,7 +261,7 @@ class: top, left
 
 .blockquote.exercise[
 
-```r
+``` r
 arrange(mtcars_tibble, cyl)
 arrange(mtcars_tibble, desc(cyl))
 ```
@@ -273,7 +273,7 @@ arrange(mtcars_tibble, desc(cyl))
 
 .blockquote.exercise[
 
-```r
+``` r
 relocate(mtcars_tibble, gear)
 relocate(mtcars_tibble, gear, .after = last_col())
 relocate(mtcars_tibble, gear, .before = cyl)
@@ -290,7 +290,7 @@ class: top, left
 .blockquote.exercise[
 
 
-```r
+``` r
 mutate(mtcars_tibble, gpm = 1/mpg)
 transmute(mtcars_tibble, gpm = 1/mpg) 
 ```
@@ -302,7 +302,7 @@ transmute(mtcars_tibble, gpm = 1/mpg)
 
 .blockquote.exercise[
 
-```r
+``` r
 summarise(mtcars_tibble, mean_hp = mean(hp), max_mpg = max(mpg))
 ```
 ]
@@ -315,7 +315,7 @@ class: top, left
 
 .blockquote.exercise[
 
-```r
+``` r
 slice_sample(mtcars_tibble, n = 10)
 slice_sample(mtcars_tibble, prop = 0.1)
 ```
@@ -327,7 +327,7 @@ slice_sample(mtcars_tibble, prop = 0.1)
 
 .blockquote.exercise[
 
-```r
+``` r
 tibble_with_duplicates    &lt;- tibble(x = c(1,1,2,3), 
                                     y = c(4,4,5,6))
 tibble_without_duplicates &lt;- distinct(tibble_with_duplicates)
@@ -340,7 +340,7 @@ tibble_without_duplicates &lt;- distinct(tibble_with_duplicates)
 
 .blockquote.exercise[
 
-```r
+``` r
 count(mtcars_tibble); count(mtcars_tibble, cyl)
 tally(mtcars_tibble); tally(mtcars_tibble, cyl)
 ```
@@ -358,7 +358,7 @@ The function `filter()` selects rows based on their values.
 
 .blockquote.exercise[
 
-```r
+``` r
 filter(mtcars_tibble, hp == 100)
 ```
 ]]
@@ -370,7 +370,7 @@ filter(mtcars_tibble, hp == 100)
 
 .blockquote.exercise[
 
-```r
+``` r
 filter(mtcars_tibble, hp &gt; 100 &amp; cyl == 4)
 filter(mtcars_tibble, hp &gt; 100 | cyl == 4)
 ```
@@ -383,7 +383,7 @@ filter(mtcars_tibble, hp &gt; 100 | cyl == 4)
 
 .blockquote.exercise[
 
-```r
+``` r
 filter(mtcars_tibble, hp &gt; 100, cyl == 4)
 ```
 ]]
@@ -395,7 +395,7 @@ filter(mtcars_tibble, hp &gt; 100, cyl == 4)
 
 .blockquote.exercise[
 
-```r
+``` r
 filter(mtcars_tibble, x &gt;= 90 &amp; x &lt;= 110)
 filter(mtcars_tibble, between(hp, 90, 110))
 ```
@@ -411,7 +411,7 @@ The function `select()` selects columns based on their name.
 
 .blockquote.exercise[
 
-```r
+``` r
 select(mtcars_tibble, disp, vs) 
 select(mtcars_tibble, "disp", "vs") 
 ```
@@ -424,7 +424,7 @@ select(mtcars_tibble, "disp", "vs")
 
 .blockquote.exercise[
 
-```r
+``` r
 select(mtcars_tibble, c("disp", "vs"))
 ```
 ]]
@@ -436,7 +436,7 @@ select(mtcars_tibble, c("disp", "vs"))
 
 .blockquote.exercise[
 
-```r
+``` r
 select(mtcars_tibble, -disp, -vs) 
 select(mtcars_tibble, -c("disp", "vs")) 
 ```
@@ -455,7 +455,7 @@ class: top, left
 
 .blockquote.exercise[
 
-```r
+``` r
 select(iris, contains("."))
 ```
 ]]
@@ -467,7 +467,7 @@ select(iris, contains("."))
 
 .blockquote.exercise[
 
-```r
+``` r
 select(iris, ends_with("Length"))
 ```
 ]]
@@ -479,7 +479,7 @@ select(iris, ends_with("Length"))
 
 .blockquote.exercise[
 
-```r
+``` r
 select(iris, matches(".t."))
 ```
 ]]
@@ -491,7 +491,7 @@ select(iris, matches(".t."))
 
 .blockquote.exercise[
 
-```r
+``` r
 select(iris, num_range("x", 1:5))
 ```
 ]]
@@ -505,7 +505,7 @@ class: top, left
 
 .blockquote.exercise[
 
-```r
+``` r
 select(iris, Sepal.Width:Petal.Width)
 ```
 ]]
@@ -517,7 +517,7 @@ select(iris, Sepal.Width:Petal.Width)
 
 .blockquote.exercise[
 
-```r
+``` r
 select(iris, one_of(c("Species", "Genus")))
 ```
 ]]
@@ -529,7 +529,7 @@ select(iris, one_of(c("Species", "Genus")))
 
 .blockquote.exercise[
 
-```r
+``` r
 select(iris, starts_with("Sepal"))
 ```
 ]]
@@ -541,7 +541,7 @@ The function `mutate()` adds new columns or replaces old columns based on existi
 
 .blockquote.exercise[
 
-```r
+``` r
 mutate(mtcars_tibble,
        gpm = 1/mpg,
        disp =  disp - mean(disp) # replaces disp 
@@ -556,7 +556,7 @@ mutate(mtcars_tibble,
 
 .blockquote.exercise[
 
-```r
+``` r
 rw &lt;- tibble(t = 1:10, y = cumsum(rnorm(10)))
 mutate(rw, increments =  y - lag(y, k = 1))
 ```
@@ -569,7 +569,7 @@ mutate(rw, increments =  y - lag(y, k = 1))
 
 .blockquote.exercise[
 
-```r
+``` r
 mutate(mtcars_tibble,
        hp_rank_smallest_first = min_rank(hp),
        hp_rank_largest_first  = min_rank(desc(hp))
@@ -595,7 +595,7 @@ mutate(mtcars_tibble,
 .blockquote.exercise[.font80[
 
 
-```r
+``` r
 summarise(mtcars_tibble,
           mean_hp    = mean(hp),
           max_wt     = max(wt), 
@@ -613,7 +613,7 @@ summarise(mtcars_tibble,
 
 .blockquote.exercise[
 
-```r
+``` r
 my_variance &lt;- function(x) 1/(n()-1) * sum((x - mean(x))^2)
 summarise(by_cyl, my_variance(mpg))
 ```
@@ -627,7 +627,7 @@ summarise(by_cyl, my_variance(mpg))
 
 .blockquote.exercise[
 
-```r
+``` r
 two_return_vaules &lt;- function(x) c(mean(x), sd(x))
 summarise(by_cyl, two_return_vaules(mpg))
 ```
@@ -639,7 +639,7 @@ summarise(by_cyl, two_return_vaules(mpg))
 
 .blockquote.exercise[
     
-    ```r
+    ``` r
     two_input_values &lt;- function(x, y) sum(x + y)
     summarise(by_cyl, two_input_values(hp, qsec)) # variable inputs
     summarise(by_cyl, two_input_values(hp, 1))    # fixed input
@@ -678,13 +678,13 @@ To exploit the full potential of `summarise()` we pair it with `group_by()`.
 
 .blockquote.exercise[
 
-```r
+``` r
 by_cyl &lt;- group_by(mtcars_tibble, cyl)
 print(summarise(by_cyl, mean(mpg)))
 ```
 
 ```
-## # A tibble: 3 x 2
+## # A tibble: 3 × 2
 ##     cyl `mean(mpg)`
 ##   &lt;dbl&gt;       &lt;dbl&gt;
 ## 1     4        26.7
@@ -711,7 +711,7 @@ It is also possible to use `group_by()` together with a lot of other single tabl
 #### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example
 
 
-```r
+``` r
 by_cyl &lt;- group_by(mtcars_tibble, cyl)
 
 # group mean is used for centering
@@ -746,7 +746,7 @@ We could do it like this:
 
 #### &lt;svg viewBox="0 0 352 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:red;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M242.72 256l100.07-100.07c12.28-12.28 12.28-32.19 0-44.48l-22.24-22.24c-12.28-12.28-32.19-12.28-44.48 0L176 189.28 75.93 89.21c-12.28-12.28-32.19-12.28-44.48 0L9.21 111.45c-12.28 12.28-12.28 32.19 0 44.48L109.28 256 9.21 356.07c-12.28 12.28-12.28 32.19 0 44.48l22.24 22.24c12.28 12.28 32.2 12.28 44.48 0L176 322.72l100.07 100.07c12.28 12.28 32.2 12.28 44.48 0l22.24-22.24c12.28-12.28 12.28-32.19 0-44.48L242.72 256z"&gt;&lt;/path&gt;&lt;/svg&gt; Bad
 
-```r
+``` r
 filtered   &lt;- filter(mtcars_tibble, cyl &lt;= 8)
 mutated    &lt;- mutate(filtered, gpm = 1/mpg)
 grouped    &lt;- group_by(mutated, gear)
@@ -771,7 +771,7 @@ We could nest all those functions to get rid of the intermediate result.
 .blockquote.exercise[ 
 #### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example
 
-```r
+``` r
 summarise(group_by(mutate(filter(mtcars_tibble, cyl &lt;= 8), gpm = 1/mpg)), 
           count = n(), 
           mean_hp = mean(hp),
@@ -779,7 +779,7 @@ summarise(group_by(mutate(filter(mtcars_tibble, cyl &lt;= 8), gpm = 1/mpg)),
 ```
 
 ```
-## # A tibble: 1 x 3
+## # A tibble: 1 × 3
 ##   count mean_hp mean_gpm
 ##   &lt;int&gt;   &lt;dbl&gt;    &lt;dbl&gt;
 ## 1    32    147.   0.0542
@@ -803,7 +803,7 @@ The value on the left side of the operator becomes the input to the function on 
 .blockquote.exercise.font80[ 
 #### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example
 
-```r
+``` r
 mtcars_tibble %&gt;% 
   mutate(gpm = 1/mpg) %&gt;%
   group_by(gear) %&gt;% 
@@ -820,7 +820,7 @@ The pipe operator is not limited to `dplyr` or the `tidyverse`
 
 .blockquote.exercise[ 
 
-```r
+``` r
 1:6 %&gt;% mean
 ```
 ]]
@@ -875,7 +875,7 @@ We often perform operations on all or several columns at once. Most helpful are 
 
 .blockquote.exercise[ 
 
-```r
+``` r
 iris %&gt;% summarise(across(c(Sepal.Length, Sepal.Width), mean))
 iris %&gt;% summarise(across(c(Sepal.Length, Sepal.Width), ~ mean(.x, na.rm = TRUE)))
 # summarise with multipe values 
@@ -889,7 +889,7 @@ iris %&gt;% summarise(across(c(Sepal.Length, Sepal.Width), list(mean = mean, sd 
 
 .blockquote.exercise[ 
 
-```r
+``` r
 iris %&gt;% summarise(across(ends_with('Width'), mean))
 ```
 ]
@@ -909,19 +909,19 @@ functions are pedestrian. Most helpful are the scoped versions of  `summarise()`
 
 - Use `summarise_all()`to summarise every column.
     
-    ```r
+    ``` r
     mtcars_tibble %&gt;% summarise_all(mean)
     ```
 
 - Use `summarise_if()` to logically subset the columns to be summarised. 
     
-    ```r
+    ``` r
     iris %&gt;% summarise_if(is.numeric, mean)
     ```
 
 -  Use `summarise_at()` to summarise selected columns.
     
-    ```r
+    ``` r
     iris %&gt;% summarise_at(c("Sepal.Length", "Sepal.Width"), mean)
     ```
 
@@ -947,7 +947,7 @@ will talk about later. Here we only give a short example of how they can be used
 
 .code80[.blockquote.exercise[ 
 
-```r
+``` r
 mtcars %&gt;%
   group_by(cyl) %&gt;% 
   group_map(~ lm(mpg  ~ hp, data = . ))
@@ -995,12 +995,12 @@ class: top, left
 
 .blockquote.exercise[ 
 
-```r
+``` r
 band_members   
 ```
 
 ```
-## # A tibble: 3 x 2
+## # A tibble: 3 × 2
 ##   name  band   
 ##   &lt;chr&gt; &lt;chr&gt;  
 ## 1 Mick  Stones 
@@ -1008,12 +1008,12 @@ band_members
 ## 3 Paul  Beatles
 ```
 
-```r
+``` r
 band_instruments
 ```
 
 ```
-## # A tibble: 3 x 2
+## # A tibble: 3 × 2
 ##   name  plays 
 ##   &lt;chr&gt; &lt;chr&gt; 
 ## 1 John  guitar
@@ -1029,12 +1029,12 @@ class: top, left
 A left join keeps all observations from the left table, and matches records from the right table based on one (or multiple) columns (`by`).
 .blockquote.exercise[ 
 
-```r
+``` r
 band_members %&gt;% left_join(band_instruments, by = 'name')
 ```
 
 ```
-## # A tibble: 3 x 3
+## # A tibble: 3 × 3
 ##   name  band    plays 
 ##   &lt;chr&gt; &lt;chr&gt;   &lt;chr&gt; 
 ## 1 Mick  Stones  &lt;NA&gt;  
@@ -1054,12 +1054,12 @@ class: top, left
 An inner join matches rows from the left and the right table but only keeps the rows where both tables have matching rows in the `by` column.
 .blockquote.exercise[ 
 
-```r
+``` r
 band_members %&gt;% inner_join(band_instruments, by = 'name')
 ```
 
 ```
-## # A tibble: 2 x 3
+## # A tibble: 2 × 3
 ##   name  band    plays 
 ##   &lt;chr&gt; &lt;chr&gt;   &lt;chr&gt; 
 ## 1 John  Beatles guitar
@@ -1074,12 +1074,12 @@ A full (outer) join matches rows from the left and the right table and keeps all
 
 .blockquote.exercise[ 
 
-```r
+``` r
 band_members %&gt;% full_join(band_instruments, by = 'name')
 ```
 
 ```
-## # A tibble: 4 x 3
+## # A tibble: 4 × 3
 ##   name  band    plays 
 ##   &lt;chr&gt; &lt;chr&gt;   &lt;chr&gt; 
 ## 1 Mick  Stones  &lt;NA&gt;  
@@ -1097,12 +1097,12 @@ It keeps only columns from the left.
 
 .blockquote.exercise[ 
 
-```r
+``` r
 band_members %&gt;% semi_join(band_instruments, by = 'name')
 ```
 
 ```
-## # A tibble: 2 x 2
+## # A tibble: 2 × 2
 ##   name  band   
 ##   &lt;chr&gt; &lt;chr&gt;  
 ## 1 John  Beatles
@@ -1117,12 +1117,12 @@ An anti join returns all rows from the first table where no matches are found in
 
 .blockquote.exercise[  
 
-```r
+``` r
 band_members %&gt;% anti_join(band_instruments, by = 'name')
 ```
 
 ```
-## # A tibble: 1 x 2
+## # A tibble: 1 × 2
 ##   name  band  
 ##   &lt;chr&gt; &lt;chr&gt; 
 ## 1 Mick  Stones
@@ -1152,14 +1152,14 @@ class: top, left
 
 .blockquote.exercise[
 
-```r
+``` r
 tidyr::table1
 ```
 
 ```
-## # A tibble: 6 x 4
+## # A tibble: 6 × 4
 ##   country      year  cases population
-##   &lt;chr&gt;       &lt;int&gt;  &lt;int&gt;      &lt;int&gt;
+##   &lt;chr&gt;       &lt;dbl&gt;  &lt;dbl&gt;      &lt;dbl&gt;
 ## 1 Afghanistan  1999    745   19987071
 ## 2 Afghanistan  2000   2666   20595360
 ## 3 Brazil       1999  37737  172006362
@@ -1179,14 +1179,14 @@ class: top, left
 
 .blockquote.exercise[
 
-```r
+``` r
 tidyr::table2
 ```
 
 ```
-## # A tibble: 12 x 4
+## # A tibble: 12 × 4
 ##    country      year type            count
-##    &lt;chr&gt;       &lt;int&gt; &lt;chr&gt;           &lt;int&gt;
+##    &lt;chr&gt;       &lt;dbl&gt; &lt;chr&gt;           &lt;dbl&gt;
 ##  1 Afghanistan  1999 cases             745
 ##  2 Afghanistan  1999 population   19987071
 ##  3 Afghanistan  2000 cases            2666
@@ -1218,15 +1218,15 @@ The function `tidyr::pivot_wider()` main arguments are
 
 .blockquote.exercise[
 
-```r
+``` r
 table2 %&gt;%
     pivot_wider(names_from = type, values_from = count)
 ```
 
 ```
-## # A tibble: 6 x 4
+## # A tibble: 6 × 4
 ##   country      year  cases population
-##   &lt;chr&gt;       &lt;int&gt;  &lt;int&gt;      &lt;int&gt;
+##   &lt;chr&gt;       &lt;dbl&gt;  &lt;dbl&gt;      &lt;dbl&gt;
 ## 1 Afghanistan  1999    745   19987071
 ## 2 Afghanistan  2000   2666   20595360
 ## 3 Brazil       1999  37737  172006362
@@ -1245,14 +1245,14 @@ See the help file for more information
 
 .blockquote.exercise[
 
-```r
+``` r
 tidyr::table4b
 ```
 
 ```
-## # A tibble: 3 x 3
+## # A tibble: 3 × 3
 ##   country         `1999`     `2000`
-## * &lt;chr&gt;            &lt;int&gt;      &lt;int&gt;
+##   &lt;chr&gt;            &lt;dbl&gt;      &lt;dbl&gt;
 ## 1 Afghanistan   19987071   20595360
 ## 2 Brazil       172006362  174504898
 ## 3 China       1272915272 1280428583
@@ -1278,15 +1278,15 @@ The function `pivot_longer()` main arguments are
 
 .font90.blockquote.exercise[
 
-```r
+``` r
 table4a %&gt;% 
   pivot_longer(cols = c('1999', '2000'), names_to = 'year', values_to = 'value')
 ```
 
 ```
-## # A tibble: 6 x 3
+## # A tibble: 6 × 3
 ##   country     year   value
-##   &lt;chr&gt;       &lt;chr&gt;  &lt;int&gt;
+##   &lt;chr&gt;       &lt;chr&gt;  &lt;dbl&gt;
 ## 1 Afghanistan 1999     745
 ## 2 Afghanistan 2000    2666
 ## 3 Brazil      1999   37737
@@ -1310,14 +1310,14 @@ notice that year is a character variable
 
 .blockquote.exercise[
 
-```r
+``` r
 tidyr::table3 
 ```
 
 ```
-## # A tibble: 6 x 3
+## # A tibble: 6 × 3
 ##   country      year rate             
-## * &lt;chr&gt;       &lt;int&gt; &lt;chr&gt;            
+##   &lt;chr&gt;       &lt;dbl&gt; &lt;chr&gt;            
 ## 1 Afghanistan  1999 745/19987071     
 ## 2 Afghanistan  2000 2666/20595360    
 ## 3 Brazil       1999 37737/172006362  
@@ -1345,15 +1345,15 @@ As input it takes:
 
 .code70[.blockquote.exercise[
 
-```r
+``` r
 table3 %&gt;% 
   separate(rate, into = c("cases", "population"), convert = TRUE)
 ```
 
 ```
-## # A tibble: 6 x 4
+## # A tibble: 6 × 4
 ##   country      year  cases population
-##   &lt;chr&gt;       &lt;int&gt;  &lt;int&gt;      &lt;int&gt;
+##   &lt;chr&gt;       &lt;dbl&gt;  &lt;int&gt;      &lt;int&gt;
 ## 1 Afghanistan  1999    745   19987071
 ## 2 Afghanistan  2000   2666   20595360
 ## 3 Brazil       1999  37737  172006362
@@ -1372,14 +1372,14 @@ why is sep not specified?
 
 .blockquote.exercise[
 
-```r
+``` r
 tidyr::table5 
 ```
 
 ```
-## # A tibble: 6 x 4
+## # A tibble: 6 × 4
 ##   country     century year  rate             
-## * &lt;chr&gt;       &lt;chr&gt;   &lt;chr&gt; &lt;chr&gt;            
+##   &lt;chr&gt;       &lt;chr&gt;   &lt;chr&gt; &lt;chr&gt;            
 ## 1 Afghanistan 19      99    745/19987071     
 ## 2 Afghanistan 20      00    2666/20595360    
 ## 3 Brazil      19      99    37737/172006362  
@@ -1402,13 +1402,13 @@ As input it takes:
 
 .blockquote.exercise[
 
-```r
+``` r
 table5 %&gt;% 
   unite(year, century, year, sep = "")
 ```
 
 ```
-## # A tibble: 6 x 3
+## # A tibble: 6 × 3
 ##   country     year  rate             
 ##   &lt;chr&gt;       &lt;chr&gt; &lt;chr&gt;            
 ## 1 Afghanistan 1999  745/19987071     
@@ -1431,7 +1431,7 @@ class: exercise_slide
 &lt;/ol&gt;
 
 
-```r
+``` r
 library(ggplot2)
 ggplot(table1, aes(year, cases)) + 
   geom_line(aes(group = country), colour = "grey50") + 
@@ -1492,6 +1492,19 @@ if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
     deleted = true;
   });
 })();
+// add `data-at-shortcutkeys` attribute to <body> to resolve conflicts with JAWS
+// screen reader (see PR #262)
+(function(d) {
+  let res = {};
+  d.querySelectorAll('.remark-help-content table tr').forEach(tr => {
+    const t = tr.querySelector('td:nth-child(2)').innerText;
+    tr.querySelectorAll('td:first-child .key').forEach(key => {
+      const k = key.innerText;
+      if (/^[a-z]$/.test(k)) res[k] = t;  // must be a single letter (key)
+    });
+  });
+  d.body.setAttribute('data-at-shortcutkeys', JSON.stringify(res));
+})(document);
 (function() {
   "use strict"
   // Replace <script> tags in slides area to make them executable

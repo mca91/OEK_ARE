@@ -2,7 +2,7 @@
 title: "Advanced R for Econometricians"
 author: 
   - "Martin Arnold"
-  - "Jens Klenke"
+  - "Martin Schmelzer"
 date: '`r Sys.Date()`'
 output:
   xaringan::moon_reader:
@@ -26,18 +26,17 @@ class: title-slide title-index
 
 .pull-left[
 1. [Introduction](Introduction/Introduction.html)
-2. Prerequisites
-   - [Rmarkdown](Rmarkdown/rmarkdown.html) 
-   - [Git and Github](Git/git_vcs.html)
-3. [Data Visualisation with ggplot](ggplot2/ggplot2.html)
-4. Data Wrangling and Transformation
-   - [dplyr](Wrangling/Wrangling.html)
-   - [Databases](databases/databases.html)
-5. [Web Scraping](Webscraping/webscraping.html)
+2. [Git and Github](Git/git_vcs.html)
+3. [Data Wrangling with dplyr](Wrangling/Wrangling.html)
+4. [Data Visualisation with ggplot](ggplot2/ggplot2.html)
+5. [Rmarkdown](Rmarkdown/rmarkdown.html) 
+6. [Databases](databases/databases.html)
+7. [Web Scraping](Webscraping/webscraping.html)
 ]
 
+
 .pull-right[
-<ol start = "6">
+<ol start = "8">
   <li> Advanced R Programming </li>
   <ul>
     <li> <a href="Advanced R concepts/Advanced.html">Advanced Concepts</a></li>
@@ -60,7 +59,7 @@ class: title-slide title-index
 <br>
 ### Additional Topics for self-study
 
-<ol start = "8">
+<ol start = "10">
   <li> <a href = Datatable/datatable.html>data.table</a> </li>
   <li> <a href = Shiny/Shiny.html>Shiny</a> </li>
   <li> <a href = Packages/Packages.html>Writing Packages</a> </li>
