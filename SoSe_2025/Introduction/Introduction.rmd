@@ -103,14 +103,14 @@ the assignments (20%).
 ### Outline
 
 .pull-left[
-1. [Introduction](Introduction/Introduction.html)
-2. [Data Visualisation with ggplot](ggplot2/ggplot2.html)
-3. [Data Wrangling with dplyr](Wrangling/Wrangling.html)
-4. [Databases](databases/databases.html)
+1. Introduction
+2. Data Visualisation with ggplot
+3. Data Wrangling with dplyr
+4. Databases
 5. Advanced R Programming
-  - [Advanced Conecepts](Advanced R concepts/Advanced.html)
-  - [Functional Programming](functional/functional.html)
-  - [Object Oriented Programming](OOP/OOP.html)
+  - Advanced Conecepts
+  - Functional Programming
+  - Object Oriented Programming
 ]
 
 
@@ -118,12 +118,12 @@ the assignments (20%).
 <ol start = "6">
   <li> Performance </li> 
   <ul>
-    <li> <a href="measuring and profiling/MeasuringProfiling.html">Profiling and Benchmarking</a></li> 
-    <li> <a href="improving performance/improving-performance.html">Improving Performance</a></li>
+    <li>Profiling and Benchmarking</li> 
+    <li>Improving Performance</li>
   </ul>
-  <li><a href="Webscraping/webscraping.html">Web Scraping</a></li>
-  <li><a href="Rmarkdown/rmarkdown.html">Rmarkdown</a></li>
-  <li><a href="Git/git_vcs.html">Git and Github</a></li>
+  <li>Web Scraping</li>
+  <li>Rmarkdown</li>
+  <li>Git and Github</li>
 </ol>
 ]]
 
