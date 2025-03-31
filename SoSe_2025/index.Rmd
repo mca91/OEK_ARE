@@ -47,7 +47,7 @@ class: title-slide title-index
   <li><a href="Rmarkdown/rmarkdown.html">Rmarkdown</a></li>
   <li><a href="Git/git_vcs.html">Git and Github</a></li>
 </ol>
-]]
+]
 
 
 

@@ -96,8 +96,9 @@ What do you know about R?
 
 - You will have to work on a final group project which focuses on one or more of the topics discussed in the course. 
 
-- The final grade is a weighted average of the grades for the group project (60%), its presentation (20%) and
-the assignments (20%).
+- The final grade is a weighted average of the grades for the group project (70%), its presentation (30%).
+
+- Projects should be registered with us until June 16th. We will set up a form on Moodle ().
 
 ---
 ### Outline
