@@ -5,8 +5,8 @@
     <meta charset="utf-8" />
     <meta name="author" content="Martin Arnold" />
     <meta name="author" content="Martin Schmelzer" />
-    <meta name="date" content="2025-01-23" />
-    <script src="libs/header-attrs-2.29/header-attrs.js"></script>
+    <meta name="date" content="2025-03-31" />
+    <script src="libs/header-attrs-2.29.1/header-attrs.js"></script>
     <link href="libs/remark-css-0.0.1/default.css" rel="stylesheet" />
     <meta name="robots" content="noindex">
     <link rel="stylesheet" href="assets/ude_fonts.css" type="text/css" />
@@ -25,32 +25,30 @@ class: title-slide title-index
 
 .pull-left[
 1. [Introduction](Introduction/Introduction.html)
-2. [Git and Github](Git/git_vcs.html)
+2. [Data Visualisation with ggplot](ggplot2/ggplot2.html)
 3. [Data Wrangling with dplyr](Wrangling/Wrangling.html)
-4. [Data Visualisation with ggplot](ggplot2/ggplot2.html)
-5. [Rmarkdown](Rmarkdown/rmarkdown.html) 
-6. [Databases](databases/databases.html)
-7. [Web Scraping](Webscraping/webscraping.html)
+4. [Databases](databases/databases.html)
+5. Advanced R Programming
+  - [Advanced Conecepts](Advanced R concepts/Advanced.html)
+  - [Functional Programming](functional/functional.html)
+  - [Object Oriented Programming](OOP/OOP.html)
 ]
 
 
 .pull-right[
-&lt;ol start = "8"&gt;
-  &lt;li&gt; Advanced R Programming &lt;/li&gt;
-  &lt;ul&gt;
-    &lt;li&gt; &lt;a href="Advanced R concepts/Advanced.html"&gt;Advanced Concepts&lt;/a&gt;&lt;/li&gt;
-    &lt;li&gt; &lt;a href="functional/functional.html"&gt;Functional Programming&lt;/a&gt;&lt;/li&gt;
-    &lt;li&gt; &lt;a href="OOP/OOP.html"&gt;Object Oriented Programming&lt;/a&gt;&lt;/li&gt;
-  &lt;/ul&gt;
+&lt;ol start = "6"&gt;
   &lt;li&gt; Performance &lt;/li&gt; 
   &lt;ul&gt;
     &lt;li&gt; &lt;a href="measuring and profiling/MeasuringProfiling.html"&gt;Profiling and Benchmarking&lt;/a&gt;&lt;/li&gt; 
     &lt;li&gt; &lt;a href="improving performance/improving-performance.html"&gt;Improving Performance&lt;/a&gt;&lt;/li&gt;
-    &lt;li&gt; &lt;a href="Rcpp/SpeedRcpp.html"&gt;Rcpp&lt;/a&gt;&lt;/li&gt;
-    &lt;li&gt; &lt;a href="RcppArmadillo/RcppArmadillo.html"&gt;RcppArmadillo&lt;/a&gt;&lt;/li&gt;
   &lt;/ul&gt;
+  &lt;li&gt;&lt;a href="Webscraping/webscraping.html"&gt;Web Scraping&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href="Rmarkdown/rmarkdown.html"&gt;Rmarkdown&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href="Git/git_vcs.html"&gt;Git and Github&lt;/a&gt;&lt;/li&gt;
 &lt;/ol&gt;
 ]]
+
+
 
 &lt;br&gt;
 
@@ -68,10 +66,10 @@ class: title-slide title-index
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
 <script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
 <script>var slideshow = remark.create({
-"highlightStyle": "github",
-"highlightLines": true,
-"countIncrementalSlides": false,
-"ratio": "16:9"
+  "highlightStyle": "github",
+  "highlightLines": true,
+  "countIncrementalSlides": false,
+  "ratio": "16:9"
 });
 if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
   window.dispatchEvent(new Event('resize'));

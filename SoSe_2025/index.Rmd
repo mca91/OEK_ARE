@@ -26,32 +26,30 @@ class: title-slide title-index
 
 .pull-left[
 1. [Introduction](Introduction/Introduction.html)
-2. [Git and Github](Git/git_vcs.html)
+2. [Data Visualisation with ggplot](ggplot2/ggplot2.html)
 3. [Data Wrangling with dplyr](Wrangling/Wrangling.html)
-4. [Data Visualisation with ggplot](ggplot2/ggplot2.html)
-5. [Rmarkdown](Rmarkdown/rmarkdown.html) 
-6. [Databases](databases/databases.html)
-7. [Web Scraping](Webscraping/webscraping.html)
+4. [Databases](databases/databases.html)
+5. Advanced R Programming
+  - [Advanced Conecepts](Advanced R concepts/Advanced.html)
+  - [Functional Programming](functional/functional.html)
+  - [Object Oriented Programming](OOP/OOP.html)
 ]
 
 
 .pull-right[
-<ol start = "8">
-  <li> Advanced R Programming </li>
-  <ul>
-    <li> <a href="Advanced R concepts/Advanced.html">Advanced Concepts</a></li>
-    <li> <a href="functional/functional.html">Functional Programming</a></li>
-    <li> <a href="OOP/OOP.html">Object Oriented Programming</a></li>
-  </ul>
+<ol start = "6">
   <li> Performance </li> 
   <ul>
     <li> <a href="measuring and profiling/MeasuringProfiling.html">Profiling and Benchmarking</a></li> 
     <li> <a href="improving performance/improving-performance.html">Improving Performance</a></li>
-    <li> <a href="Rcpp/SpeedRcpp.html">Rcpp</a></li>
-    <li> <a href="RcppArmadillo/RcppArmadillo.html">RcppArmadillo</a></li>
   </ul>
+  <li><a href="Webscraping/webscraping.html">Web Scraping</a></li>
+  <li><a href="Rmarkdown/rmarkdown.html">Rmarkdown</a></li>
+  <li><a href="Git/git_vcs.html">Git and Github</a></li>
 </ol>
 ]]
+
+
 
 <br>
 
