@@ -108,7 +108,7 @@ the assignments (20%).
 3. Data Wrangling with dplyr
 4. Databases
 5. Advanced R Programming
-  - Advanced Conecepts
+  - Advanced Concepts
   - Functional Programming
   - Object Oriented Programming
 ]
@@ -125,7 +125,7 @@ the assignments (20%).
   <li>Rmarkdown</li>
   <li>Git and Github</li>
 </ol>
-]]
+]
 
 
 
