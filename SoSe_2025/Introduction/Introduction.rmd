@@ -130,15 +130,15 @@ the assignments (20%).
 
 
 
-.pull-down-small_margin.font90[
+.pull-right[.pull-down-small_margin.font90[
 #### Additional Topics for self-study
 
 <ol start = "8">
   <li>data.table</li>
-  <li> Shiny</li>
-  <li> Writing Packages </li>
+  <li>Shiny</li>
+  <li>Writing Packages</li>
 </ol>
-]
+]]
 ---
 
 class: top, left
