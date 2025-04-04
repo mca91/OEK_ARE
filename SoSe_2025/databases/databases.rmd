@@ -2,8 +2,8 @@
 title: "Advanced R for Econometricians"
 subtitle: "Databases using R"
 author: 
-  - "Martin C. Arnold"
-  - "Jens Klenke"
+  - "Martin Arnold"
+  - "Martin Schmelzer"
 date: "`r Sys.Date()`"
 output:
   xaringan::moon_reader:
@@ -216,7 +216,7 @@ con <- DBI::dbConnect(
 ```
 ]]
 
-```{r, eval = TRUE, echo = FALSE}
+```{r, eval = FALSE, echo = FALSE}
 library(dplyr)
 con <- DBI::dbConnect(
                drv = RMariaDB::MariaDB(), # MariaDB driver works for MySQL as well
@@ -254,7 +254,7 @@ you can use keyring
 
 .blockquote.exercise[
 
-```{r, eval = TRUE}
+```{r, eval = FALSE}
 DBI::dbListTables(con)
 ```
 ]
@@ -268,7 +268,7 @@ DBI::dbListTables(con)
 .blockquote.exercise[
 
 #### `r desktop` Example 
-```{r, eval = TRUE}
+```{r, eval = FALSE}
 gap_db <- tbl(con, "gapminder")
 class(gap_db)
 ```
@@ -279,7 +279,7 @@ class(gap_db)
 .font90.blockquote.exercise[
 
 #### `r desktop` Example 
-```{r, message=FALSE, warning=FALSE, eval = TRUE}
+```{r, message=FALSE, warning=FALSE, eval = FALSE}
 gap_avg_db <- gap_db %>%
   group_by(continent) %>% 
   select_if(is.numeric) %>% 
@@ -301,7 +301,7 @@ gap_avg_db <- gap_db %>%
 .font90.blockquote.exercise[
 
 #### `r desktop` Example 
-```{r, warning=FALSE, eval = TRUE}
+```{r, warning=FALSE, eval = FALSE}
 show_query(gap_avg_db)
 ```
 ]
@@ -331,7 +331,7 @@ When working with databases, `dplyr` tries to be as lazy as possible:
 .font90.blockquote.exercise[
 #### `r desktop` Example 
 
-```{r, eval = TRUE}
+```{r, eval = FALSE}
 gap_avg <- gap_avg_db %>% collect(n = Inf)
 print(gap_avg)
 ```

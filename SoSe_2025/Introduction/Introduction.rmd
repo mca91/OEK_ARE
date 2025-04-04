@@ -2,7 +2,7 @@
 title: "Advanced R for Econometricians"
 subtitle: "Introduction"
 author: 
-  - "Martin C. Arnold"
+  - "Martin Arnold"
   - "Martin Schmelzer"
 date: "`r Sys.Date()`"
 output:

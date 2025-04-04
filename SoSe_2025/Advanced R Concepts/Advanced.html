@@ -3,17 +3,17 @@
   <head>
     <title>Advanced R for Econometricians</title>
     <meta charset="utf-8" />
-    <meta name="author" content="Martin C. Arnold" />
-    <meta name="author" content="Jens Klenke" />
-    <meta name="date" content="2022-05-31" />
+    <meta name="author" content="Martin Arnold" />
+    <meta name="author" content="Martin Schmelzer" />
+    <meta name="date" content="2025-04-04" />
     <script src="Advanced_files/header-attrs/header-attrs.js"></script>
     <link href="Advanced_files/remark-css/default.css" rel="stylesheet" />
     <script src="Advanced_files/clipboard/clipboard.min.js"></script>
     <link href="Advanced_files/xaringanExtra-clipboard/xaringanExtra-clipboard.css" rel="stylesheet" />
     <script src="Advanced_files/xaringanExtra-clipboard/xaringanExtra-clipboard.js"></script>
     <script>window.xaringanExtraClipboard(null, {"button":"<i class=\"fa fa-clipboard\"><\/i>","success":"<i class=\"fa fa-check\" style=\"color: #00ff00\"><\/i>","error":"<i class=\"fa fa-times-circle\" style=\"color: #F94144\"><\/i>"})</script>
-    <link href="Advanced_files/font-awesome/css/all.css" rel="stylesheet" />
-    <link href="Advanced_files/font-awesome/css/v4-shims.css" rel="stylesheet" />
+    <link href="Advanced_files/font-awesome/css/all.min.css" rel="stylesheet" />
+    <link href="Advanced_files/font-awesome/css/v4-shims.min.css" rel="stylesheet" />
     <script src="Advanced_files/xaringanExtra-progressBar/progress-bar.js"></script>
     <script type="text/x-mathjax-config">
       MathJax.Hub.Config({
@@ -46,7 +46,7 @@ class: title-slide title-rintro center middle
 
 # Advanced R for Econometricians
 ## Advanced R Concepts
-### Martin C. Arnold, Jens Klenke
+### Martin Arnold, Martin Schmelzer
 
 ---
 ## Overview
@@ -75,7 +75,7 @@ class: title-slide title-rintro center middle
 Make sure the `lobstr` package is attached!
 
 
-```r
+``` r
 install.packages('lobstr')
 library(lobstr)
 ```
@@ -114,7 +114,7 @@ class: segue-red
 
 .pull-left[
 
-```r
+``` r
 a &lt;- b &lt;- 1
 a == b
 ```
@@ -123,7 +123,7 @@ a == b
 ## [1] TRUE
 ```
 
-```r
+``` r
 a = b = 1
 a == b
 ```
@@ -134,7 +134,7 @@ a == b
 ]
 .pull-right[
 
-```r
+``` r
 a = b &lt;- 1
 a == b
 ```
@@ -143,7 +143,7 @@ a == b
 ## [1] TRUE
 ```
 
-```r
+``` r
 a &lt;- b = 1
 ```
 
@@ -199,7 +199,7 @@ Assignment operators work in the environment they are invoked in. The super assi
 #### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example: super assignment
 
 
-```r
+``` r
 var_GE &lt;- 1
 
 a &lt;- function(x) {
@@ -247,12 +247,12 @@ var_GE
 ]
 .pull-right[.code80[
   
-  ```r
+  ``` r
   x &lt;- c(1, 2, 3)
   ```
   &lt;br&gt;
   
-  ```r
+  ``` r
   y &lt;- x
   ```
 ]]]]
@@ -275,17 +275,17 @@ A `character` vector is a binding to a vector of strings.
 ]
 .pull-right[
 
-```r
+``` r
 x &lt;- c("a", "a", "abc", "d")
 ref(x, character = TRUE)
 ```
 
 ```
-## █ [1:0x10900f248] &lt;chr&gt; 
-## ├─[2:0x12b2ced78] &lt;string: "a"&gt; 
-## ├─[2:0x12b2ced78] 
-## ├─[3:0x10495fc88] &lt;string: "abc"&gt; 
-## └─[4:0x12b505670] &lt;string: "d"&gt;
+## █ [1:0x1044fc648] &lt;chr&gt; 
+## ├─[2:0x12a30f290] &lt;string: "a"&gt; 
+## ├─[2:0x12a30f290] 
+## ├─[3:0x1060147b8] &lt;string: "abc"&gt; 
+## └─[4:0x12a7a2950] &lt;string: "d"&gt;
 ```
 ]]]
 
@@ -311,7 +311,7 @@ R's copy-on-modify behavior is both blessing and curse:
 .pull-right[
 .code90[.font90[
 
-```r
+``` r
 x &lt;- c(1, 2, 3)
 y &lt;- x
 
@@ -324,20 +324,20 @@ x
 ```
 
 
-```r
+``` r
 obj_addr(x)
 ```
 
 ```
-## [1] "0x10900fbf8"
+## [1] "0x105652958"
 ```
 
-```r
+``` r
 obj_addr(y)
 ```
 
 ```
-## [1] "0x109a51258"
+## [1] "0x105651558"
 ```
 ]]
 ]]]
@@ -404,7 +404,7 @@ The above rules apply to function calls as well.
 ]
 .pull-right[
 
-```r
+``` r
 f &lt;- function(a) a
 x &lt;- c(1, 2, 3)
 ```
@@ -416,7 +416,7 @@ tracemem(x)
 ```
 
 
-```r
+``` r
 z &lt;- f(x) # no copy here!
 
 untracemem(x)
@@ -507,20 +507,20 @@ Note that copy-on-modify due to `l2[[3]] &lt;- 4 ` results in a **shallow** copy
 You may check your predictions using `lobstr::ref()`.
 
 
-```r
+``` r
 ref(l1, l2)
 ```
 
 ```
-## █ [1:0x13b0c5768] &lt;list&gt; 
-## ├─[2:0x106033f20] &lt;dbl&gt; 
-## ├─[3:0x106033ee8] &lt;dbl&gt; 
-## └─[4:0x106033eb0] &lt;dbl&gt; 
+## █ [1:0x104287768] &lt;list&gt; 
+## ├─[2:0x104554ea8] &lt;dbl&gt; 
+## ├─[3:0x104554ce8] &lt;dbl&gt; 
+## └─[4:0x104564a38] &lt;dbl&gt; 
 ##  
-## █ [5:0x13b3404a8] &lt;list&gt; 
-## ├─[2:0x106033f20] 
-## ├─[3:0x106033ee8] 
-## └─[6:0x106033dd0] &lt;dbl&gt;
+## █ [5:0x10407afc8] &lt;list&gt; 
+## ├─[2:0x104554ea8] 
+## ├─[3:0x104554ce8] 
+## └─[6:0x104563768] &lt;dbl&gt;
 ```
 
 ]
@@ -583,7 +583,7 @@ ref(d1)
 
 3. Explain the below results.
     
-    ```r
+    ``` r
     obj_size(1:10)
     ```
     
@@ -591,7 +591,7 @@ ref(d1)
     ## 680 B
     ```
     
-    ```r
+    ``` r
     obj_size(1:1e6)
     ```
     
@@ -673,7 +673,7 @@ Whether or not R copies an object&amp;mdash;and if so, how often&amp;mdash;can b
 You should **never** modify a data frame in a loop.
 
 
-```r
+``` r
 x &lt;- data.frame(
   matrix(runif(5 * 1e4), 
          ncol = 5)
@@ -779,7 +779,7 @@ What's happening here and why?
 It's better to use a list for this purpose.
 
 
-```r
+``` r
 y &lt;- as.list(x)
 tracemem(y)
 
@@ -839,7 +839,7 @@ Can you explain what's going on?
 
 .pull-left[
 
-```r
+``` r
 # step 1
 x &lt;- list(1:10)
 lobstr::ref(x)
@@ -853,15 +853,15 @@ lobstr::ref(x)
 .pull-right[
 
 ```
-## █ [1:0x109555ad0] &lt;list&gt; 
-## └─[2:0x109b1d780] &lt;int&gt;
+## █ [1:0x105496188] &lt;list&gt; 
+## └─[2:0x1053ca4d0] &lt;int&gt;
 ```
 
 ```
-## █ [1:0x13b38a248] &lt;list&gt; 
-## ├─[2:0x109b1d780] &lt;int&gt; 
-## └─█ [3:0x109555ad0] &lt;list&gt; 
-##   └─[2:0x109b1d780]
+## █ [1:0x1060e5248] &lt;list&gt; 
+## ├─[2:0x1053ca4d0] &lt;int&gt; 
+## └─█ [3:0x105496188] &lt;list&gt; 
+##   └─[2:0x1053ca4d0]
 ```
 ]]]
 
@@ -892,7 +892,7 @@ Ubiquitous operations that are reflected in the RStudio's _Environment tab_ are 
 
 .pull-right[
 
-```r
+``` r
 x &lt;- 1:3
 ```
 ]]
@@ -906,7 +906,7 @@ x &lt;- 1:3
 
 .pull-right[
 
-```r
+``` r
 x &lt;- 2:4
 ```
 ]]
@@ -920,7 +920,7 @@ x &lt;- 2:4
 
 .pull-right[
 
-```r
+``` r
 rm(x)
 ```
 ]]]]
@@ -1003,7 +1003,7 @@ Everything that happens is a function call.
 .medium[
 .pull-left[
 
-```r
+``` r
 typeof(lm)
 ```
 
@@ -1011,7 +1011,7 @@ typeof(lm)
 ## [1] "closure"
 ```
 
-```r
+``` r
 environment(lm)
 ```
 
@@ -1019,7 +1019,7 @@ environment(lm)
 ## &lt;environment: namespace:stats&gt;
 ```
 
-```r
+``` r
 names(formals(lm))[1:4]
 ```
 
@@ -1027,13 +1027,13 @@ names(formals(lm))[1:4]
 ## [1] "formula" "data"    "subset"  "weights"
 ```
 
-```r
+``` r
 # body(lm) # too large, feel free to check!
 ```
 ]
 .pull-right[
 
-```r
+``` r
 typeof(sum)
 ```
 
@@ -1041,7 +1041,7 @@ typeof(sum)
 ## [1] "builtin"
 ```
 
-```r
+``` r
 environment(sum)
 ```
 
@@ -1049,7 +1049,7 @@ environment(sum)
 ## NULL
 ```
 
-```r
+``` r
 names(formals(sum))
 ```
 
@@ -1057,7 +1057,7 @@ names(formals(sum))
 ## NULL
 ```
 
-```r
+``` r
 body(sum)
 ```
 
@@ -1078,7 +1078,7 @@ body(sum)
 
 .pull-left[
 
-```r
+``` r
 funs &lt;- list(
   function(x) x^2,
   function(x) x^3
@@ -1087,12 +1087,12 @@ lobstr::ref(funs)
 ```
 
 ```
-## █ [1:0x109a1bf88] &lt;list&gt; 
-## ├─[2:0x1058bc0b8] &lt;fn&gt; 
-## └─[3:0x1058bbfd8] &lt;fn&gt;
+## █ [1:0x106ed9508] &lt;list&gt; 
+## ├─[2:0x106f77628] &lt;fn&gt; 
+## └─[3:0x106f775b8] &lt;fn&gt;
 ```
 
-```r
+``` r
 sapply(funs, function(z) z(5))
 ```
 
@@ -1103,7 +1103,7 @@ sapply(funs, function(z) z(5))
 
 .pull-right[
 
-```r
+``` r
 (function(x) x^2)(5)
 ```
 
@@ -1111,7 +1111,7 @@ sapply(funs, function(z) z(5))
 ## [1] 25
 ```
 
-```r
+``` r
 (function(x) x^3)(5)
 ```
 
@@ -1141,7 +1141,7 @@ Explore what kind of function `(` is, what it does, and explain why the statemen
 and
 
 
-```r
+``` r
 (x&lt;-5)
 ```
 
@@ -1157,7 +1157,7 @@ are meaningful to R.
 
 - `(` is a primitive:
     
-    ```r
+    ``` r
     `(`
     ```
     
@@ -1207,7 +1207,7 @@ Write a code snippet which is useful for demonstrating all of the above concepts
 ???
 
 
-```r
+``` r
 rm(x)
 z &lt;- function(x) x^2
 
@@ -1247,7 +1247,7 @@ Lazy evaluation allows R functions to behave quite differently than functions in
 #### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example: outside evaluation
 
 
-```r
+``` r
 f1 &lt;- function(x) { y &lt;&lt;- 5; x + 1 }
 f1(x = y &lt;- 6)
 ```
@@ -1256,7 +1256,7 @@ f1(x = y &lt;- 6)
 ## [1] 7
 ```
 
-```r
+``` r
 y
 ```
 
@@ -1282,7 +1282,7 @@ y
 #### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example: laziness
 
 
-```r
+``` r
 double &lt;- function(x) { 
   message("Computing...")
   x * 2
@@ -1319,7 +1319,7 @@ We see that `double(20)` is evaluated only once: there's only _one_ message prin
 #### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example: lazy evaluation of (default) function arguments
 
 
-```r
+``` r
 f &lt;- function(x) {
   cat("f: 'x doesn't matter to me.'")
 }
@@ -1331,7 +1331,7 @@ f(x = stop("I don't matter."))
 ```
 
 
-```r
+``` r
 # (default arguments)
 f &lt;- function(x = 1, y = x * 2, z = a + b) {
   a &lt;- 10
@@ -1363,7 +1363,7 @@ f()
 `ls()` lists objects in the environment where it is called. Explain the results below. 
 
 
-```r
+``` r
 f &lt;- function(x = ls()) {
   a &lt;- 1
   x
@@ -1375,7 +1375,7 @@ f()
 ## [1] "a" "x"
 ```
 
-```r
+``` r
 f(ls())
 ```
 
@@ -1397,7 +1397,7 @@ f(ls())
 Lazy evaluation also applies to other situations, e.g., in control flow.
 
 
-```r
+``` r
 x &lt;- NULL
 if (!is.null(x) &amp;&amp; x &gt; 0) {
  # &lt;do something&gt;
@@ -1428,7 +1428,7 @@ if (!is.null(x) &amp;&amp; x &gt; 0) {
 
 1. Explain why the following code does not work. Can you come up with a work-around without altering `f()`?
     
-    ```r
+    ``` r
     f &lt;- function(x, z) {
       z + x^2
     }
@@ -1436,12 +1436,12 @@ if (!is.null(x) &amp;&amp; x &gt; 0) {
     ```
     
     ```
-    ## Error in f(x = z^2, z = 2): object 'z' not found
+    ## Error: object 'z' not found
     ```
 
 2. Explain what the `...` argument ([ellipsis](https://en.wikipedia.org/wiki/Ellipsis#Programming_languages)) does by means of the following example:
     
-    ```r
+    ``` r
     f &lt;- function(...) {
       names(list(...))
     }
@@ -1458,7 +1458,7 @@ if (!is.null(x) &amp;&amp; x &gt; 0) {
 
 1. Lazy evaluation happens at function definition, _not invocation_: R looks for `z` in the global environment because `x` is not `z^2` by default, like in the fixed version below.
     
-    ```r
+    ``` r
     f &lt;- function(x = z^2, z) {
       z + x^2
     }
@@ -1487,7 +1487,7 @@ if (!is.null(x) &amp;&amp; x &gt; 0) {
 
 - Every function call can be written in prefix form!
     
-    ```r
+    ``` r
     `[`(1:3, 3)
     ```
     
@@ -1509,7 +1509,7 @@ if (!is.null(x) &amp;&amp; x &gt; 0) {
 #### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example: rewrite special and infix as prefix
 
 
-```r
+``` r
 # addition
 1 + 2
 ```
@@ -1518,7 +1518,7 @@ if (!is.null(x) &amp;&amp; x &gt; 0) {
 ## [1] 3
 ```
 
-```r
+``` r
 `+`(1, 2)
 ```
 
@@ -1526,7 +1526,7 @@ if (!is.null(x) &amp;&amp; x &gt; 0) {
 ## [1] 3
 ```
 
-```r
+``` r
 # integer sequence generation
 x &lt;- `:`(1, 10)
 x
@@ -1536,7 +1536,7 @@ x
 ##  [1]  1  2  3  4  5  6  7  8  9 10
 ```
 
-```r
+``` r
 # evaluation
 `(`(x)
 ```
@@ -1556,7 +1556,7 @@ It's straightforward to write your own operators in infix form.
 #### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example: `paste0()` as infix
 
 
-```r
+``` r
 `%+%` &lt;- function(a, b) paste0(a, b)
 "new " %+% "string"
 ```
@@ -1583,7 +1583,7 @@ Replacement functions have the form shown below.
 #### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example: replacement of the last vector element
 
 
-```r
+``` r
 `last&lt;-` &lt;- function(x, value) {
   x[length(x)] &lt;- value
   x
@@ -1623,7 +1623,7 @@ tracemem(x)
 ## &lt;0x7feac1eb7598&gt;
 ```
 
-```r
+``` r
 last(x) &lt;- 420
 ```
 ```
@@ -1632,7 +1632,7 @@ last(x) &lt;- 420
 ```
 
 
-```r
+``` r
 x
 ```
 
@@ -1669,13 +1669,13 @@ class: segue-red
 <script src="../xaringan_files/macros.js"></script>
 <script src="https://platform.twitter.com/widgets.js"></script>
 <script>var slideshow = remark.create({
-"highlightStyle": "github",
-"highlightLines": true,
-"countIncrementalSlides": false,
-"ratio": "16:9",
-"navigation": {
-"scroll": false
-}
+  "highlightStyle": "github",
+  "highlightLines": true,
+  "countIncrementalSlides": false,
+  "ratio": "16:9",
+  "navigation": {
+    "scroll": false
+  }
 });
 if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
   window.dispatchEvent(new Event('resize'));
@@ -1716,6 +1716,19 @@ if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
     deleted = true;
   });
 })();
+// add `data-at-shortcutkeys` attribute to <body> to resolve conflicts with JAWS
+// screen reader (see PR #262)
+(function(d) {
+  let res = {};
+  d.querySelectorAll('.remark-help-content table tr').forEach(tr => {
+    const t = tr.querySelector('td:nth-child(2)').innerText;
+    tr.querySelectorAll('td:first-child .key').forEach(key => {
+      const k = key.innerText;
+      if (/^[a-z]$/.test(k)) res[k] = t;  // must be a single letter (key)
+    });
+  });
+  d.body.setAttribute('data-at-shortcutkeys', JSON.stringify(res));
+})(document);
 (function() {
   "use strict"
   // Replace <script> tags in slides area to make them executable

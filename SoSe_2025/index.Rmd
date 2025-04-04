@@ -56,10 +56,10 @@ class: title-slide title-index
 .pull-down-small_margin.font70[
 <br>
 ### Additional Topics for self-study
-are25
+
 <ol start = "10">
   <li> <a href = Datatable/datatable.html>data.table</a> </li>
   <li> <a href = Shiny/Shiny.html>Shiny</a> </li>
   <li> <a href = Packages/Packages.html>Writing Packages</a> </li>
 </ol>
-]
+]]

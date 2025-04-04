@@ -3,18 +3,18 @@
   <head>
     <title>Advanced R for Econometricians</title>
     <meta charset="utf-8" />
-    <meta name="author" content="Martin C. Arnold" />
-    <meta name="author" content="Jens Klenke" />
-    <meta name="date" content="2022-04-06" />
-    <script src="databases_files/header-attrs-2.12/header-attrs.js"></script>
+    <meta name="author" content="Martin Arnold" />
+    <meta name="author" content="Martin Schmelzer" />
+    <meta name="date" content="2025-04-04" />
+    <script src="databases_files/header-attrs-2.29/header-attrs.js"></script>
     <link href="databases_files/remark-css-0.0.1/default.css" rel="stylesheet" />
     <script src="databases_files/xaringanExtra-progressBar-0.0.1/progress-bar.js"></script>
     <script src="databases_files/clipboard-2.0.6/clipboard.min.js"></script>
     <link href="databases_files/xaringanExtra-clipboard-0.2.6/xaringanExtra-clipboard.css" rel="stylesheet" />
     <script src="databases_files/xaringanExtra-clipboard-0.2.6/xaringanExtra-clipboard.js"></script>
     <script>window.xaringanExtraClipboard(null, {"button":"<i class=\"fa fa-clipboard\"><\/i>","success":"<i class=\"fa fa-check\" style=\"color: #00ff00\"><\/i>","error":"<i class=\"fa fa-times-circle\" style=\"color: #F94144\"><\/i>"})</script>
-    <link href="databases_files/font-awesome-5.1.0/css/all.css" rel="stylesheet" />
-    <link href="databases_files/font-awesome-5.1.0/css/v4-shims.css" rel="stylesheet" />
+    <link href="databases_files/font-awesome-6.5.2/css/all.min.css" rel="stylesheet" />
+    <link href="databases_files/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet" />
     <script type="text/x-mathjax-config">
       MathJax.Hub.Config({
         TeX: { equationNumbers: { autoNumber: "AMS" } },
@@ -65,7 +65,7 @@ class: title-slide title-sqlite center middle
 
 # Advanced R for Econometricians
 ## Databases using R
-### Martin C. Arnold, Jens Klenke
+### Martin Arnold, Martin Schmelzer
 
 ---
 ## Memory Limitations of R
@@ -333,7 +333,7 @@ class: title-slide title-sqlite center middle
 
 .blockquote.exercise[
 
-```r
+``` r
 install.packages("dbplyr")
 ```
 ]
@@ -367,7 +367,7 @@ install.packages("dbplyr")
 #### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Setup the connection 
 
 
-```r
+``` r
 library(dbplyr)
 library(DBI)
 con &lt;- DBI::dbConnect(
@@ -391,7 +391,7 @@ con &lt;- DBI::dbConnect(
 
 #### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example: Writing data
 
-```r
+``` r
 DBI::dbWriteTable(con, "gapminder", gapminder::gapminder)
 DBI::dbWriteTable(con, "country_codes", gapminder::country_codes)
 ```
@@ -411,12 +411,8 @@ you can use keyring
 .blockquote.exercise[
 
 
-```r
+``` r
 DBI::dbListTables(con)
-```
-
-```
-## [1] "country_codes" "gapminder"
 ```
 ]
 
@@ -430,14 +426,9 @@ DBI::dbListTables(con)
 
 #### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example 
 
-```r
+``` r
 gap_db &lt;- tbl(con, "gapminder")
 class(gap_db)
-```
-
-```
-## [1] "tbl_MariaDBConnection" "tbl_dbi"               "tbl_sql"              
-## [4] "tbl_lazy"              "tbl"
 ```
 ]
 ---
@@ -447,7 +438,7 @@ class(gap_db)
 
 #### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example 
 
-```r
+``` r
 gap_avg_db &lt;- gap_db %&gt;%
   group_by(continent) %&gt;% 
   select_if(is.numeric) %&gt;% 
@@ -470,16 +461,8 @@ gap_avg_db &lt;- gap_db %&gt;%
 
 #### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example 
 
-```r
+``` r
 show_query(gap_avg_db)
-```
-
-```
-## &lt;SQL&gt;
-## SELECT `continent`, AVG(`lifeExp`) AS `lifeExp`, AVG(`pop`) AS `pop`, AVG(`gdpPercap`) AS `gdpPercap`
-## FROM (SELECT `continent`, `lifeExp`, `pop`, `gdpPercap`
-## FROM `gapminder`) `q01`
-## GROUP BY `continent`
 ```
 ]
 
@@ -509,20 +492,9 @@ When working with databases, `dplyr` tries to be as lazy as possible:
 #### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example 
 
 
-```r
+``` r
 gap_avg &lt;- gap_avg_db %&gt;% collect(n = Inf)
 print(gap_avg)
-```
-
-```
-## # A tibble: 5 x 4
-##   continent lifeExp       pop gdpPercap
-##   &lt;chr&gt;       &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;
-## 1 Africa       48.9  9916003.     2194.
-## 2 Americas     64.7 24504795.     7136.
-## 3 Asia         60.1 77038722.     7902.
-## 4 Europe       71.9 17169765.    14469.
-## 5 Oceania      74.3  8874672.    18622.
 ```
 ]
 ---
@@ -534,7 +506,7 @@ print(gap_avg)
 
 .blockquote.exercise[
 
-```r
+``` r
 DBI::dbDisconnect(con)
 rm(con)
 ```
@@ -567,7 +539,7 @@ connects to that database.
 #### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example 
 
 
-```r
+``` r
 library(dplyr)
 con &lt;- DBI::dbConnect(
   drv = RSQLite::SQLite(),
@@ -591,7 +563,7 @@ SQLite -&gt; SQLite is a C-language library that implements a small, fast, self-
 .font90.blockquote.exercise[
 #### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example 
 
-```r
+``` r
 DBI::dbWriteTable(con,
                   name = "mtcars_db", 
                   value = mtcars)
@@ -608,7 +580,7 @@ DBI::dbWriteTable(con,
 #### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example 
 
 
-```r
+``` r
 new_car &lt;- data.frame(mpg = 1, cyl = 16, disp = 800, hp = 210, 
                       drat = 5, wt = 6, qsec = 2, vs = 1, am = 0)
 rownames(new_car) &lt;- "Super Car 500"
@@ -650,13 +622,13 @@ class: exercise_slide
 <script src="../xaringan_files/macros.js"></script>
 <script src="https://platform.twitter.com/widgets.js"></script>
 <script>var slideshow = remark.create({
-"highlightStyle": "github",
-"highlightLines": true,
-"countIncrementalSlides": false,
-"ratio": "16:9",
-"navigation": {
-"scroll": false
-}
+  "highlightStyle": "github",
+  "highlightLines": true,
+  "countIncrementalSlides": false,
+  "ratio": "16:9",
+  "navigation": {
+    "scroll": false
+  }
 });
 if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
   window.dispatchEvent(new Event('resize'));
@@ -697,6 +669,19 @@ if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
     deleted = true;
   });
 })();
+// add `data-at-shortcutkeys` attribute to <body> to resolve conflicts with JAWS
+// screen reader (see PR #262)
+(function(d) {
+  let res = {};
+  d.querySelectorAll('.remark-help-content table tr').forEach(tr => {
+    const t = tr.querySelector('td:nth-child(2)').innerText;
+    tr.querySelectorAll('td:first-child .key').forEach(key => {
+      const k = key.innerText;
+      if (/^[a-z]$/.test(k)) res[k] = t;  // must be a single letter (key)
+    });
+  });
+  d.body.setAttribute('data-at-shortcutkeys', JSON.stringify(res));
+})(document);
 (function() {
   "use strict"
   // Replace <script> tags in slides area to make them executable
