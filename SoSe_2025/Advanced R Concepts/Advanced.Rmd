@@ -2,8 +2,8 @@
 title: "Advanced R for Econometricians"
 subtitle: "Advanced R Concepts"
 author: 
-  - "Martin C. Arnold"
-  - "Jens Klenke"
+  - "Martin Arnold"
+  - "Martin Schmelzer"
 date: "`r Sys.Date()`"
 output:
   xaringan::moon_reader:
