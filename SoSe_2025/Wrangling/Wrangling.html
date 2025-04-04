@@ -5,7 +5,7 @@
     <meta charset="utf-8" />
     <meta name="author" content="Martin Arnold" />
     <meta name="author" content="Martin Schmelzer" />
-    <meta name="date" content="2025-04-04" />
+    <meta name="date" content="2025-02-08" />
     <script src="Wrangling_files/header-attrs/header-attrs.js"></script>
     <link href="Wrangling_files/remark-css/default.css" rel="stylesheet" />
     <script src="Wrangling_files/xaringanExtra-progressBar/progress-bar.js"></script>
@@ -328,8 +328,8 @@ slice_sample(mtcars_tibble, prop = 0.1)
 .blockquote.exercise[
 
 ``` r
-tibble_with_duplicates    &lt;- tibble(x = c(1, 1, 2, 3), 
-                                    y = c(4, 4, 5, 6))
+tibble_with_duplicates    &lt;- tibble(x = c(1,1,2,3), 
+                                    y = c(4,4,5,6))
 tibble_without_duplicates &lt;- distinct(tibble_with_duplicates)
 ```
 ]
@@ -544,8 +544,8 @@ The function `mutate()` adds new columns or replaces old columns based on existi
 ``` r
 mutate(mtcars_tibble,
        gpm = 1/mpg,
-       disp =  disp - mean(disp)  # replaces disp
-)
+       disp =  disp - mean(disp) # replaces disp 
+       )
 ```
 ]]
 
@@ -573,7 +573,7 @@ mutate(rw, increments =  y - lag(y, k = 1))
 mutate(mtcars_tibble,
        hp_rank_smallest_first = min_rank(hp),
        hp_rank_largest_first  = min_rank(desc(hp))
-)
+  )
 ```
 ]]
 
@@ -586,7 +586,7 @@ mutate(mtcars_tibble,
 - base R functions such as `mean()`, `sd()`, `max()`
 - dplyr specific functions for
   - position `first()`, `nth()`, `last()`
-  - counts `n()`, `n_distinct()`
+  - counts `n()`, `n_disticnt()`
 
 ]
 
@@ -614,8 +614,8 @@ summarise(mtcars_tibble,
 .blockquote.exercise[
 
 ``` r
-my_variance &lt;- function(x) 1 / (n() - 1) * sum((x - mean(x))^2)
-summarise(mtcars_tibble, my_variance(mpg))
+my_variance &lt;- function(x) 1/(n()-1) * sum((x - mean(x))^2)
+summarise(by_cyl, my_variance(mpg))
 ```
 
 ]]
@@ -629,7 +629,7 @@ summarise(mtcars_tibble, my_variance(mpg))
 
 ``` r
 two_return_vaules &lt;- function(x) c(mean(x), sd(x))
-summarise(mtcars_tibble, two_return_vaules(mpg))
+summarise(by_cyl, two_return_vaules(mpg))
 ```
 ]
 
@@ -748,11 +748,10 @@ We could do it like this:
 
 ``` r
 filtered   &lt;- filter(mtcars_tibble, cyl &lt;= 8)
-mutated    &lt;- mutate(filtered, gpm = 1 / mpg)
+mutated    &lt;- mutate(filtered, gpm = 1/mpg)
 grouped    &lt;- group_by(mutated, gear)
-summarized &lt;- summarise(grouped, 
-                        count = n(), 
-                        mean_hp  = mean(hp),
+summarized &lt;- summarise(grouped, count = n(), 
+                        mean_hp = mean(hp),
                         mean_gpm = mean(gpm)) 
 ```
 ]
@@ -773,9 +772,9 @@ We could nest all those functions to get rid of the intermediate result.
 #### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example
 
 ``` r
-summarise(group_by(mutate(filter(mtcars_tibble, cyl &lt;= 8), gpm = 1 / mpg)), 
-          count    = n(), 
-          mean_hp  = mean(hp),
+summarise(group_by(mutate(filter(mtcars_tibble, cyl &lt;= 8), gpm = 1/mpg)), 
+          count = n(), 
+          mean_hp = mean(hp),
           mean_gpm = mean(gpm))
 ```
 
@@ -806,10 +805,10 @@ The value on the left side of the operator becomes the input to the function on 
 
 ``` r
 mtcars_tibble %&gt;% 
-  mutate(gpm = 1 / mpg) %&gt;%
+  mutate(gpm = 1/mpg) %&gt;%
   group_by(gear) %&gt;% 
-  summarise(count    = n(), 
-            mean_hp  = mean(hp),
+  summarise(count = n(), 
+            mean_hp = mean(hp),
             mean_gpm = mean(gpm)) 
 ```
 ]
@@ -838,9 +837,9 @@ Different pipe operator for more flexbility.
 
 ???
 
-Examples:
+Examnples:
 
-#### overwriting object
+#### overvwriting object
 cars %&lt;&gt;%
   dplyr::summarise(mean(hp))
 
@@ -886,12 +885,12 @@ iris %&gt;% summarise(across(c(Sepal.Length, Sepal.Width), list(mean = mean, sd 
 
 --
 
-- Inside the `across()` function we can use the helper functions to select certain variables which we already saw on the previous slides. 
+- Inside the `across()` function we can use the helper function for select which we already saw on the previous slides. 
 
 .blockquote.exercise[ 
 
 ``` r
-iris %&gt;% summarise(across(ends_with("Width"), mean))
+iris %&gt;% summarise(across(ends_with('Width'), mean))
 ```
 ]
 
@@ -1031,7 +1030,7 @@ A left join keeps all observations from the left table, and matches records from
 .blockquote.exercise[ 
 
 ``` r
-band_members %&gt;% left_join(band_instruments, by = "name")
+band_members %&gt;% left_join(band_instruments, by = 'name')
 ```
 
 ```
@@ -1056,7 +1055,7 @@ An inner join matches rows from the left and the right table but only keeps the 
 .blockquote.exercise[ 
 
 ``` r
-band_members %&gt;% inner_join(band_instruments, by = "name")
+band_members %&gt;% inner_join(band_instruments, by = 'name')
 ```
 
 ```
@@ -1076,7 +1075,7 @@ A full (outer) join matches rows from the left and the right table and keeps all
 .blockquote.exercise[ 
 
 ``` r
-band_members %&gt;% full_join(band_instruments, by = "name")
+band_members %&gt;% full_join(band_instruments, by = 'name')
 ```
 
 ```
@@ -1099,7 +1098,7 @@ It keeps only columns from the left.
 .blockquote.exercise[ 
 
 ``` r
-band_members %&gt;% semi_join(band_instruments, by = "name")
+band_members %&gt;% semi_join(band_instruments, by = 'name')
 ```
 
 ```
@@ -1119,7 +1118,7 @@ An anti join returns all rows from the first table where no matches are found in
 .blockquote.exercise[  
 
 ``` r
-band_members %&gt;% anti_join(band_instruments, by = "name")
+band_members %&gt;% anti_join(band_instruments, by = 'name')
 ```
 
 ```
@@ -1281,7 +1280,7 @@ The function `pivot_longer()` main arguments are
 
 ``` r
 table4a %&gt;% 
-  pivot_longer(cols = c("1999", "2000"), names_to = "year", values_to = "value")
+  pivot_longer(cols = c('1999', '2000'), names_to = 'year', values_to = 'value')
 ```
 
 ```
@@ -1446,13 +1445,13 @@ ggplot(table1, aes(year, cases)) +
 <script src="../xaringan_files/macros.js"></script>
 <script src="https://platform.twitter.com/widgets.js"></script>
 <script>var slideshow = remark.create({
-  "highlightStyle": "github",
-  "highlightLines": true,
-  "countIncrementalSlides": false,
-  "ratio": "16:9",
-  "navigation": {
-    "scroll": false
-  }
+"highlightStyle": "github",
+"highlightLines": true,
+"countIncrementalSlides": false,
+"ratio": "16:9",
+"navigation": {
+"scroll": false
+}
 });
 if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
   window.dispatchEvent(new Event('resize'));
