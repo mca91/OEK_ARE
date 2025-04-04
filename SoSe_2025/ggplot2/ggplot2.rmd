@@ -487,7 +487,7 @@ class: left, top
 ```{r echo = TRUE, eval = FALSE}
 ggplot(diamonds, aes(carat, price)) + 
   geom_point() + 
-  stat_density2d(aes(fill = ..level..), 
+  stat_density2d(aes(fill = after_stat(level), 
                  geom = "polygon")
 ```
 ]]]
@@ -498,7 +498,7 @@ ggplot(diamonds, aes(carat, price)) +
 ```{r, echo = FALSE, eval = TRUE, out.width='100%'}
 ggplot(data = diamonds, mapping = aes(carat, price)) + 
   geom_point() + 
-  stat_density2d(aes(fill = ..level..), 
+  stat_density2d(aes(fill = after_stat(level)), 
                  geom = "polygon")
 
 ```
