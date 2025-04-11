@@ -5,8 +5,8 @@
     <meta charset="utf-8" />
     <meta name="author" content="Martin Arnold" />
     <meta name="author" content="Martin Schmelzer" />
-    <meta name="date" content="2025-04-04" />
-    <script src="databases_files/header-attrs-2.29/header-attrs.js"></script>
+    <meta name="date" content="2025-04-11" />
+    <script src="databases_files/header-attrs-2.29.1/header-attrs.js"></script>
     <link href="databases_files/remark-css-0.0.1/default.css" rel="stylesheet" />
     <script src="databases_files/xaringanExtra-progressBar-0.0.1/progress-bar.js"></script>
     <script src="databases_files/clipboard-2.0.6/clipboard.min.js"></script>
@@ -348,6 +348,7 @@ install.packages("dbplyr")
     - `RMariaDB` connects to MySQL and MariaDB.
     - `RPostgreSQL` connects to Postgres and Redshift.
     - `RSQLite` embeds a SQLite database.
+    - `duckdb` embeds a fast, in-process analytical db optimized for large data and complex queries.
     - `bigrquery` connects to Google’s BigQuery.
 
 ---
@@ -357,7 +358,7 @@ install.packages("dbplyr")
 - To connect to a database authentication information such as 
   username and password are required (the database admin should provide those). 
 - You also need to specify a driver that makes communication with the database possible.
-- There is a remote MySQL database hosted on the web which we have access to:
+- ~~There is a remote MySQL database hosted on the web which we have access to:~~
 ]
 
 --
@@ -384,28 +385,123 @@ con &lt;- DBI::dbConnect(
 
 
 
+
+
+
+
+
+
+
+
+---
+
+.font90[
+## Set up an SQLite Database
+
+- SQLite is a very light weighted Database Management System 
+- An SQLite database is contained in a single file. There is no need for a server. 
+- Everything you need is to install the `RSQLite` packages. 
+]
+
 --
 
+.font90[
+#### Create a SQLite Database
+- A new SQLite database is automatically created if you call `DBI::dbConnect()`
+with argument `dbname = "path_to_database"` where `"path_to_database"` is a path to 
+a non-existing file. 
+- In case `"path_to_database"` is an existing SQLite database it 
+connects to that database. 
+]
 
-.font80[.blockquote.exercise[
+--
 
-#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example: Writing data
+.font90.blockquote.exercise[
+#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example 
+
 
 ``` r
-DBI::dbWriteTable(con, "gapminder", gapminder::gapminder)
-DBI::dbWriteTable(con, "country_codes", gapminder::country_codes)
+library(dplyr)
+con &lt;- DBI::dbConnect(
+  drv = RSQLite::SQLite(),
+  dbname = "local_db.sqlite"), 
+  )
 ```
+]
 
-]]
 ???
 
-you can use keyring
+SQLite -&gt; SQLite is a C-language library that implements a small, fast, self-contained, high-reliability, full-featured, SQL database engine.
+
+
+
+---
+## Write Data to the Database
+.font80[
+- When the connection is established we can use the object `con` to communicate with the database.
+- We add the data frame `mtcars` as a new table to the database.
+]
+--
+
+.font90.blockquote.exercise[
+#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example 
+
+``` r
+DBI::dbWriteTable(con,
+                  name = "tbl_mtcars", 
+                  value = mtcars)
+```
+]
+
+--
+.font80[
+- To add data to an existing table we use the additional argument `append = TRUE`.
+]
+
+--
+
+.font90.blockquote.exercise[
+#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example 
+
+
+``` r
+new_car &lt;- data.frame(mpg = 1, cyl = 16, disp = 800, hp = 210, 
+                      drat = 5, wt = 6, qsec = 2, vs = 1, am = 0)
+rownames(new_car) &lt;- "Super Car 500"
+
+DBI::dbWriteTable(con, 
+                  name = "tbl_mtcars", 
+                  value = new_car, 
+                  append = TRUE)
+
+DBI::dbDisconnect(con)
+```
+
+]
+
+???
+with name `mtcars_db` 
+
+
+
+---
+## Write Data to the Database
+
+
+.font90.blockquote.exercise[
+#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example 
+
+
+``` r
+dbWriteTable(con, "tbl_gapminder", gapminder::gapminder)
+dbWriteTable(con, "tbl_country_codes", gapminder::country_codes)
+```
+]
 
 
 ---
 ## Access Data
 
-- When the connection is established we can use the object `con` to communicate with the database.
 - The function `DBI::dbListTables()` tells us which tables are in the database.
 
 .blockquote.exercise[
@@ -427,8 +523,8 @@ DBI::dbListTables(con)
 #### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example 
 
 ``` r
-gap_db &lt;- tbl(con, "gapminder")
-class(gap_db)
+gap_tbl &lt;- tbl(con, "tbl_gapminder")
+class(gap_tbl)
 ```
 ]
 ---
@@ -439,7 +535,7 @@ class(gap_db)
 #### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example 
 
 ``` r
-gap_avg_db &lt;- gap_db %&gt;%
+gap_avg_tbl &lt;- gap_tbl %&gt;%
   group_by(continent) %&gt;% 
   select_if(is.numeric) %&gt;% 
   select(-year) %&gt;%
@@ -451,7 +547,7 @@ gap_avg_db &lt;- gap_db %&gt;%
 --
 
 .font90[
-- Even if it seems as if `gap_avg_db` is a data frame it still is only a set of instructions to be performed by the database. 
+- Even if it seems as if `gap_avg_tbl` is a data frame it still is only a set of instructions to be performed by the database. 
 - `show_query()` tells us which instructions are sent to the database. 
 ]
 
@@ -462,7 +558,7 @@ gap_avg_db &lt;- gap_db %&gt;%
 #### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example 
 
 ``` r
-show_query(gap_avg_db)
+show_query(gap_avg_tbl)
 ```
 ]
 
@@ -493,7 +589,7 @@ When working with databases, `dplyr` tries to be as lazy as possible:
 
 
 ``` r
-gap_avg &lt;- gap_avg_db %&gt;% collect(n = Inf)
+gap_avg &lt;- gap_avg_tbl %&gt;% collect(n = Inf)
 print(gap_avg)
 ```
 ]
@@ -512,91 +608,9 @@ rm(con)
 ```
 ]
 
----
-
-.font90[
-## Set up an SQLite Database
-
-- SQLite is a very light weighted Database Management System 
-- An SQLite database is contained in a single file. There is no need for a server. 
-- Everything you need is to install the `RSQLite` packages. 
-]
-
---
-
-.font90[
-#### Create an SQLite Database
-- A new SQLite database is automatically created if you call `DBI::dbConnect()`
-with argument `dbname = "path_to_database"` where `"path_to_database"` is a path to 
-a non-existing file. 
-- In case `"path_to_database"` is an existing SQLite database it 
-connects to that database. 
-]
-
---
-
-.font90.blockquote.exercise[
-#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example 
 
 
-``` r
-library(dplyr)
-con &lt;- DBI::dbConnect(
-  drv = RSQLite::SQLite(),
-  dbname = here::here("databases","mtcars.sqlite3"), 
-  )
-```
-]
 
-???
-
-SQLite -&gt; SQLite is a C-language library that implements a small, fast, self-contained, high-reliability, full-featured, SQL database engine.
-
-
----
-## Write Data to the Database
-
-- we add the data frame `mtcars` as a new table to the database.
-
---
-
-.font90.blockquote.exercise[
-#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example 
-
-``` r
-DBI::dbWriteTable(con,
-                  name = "mtcars_db", 
-                  value = mtcars)
-```
-]
-
---
-
-- To add data to an existing table we use the additional argument `append = TRUE`.
-
---
-
-.font90.blockquote.exercise[
-#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example 
-
-
-``` r
-new_car &lt;- data.frame(mpg = 1, cyl = 16, disp = 800, hp = 210, 
-                      drat = 5, wt = 6, qsec = 2, vs = 1, am = 0)
-rownames(new_car) &lt;- "Super Car 500"
-
-DBI::dbWriteTable(con, 
-                  name = "mtcars_db", 
-                  value = new_car, 
-                  append = TRUE)
-
-DBI::dbDisconnect(con)
-```
-
-]
-
-???
-with name `mtcars_db` 
 ---
 class: exercise_slide
 ## Exercises
@@ -618,6 +632,7 @@ class: exercise_slide
     </textarea>
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
 <script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script src="../assets/navigate_home.js"></script>
 <script src="../assets/remark-zoom.js"></script>
 <script src="../xaringan_files/macros.js"></script>
 <script src="https://platform.twitter.com/widgets.js"></script>

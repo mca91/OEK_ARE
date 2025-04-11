@@ -13,7 +13,7 @@ output:
     includes:
       in_header: "../assets/mathjax-equation-numbers.html"
     nature:
-      beforeInit: ["../assets/remark-zoom.js", "../xaringan_files/macros.js", "https://platform.twitter.com/widgets.js"]
+      beforeInit: ["../assets/navigate_home.js", "../assets/remark-zoom.js", "../xaringan_files/macros.js", "https://platform.twitter.com/widgets.js"]
       highlightStyle: github
       highlightLines: true
       countIncrementalSlides: false
@@ -183,6 +183,7 @@ install.packages("dbplyr")
     - `RMariaDB` connects to MySQL and MariaDB.
     - `RPostgreSQL` connects to Postgres and Redshift.
     - `RSQLite` embeds a SQLite database.
+    - `duckdb` embeds a fast, in-process analytical db optimized for large data and complex queries.
     - `bigrquery` connects to Google’s BigQuery.
 
 ---
@@ -192,7 +193,7 @@ install.packages("dbplyr")
 - To connect to a database authentication information such as 
   username and password are required (the database admin should provide those). 
 - You also need to specify a driver that makes communication with the database possible.
-- There is a remote MySQL database hosted on the web which we have access to:
+- ~~There is a remote MySQL database hosted on the web which we have access to:~~
 ]
 
 --
@@ -229,27 +230,119 @@ con <- DBI::dbConnect(
                )
 ```
 
+
+
+
+
+
+
+
+
+---
+
+.font90[
+## Set up an SQLite Database
+
+- SQLite is a very light weighted Database Management System 
+- An SQLite database is contained in a single file. There is no need for a server. 
+- Everything you need is to install the `RSQLite` packages. 
+]
+
 --
 
+.font90[
+#### Create a SQLite Database
+- A new SQLite database is automatically created if you call `DBI::dbConnect()`
+with argument `dbname = "path_to_database"` where `"path_to_database"` is a path to 
+a non-existing file. 
+- In case `"path_to_database"` is an existing SQLite database it 
+connects to that database. 
+]
 
-.font80[.blockquote.exercise[
+--
 
-#### `r desktop` Example: Writing data
+.font90.blockquote.exercise[
+#### `r desktop` Example 
+
 ```{r, echo = TRUE, eval = FALSE}
-DBI::dbWriteTable(con, "gapminder", gapminder::gapminder)
-DBI::dbWriteTable(con, "country_codes", gapminder::country_codes)
+library(dplyr)
+con <- DBI::dbConnect(
+  drv = RSQLite::SQLite(),
+  dbname = "local_db.sqlite"), 
+  )
 ```
+]
 
-]]
 ???
 
-you can use keyring
+SQLite -> SQLite is a C-language library that implements a small, fast, self-contained, high-reliability, full-featured, SQL database engine.
+
+
+
+---
+## Write Data to the Database
+.font80[
+- When the connection is established we can use the object `con` to communicate with the database.
+- We add the data frame `mtcars` as a new table to the database.
+]
+--
+
+.font90.blockquote.exercise[
+#### `r desktop` Example 
+```{r, eval = FALSE}
+DBI::dbWriteTable(con,
+                  name = "tbl_mtcars", 
+                  value = mtcars)
+```
+]
+
+--
+.font80[
+- To add data to an existing table we use the additional argument `append = TRUE`.
+]
+
+--
+
+.font90.blockquote.exercise[
+#### `r desktop` Example 
+
+```{r, eval = FALSE}
+new_car <- data.frame(mpg = 1, cyl = 16, disp = 800, hp = 210, 
+                      drat = 5, wt = 6, qsec = 2, vs = 1, am = 0)
+rownames(new_car) <- "Super Car 500"
+
+DBI::dbWriteTable(con, 
+                  name = "tbl_mtcars", 
+                  value = new_car, 
+                  append = TRUE)
+
+DBI::dbDisconnect(con)
+```
+
+]
+
+???
+with name `mtcars_db` 
+
+
+
+---
+## Write Data to the Database
+
+
+.font90.blockquote.exercise[
+#### `r desktop` Example 
+
+```{r, echo = TRUE, eval = FALSE}
+dbWriteTable(con, "tbl_gapminder", gapminder::gapminder)
+dbWriteTable(con, "tbl_country_codes", gapminder::country_codes)
+```
+]
 
 
 ---
 ## Access Data
 
-- When the connection is established we can use the object `con` to communicate with the database.
 - The function `DBI::dbListTables()` tells us which tables are in the database.
 
 .blockquote.exercise[
@@ -269,8 +362,8 @@ DBI::dbListTables(con)
 
 #### `r desktop` Example 
 ```{r, eval = FALSE}
-gap_db <- tbl(con, "gapminder")
-class(gap_db)
+gap_tbl <- tbl(con, "tbl_gapminder")
+class(gap_tbl)
 ```
 ]
 ---
@@ -280,7 +373,7 @@ class(gap_db)
 
 #### `r desktop` Example 
 ```{r, message=FALSE, warning=FALSE, eval = FALSE}
-gap_avg_db <- gap_db %>%
+gap_avg_tbl <- gap_tbl %>%
   group_by(continent) %>% 
   select_if(is.numeric) %>% 
   select(-year) %>%
@@ -292,7 +385,7 @@ gap_avg_db <- gap_db %>%
 --
 
 .font90[
-- Even if it seems as if `gap_avg_db` is a data frame it still is only a set of instructions to be performed by the database. 
+- Even if it seems as if `gap_avg_tbl` is a data frame it still is only a set of instructions to be performed by the database. 
 - `show_query()` tells us which instructions are sent to the database. 
 ]
 
@@ -302,7 +395,7 @@ gap_avg_db <- gap_db %>%
 
 #### `r desktop` Example 
 ```{r, warning=FALSE, eval = FALSE}
-show_query(gap_avg_db)
+show_query(gap_avg_tbl)
 ```
 ]
 
@@ -332,7 +425,7 @@ When working with databases, `dplyr` tries to be as lazy as possible:
 #### `r desktop` Example 
 
 ```{r, eval = FALSE}
-gap_avg <- gap_avg_db %>% collect(n = Inf)
+gap_avg <- gap_avg_tbl %>% collect(n = Inf)
 print(gap_avg)
 ```
 ]
@@ -350,88 +443,9 @@ rm(con)
 ```
 ]
 
----
-
-.font90[
-## Set up an SQLite Database
-
-- SQLite is a very light weighted Database Management System 
-- An SQLite database is contained in a single file. There is no need for a server. 
-- Everything you need is to install the `RSQLite` packages. 
-]
-
---
-
-.font90[
-#### Create an SQLite Database
-- A new SQLite database is automatically created if you call `DBI::dbConnect()`
-with argument `dbname = "path_to_database"` where `"path_to_database"` is a path to 
-a non-existing file. 
-- In case `"path_to_database"` is an existing SQLite database it 
-connects to that database. 
-]
-
---
-
-.font90.blockquote.exercise[
-#### `r desktop` Example 
-
-```{r, echo = TRUE, eval = FALSE}
-library(dplyr)
-con <- DBI::dbConnect(
-  drv = RSQLite::SQLite(),
-  dbname = here::here("databases","mtcars.sqlite3"), 
-  )
-```
-]
-
-???
-
-SQLite -> SQLite is a C-language library that implements a small, fast, self-contained, high-reliability, full-featured, SQL database engine.
 
 
----
-## Write Data to the Database
 
-- we add the data frame `mtcars` as a new table to the database.
-
---
-
-.font90.blockquote.exercise[
-#### `r desktop` Example 
-```{r, eval = FALSE}
-DBI::dbWriteTable(con,
-                  name = "mtcars_db", 
-                  value = mtcars)
-```
-]
-
---
-
-- To add data to an existing table we use the additional argument `append = TRUE`.
-
---
-
-.font90.blockquote.exercise[
-#### `r desktop` Example 
-
-```{r, eval = FALSE}
-new_car <- data.frame(mpg = 1, cyl = 16, disp = 800, hp = 210, 
-                      drat = 5, wt = 6, qsec = 2, vs = 1, am = 0)
-rownames(new_car) <- "Super Car 500"
-
-DBI::dbWriteTable(con, 
-                  name = "mtcars_db", 
-                  value = new_car, 
-                  append = TRUE)
-
-DBI::dbDisconnect(con)
-```
-
-]
-
-???
-with name `mtcars_db` 
 ---
 class: exercise_slide
 ## Exercises
