@@ -13,7 +13,7 @@ output:
     includes:
       in_header: "../assets/mathjax-equation-numbers.html"
     nature:
-      beforeInit: ["../assets/remark-zoom.js", "../xaringan_files/macros.js", "https://platform.twitter.com/widgets.js"]
+      beforeInit: ["../assets/navigate_home.js", "../assets/remark-zoom.js", "../xaringan_files/macros.js", "https://platform.twitter.com/widgets.js"]
       highlightStyle: github
       highlightLines: true
       countIncrementalSlides: false
@@ -955,7 +955,7 @@ Obviously, R functions are objects on their own right &mdash; they need not be b
 .content-box-white[
 **Task:** 
 
-Explore what kind of function `(` is, what it does, and explain why the statements
+Explore what kind of function '`(`' is, what it does, and explain why the statements
 ```r
 (function(x) x^2)(5)
 ```
@@ -989,19 +989,19 @@ are meaningful to R.
 
 1. **Name Masking**: 
 
-    names defined inside a function mask names defined outside of it.
+    Names defined *inside* a function mask names defined *outside* of it.
 
 2. **Functions before variables**: 
 
-    functions and objects in *different* environments may share the same name. R ignores non-function objects in function calls. 
+    Functions and objects in *different* environments may share the same name. R ignores non-function objects in function calls. 
 
 3. **Execution Environments**:
 
-    functions generate ephemeral environments.
+    Functions generate ephemeral environments.
     
 4. **Dynamic Look-up**: 
 
-    R searches for values when the function is run (and not when it's created).
+    `R` searches for values when the function is run (but *not* when it's created).
 
 ]
 
@@ -1233,11 +1233,11 @@ if (!is.null(x) && x > 0) {
 
     - **infix**: `a + b`. Also `==`, `<-`, `::`, ...
 
-    - **replacement**: `names(c) <- c("x", "y")`
+    - **replacement**: `names(z) <- c("x", "y")`
 
     - **special**: `for`, `[[`, `if`, ...
 
-- Every function call can be written in prefix form!
+- *Every* function call can be written in prefix form!
     ```{r}
     `[`(1:3, 3)
     ```
@@ -1276,11 +1276,11 @@ x
 It's straightforward to write your own operators in infix form.
 
 .blockquote.exercise[
-#### `r desktop` Example: `paste0()` as infix
+#### `r desktop` Example: `paste()` as infix
 
 ```{r}
-`%+%` <- function(a, b) paste0(a, b)
-"new " %+% "string"
+`%+%` <- function(a, b) paste(a, b)
+"new" %+% "string"
 ```
 
 ]
