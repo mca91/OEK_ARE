@@ -5,7 +5,7 @@
     <meta charset="utf-8" />
     <meta name="author" content="Martin Arnold" />
     <meta name="author" content="Martin Schmelzer" />
-    <meta name="date" content="2025-04-04" />
+    <meta name="date" content="2025-04-11" />
     <script src="Advanced_files/header-attrs/header-attrs.js"></script>
     <link href="Advanced_files/remark-css/default.css" rel="stylesheet" />
     <script src="Advanced_files/clipboard/clipboard.min.js"></script>
@@ -281,11 +281,11 @@ ref(x, character = TRUE)
 ```
 
 ```
-## █ [1:0x1044fc648] &lt;chr&gt; 
-## ├─[2:0x12a30f290] &lt;string: "a"&gt; 
-## ├─[2:0x12a30f290] 
-## ├─[3:0x1060147b8] &lt;string: "abc"&gt; 
-## └─[4:0x12a7a2950] &lt;string: "d"&gt;
+## █ [1:0x10bce7ba8] &lt;chr&gt; 
+## ├─[2:0x14130f290] &lt;string: "a"&gt; 
+## ├─[2:0x14130f290] 
+## ├─[3:0x10b80dcb8] &lt;string: "abc"&gt; 
+## └─[4:0x1416eb350] &lt;string: "d"&gt;
 ```
 ]]]
 
@@ -329,7 +329,7 @@ obj_addr(x)
 ```
 
 ```
-## [1] "0x105652958"
+## [1] "0x10b63db98"
 ```
 
 ``` r
@@ -337,7 +337,7 @@ obj_addr(y)
 ```
 
 ```
-## [1] "0x105651558"
+## [1] "0x10b63c798"
 ```
 ]]
 ]]]
@@ -376,8 +376,14 @@ y[[3]] &lt;- 4
 
 ```r
 y[[3]] &lt;- 5
+```
+
+`tracemem[0x7fba76883958 -&gt; 0x1391190e8767]:`
+
+```r
 # stop tracking
 untracemem(x)
+untracemem(y)
 ```
 
 ]]]
@@ -476,7 +482,7 @@ Lists are special: **list elements are *references* to values**.
 .content-box-white[
 **Task:** 
 
-Which (sequentially called) statement generate the results shown in each diagram? What is special about the bottom one?
+Which (sequentially called) statements generate the results shown in each diagram? What is special about the bottom one?
 
 .pull-left[
   ![:image 35%](img/list.png)
@@ -512,15 +518,15 @@ ref(l1, l2)
 ```
 
 ```
-## █ [1:0x104287768] &lt;list&gt; 
-## ├─[2:0x104554ea8] &lt;dbl&gt; 
-## ├─[3:0x104554ce8] &lt;dbl&gt; 
-## └─[4:0x104564a38] &lt;dbl&gt; 
+## █ [1:0x10e046958] &lt;list&gt; 
+## ├─[2:0x10bd4ec18] &lt;dbl&gt; 
+## ├─[3:0x10bd4ea58] &lt;dbl&gt; 
+## └─[4:0x10bd4e898] &lt;dbl&gt; 
 ##  
-## █ [5:0x10407afc8] &lt;list&gt; 
-## ├─[2:0x104554ea8] 
-## ├─[3:0x104554ce8] 
-## └─[6:0x104563768] &lt;dbl&gt;
+## █ [5:0x1419da1d8] &lt;list&gt; 
+## ├─[2:0x10bd4ec18] 
+## ├─[3:0x10bd4ea58] 
+## └─[6:0x10bd5f4d8] &lt;dbl&gt;
 ```
 
 ]
@@ -541,7 +547,7 @@ A _data frame_ is essentially a list whose elements point to vectors.
 ]
 .pull-right[
 ```r
-df &lt;- data.frame(
+d1 &lt;- data.frame(
   x = c(1, 5, 6), 
   y = c(2, 4, 3)
 )
@@ -573,7 +579,7 @@ ref(d1)
 
 1. Why is `tracemem(1:10)` not useful?
 
-2. Explain why `tracemem()` shows two copies when you run this code. &lt;br&gt; *Hint:* carefully look at the difference between this code and the code on Slide 11.
+2. Explain why `tracemem()` shows a copy when you run this code. &lt;br&gt; *Hint:* carefully look at the difference between this code and the code on [Slide 10](https://are25.netlify.app/advanced%20r%20concepts/advanced#10).
     ```r
     x &lt;- c(1L, 2L, 3L)
     tracemem(x)
@@ -617,7 +623,7 @@ ref(d1)
 
 R modifies in-place in two cases:
 
-1. The object has **only one** binding
+1. The object has **only one binding**
 
 2. The object is an **environment**
 
@@ -679,7 +685,7 @@ x &lt;- data.frame(
          ncol = 5)
   )
 
-medians &lt;- vapply(X = x, FUN = median, FUN.VALUE = numeric(1))
+medians &lt;- apply(X = x, MARGIN =  2, FUN = median)
 
 tracemem(x)
 
@@ -853,15 +859,15 @@ lobstr::ref(x)
 .pull-right[
 
 ```
-## █ [1:0x105496188] &lt;list&gt; 
-## └─[2:0x1053ca4d0] &lt;int&gt;
+## █ [1:0x10b4a6160] &lt;list&gt; 
+## └─[2:0x10b3c14e8] &lt;int&gt;
 ```
 
 ```
-## █ [1:0x1060e5248] &lt;list&gt; 
-## ├─[2:0x1053ca4d0] &lt;int&gt; 
-## └─█ [3:0x105496188] &lt;list&gt; 
-##   └─[2:0x1053ca4d0]
+## █ [1:0x10b8b8248] &lt;list&gt; 
+## ├─[2:0x10b3c14e8] &lt;int&gt; 
+## └─█ [3:0x10b4a6160] &lt;list&gt; 
+##   └─[2:0x10b3c14e8]
 ```
 ]]]
 
@@ -1087,9 +1093,9 @@ lobstr::ref(funs)
 ```
 
 ```
-## █ [1:0x106ed9508] &lt;list&gt; 
-## ├─[2:0x106f77628] &lt;fn&gt; 
-## └─[3:0x106f775b8] &lt;fn&gt;
+## █ [1:0x10c572948] &lt;list&gt; 
+## ├─[2:0x10c680b38] &lt;fn&gt; 
+## └─[3:0x10c680ac8] &lt;fn&gt;
 ```
 
 ``` r
