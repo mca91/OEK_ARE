@@ -3,7 +3,7 @@ title: "Advanced R for Econometricians"
 subtitle: "Web Scraping with rvest"
 author:
   - "Martin C. Arnold"
-  - "Jens Klenke"
+  - "Martin Schmelzer"
 date: "`r Sys.Date()`"
 output:
   xaringan::moon_reader:
@@ -13,13 +13,15 @@ output:
     includes:
       in_header: "../assets/mathjax-equation-numbers.html"
     nature:
-      beforeInit: ["../assets/remark-zoom.js", "../xaringan_files/macros.js", "https://platform.twitter.com/widgets.js"]
+      beforeInit: ["../assets/navigate_home.js", "../assets/remark-zoom.js", "../xaringan_files/macros.js", "https://platform.twitter.com/widgets.js"]
       highlightStyle: github
       highlightLines: true
       countIncrementalSlides: false
       ratio: '16:9' # alternatives '16:9' or '4:3' or others e.g. 13:9
       navigation:
         scroll: false # disable slide transitions by scrolling
+editor_options: 
+  chunk_output_type: console
 ---
 class: title-slide title-rvest center middle
 ```{r moon_reader, include = FALSE, eval = FALSE}
@@ -46,11 +48,12 @@ htmltools::tagList(
 ```
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE, warning=FALSE, message=FALSE)
+knitr::opts_chunk$set(echo = TRUE, eval = F, warning=FALSE, message=FALSE)
 options(htmltools.dir.version = FALSE)
 def.chunk.hook  <- knitr::knit_hooks$get("chunk")
 
 library(icons)
+library(dplyr)
 
 # pre-define icons
 desktop <- icons::icon_style(icons::fontawesome$solid$desktop, fill = "#004c93")
@@ -65,8 +68,7 @@ times_red <- icons::icon_style(icons::fontawesome$solid$times, fill = "red")
 class: left, top
 ## What is Web Scraping?
 
-Web scraping is the process of extracting data from websites. It can be used if the desired data 
-are not readily available via e.g. a download link or an API.
+Web scraping is the process of extracting data from websites. It can be used if the desired data is not readily available via e.g. as a machine readable file to download or through an API.
 
 --
 
@@ -92,13 +94,13 @@ Let's say we are interested whether the ratings of a shop change over time. For 
 to gather the date and the star rating which are, however, not downloadable. 
 
 
-We will learn how we can access these data nonetheless to perform the analysis. 
+We will learn how we can access this data nonetheless to perform the analysis. 
 
 ---
 class: left, top
 ## Legal Issues
 
-Web scraping is generally legal. However, depending on the jurisdiction it can be considered illegal in some cases.
+Webscraping is generally legal. However, depending on the jurisdiction it can be considered illegal in some cases.
 
 --
 
@@ -113,7 +115,7 @@ You should be careful if...
 
 --
 
-**Important**: avoid troubles by limiting the number of requests to a reasonable amount (e.g. 1 request every 10 seconds). Otherwise it could be considered as a denial of service attack. 
+**Important**: avoid troubles by limiting the number of requests to a reasonable amount (e.g. 1 request every 10 seconds). Otherwise it could be considered as a denial of service attack (DoS). 
 
 
 ---
@@ -131,22 +133,20 @@ To extract data from a website it is necessary to understand the basics of how a
 
 ```{}
 <!DOCTYPE html>
-  <html>
+<html>
   <head>
-  <title>Page Title</title>
+    <title>Page Title</title>
   </head>
   <body>
-
-  <h1>This is a Heading</h1>
-  <p>This is a paragraph.</p>
+    <h1>This is a Heading</h1>
+    <p>This is a paragraph.</p>
   
-  <div>
-  <h1>This is another Heading</h1>
-  <p>This is another paragraph.</p>
-  </div>
-  
+    <div>
+      <h1>This is another Heading</h1>
+      <p>This is another paragraph.</p>
+    </div>
   </body>
-  </html>
+</html>
 ```
 ]
 
@@ -162,19 +162,17 @@ To extract data from a website it is necessary to understand the basics of how a
 
 .code70.blockquote.exercise[
 
-#### `r desktop` Exmaple
+#### `r desktop` Example
 ```{}
-  <body>
-  
+<body>
   <h1>This is a Heading</h1>
   <p>This is a paragraph.</p>
   
   <div>
-  <h1>This is another Heading</h1>
-  <p>This is another paragraph.</p>
+    <h1>This is another Heading</h1>
+    <p>This is another paragraph.</p>
   </div>
-  
-  </body>
+</body>
 ```
 ]
 
@@ -183,7 +181,7 @@ To extract data from a website it is necessary to understand the basics of how a
 .font90[
 - In the body part tags are used to give the displayed information a structure. In our example we use: 
     - `<h1>...</h1>`   to define a heading
-    - `<p>...</p>`     to define text
+    - `<p>...</p>`     to define a paragraph
     - `<div>...</div>` to define different sections.
 
 - Look at the [w3schools tag list](https://www.w3schools.com/tags/default.asp) for other tags you might encounter. 
@@ -200,20 +198,20 @@ Create a new HTML document and copy the code from the last slide into it.
 ## `read_html()`
 
 
-The package `rvest` makes use of the structure of an HTML document to extract the relevant information. 
+The `rvest` package leverages the structure of an HTML document to extract relevant information.
 
-The first step is to load the website into R using `xml2::read_html()` (`rvest` depends on `xml2` whereby `xml2`  automatically loads when `rvest` gets loaded). 
+The first step is to load the website into R using `xml2::read_html()`. Since `rvest` depends on `xml2`, the `xml2` package is automatically loaded when `rvest` is loaded.
 
 <br>
 
 --
 
 .font90.blockquote.exercise[
-#### `r desktop` Exmaple
+#### `r desktop` Example
 
-```{r}
+```{r, eval = T}
 library(rvest)
-URL <- here::here("SoSe_2022/webscraping/examples/simple_html_page.html") # path of my html file
+URL <- here::here("SoSe_2025/Webscraping/examples/simple_html_page.html")
 (page <- read_html(URL))
 ```
 ]
@@ -239,23 +237,33 @@ knitr::include_graphics("xml_structure1.png")
 
 We can navigate through the `xml` object using `rvest::html_node()`.
 
--  Get all `p` node
-.blockquote.exercise[
-```{r}
-page %>% rvest::html_nodes("p")
+-  Get all `p` nodes
+
+
+.font80.blockquote.exercise[
+#### `r desktop` Example
+
+```{r, eval = T}
+page %>% html_nodes("p")
 ```
 ]
+
 
 --
 
--  Get only `p` nodes which are children of `div` nodes
-.blockquote.exercise[
-```{r}
+- Get only `p` nodes which are children of `div` nodes
+
+.font80.blockquote.exercise[
+#### `r desktop` Example
+
+```{r, eval = T}
 page %>% 
-  rvest::html_nodes("div") %>% 
-  rvest::html_nodes("p")
+  html_nodes("div") %>% 
+  html_nodes("p")
 ```
 ]
+
+
 
 ---
 ## `html_text()`
@@ -266,15 +274,20 @@ extract the data (i.e. the text between the tags) as a normal character vector.
 
 --
 
-.blockquote.exercise[
-```{r}
+
+.font90.blockquote.exercise[
+#### `r desktop` Example
+```{r, eval = T}
 page %>% 
   html_nodes("div") %>% 
   html_nodes("p") %>%  
   html_text()
-  
 ```
 ]
+
+
+
+
 
 ---
 ## CSS 
@@ -381,14 +394,14 @@ each user review looks the same). We can use those to scrape the content we desi
 ---
 ## Use the Selectors 
 
-Let's say we want to select all paragraphs (`p`) which are a descend of an element with class `.red`. We can achieve this with
+Let's say we want to select all paragraphs (`p`) which are a descendant of an element with class `.red`. We can achieve this with
 
 --
 
 .font90.blockquote.exercise[
-#### `r desktop` Exmaple
-```{r}
-url <- here::here("SoSe_2022/webscraping/examples/simple_html_page_with_css.html")
+#### `r desktop` Example
+```{r, eval = T}
+url <- here::here("SoSe_2025/Webscraping/examples/simple_html_page_with_css.html")
 page <- url %>% read_html()
 page %>%  
   html_nodes(".red") %>% 
@@ -401,7 +414,7 @@ page %>%
 
 or in short
 .font90.blockquote.exercise[
-#### `r desktop` Exmaple
+#### `r desktop` Example
 
 ```{r}
 page %>%  
@@ -422,7 +435,7 @@ Attributes are everything that is defined in the opening tag, e.g in
 --
 
 .font70.blockquote.exercise[
-#### `r desktop` Exmaple
+#### `r desktop` Example
 
 ```{}
 <div class = "blue"> ... </div> 
@@ -440,7 +453,7 @@ With `html_attrs()` and `html_attr()`  we can extract these information.
 --
 
 .font70.blockquote.exercise[
-#### `r desktop` Exmaple
+#### `r desktop` Example
 ```{r}
 # Get all attributes
 page %>%  
@@ -463,7 +476,7 @@ Since data are often stored in tables, `rvest` provides the function `html_table
 --
 .pull-left-1[
 .font80.blockquote.exercise[
-#### `r desktop` Exmaple
+#### `r desktop` Example
 
 ```{}
 <table style="width:100%">
@@ -527,7 +540,7 @@ We want to write a function that for each review extracts
 The final function to extract data from one URL might look like this: 
 
 .blockquote.exercise[
-#### `r desktop` Exmaple
+#### `r desktop` Example
 ```{r, eval = FALSE}
 get_reviews <- function(url){
   page <- read_html(url)

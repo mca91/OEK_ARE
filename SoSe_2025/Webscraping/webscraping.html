@@ -4,8 +4,8 @@
     <title>Advanced R for Econometricians</title>
     <meta charset="utf-8" />
     <meta name="author" content="Martin C. Arnold" />
-    <meta name="author" content="Jens Klenke" />
-    <meta name="date" content="2022-04-28" />
+    <meta name="author" content="Martin Schmelzer" />
+    <meta name="date" content="2025-04-12" />
     <script src="webscraping_files/header-attrs/header-attrs.js"></script>
     <link href="webscraping_files/remark-css/default.css" rel="stylesheet" />
     <script src="webscraping_files/xaringanExtra-progressBar/progress-bar.js"></script>
@@ -13,8 +13,8 @@
     <link href="webscraping_files/xaringanExtra-clipboard/xaringanExtra-clipboard.css" rel="stylesheet" />
     <script src="webscraping_files/xaringanExtra-clipboard/xaringanExtra-clipboard.js"></script>
     <script>window.xaringanExtraClipboard(null, {"button":"<i class=\"fa fa-clipboard\"><\/i>","success":"<i class=\"fa fa-check\" style=\"color: #00ff00\"><\/i>","error":"<i class=\"fa fa-times-circle\" style=\"color: #F94144\"><\/i>"})</script>
-    <link href="webscraping_files/font-awesome/css/all.css" rel="stylesheet" />
-    <link href="webscraping_files/font-awesome/css/v4-shims.css" rel="stylesheet" />
+    <link href="webscraping_files/font-awesome/css/all.min.css" rel="stylesheet" />
+    <link href="webscraping_files/font-awesome/css/v4-shims.min.css" rel="stylesheet" />
     <script type="text/x-mathjax-config">
       MathJax.Hub.Config({
         TeX: { equationNumbers: { autoNumber: "AMS" } },
@@ -65,13 +65,12 @@ class: title-slide title-rvest center middle
 
 # Advanced R for Econometricians
 ## Web Scraping with rvest
-### Martin C. Arnold, Jens Klenke
+### Martin C. Arnold, Martin Schmelzer
 ---
 class: left, top
 ## What is Web Scraping?
 
-Web scraping is the process of extracting data from websites. It can be used if the desired data 
-are not readily available via e.g. a download link or an API.
+Web scraping is the process of extracting data from websites. It can be used if the desired data is not readily available via e.g. as a machine readable file to download or through an API.
 
 --
 
@@ -97,13 +96,13 @@ Let's say we are interested whether the ratings of a shop change over time. For 
 to gather the date and the star rating which are, however, not downloadable. 
 
 
-We will learn how we can access these data nonetheless to perform the analysis. 
+We will learn how we can access this data nonetheless to perform the analysis. 
 
 ---
 class: left, top
 ## Legal Issues
 
-Web scraping is generally legal. However, depending on the jurisdiction it can be considered illegal in some cases.
+Webscraping is generally legal. However, depending on the jurisdiction it can be considered illegal in some cases.
 
 --
 
@@ -118,7 +117,7 @@ You should be careful if...
 
 --
 
-**Important**: avoid troubles by limiting the number of requests to a reasonable amount (e.g. 1 request every 10 seconds). Otherwise it could be considered as a denial of service attack. 
+**Important**: avoid troubles by limiting the number of requests to a reasonable amount (e.g. 1 request every 10 seconds). Otherwise it could be considered as a denial of service attack (DoS). 
 
 
 ---
@@ -136,22 +135,20 @@ To extract data from a website it is necessary to understand the basics of how a
 
 ```{}
 &lt;!DOCTYPE html&gt;
-  &lt;html&gt;
+&lt;html&gt;
   &lt;head&gt;
-  &lt;title&gt;Page Title&lt;/title&gt;
+    &lt;title&gt;Page Title&lt;/title&gt;
   &lt;/head&gt;
   &lt;body&gt;
-
-  &lt;h1&gt;This is a Heading&lt;/h1&gt;
-  &lt;p&gt;This is a paragraph.&lt;/p&gt;
+    &lt;h1&gt;This is a Heading&lt;/h1&gt;
+    &lt;p&gt;This is a paragraph.&lt;/p&gt;
   
-  &lt;div&gt;
-  &lt;h1&gt;This is another Heading&lt;/h1&gt;
-  &lt;p&gt;This is another paragraph.&lt;/p&gt;
-  &lt;/div&gt;
-  
+    &lt;div&gt;
+      &lt;h1&gt;This is another Heading&lt;/h1&gt;
+      &lt;p&gt;This is another paragraph.&lt;/p&gt;
+    &lt;/div&gt;
   &lt;/body&gt;
-  &lt;/html&gt;
+&lt;/html&gt;
 ```
 ]
 
@@ -169,17 +166,15 @@ To extract data from a website it is necessary to understand the basics of how a
 
 #### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Exmaple
 ```{}
-  &lt;body&gt;
-  
+&lt;body&gt;
   &lt;h1&gt;This is a Heading&lt;/h1&gt;
   &lt;p&gt;This is a paragraph.&lt;/p&gt;
   
   &lt;div&gt;
-  &lt;h1&gt;This is another Heading&lt;/h1&gt;
-  &lt;p&gt;This is another paragraph.&lt;/p&gt;
+    &lt;h1&gt;This is another Heading&lt;/h1&gt;
+    &lt;p&gt;This is another paragraph.&lt;/p&gt;
   &lt;/div&gt;
-  
-  &lt;/body&gt;
+&lt;/body&gt;
 ```
 ]
 
@@ -188,7 +183,7 @@ To extract data from a website it is necessary to understand the basics of how a
 .font90[
 - In the body part tags are used to give the displayed information a structure. In our example we use: 
     - `&lt;h1&gt;...&lt;/h1&gt;`   to define a heading
-    - `&lt;p&gt;...&lt;/p&gt;`     to define text
+    - `&lt;p&gt;...&lt;/p&gt;`     to define a paragraph
     - `&lt;div&gt;...&lt;/div&gt;` to define different sections.
 
 - Look at the [w3schools tag list](https://www.w3schools.com/tags/default.asp) for other tags you might encounter. 
@@ -205,9 +200,9 @@ Create a new HTML document and copy the code from the last slide into it.
 ## `read_html()`
 
 
-The package `rvest` makes use of the structure of an HTML document to extract the relevant information. 
+The `rvest` package leverages the structure of an HTML document to extract relevant information.
 
-The first step is to load the website into R using `xml2::read_html()` (`rvest` depends on `xml2` whereby `xml2`  automatically loads when `rvest` gets loaded). 
+The first step is to load the website into R using `xml2::read_html()`. Since `rvest` depends on `xml2`, the `xml2` package is automatically loaded when `rvest` is loaded.
 
 &lt;br&gt;
 
@@ -217,9 +212,9 @@ The first step is to load the website into R using `xml2::read_html()` (`rvest` 
 #### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Exmaple
 
 
-```r
+``` r
 library(rvest)
-URL &lt;- here::here("SoSe_2022/webscraping/examples/simple_html_page.html") # path of my html file
+URL &lt;- here::here("SoSe_2025/Webscraping/examples/simple_html_page.html")
 (page &lt;- read_html(URL))
 ```
 
@@ -250,11 +245,15 @@ Our page is now stored as an `xml` document which has a hierarchical data struct
 
 We can navigate through the `xml` object using `rvest::html_node()`.
 
--  Get all `p` node
-.blockquote.exercise[
+-  Get all `p` nodes
 
-```r
-page %&gt;% rvest::html_nodes("p")
+
+.font80.blockquote.exercise[
+#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example
+
+
+``` r
+page %&gt;% html_nodes("p")
 ```
 
 ```
@@ -264,15 +263,19 @@ page %&gt;% rvest::html_nodes("p")
 ```
 ]
 
+
 --
 
--  Get only `p` nodes which are children of `div` nodes
-.blockquote.exercise[
+- Get only `p` nodes which are children of `div` nodes
 
-```r
+.font80.blockquote.exercise[
+#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example
+
+
+``` r
 page %&gt;% 
-  rvest::html_nodes("div") %&gt;% 
-  rvest::html_nodes("p")
+  html_nodes("div") %&gt;% 
+  html_nodes("p")
 ```
 
 ```
@@ -280,6 +283,8 @@ page %&gt;%
 ## [1] &lt;p&gt;This is another paragraph.&lt;/p&gt;
 ```
 ]
+
+
 
 ---
 ## `html_text()`
@@ -290,9 +295,11 @@ extract the data (i.e. the text between the tags) as a normal character vector.
 
 --
 
-.blockquote.exercise[
 
-```r
+.font90.blockquote.exercise[
+#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example
+
+``` r
 page %&gt;% 
   html_nodes("div") %&gt;% 
   html_nodes("p") %&gt;%  
@@ -303,6 +310,10 @@ page %&gt;%
 ## [1] "This is another paragraph."
 ```
 ]
+
+
+
+
 
 ---
 ## CSS 
@@ -409,15 +420,15 @@ each user review looks the same). We can use those to scrape the content we desi
 ---
 ## Use the Selectors 
 
-Let's say we want to select all paragraphs (`p`) which are a descend of an element with class `.red`. We can achieve this with
+Let's say we want to select all paragraphs (`p`) which are a descendant of an element with class `.red`. We can achieve this with
 
 --
 
 .font90.blockquote.exercise[
 #### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Exmaple
 
-```r
-url &lt;- here::here("SoSe_2022/webscraping/examples/simple_html_page_with_css.html")
+``` r
+url &lt;- here::here("SoSe_2025/Webscraping/examples/simple_html_page_with_css.html")
 page &lt;- url %&gt;% read_html()
 page %&gt;%  
   html_nodes(".red") %&gt;% 
@@ -437,14 +448,10 @@ or in short
 #### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Exmaple
 
 
-```r
+``` r
 page %&gt;%  
   html_nodes(".red p") %&gt;% 
   html_text()
-```
-
-```
-## [1] "But this isn't red."
 ```
 ]
 
@@ -480,28 +487,16 @@ With `html_attrs()` and `html_attr()`  we can extract these information.
 .font70.blockquote.exercise[
 #### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Exmaple
 
-```r
+``` r
 # Get all attributes
 page %&gt;%  
   html_nodes(".red") %&gt;% 
   html_attrs()
-```
 
-```
-## [[1]]
-## class 
-## "red"
-```
-
-```r
 # Get a specific attribute
 page %&gt;%  
   html_nodes(".red") %&gt;% 
   html_attr("class")
-```
-
-```
-## [1] "red"
 ```
 ]
 
@@ -580,7 +575,7 @@ The final function to extract data from one URL might look like this:
 .blockquote.exercise[
 #### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Exmaple
 
-```r
+``` r
 get_reviews &lt;- function(url){
   page &lt;- read_html(url)
   tibble(
@@ -620,17 +615,18 @@ are distributed over many URLs. Can you write a function which can do this?
     </textarea>
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
 <script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script src="../assets/navigate_home.js"></script>
 <script src="../assets/remark-zoom.js"></script>
 <script src="../xaringan_files/macros.js"></script>
 <script src="https://platform.twitter.com/widgets.js"></script>
 <script>var slideshow = remark.create({
-"highlightStyle": "github",
-"highlightLines": true,
-"countIncrementalSlides": false,
-"ratio": "16:9",
-"navigation": {
-"scroll": false
-}
+  "highlightStyle": "github",
+  "highlightLines": true,
+  "countIncrementalSlides": false,
+  "ratio": "16:9",
+  "navigation": {
+    "scroll": false
+  }
 });
 if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
   window.dispatchEvent(new Event('resize'));
@@ -671,6 +667,19 @@ if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
     deleted = true;
   });
 })();
+// add `data-at-shortcutkeys` attribute to <body> to resolve conflicts with JAWS
+// screen reader (see PR #262)
+(function(d) {
+  let res = {};
+  d.querySelectorAll('.remark-help-content table tr').forEach(tr => {
+    const t = tr.querySelector('td:nth-child(2)').innerText;
+    tr.querySelectorAll('td:first-child .key').forEach(key => {
+      const k = key.innerText;
+      if (/^[a-z]$/.test(k)) res[k] = t;  // must be a single letter (key)
+    });
+  });
+  d.body.setAttribute('data-at-shortcutkeys', JSON.stringify(res));
+})(document);
 (function() {
   "use strict"
   // Replace <script> tags in slides area to make them executable
