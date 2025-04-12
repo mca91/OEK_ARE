@@ -5,7 +5,7 @@
     <meta charset="utf-8" />
     <meta name="author" content="Martin Arnold" />
     <meta name="author" content="Martin Schmelzer" />
-    <meta name="date" content="2025-04-05" />
+    <meta name="date" content="2025-04-12" />
     <script src="Wrangling_files/header-attrs/header-attrs.js"></script>
     <link href="Wrangling_files/remark-css/default.css" rel="stylesheet" />
     <script src="Wrangling_files/xaringanExtra-progressBar/progress-bar.js"></script>
@@ -1030,7 +1030,7 @@ A left join keeps all observations from the left table, and matches records from
 .blockquote.exercise[ 
 
 ``` r
-band_members %&gt;% left_join(band_instruments, by = 'name')
+band_members %&gt;% left_join(band_instruments, by = "name")
 ```
 
 ```
@@ -1055,7 +1055,7 @@ An inner join matches rows from the left and the right table but only keeps the 
 .blockquote.exercise[ 
 
 ``` r
-band_members %&gt;% inner_join(band_instruments, by = 'name')
+band_members %&gt;% inner_join(band_instruments, by = "name")
 ```
 
 ```
@@ -1075,7 +1075,7 @@ A full (outer) join matches rows from the left and the right table and keeps all
 .blockquote.exercise[ 
 
 ``` r
-band_members %&gt;% full_join(band_instruments, by = 'name')
+band_members %&gt;% full_join(band_instruments, by = "name")
 ```
 
 ```
@@ -1098,7 +1098,7 @@ It keeps only columns from the left.
 .blockquote.exercise[ 
 
 ``` r
-band_members %&gt;% semi_join(band_instruments, by = 'name')
+band_members %&gt;% semi_join(band_instruments, by = "name")
 ```
 
 ```
@@ -1280,7 +1280,7 @@ The function `pivot_longer()` main arguments are
 
 ``` r
 table4a %&gt;% 
-  pivot_longer(cols = c('1999', '2000'), names_to = 'year', values_to = 'value')
+  pivot_longer(cols = c("1999", "2000"), names_to = "year", values_to = "value")
 ```
 
 ```
