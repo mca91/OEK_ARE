@@ -5,7 +5,7 @@
     <meta charset="utf-8" />
     <meta name="author" content="Martin Arnold" />
     <meta name="author" content="Martin Schmelzer" />
-    <meta name="date" content="2025-04-11" />
+    <meta name="date" content="2025-04-12" />
     <script src="databases_files/header-attrs-2.29.1/header-attrs.js"></script>
     <link href="databases_files/remark-css-0.0.1/default.css" rel="stylesheet" />
     <script src="databases_files/xaringanExtra-progressBar-0.0.1/progress-bar.js"></script>
@@ -424,8 +424,8 @@ connects to that database.
 library(dplyr)
 con &lt;- DBI::dbConnect(
   drv = RSQLite::SQLite(),
-  dbname = "local_db.sqlite"), 
-  )
+  dbname = "local_db.sqlite"
+)
 ```
 ]
 

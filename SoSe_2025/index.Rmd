@@ -32,7 +32,7 @@ TEST
 3. [Data Wrangling with dplyr](Wrangling/Wrangling.html)
 4. [Databases](databases/databases.html)
 5. Advanced R Programming
-  - [Advanced Conecepts](Advanced R concepts/Advanced.html)
+  - [Advanced Concepts](Advanced R concepts/Advanced.html)
   - [Functional Programming](functional/functional.html)
   - [Object Oriented Programming](OOP/OOP.html)
 ]

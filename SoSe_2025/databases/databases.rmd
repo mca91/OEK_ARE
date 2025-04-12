@@ -268,8 +268,8 @@ connects to that database.
 library(dplyr)
 con <- DBI::dbConnect(
   drv = RSQLite::SQLite(),
-  dbname = "local_db.sqlite"), 
-  )
+  dbname = "local_db.sqlite"
+)
 ```
 ]
 

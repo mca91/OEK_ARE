@@ -950,7 +950,7 @@ class: top, left
 A left join keeps all observations from the left table, and matches records from the right table based on one (or multiple) columns (`by`).
 .blockquote.exercise[ 
 ```{r, echo = TRUE, results='markup'}
-band_members %>% left_join(band_instruments, by = 'name')
+band_members %>% left_join(band_instruments, by = "name")
 ```
 ]
 
@@ -965,7 +965,7 @@ class: top, left
 An inner join matches rows from the left and the right table but only keeps the rows where both tables have matching rows in the `by` column.
 .blockquote.exercise[ 
 ```{r, echo = TRUE, results='markup'}
-band_members %>% inner_join(band_instruments, by = 'name')
+band_members %>% inner_join(band_instruments, by = "name")
 ```
  ]
 ---
@@ -976,7 +976,7 @@ A full (outer) join matches rows from the left and the right table and keeps all
 
 .blockquote.exercise[ 
 ```{r, echo = TRUE, results='markup'}
-band_members %>% full_join(band_instruments, by = 'name')
+band_members %>% full_join(band_instruments, by = "name")
 ```
 ]
 ---
@@ -988,7 +988,7 @@ It keeps only columns from the left.
 
 .blockquote.exercise[ 
 ```{r, echo = TRUE, results='markup'}
-band_members %>% semi_join(band_instruments, by = 'name')
+band_members %>% semi_join(band_instruments, by = "name")
 ```
 ]
 
@@ -1098,7 +1098,7 @@ The function `pivot_longer()` main arguments are
 .font90.blockquote.exercise[
 ```{r, echo = TRUE}
 table4a %>% 
-  pivot_longer(cols = c('1999', '2000'), names_to = 'year', values_to = 'value')
+  pivot_longer(cols = c("1999", "2000"), names_to = "year", values_to = "value")
 ```
 ]
 
