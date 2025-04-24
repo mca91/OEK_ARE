@@ -3,17 +3,17 @@
   <head>
     <title>Advanced R for Econometricians</title>
     <meta charset="utf-8" />
-    <meta name="author" content="Martin C. Arnold" />
-    <meta name="author" content="Jens Klenke" />
-    <meta name="date" content="2022-06-26" />
+    <meta name="author" content="Martin Arnold" />
+    <meta name="author" content="Martin Schmelzer" />
+    <meta name="date" content="2025-04-24" />
     <script src="functional_files/header-attrs/header-attrs.js"></script>
     <link href="functional_files/remark-css/default.css" rel="stylesheet" />
     <script src="functional_files/clipboard/clipboard.min.js"></script>
     <link href="functional_files/xaringanExtra-clipboard/xaringanExtra-clipboard.css" rel="stylesheet" />
     <script src="functional_files/xaringanExtra-clipboard/xaringanExtra-clipboard.js"></script>
     <script>window.xaringanExtraClipboard(null, {"button":"<i class=\"fa fa-clipboard\"><\/i>","success":"<i class=\"fa fa-check\" style=\"color: #00ff00\"><\/i>","error":"<i class=\"fa fa-times-circle\" style=\"color: #F94144\"><\/i>"})</script>
-    <link href="functional_files/font-awesome/css/all.css" rel="stylesheet" />
-    <link href="functional_files/font-awesome/css/v4-shims.css" rel="stylesheet" />
+    <link href="functional_files/font-awesome/css/all.min.css" rel="stylesheet" />
+    <link href="functional_files/font-awesome/css/v4-shims.min.css" rel="stylesheet" />
     <script type="text/x-mathjax-config">
       MathJax.Hub.Config({
         TeX: { equationNumbers: { autoNumber: "AMS" } },
@@ -43,7 +43,7 @@ class: title-slide title-purrr center middle
 
 # Advanced R for Econometricians
 ## Functional Style R Programming
-### Martin C. Arnold, Jens Klenke
+### Martin Arnold, Martin Schmelzer
 
 ---
 class: segue-red
@@ -66,7 +66,7 @@ To become significantly more reliable, code must become more transparent. In par
 .font90[
 
 
-```r
+``` r
 # Packages needed
 library(dplyr)
 library(purrr)
@@ -163,21 +163,21 @@ Let's do something that might seem strange at first sight:
 &lt;br&gt;
 
 
-```r
+``` r
 randomise &lt;- function(f) f(rnorm(1e3))
 randomise(mean)
 ```
 
 ```
-## [1] -0.002711432
+## [1] 0.06378612
 ```
 
-```r
+``` r
 randomise(sum)
 ```
 
 ```
-## [1] -75.23842
+## [1] 16.50506
 ```
 
 ]
@@ -240,7 +240,7 @@ Functionals can also produce other data structures, e.g., data frames as output.
 
 `map(1:3, f)` is `list(f(1), f(2), f(3))`.
 
-```r
+``` r
 triple &lt;- function(x) x * 3
 map(1:3, triple)
 ```
@@ -289,7 +289,7 @@ map(1:3, triple)
 .pull-right[
 .smaller[
 
-```r
+``` r
 # check class of mtcars data
 class(mtcars)
 ```
@@ -298,7 +298,7 @@ class(mtcars)
 ## [1] "data.frame"
 ```
 
-```r
+``` r
 map_lgl(mtcars, is.double)
 ```
 
@@ -307,7 +307,7 @@ map_lgl(mtcars, is.double)
 ## TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE
 ```
 
-```r
+``` r
 n_unique &lt;- function(x) length(unique(x))
 map_int(mtcars, n_unique)
 ```
@@ -341,7 +341,7 @@ map_int(mtcars, n_unique)
 #### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example: `map_*()` with inline anonymous function
 
 
-```r
+``` r
 map_dbl(mtcars, function(x) length(unique(x)))
 ```
 
@@ -351,7 +351,7 @@ map_dbl(mtcars, function(x) length(unique(x)))
 ```
 
 
-```r
+``` r
 map_dbl(mtcars, ~ length(unique(.x)))
 ```
 
@@ -376,7 +376,7 @@ map_dbl(mtcars, ~ length(unique(.x)))
 #### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example: element extraction with `map_*()`
 
 
-```r
+``` r
 x &lt;- list(
   list(-1, x = 1, y = c(2), z = "a"),
   list(-2, x = 4, y = c(5, 6), z = "b"),
@@ -385,7 +385,7 @@ x &lt;- list(
 ```
 
 
-```r
+``` r
 map_dbl(x, "x")   # select by name
 ```
 
@@ -393,7 +393,7 @@ map_dbl(x, "x")   # select by name
 ## [1] 1 4 8
 ```
 
-```r
+``` r
 map_dbl(x, 1)     # select by position
 ```
 
@@ -426,7 +426,7 @@ Write short Base *R* code which works on `x` from the previous slide and returns
 ???
 
 
-```r
+``` r
 # 1.
 sapply(x, "[[", "x")
 # 2.
@@ -451,19 +451,21 @@ Note that components must exist in all entries of the object we iterate over (he
 #### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example: element extraction with `map_*()`
 
 
-```r
+``` r
 map_chr(x, "z")   # z doesn't exist in x[[3]]
 ```
 
 ```
-## Error in `stop_bad_type()`:
-## ! Result 3 must be a single string, not NULL of length 0
+## Error in `map_chr()`:
+## ℹ In index: 3.
+## Caused by error:
+## ! Result must be length 1, not 0.
 ```
 
 To prevent this error a `.default` value can be supplied.
 
 
-```r
+``` r
 map_chr(x, "z", .default = NA)
 ```
 
@@ -499,7 +501,7 @@ Keep in mind that this requires your subsequent code to work with `NA`s.
 .pull-right[
 
 
-```r
+``` r
 x &lt;- list(1:5, c(1:10, NA))
 map_dbl(x, ~ mean(.x, na.rm = TRUE))
 ```
@@ -511,7 +513,7 @@ map_dbl(x, ~ mean(.x, na.rm = TRUE))
 More efficient:
 
 
-```r
+``` r
 map_dbl(x, mean, na.rm = TRUE)
 ```
 
@@ -545,20 +547,20 @@ Additional arguments are *not decomposed*: `map_*()` is only vectorised over (th
 
 .pull-right[
 
-```r
+``` r
 # Arg. 'mean' is recycled
 map(1:3, rnorm, mean = c(100, 10, 1))
 ```
 
 ```
 ## [[1]]
-## [1] 101.1215
+## [1] 101.2629
 ## 
 ## [[2]]
-## [1] 101.324174   9.246503
+## [1] 101.315363   8.799727
 ## 
 ## [[3]]
-## [1] 101.8168982  10.5856532   0.9970042
+## [1] 99.343096 11.357130  2.661336
 ```
 ]]]
 
@@ -590,7 +592,7 @@ Assume you'd like to investigate the impact of different amounts of trimming whe
 .pull-right[
 
 
-```r
+``` r
 trims &lt;- c(0, 0.1, 0.2, 0.5)
 x &lt;- rcauchy(1000)
 ```
@@ -598,23 +600,23 @@ x &lt;- rcauchy(1000)
 We may switch arguments using an anonymous function:
 
 
-```r
+``` r
 map_dbl(trims, ~ mean(x, trim = .x))
 ```
 
 ```
-## [1] 0.624460050 0.006129521 0.038663335 0.075093275
+## [1]  5.51562453 -0.07502473 -0.08066313 -0.04083058
 ```
 
 This is equivalent to:
 
 
-```r
+``` r
 map_dbl(trims, function(trim) mean(x, trim = trim))
 ```
 
 ```
-## [1] 0.624460050 0.006129521 0.038663335 0.075093275
+## [1]  5.51562453 -0.07502473 -0.08066313 -0.04083058
 ```
 
 ]]]
@@ -630,13 +632,13 @@ map_dbl(trims, function(trim) mean(x, trim = trim))
 
 2. The following code simulates the performance of a t-test for non-normal data. Extract the p-value from each test, then visualise.
     
-    ```r
+    ``` r
     trials &lt;- map(1:100, ~ t.test(rpois(10, 10), rpois(10, 7)))
     ```
 
 3. Use `map()` to fit linear models to the `mtcars` dataset using the formulas stored in this list:
     
-    ```r
+    ``` r
     formulas &lt;- list(
        mpg ~ disp,
        mpg ~ disp + wt,
@@ -694,7 +696,7 @@ exclude: true
 ## Case Study: Model Fitting with `purrr`
 
 
-```r
+``` r
 cars2018 &lt;- readr::read_csv("../data/cars2018.csv")
 by_drive &lt;- split(cars2018, cars2018$Drive)
 ```
@@ -702,7 +704,7 @@ by_drive &lt;- split(cars2018, cars2018$Drive)
 **`purrr` style:**
 
 
-```r
+``` r
 by_drive %&gt;%
   map(~ lm(MPG ~ Cylinders, data = .x)) %&gt;%
   map(coef) %&gt;%
@@ -725,7 +727,7 @@ exclude: true
 **`apply()`-style R**
 
 
-```r
+``` r
 models &lt;- lapply(by_drive, function(data) lm(MPG ~ Cylinders, data = data))
 vapply(models, function(x) coef(x)[[2]], double(1))
 ```
@@ -740,7 +742,7 @@ vapply(models, function(x) coef(x)[[2]], double(1))
 **`for()` loop**
 
 
-```r
+``` r
 slopes &lt;- double(length(by_drive))
 for (i in seq_along(by_drive)) {
   model &lt;- lm(MPG ~ Cylinders, data = by_drive[[i]])
@@ -818,7 +820,7 @@ The `modify()` function works on the input *components* and returns an object of
 #### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example: `data.frame` in / `data.frame` out
 
 
-```r
+``` r
 df &lt;- data.frame(
   x = 1:3,
   y = 6:4
@@ -837,7 +839,7 @@ modify(df, ~ .x * 2)
 Note that `modify()` never modifies in-place but creates a copy, which must be (re)assigned.
 
 
-```r
+``` r
 df &lt;- modify(df, ~ .x * 2)
 ```
 
@@ -866,7 +868,7 @@ df &lt;- modify(df, ~ .x * 2)
 Let's generate lists of observations and associated weights.
 
 
-```r
+``` r
 set.seed(123)
 xs &lt;- map(1:4, ~ runif(4))
 xs[[1]][[1]] &lt;- NA
@@ -876,7 +878,7 @@ ws &lt;- map(1:4, ~ rpois(4, 5) + 1)
 `map2_dbl` varies both `xs` and `ws` as inputs to `weighted.mean()`.
 
 
-```r
+``` r
 map2_dbl(xs, ws, weighted.mean)
 ```
 
@@ -906,7 +908,7 @@ Additional arguments may be passed just as with `map()`.
 .pull-right[
 
 
-```r
+``` r
 # passing na.rm = TRUE
 map2_dbl(xs, ws, weighted.mean, na.rm = TRUE)
 ```
@@ -937,7 +939,7 @@ Note that `map2()` also recycles inputs to ensure that they are the same length.
 .pull-right[
 
 
-```r
+``` r
 map2_dbl(1:6, 1, ~ .x + .y)
 ```
 
@@ -1056,7 +1058,7 @@ A common side-effect which needs two arguments (object and path) is writing to d
 `map2_dbl()` behaves as `pmap_dbl()` in the two-argument case:
 
 
-```r
+``` r
 map2_dbl(xs, ws, weighted.mean)
 ```
 
@@ -1065,7 +1067,7 @@ map2_dbl(xs, ws, weighted.mean)
 ```
 
 
-```r
+``` r
 pmap_dbl(list(xs, ws), weighted.mean)
 ```
 
@@ -1096,7 +1098,7 @@ As before, additional arguments may be passed after `.f` and they are recycled, 
 Now with the additional argument `na.rm = TRUE`:
 
 
-```r
+``` r
 pmap_dbl(list(xs, ws), 
          weighted.mean, 
          na.rm = TRUE)
@@ -1131,7 +1133,7 @@ Note that `pmap()` gives much finer control over argument matching as we may use
 We look at the trimmed mean example again.
 
 
-```r
+``` r
 trims &lt;- c(0, 0.1, 0.2, 0.5)
 x &lt;- rcauchy(1000)
 ```
@@ -1139,7 +1141,7 @@ x &lt;- rcauchy(1000)
 Varying the `trim` argument can be done by passing the values in a named list.
 
 
-```r
+``` r
 pmap_dbl(list(trim = trims), mean, x = x)
 ```
 
@@ -1171,7 +1173,7 @@ Remember that a `data.frame` is a `list` and thus can be passed to `pmap()` as a
 .pull-right[
 
 
-```r
+``` r
 params &lt;- tibble::tribble(
   ~ n, ~ min, ~ max,
    1L,     0,     1,
@@ -1182,7 +1184,7 @@ params &lt;- tibble::tribble(
 Column names match the arguments: we don't have to worry about their order.
 
 
-```r
+``` r
 pmap(params, runif)
 ```
 
@@ -1211,7 +1213,7 @@ pmap(params, runif)
 
 2. Explain how the following code transforms a `data.frame` using functions stored in a `list`.
     
-    ```r
+    ``` r
     trans &lt;- list(
       Displacement = function(x) x * 0.0163871,
       Transmission = function(x) factor(x, labels = c("Automatic", "Manual", "CVT"))
@@ -1223,7 +1225,7 @@ pmap(params, runif)
 
 3. Compare and contrast the `map2()` approach to this `map()` approach:
     
-    ```r
+    ``` r
     cars2018[nm] &lt;- map(nm, ~ trans[[.x]](cars2018[[.x]]))
     ```
 
@@ -1264,7 +1266,7 @@ exclude: true
 Consider the following list of numeric vectors `l`.
 
 
-```r
+``` r
 l &lt;- map(1:4, ~ sample(1:10, 15, replace = T))
 str(l)
 ```
@@ -1291,7 +1293,7 @@ exclude: true
 A base R solution is rather cumbersome even for a small set of vectors.
 
 
-```r
+``` r
 out &lt;- l[[1]]
 out &lt;- intersect(out, l[[2]])
 out &lt;- intersect(out, l[[3]])
@@ -1306,7 +1308,7 @@ out
 We could generalise the above to an arbitrary number of vectors using a loop but such operations are conveniently handled by `reduce()` which is also more efficient.
 
 
-```r
+``` r
 reduce(l, intersect)
 ```
 
@@ -1314,7 +1316,7 @@ reduce(l, intersect)
 ## [1] 9 3 2 8
 ```
 
-```r
+``` r
 reduce(l, union)
 ```
 
@@ -1337,7 +1339,7 @@ exclude: true
 The difference between `reduce()` and `accumulate()` is best understood using a sequence of binary arithmetic operations.
 
 
-```r
+``` r
 x &lt;- 1:3
 reduce(x, `+`)
 ```
@@ -1349,7 +1351,7 @@ reduce(x, `+`)
 vs.
 
 
-```r
+``` r
 x &lt;- 1:3
 accumulate(x, `+`)
 ```
@@ -1370,7 +1372,7 @@ exclude: true
 So with `.f` a function for binary intersection we also obtain the 'intermediate' sets.
 
 
-```r
+``` r
 accumulate(l, intersect)
 ```
 
@@ -1408,7 +1410,7 @@ A function factory is a function that *produces* functions.
 #### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example: function factory
 
 
-```r
+``` r
 nth_root &lt;- function(n) {   # function factory
   function(x) {
     x^(1/n)
@@ -1438,18 +1440,18 @@ The enclosing environment of the manufactured function is an **execution environ
 #### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example: function factory &amp;mdash; ctd.
 
 
-```r
+``` r
 rlang::env_print(cube_root)     # inspect enclosing environment
 ```
 
 ```
-## &lt;environment: 0x1043a9fa8&gt;
+## &lt;environment: 0x1256013a0&gt;
 ## Parent: &lt;environment: global&gt;
 ## Bindings:
 ## • n: &lt;dbl&gt;
 ```
 
-```r
+``` r
 rlang::fn_env(cube_root)$n      # retrieve from enclosing environment
 ```
 
@@ -1478,7 +1480,7 @@ Remember **lazy evaluation**?
 #### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example: function factory &amp;mdash; ctd.
 
 
-```r
+``` r
 n &lt;- 2
 sq &lt;- nth_root(n)
 n &lt;- 16
@@ -1512,7 +1514,7 @@ Remember **lazy evaluation**?
 #### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example: function factory &amp;mdash; ctd.
 
 
-```r
+``` r
 nth_root &lt;- function(n) {
     force(n)
     function(x) {
@@ -1561,7 +1563,7 @@ Function factories allow us to create *functions with a memory*.
 #### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example: counter
 
 
-```r
+``` r
 # factory for a counter
 new_counter &lt;- function() {
   i &lt;- 0
@@ -1580,7 +1582,7 @@ replicate(2, counter_one())
 ## [1] 1 2
 ```
 
-```r
+``` r
 replicate(5, counter_two())
 ```
 
@@ -1614,7 +1616,7 @@ P(\lambda, \mathbb{x}) =&amp; \, \prod_{i=1}^n\frac{\lambda^{x_i}\exp{\lambda}}{
 The log-likelihood is easily implemented as an R function:
 
 
-```r
+``` r
 lprob_poisson &lt;- function(lambda, x) {
   n &lt;- length(x)
   (log(lambda) * sum(x)) - (n * lambda) - sum(lfactorial(x))
@@ -1634,7 +1636,7 @@ A general Poisson log-likelihood for data `x` can also be implemented using a fu
 ]
 
 
-```r
+``` r
 ll_poisson &lt;- function(x) {
   # components that depend on x only
   n &lt;- length(x)
@@ -1703,17 +1705,18 @@ class: segue-red
     </textarea>
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
 <script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script src="../assets/navigate_home.js"></script>
 <script src="../assets/remark-zoom.js"></script>
 <script src="../xaringan_files/macros.js"></script>
 <script src="https://platform.twitter.com/widgets.js"></script>
 <script>var slideshow = remark.create({
-"highlightStyle": "github",
-"highlightLines": true,
-"countIncrementalSlides": false,
-"ratio": "16:9",
-"navigation": {
-"scroll": false
-}
+  "highlightStyle": "github",
+  "highlightLines": true,
+  "countIncrementalSlides": false,
+  "ratio": "16:9",
+  "navigation": {
+    "scroll": false
+  }
 });
 if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
   window.dispatchEvent(new Event('resize'));

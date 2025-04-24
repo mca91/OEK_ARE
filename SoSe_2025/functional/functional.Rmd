@@ -2,8 +2,8 @@
 title: "Advanced R for Econometricians"
 subtitle: "Functional Style R Programming"
 author:
-  - "Martin C. Arnold"
-  - "Jens Klenke"
+  - "Martin Arnold"
+  - "Martin Schmelzer"
 date: "`r Sys.Date()`"
 output:
   xaringan::moon_reader:
@@ -13,7 +13,7 @@ output:
     includes:
       in_header: "../assets/mathjax-equation-numbers.html"
     nature:
-      beforeInit: ["../assets/remark-zoom.js", "../xaringan_files/macros.js", "https://platform.twitter.com/widgets.js"]
+      beforeInit: ["../assets/navigate_home.js", "../assets/remark-zoom.js", "../xaringan_files/macros.js", "https://platform.twitter.com/widgets.js"]
       highlightStyle: github
       highlightLines: true
       countIncrementalSlides: false

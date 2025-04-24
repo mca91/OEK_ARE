@@ -1,7 +1,7 @@
 ---
-title: "Advanced R for Econometricians (Summer 2022)"
+title: "Advanced R for Econometricians (Summer 2025)"
 subtitle: "Advanced R Concepts --- Notes and Examples"
-author: "Martin Arnold, Jens Klenke"
+author: "Martin Arnold, Martin Schmelzer"
 output: pdf_document
 ---
 
