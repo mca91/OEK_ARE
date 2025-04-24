@@ -24,8 +24,6 @@ class: title-slide title-index
 
 ### Outline
 
-TEST
-
 .pull-left[
 1. [Introduction](Introduction/Introduction.html)
 2. [Data Visualisation with ggplot](ggplot2/ggplot2.html)
