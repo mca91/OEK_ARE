@@ -86,38 +86,40 @@ library(readr)
 
 **What is a functional programming (FP) language?**
 
-- Simply put: a language which is centered on problem-solving using functions!
+- Simply put: a language which is centered on **problem-solving using functions**!
 
-- There are two common threads in FP:
+- There are **two common threads** in FP:
 
     1. A functional language has **first-class functions** which behave like any other data type. In R this means we may treat function like variables (i.e., assign them, store them in a `list` or pass them as arguments to other functions)
     
-    2. Many functional languages require **pure** functions only. These are functions which have no side-effects: they do not interfere with anything outside their scope and produce output which depends only on the input.
+    2. Many functional languages require **pure functions** only. These are functions which have **no side-effects**: they do not interfere with anything outside their scope and produce output which depends only on the input.
 
 ]
 
 ???
 
-1. *R* has first-class functions.
+- R has first-class functions, but it does not strictly enforce pure functions.
 
-2. Does R allow for pure functions only? No: e.g. `print()` has side-effects. Obviously all functions which return pseudo-random numbers are not pure functions.
+- Side effects: writing to disk, modifying global variables, printing output, etc.
+
+- Obviously, functions which return pseudo-random numbers are not pure functions.
 
 ---
 ## FAQs
 
 .font90[
     
-**Is *R* a FP language?**
+**Is R a FP language?**
 
-- *R* is not a FP language but we may adopt a *functional style* of programming.
+- R is not a FP language but we may adopt a *functional style* of programming.
 
-- **Functionals** are functions which take functions as input and produce, e.g. vector output
+- R **functionals** are functions which take functions as input and produce vector output
 
 **Why should I use functional style programming?**
 
-- FP is often space efficient, very comprehensible and easily adopted to new situations
+- FP is often **space efficient**, very **comprehensible** and easily adopted to new situations
 
-- Functionals are easily analysed in isolation and thus are often straightforward to optimise and parallelise
+- Functionals are easily analysed in isolation and thus are often **straightforward to optimise and parallelise**
 
     (We'll discuss functionals in a minute)
 
@@ -149,7 +151,7 @@ Functional programming style means decomposing a big problem into smaller pieces
 
 .font90[
 
-We will briefly discuss key techniques in functional *R* programming which are best summarised by the table below. We will focus on `purrr` functionals and applications of function factories.  
+We will briefly discuss key techniques in functional R programming which are best summarised by the table below. We will focus on `purrr` functionals and applications of function factories.  
 
 <br>
 <br>
@@ -158,6 +160,24 @@ We will briefly discuss key techniques in functional *R* programming which are b
 ![:source 2019](Wickham)
 
 ]
+
+???
+
+Function Operators are also called *higher-order functions*:
+
+```
+# Function operator: takes a function and returns its logical negation
+negate <- function(f) {
+  function(x) {
+    !f(x)
+  }
+}
+
+# A basic function: checks if a number is positive
+is_positive <- function(x) x > 0
+
+is_not_positive <- negate(is_positive)
+```
 
 ---
 ## Functionals
@@ -189,15 +209,15 @@ Functionals can also produce other data structures, e.g., data frames as output.
 
 .font90[
 
-- Functionals are often used as alternatives to loops. Not because loops are inherently slow (which is common wisdom), but because loops 
+- Functionals are often used as **alternatives to loops**. Not because loops are inherently "bad", but because loops 
 
-    - make it relatively cumbersome to harness the power of iteration
+    - make it relatively **cumbersome** to harness the power of iteration
 
-    - are prone to typos that are difficult to identify
+    - are **prone to typos** that are difficult to identify
 
-    - can be *overly flexible*: loops convey that an iteration is done, but may make it relatively hard to grasp _what is done_ and what should be done with the results.
+    - can be **overly flexible**: loops convey that an iteration is done, but may make it relatively hard to grasp _what is done_ and what should be done with the results.
     
-- Functionals are tailored to specific tasks which immediately convey *why* they are being used and what output format they produce.
+- Functionals are **tailored to specific tasks** which immediately **convey for what** they do and the **type of output** they produce.
     
 - Switching from loops to functionals doesn't necessarily mean that we must write our own functionals: the `purrr` package provides functionals which are very easy to apply and also fast as they are written in _C_.
 
@@ -252,9 +272,9 @@ map(1:3, triple)
 
 .font90[
 
-- There are helper functions which are more convenient if simpler data structures are required: `map_lgl()`, `map_int()`, `map_dbl()`, and `map_chr()` return an atomic vector of the specified type
+- There are more convenient variants if simpler (atomic) structures are required: `map_lgl()`, `map_int()`, `map_dbl()`, and `map_chr()` return an atomic vector of the specified type
 
-- Base *R* equivalents are `sapply()` and `vapply()`
+- Base R equivalents are `sapply()` and `vapply()`
 
 ]
 
@@ -296,9 +316,9 @@ map_int(mtcars, n_unique)
 
 .font90[
 
-- The ***twiddle operator `~`*** allows to write anonymous functions in a less verbose manner. It conveys that the subsequent expression is a formula.
+- The ***twiddle operator `~`*** allows to write space efficient anonymous functions. `~` conveys that the subsequent expression is a *formula*.
 
-- **A good rule of thumb:** if a function spans lines or uses `{...}`, we should give it a name.
+- **A good rule of thumb:** If a function spans lines or uses `{...}`, we should give it a name.
 
 <br>
 
@@ -344,7 +364,7 @@ map_dbl(x, 1)     # select by position
 
 ???
 
-In base *R* we'd have to write a function that iterates through `x` or use `sapply()`.
+In base R we'd have to write a function that iterates through `x` or use `sapply()`.
 
 ---
 ## `purrr::map_*()` &mdash; Producing Atomic Vectors
@@ -356,7 +376,7 @@ In base *R* we'd have to write a function that iterates through `x` or use `sapp
 .content-box-white[
 **Task:** 
 
-Write short Base *R* code which works on `x` from the previous slide and returns 
+Write short Base R code which works on `x` from the previous slide and returns 
 
   1. all entries named `'x'` and 
   
@@ -443,7 +463,7 @@ Arguments passed to an anonymous function are evaluated in every iteration. The 
 
 .font90[
 
-Additional arguments are *not decomposed*: `map_*()` is only vectorised over (the data passed as) the first argument. Further (vector) arguments are passed along.
+Additional arguments are **not decomposed**: `map_*()` is only vectorized over the first argument (the data). Further (vector) arguments are passed along.
 
 <br>
 
@@ -536,7 +556,7 @@ map_dbl(trims, function(trim) mean(x, trim = trim))
 
 ???
 
-1. `map(1:3, ~ runif(2))` evaluates `runif()` with `n = 2` in every iteration since `~` converts to an anonymous function. `map(1:3, runif(2))` evaluates `runif(2)` only once and cannot do mapping because `runif(2)` is not treated as a function. `NULL` is returned in every iteration.
+1. `map(1:3, ~ runif(2))` evaluates `runif()` with `n = 2` in every iteration since `~` converts to an anonymous function. `map(1:3, runif(2))` evaluates `runif(2)` only once and cannot do mapping because `runif(2)` is not treated as a function.
 
 2. Code:
     ```r
@@ -645,7 +665,7 @@ exclude: true
 
 .font90[
 
-There are 23 variants of `map*()` which are easily understood as variants of the following functions:
+There are 23 variants of `map*()` which are variants of the following functions:
 
 - Output same type as input: **`modify()`**
 
@@ -795,7 +815,7 @@ map2_dbl(1:6, 1, ~ .x + .y)
 
 - `walk()` ignores the return value of `.f` and returns `.x` invisibly. This is useful for functions that are called for their side-effects.
 
-- There is no base *R* equivalent but wrapping `lapply()` with `invisible()` comes close
+- There is no base R equivalent but wrapping `lapply()` with `invisible()` comes close
 
 .blockquote.exercise[
 #### `r desktop` Example: assigning and passing objects
@@ -938,7 +958,7 @@ pmap_dbl(list(xs, ws),
 
 .font90[
 
-Note that `pmap()` gives much finer control over argument matching as we may use **_named_ `list`**. This is very convenient for working with complex `list` objects.
+Note that `pmap()` gives much finer control over argument matching as we may use **_named_ `list`**. This is convenient for working with complex `list` objects.
 
 <br>
 
@@ -954,17 +974,21 @@ Note that `pmap()` gives much finer control over argument matching as we may use
 
 .pull-right[
 
-We look at the trimmed mean example again.
+Look at this trimmed mean example:
 
 ```{r}
 trims <- c(0, 0.1, 0.2, 0.5)
 x <- rcauchy(1000)
 ```
 
-Varying the `trim` argument can be done by passing the values in a named list.
+Varying the argument values can be done by passing the values in a _named_ list.
 
 ```{r}
-pmap_dbl(list(trim = trims), mean, x = x)
+pmap_dbl(
+  list(trim = trims, na.rm = F), 
+  .f = mean, 
+  x = x
+)
 ```
 ]]]
 
@@ -1027,7 +1051,7 @@ pmap(params, runif)
     )
     
     nm <- names(trans)
-    cars2018[nm] <- map2(trans, cars2018[nm], function(f, var) f(var))
+    cars2018[nm] <- map2(trans, cars2018[nm], ~ .x(.y))
     ```
 
 3. Compare and contrast the `map2()` approach to this `map()` approach:

@@ -2,8 +2,8 @@
 title: "Advanced R for Econometricians"
 subtitle: "Object Oriented Programming in R"
 author:
-  - "Martin C. Arnold"
-  - "Jens Klenke"
+  - "Martin Arnold"
+  - "Martin Schmelzer"
 date: "`r Sys.Date()`"
 output:
   xaringan::moon_reader:
@@ -13,7 +13,7 @@ output:
     includes:
       in_header: "../assets/mathjax-equation-numbers.html"
     nature:
-      beforeInit: ["../assets/remark-zoom.js", "../xaringan_files/macros.js", "https://platform.twitter.com/widgets.js"]
+      beforeInit: ["../assets/navigate_home.js", "../assets/remark-zoom.js", "../xaringan_files/macros.js", "https://platform.twitter.com/widgets.js"]
       highlightStyle: github
       highlightLines: true
       countIncrementalSlides: false
@@ -459,13 +459,11 @@ Note that the integer $z>2$ is a prime number if $$z\,\text{mod}\,y > 0 \, \fora
 
 ```{r, echo=T}
 validate_prime <- function(x = list()) {
-  sapply(
-    unique(unlist(x)), function(z) {
-      if(!all(z==2 || z %% 2:(z-1) > 0)) {
-        stop('Input contains non-prime number(s)!', call. = F)
-      }
-    } 
-  )
+  for (z in unique(unlist(x))) {
+    if (z <= 1 || !(z == 2 || all(z %% (2:(z - 1)) > 0))) {
+      stop('Input contains non-prime number(s)!', call. = FALSE)
+    }
+  }
   x
 }
 ```  
