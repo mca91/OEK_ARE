@@ -111,7 +111,7 @@ library(readr)
     
 **Is R a FP language?**
 
-- R is not a FP language but we may adopt a *functional style* of programming.
+- R is not a "pure" FP language but we may adopt a *functional style* of programming.
 
 - R **functionals** are functions which take functions as input and produce vector output
 
@@ -151,7 +151,7 @@ Functional programming style means decomposing a big problem into smaller pieces
 
 .font90[
 
-We will briefly discuss key techniques in functional R programming which are best summarised by the table below. We will focus on `purrr` functionals and applications of function factories.  
+We will briefly discuss key techniques in functional R programming which are best summarised by the table below. We will focus on `purrr` **functionals** and **function factories**.  
 
 <br>
 <br>
@@ -203,7 +203,7 @@ randomise(sum)
 Functionals can also produce other data structures, e.g., data frames as output.
 
 ---
-## Functionals
+## Functionals and iteration problems
 
 <br>
 
