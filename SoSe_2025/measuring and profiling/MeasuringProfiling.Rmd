@@ -73,9 +73,9 @@ library(bench)
 library(beeswarm) # for plotting with `bench` package
 ```
 
-- **Profiling** means measuring run time of our code *line-by-line* using realistic inputs in order to identify *bottlenecks*.
+- **Profiling** is measuring run time *line-by-line* using realistic inputs to **identify bottlenecks**.
 
-- After identifying bottlenecks we experiment with alternatives and find the fastest using a **microbenchmark**.
+- After identifying bottlenecks, we experiment with alternatives and find the fastest using a **microbenchmark**.
 
 - We will use the packages `profvis` and `bench` for profiling and benchmarking. 
 
@@ -94,9 +94,11 @@ It’s tempting to think you just know where the bottlenecks in your code are. I
 
 .smaller[
 
-- `Rprof()` is a build-in **sampling profiler**. It keeps track of the **function call stack** at regularly sampled intervals.
+- `utils::Rprof()` is **sampling profiler**: it tracks the **function call stack** at regularly sampled intervals.
 
-- Note: results are *stochastic*&mdash;we never run a function under the same conditions twice (think memory usage, CPU load, etc.) 
+- Results are *stochastic*&mdash;we never run a function under the same conditions twice 
+    
+    (think memory usage, CPU load, etc.) 
 
 .blockquote.exercise[
 #### `r desktop` Example: profiling a call of `replicate()`
@@ -126,8 +128,8 @@ sample.interval=100000
 <br>
 
 .smaller[
-.blockquote.exercise[
-#### `r desktop` Exercise: profiling nested functions
+.content-box-white[
+**Task:** profiling nested functions
 
 Profile a call of `f()` and visualise the results using `profvis::profvis()`.
 
@@ -170,7 +172,7 @@ h <- function() {
 
 .smaller[
 .blockquote.exercise[
-#### `r desktop` Example: profiling linear regression
+#### `r desktop` Example: profiling linear regression and visualization
 
 ```{r, eval=FALSE}
 profvis({
@@ -209,7 +211,7 @@ background-size: 650px
 <br>
 
 .blockquote.exercise[
-#### `r desktop` Exercise: extensive garbage collection
+#### `r desktop` Exercise: copy-on-modify and extensive garbage collection
 
 The following code generates a large number of short-lived objects by **copy-on-modification**.
 
@@ -266,17 +268,17 @@ background-size: 650px
 **Exercise: coercion to another type**
 
 ---
-## Profiling &mdash; some notes and hints
+## Profiling &mdash; Notes and Hints
 
 <br>
 
-- `C`/`C++` (or other compiled) code cannot be profiled
+- We **cannot profile compiled code** in R (`C`/`C++`/`FORTRAN`)
 
-- We also cannot profile what happens *inside* *primitive functions*, e.g., `sum()` and `sqrt()` (these functions are written in `C` or `FORTRAN`).
+    $\Rightarrow$ Cannot measure the call stack of **primitives** (`sum()`, `sqrt()`, ...) 
 
-  We thus cannot use profiling to see whether the code is slow because something further down the call stack is slow.
+    $\Rightarrow$ Cannot use profiling to see whether the code is slow because something further down the call stack is slow.
   
-- Profiling is another good reason to **break your code into functions** so that the profiler can give useful information about where time is being spent
+- Profiling is another good reason to **break your code into functions** (Functional programming!) so that the profiler can give useful information about where time is being spent
 
 ---
 class: segue-red
@@ -293,28 +295,26 @@ class: segue-red
 
 - **Important**: 
 
-    microbenchmarks can rarely be generalised to 'real' code: the observed differences in microbenchmarks will typically be dominated by **higher-order effects** in real code.
-
-  Think of it this way:
+    Microbenchmarks can rarely be generalised to 'real' code: Observed timings in benchmarks are typically dominated by **higher-order effects** in real code.
   
-  A deep understanding of quantum physics is not very helpful when baking cookies.
+  **A deep understanding of quantum physics is not very helpful when baking cookies.**
   
-- There are several R packages for microbenchmarking. We will rely on the `bench` package by Hester (2022) which has the most accurate timer function currently available in `R`.
+- There are several R packages for microbenchmarking. We will rely on the `bench` package by Hester (2025) which has the most accurate timer function currently available in `R`.
 
 ---
 ## Microbenchmarking &mdash; the `bench` package
 
 <br>
 
-- `bench` is part of the `tidyerse`. It uses the highest precision APIs available for the common operating system (often nanoseconds-level!)
+- `bench` uses the **highest precision APIs** available for the operating system (often nano-seconds!)
 
 - `mark()` is the working horse of the `bench` package and measures both memory allocation and computation time.
 
-- By default, a human-readable statistical summary on the distributions of memory load and timings based on 1e4 iterations is returned which also reports on garbage collections
+- By default, a **human-readable statistical summary** on the distributions of **memory load** and **timings based on multiple iterations** is returned which also reports on garbage collections
 
-- Benchmarking across a grid of input values with `bench::press()` is possible
+- Benchmarking across a **grid of input values** with `bench::press()`
 
-- The package also has methods for neat visualisation of the results using `ggplot2::autoplot()` (default plot type is [beeswarm](https://flowingdata.com/2016/09/08/beeswarm-plot-in-r-to-show-distributions/)) 
+- The package also has methods for **neat visualisations** of the results using `ggplot2::autoplot()` (default plot type is [beeswarm](https://flowingdata.com/2016/09/08/beeswarm-plot-in-r-to-show-distributions/)) 
 
 ---
 ## Microbenchmarking &mdash; `bench::mark()`
@@ -325,10 +325,12 @@ class: segue-red
 ```{r, eval=T}
 x <- runif(100)
 
-(lb <- bench::mark(
-  sqrt(x),
-  x^0.5
-))
+(
+  lb <- bench::mark(
+    sqrt(x),
+    x^0.5
+  )
+)
 ```
 
 ```{r, eval=F, warning=F, message=F}
@@ -386,7 +388,9 @@ Use `check = FALSE` to disable checking of consistent results.
 ---
 ## Microbenchmarking &mdash; `bench::press()`
 
-Sometimes it is useful to benchmark against a parameter grid. This can be done using `bench::press()`.
+Sometimes we want to benchmark against a parameter grid. 
+
+$\Rightarrow$ `bench::press()` to the rescue!
 
 <br>
 
@@ -423,10 +427,10 @@ create_df <- function(rows, cols) {
   How do the estimates from `system.time()` compare to those from `bench::mark()`? Why are they different?
 
 2. Here are two other ways to compute the square root of a numeric vector. Which do you think will be fastest? Use microbenchmarking to verify.
-```{r, eval=F}
+    ```{r, eval=F}
     x^(1/2)
     exp(log(x)/2)
-```
+    ```
 
 ---
 class: segue-red
@@ -476,11 +480,11 @@ for (i in 1:1e6) {
 
 - R (written in *FORTRAN*, *R*, and *C*) is more than 20 years old was not intended for super fast computations
 
-- `r emoji::emoji('bolt')` tweaking for speed improvements is easier (done by R-core team) but not feasible for end users like us. <br><br> Some alternatives address specific issues:
+- `r emoji::emoji('bolt')` tweaking for speed improvements is "easier" (and done by R-core team) but not feasible for end users like us. <br><br> Some alternatives to the "official R" address specific issues:
 
   - "pretty quick R" [pqR](http://www.pqr-project.org/) (parallelisation of core functions)
   
-  - [Microsoft R Open](https://mran.microsoft.com/open) (some fast extensions for machine learning)
+  - [Microsoft R Open](https://mran.microsoft.com/open) (discontinued, some fast extensions for machine learning)
 
 
 ---
@@ -516,7 +520,7 @@ f <- function(x, y) {
 ```
 
 ```{r}
-# print search list
+# print search path
 search()
 ```
 
@@ -549,16 +553,14 @@ f <- function() {      # f() is parent to g()
 f()
 ```
 
-Name look-up is done every time we call `print(z)`!
+Name look-up is done **every time** we call `print(z)`!
 
 ]]
 
 ---
-## (Why) is R slow? &mdash; Look-up with Mutable Environments
+## (Why) is R slow? &mdash; Performance Drop from Parsing
 
 .smaller[
-
-Even more problematic: most operations are lexically scoped function calls. This includes `+` and `-` but also (sometimes "recklessly" used) *operators* like `(` and `{`.
 
 .blockquote.exercise[
 #### `r desktop` Example: excessive usage of parenthesis
@@ -568,7 +570,7 @@ Even more problematic: most operations are lexically scoped function calls. This
 ```{r, cache=T}
 g <- function(x) x = (1/(1 + x))
 h <- function(x) x = ((1/(1 + x)))
-i <- function(x) x = (((1/(1 + x))))
+i <- function(x) x = ((((((1/(1 + x)))))))
 
 x <- sample(1:100, 100, replace = TRUE)
 
@@ -577,58 +579,11 @@ bench::mark(g(x), h(x), i(x))
 
 ]]
 
----
-## (Why) is R slow? &mdash; Look-up with Mutable Environments
-
-<br>
-
-.smaller[
-.blockquote.exercise[
-#### `r desktop` Example: function calls in nested environments
-
-```{r, cache=T}
-f <- function(x, y) {
-  (x + y) ^ 2
-}
-
-random_env <- function(parent = globalenv()) {
-  letter_list <- setNames(as.list(runif(26)), LETTERS)
-  list2env(letter_list, envir = new.env(parent = parent))
-}
-
-set_env <- function(f, e) {
-  environment(f) <- e
-  f
-}
-
-f2 <- set_env(f, random_env())
-f3 <- set_env(f, random_env(environment(f2)))
-f4 <- set_env(f, random_env(environment(f3)))
-```
-
-]]
-
----
-## (Why) is R slow? &mdash; Look-up with Mutable Environments
-
-<br>
-
-.smaller[
-.blockquote.exercise[
-#### `r desktop` Example: function calls in nested environments &mdash; ctd.
-
-```{r, warning=F, message=F, cache=T}
-bench::mark(f(1, 2), f2(1, 2), f3(1, 2), f4(1, 2))
-```
-
-Each additional environment between `f()` and the global environment where `+` and `^` are defined increases computation time.
-
-]]
 
 ---
 ## (Why) is R slow? &mdash; Lazy Evaluation Overhead
 
-Remember that function arguments are lazy &mdash; they are only evaluated when actually needed. 
+Remember that function arguments are lazy&mdash;they are only evaluated when actually needed. 
 
 <br>
 
@@ -655,7 +610,7 @@ f1(stop("My dog speaks Chinese"))
 ]
 
 ---
-## (Why) is R slow? &mdash; Lazy Evaluation Overhead
+## (Why) is R slow? &mdash; Promise Creation Isn’t Free
 
 Promises are very convenient but should be avoided if speed is crucial.
 
@@ -677,17 +632,21 @@ Arguments trigger promises each time the function is *called*. Superfluous argum
 ---
 ## (Why) is R slow? &mdash; Summary
 
-- R is not slow *per se* &mdash; but it is slow compared to other languages:
+- R isn’t slow *per se* — but it **is slower than many other languages**.
 
-    Speed isn't its strongest suit but accessability and compatibility are. R was designed to make life easier for you, not for your computer!
+  R was designed to make your life easier, not your computer’s.
 
-    More technically: R is an easy-to-use high level programming language. It provides a flexible and extensible toolkit for data analysis and statistics.
+  It's a high-level language built for data analysis and statistics — far easier than doing it all in C!
+  
+  As of `r Sys.Date()`, there are `r nrow(available.packages(repos = "http://cran.us.r-project.org"))` packages on [CRAN](https://cran.r-project.org/) — most problems have already been solved for you.
 
-- We are (mostly) happy to accept the slower speed for the time saved from not having to reinvent the wheel each time we want to implement a new function that, e.g., computes a test statistic.
+- We're (mostly) happy to accept the trade-off: **slower execution for much faster development**.
 
-    (meanwhile (`r Sys.Date()`) there are `r nrow(available.packages(repos = "http://cran.us.r-project.org"))` packages available on [CRAN](https://cran.r-project.org/) with many useful functions waiting to be discovered by you!)
+- We can't fix R's quirks, but:  
+  
+  **You *can* write efficient code** — if you know what to watch out for.
 
-- We cannot overcome the idiosyncrasies of `R` described in this section. However, there are a few things and tricks to keep in mind if you want to write performant code. We'll discuss these in the next Lecture.
+  Stay tuned — we’ll look at more practical tips in the next lectures.
 
 ---
 class: segue-red

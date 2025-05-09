@@ -60,9 +60,9 @@ library(bench)
 library(beeswarm) # for plotting with `bench` package
 ```
 
-- **Profiling** means measuring run time of our code *line-by-line* using realistic inputs in order to identify *bottlenecks*.
+- **Profiling** is measuring run time *line-by-line* using realistic inputs to **identify bottlenecks**.
 
-- After identifying bottlenecks we experiment with alternatives and find the fastest using a **microbenchmark**.
+- After identifying bottlenecks, we experiment with alternatives and find the fastest using a **microbenchmark**.
 
 - We will use the packages `profvis` and `bench` for profiling and benchmarking. 
 
@@ -81,9 +81,11 @@ It’s tempting to think you just know where the bottlenecks in your code are. I
 
 .smaller[
 
-- `Rprof()` is a build-in **sampling profiler**. It keeps track of the **function call stack** at regularly sampled intervals.
+- `utils::Rprof()` is **sampling profiler**: it tracks the **function call stack** at regularly sampled intervals.
 
-- Note: results are *stochastic*&amp;mdash;we never run a function under the same conditions twice (think memory usage, CPU load, etc.) 
+- Results are *stochastic*&amp;mdash;we never run a function under the same conditions twice 
+    
+    (think memory usage, CPU load, etc.) 
 
 .blockquote.exercise[
 #### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example: profiling a call of `replicate()`
@@ -114,8 +116,8 @@ writeLines(readLines(tmp))
 &lt;br&gt;
 
 .smaller[
-.blockquote.exercise[
-#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Exercise: profiling nested functions
+.content-box-white[
+**Task:** profiling nested functions
 
 Profile a call of `f()` and visualise the results using `profvis::profvis()`.
 
@@ -159,7 +161,7 @@ h &lt;- function() {
 
 .smaller[
 .blockquote.exercise[
-#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example: profiling linear regression
+#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example: profiling linear regression and visualization
 
 
 ``` r
@@ -199,7 +201,7 @@ background-size: 650px
 &lt;br&gt;
 
 .blockquote.exercise[
-#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Exercise: extensive garbage collection
+#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Exercise: copy-on-modify and extensive garbage collection
 
 The following code generates a large number of short-lived objects by **copy-on-modification**.
 
@@ -258,17 +260,17 @@ background-size: 650px
 **Exercise: coercion to another type**
 
 ---
-## Profiling &amp;mdash; some notes and hints
+## Profiling &amp;mdash; Notes and Hints
 
 &lt;br&gt;
 
-- `C`/`C++` (or other compiled) code cannot be profiled
+- We **cannot profile compiled code** in R (`C`/`C++`/`FORTRAN`)
 
-- We also cannot profile what happens *inside* *primitive functions*, e.g., `sum()` and `sqrt()` (these functions are written in `C` or `FORTRAN`).
+    `\(\Rightarrow\)` Cannot measure the call stack of **primitives** (`sum()`, `sqrt()`, ...) 
 
-  We thus cannot use profiling to see whether the code is slow because something further down the call stack is slow.
+    `\(\Rightarrow\)` Cannot use profiling to see whether the code is slow because something further down the call stack is slow.
   
-- Profiling is another good reason to **break your code into functions** so that the profiler can give useful information about where time is being spent
+- Profiling is another good reason to **break your code into functions** (Functional programming!) so that the profiler can give useful information about where time is being spent
 
 ---
 class: segue-red
@@ -285,28 +287,26 @@ class: segue-red
 
 - **Important**: 
 
-    microbenchmarks can rarely be generalised to 'real' code: the observed differences in microbenchmarks will typically be dominated by **higher-order effects** in real code.
-
-  Think of it this way:
+    Microbenchmarks can rarely be generalised to 'real' code: Observed timings in benchmarks are typically dominated by **higher-order effects** in real code.
   
-  A deep understanding of quantum physics is not very helpful when baking cookies.
+  **A deep understanding of quantum physics is not very helpful when baking cookies.**
   
-- There are several R packages for microbenchmarking. We will rely on the `bench` package by Hester (2022) which has the most accurate timer function currently available in `R`.
+- There are several R packages for microbenchmarking. We will rely on the `bench` package by Hester (2025) which has the most accurate timer function currently available in `R`.
 
 ---
 ## Microbenchmarking &amp;mdash; the `bench` package
 
 &lt;br&gt;
 
-- `bench` is part of the `tidyerse`. It uses the highest precision APIs available for the common operating system (often nanoseconds-level!)
+- `bench` uses the **highest precision APIs** available for the operating system (often nano-seconds!)
 
 - `mark()` is the working horse of the `bench` package and measures both memory allocation and computation time.
 
-- By default, a human-readable statistical summary on the distributions of memory load and timings based on 1e4 iterations is returned which also reports on garbage collections
+- By default, a **human-readable statistical summary** on the distributions of **memory load** and **timings based on multiple iterations** is returned which also reports on garbage collections
 
-- Benchmarking across a grid of input values with `bench::press()` is possible
+- Benchmarking across a **grid of input values** with `bench::press()`
 
-- The package also has methods for neat visualisation of the results using `ggplot2::autoplot()` (default plot type is [beeswarm](https://flowingdata.com/2016/09/08/beeswarm-plot-in-r-to-show-distributions/)) 
+- The package also has methods for **neat visualisations** of the results using `ggplot2::autoplot()` (default plot type is [beeswarm](https://flowingdata.com/2016/09/08/beeswarm-plot-in-r-to-show-distributions/)) 
 
 ---
 ## Microbenchmarking &amp;mdash; `bench::mark()`
@@ -318,18 +318,20 @@ class: segue-red
 ``` r
 x &lt;- runif(100)
 
-(lb &lt;- bench::mark(
-  sqrt(x),
-  x^0.5
-))
+(
+  lb &lt;- bench::mark(
+    sqrt(x),
+    x^0.5
+  )
+)
 ```
 
 ```
 ## # A tibble: 2 × 6
-##   expression      min   median `itr/sec` mem_alloc `gc/sec`
-##   &lt;bch:expr&gt; &lt;bch:tm&gt; &lt;bch:tm&gt;     &lt;dbl&gt; &lt;bch:byt&gt;    &lt;dbl&gt;
-## 1 sqrt(x)      82.1ns 164.03ns  4034957.      848B        0
-## 2 x^0.5         902ns   1.02µs   870070.      848B        0
+##   expression     min   median `itr/sec` mem_alloc `gc/sec`
+##   &lt;bch:expr&gt; &lt;bch:t&gt; &lt;bch:tm&gt;     &lt;dbl&gt; &lt;bch:byt&gt;    &lt;dbl&gt;
+## 1 sqrt(x)       82ns 164.03ns  3164467.      848B        0
+## 2 x^0.5        902ns   1.02µs   819462.      848B        0
 ```
 
 
@@ -388,7 +390,9 @@ Use `check = FALSE` to disable checking of consistent results.
 ---
 ## Microbenchmarking &amp;mdash; `bench::press()`
 
-Sometimes it is useful to benchmark against a parameter grid. This can be done using `bench::press()`.
+Sometimes we want to benchmark against a parameter grid. 
+
+`\(\Rightarrow\)` `bench::press()` to the rescue!
 
 &lt;br&gt;
 
@@ -427,11 +431,11 @@ create_df &lt;- function(rows, cols) {
   How do the estimates from `system.time()` compare to those from `bench::mark()`? Why are they different?
 
 2. Here are two other ways to compute the square root of a numeric vector. Which do you think will be fastest? Use microbenchmarking to verify.
-
-``` r
+    
+    ``` r
     x^(1/2)
     exp(log(x)/2)
-```
+    ```
 
 ---
 class: segue-red
@@ -482,11 +486,11 @@ for (i in 1:1e6) {
 
 - R (written in *FORTRAN*, *R*, and *C*) is more than 20 years old was not intended for super fast computations
 
-- 🔩 tweaking for speed improvements is easier (done by R-core team) but not feasible for end users like us. &lt;br&gt;&lt;br&gt; Some alternatives address specific issues:
+- 🔩 tweaking for speed improvements is "easier" (and done by R-core team) but not feasible for end users like us. &lt;br&gt;&lt;br&gt; Some alternatives to the "official R" address specific issues:
 
   - "pretty quick R" [pqR](http://www.pqr-project.org/) (parallelisation of core functions)
   
-  - [Microsoft R Open](https://mran.microsoft.com/open) (some fast extensions for machine learning)
+  - [Microsoft R Open](https://mran.microsoft.com/open) (discontinued, some fast extensions for machine learning)
 
 
 ---
@@ -524,17 +528,25 @@ f &lt;- function(x, y) {
 
 
 ``` r
-# print search list
+# print search path
 search()
 ```
 
 ```
-##  [1] ".GlobalEnv"             "package:emoji"          "package:icons"         
-##  [4] "package:tidyr"          "package:dplyr"          "package:tictoc"        
-##  [7] "package:beeswarm"       "package:microbenchmark" "package:stats"         
-## [10] "package:graphics"       "package:grDevices"      "package:utils"         
-## [13] "package:datasets"       "package:methods"        "Autoloads"             
-## [16] "package:base"
+##  [1] ".GlobalEnv"             "package:profvis"       
+##  [3] "package:emoji"          "package:icons"         
+##  [5] "package:tictoc"         "package:beeswarm"      
+##  [7] "package:microbenchmark" "package:sloop"         
+##  [9] "package:lubridate"      "package:forcats"       
+## [11] "package:stringr"        "package:readr"         
+## [13] "package:tidyr"          "package:tibble"        
+## [15] "package:ggplot2"        "package:tidyverse"     
+## [17] "package:dplyr"          "package:purrr"         
+## [19] "package:palmerpenguins" "tools:rstudio"         
+## [21] "package:stats"          "package:graphics"      
+## [23] "package:grDevices"      "package:utils"         
+## [25] "package:datasets"       "package:methods"       
+## [27] "Autoloads"              "package:base"
 ```
 
 ]]
@@ -567,16 +579,14 @@ f &lt;- function() {      # f() is parent to g()
 f()
 ```
 
-Name look-up is done every time we call `print(z)`!
+Name look-up is done **every time** we call `print(z)`!
 
 ]]
 
 ---
-## (Why) is R slow? &amp;mdash; Look-up with Mutable Environments
+## (Why) is R slow? &amp;mdash; Performance Drop from Parsing
 
 .smaller[
-
-Even more problematic: most operations are lexically scoped function calls. This includes `+` and `-` but also (sometimes "recklessly" used) *operators* like `(` and `{`.
 
 .blockquote.exercise[
 #### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example: excessive usage of parenthesis
@@ -584,10 +594,10 @@ Even more problematic: most operations are lexically scoped function calls. This
 (or: a good example of poorly written code)
 
 
-```r
+``` r
 g &lt;- function(x) x = (1/(1 + x))
 h &lt;- function(x) x = ((1/(1 + x)))
-i &lt;- function(x) x = (((1/(1 + x))))
+i &lt;- function(x) x = ((((((1/(1 + x)))))))
 
 x &lt;- sample(1:100, 100, replace = TRUE)
 
@@ -595,80 +605,21 @@ bench::mark(g(x), h(x), i(x))
 ```
 
 ```
-## # A tibble: 3 x 6
-##   expression      min   median `itr/sec` mem_alloc `gc/sec`
-##   &lt;bch:expr&gt; &lt;bch:tm&gt; &lt;bch:tm&gt;     &lt;dbl&gt; &lt;bch:byt&gt;    &lt;dbl&gt;
-## 1 g(x)          500ns    700ns  1076771.      848B    108. 
-## 2 h(x)          500ns    700ns  1039037.      848B      0  
-## 3 i(x)          500ns    700ns   925182.      848B     92.5
+## # A tibble: 3 × 6
+##   expression      min  median `itr/sec` mem_alloc `gc/sec`
+##   &lt;bch:expr&gt; &lt;bch:tm&gt; &lt;bch:t&gt;     &lt;dbl&gt; &lt;bch:byt&gt;    &lt;dbl&gt;
+## 1 g(x)          287ns   410ns  2239683.      848B        0
+## 2 h(x)          328ns   410ns  1938499.      848B        0
+## 3 i(x)          287ns   410ns  1095431.      848B        0
 ```
 
 ]]
 
----
-## (Why) is R slow? &amp;mdash; Look-up with Mutable Environments
-
-&lt;br&gt;
-
-.smaller[
-.blockquote.exercise[
-#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example: function calls in nested environments
-
-
-```r
-f &lt;- function(x, y) {
-  (x + y) ^ 2
-}
-
-random_env &lt;- function(parent = globalenv()) {
-  letter_list &lt;- setNames(as.list(runif(26)), LETTERS)
-  list2env(letter_list, envir = new.env(parent = parent))
-}
-
-set_env &lt;- function(f, e) {
-  environment(f) &lt;- e
-  f
-}
-
-f2 &lt;- set_env(f, random_env())
-f3 &lt;- set_env(f, random_env(environment(f2)))
-f4 &lt;- set_env(f, random_env(environment(f3)))
-```
-
-]]
-
----
-## (Why) is R slow? &amp;mdash; Look-up with Mutable Environments
-
-&lt;br&gt;
-
-.smaller[
-.blockquote.exercise[
-#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example: function calls in nested environments &amp;mdash; ctd.
-
-
-```r
-bench::mark(f(1, 2), f2(1, 2), f3(1, 2), f4(1, 2))
-```
-
-```
-## # A tibble: 4 x 6
-##   expression      min   median `itr/sec` mem_alloc `gc/sec`
-##   &lt;bch:expr&gt; &lt;bch:tm&gt; &lt;bch:tm&gt;     &lt;dbl&gt; &lt;bch:byt&gt;    &lt;dbl&gt;
-## 1 f(1, 2)       300ns    400ns  1568554.        0B       0 
-## 2 f2(1, 2)      500ns    700ns  1071876.        0B     107.
-## 3 f3(1, 2)      500ns    700ns  1149359.        0B       0 
-## 4 f4(1, 2)      600ns    700ns  1230237.        0B     123.
-```
-
-Each additional environment between `f()` and the global environment where `+` and `^` are defined increases computation time.
-
-]]
 
 ---
 ## (Why) is R slow? &amp;mdash; Lazy Evaluation Overhead
 
-Remember that function arguments are lazy &amp;mdash; they are only evaluated when actually needed. 
+Remember that function arguments are lazy&amp;mdash;they are only evaluated when actually needed. 
 
 &lt;br&gt;
 
@@ -697,7 +648,7 @@ f1(stop("My dog speaks Chinese"))
 ]
 
 ---
-## (Why) is R slow? &amp;mdash; Lazy Evaluation Overhead
+## (Why) is R slow? &amp;mdash; Promise Creation Isn’t Free
 
 Promises are very convenient but should be avoided if speed is crucial.
 
@@ -715,10 +666,10 @@ bench::mark(f1(), f2())
 
 ```
 ## # A tibble: 2 × 6
-##   expression      min   median `itr/sec` mem_alloc `gc/sec`
-##   &lt;bch:expr&gt; &lt;bch:tm&gt; &lt;bch:tm&gt;     &lt;dbl&gt; &lt;bch:byt&gt;    &lt;dbl&gt;
-## 1 f1()              0   41.1ns  8100084.        0B        0
-## 2 f2()           82ns    164ns  3531013.        0B        0
+##   expression      min  median `itr/sec` mem_alloc `gc/sec`
+##   &lt;bch:expr&gt; &lt;bch:tm&gt; &lt;bch:t&gt;     &lt;dbl&gt; &lt;bch:byt&gt;    &lt;dbl&gt;
+## 1 f1()              0    82ns  8135081.        0B      0  
+## 2 f2()          123ns   287ns   814988.        0B     81.5
 ```
 
 Arguments trigger promises each time the function is *called*. Superfluous arguments thus lead to avoidable overhead.
@@ -728,17 +679,21 @@ Arguments trigger promises each time the function is *called*. Superfluous argum
 ---
 ## (Why) is R slow? &amp;mdash; Summary
 
-- R is not slow *per se* &amp;mdash; but it is slow compared to other languages:
+- R isn’t slow *per se* — but it **is slower than many other languages**.
 
-    Speed isn't its strongest suit but accessability and compatibility are. R was designed to make life easier for you, not for your computer!
+  R was designed to make your life easier, not your computer’s.
 
-    More technically: R is an easy-to-use high level programming language. It provides a flexible and extensible toolkit for data analysis and statistics.
+  It's a high-level language built for data analysis and statistics — far easier than doing it all in C!
+  
+  As of 2025-05-09, there are 22390 packages on [CRAN](https://cran.r-project.org/) — most problems have already been solved for you.
 
-- We are (mostly) happy to accept the slower speed for the time saved from not having to reinvent the wheel each time we want to implement a new function that, e.g., computes a test statistic.
+- We're (mostly) happy to accept the trade-off: **slower execution for much faster development**.
 
-    (meanwhile (2025-05-09) there are 22390 packages available on [CRAN](https://cran.r-project.org/) with many useful functions waiting to be discovered by you!)
+- We can't fix R's quirks, but:  
+  
+  **You *can* write efficient code** — if you know what to watch out for.
 
-- We cannot overcome the idiosyncrasies of `R` described in this section. However, there are a few things and tricks to keep in mind if you want to write performant code. We'll discuss these in the next Lecture.
+  Stay tuned — we’ll look at more practical tips in the next lectures.
 
 ---
 class: segue-red
