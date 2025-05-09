@@ -1,7 +1,7 @@
 ---
-title: "Advanced `R` for Econometricians (Summer 2022)"
+title: "Advanced `R` for Econometricians (Summer 2025)"
 subtitle: "Object Oriented `R` Programming --- Solutions to Exercises"
-author: 'Jens Klenke, Martin Arnold' 
+author: 'Martin Arnold, Martin Schmelzer' 
 output: pdf_document
 ---
 

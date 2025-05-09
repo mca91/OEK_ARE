@@ -3,17 +3,17 @@
   <head>
     <title>Advanced R for Econometricians</title>
     <meta charset="utf-8" />
-    <meta name="author" content="Martin C. Arnold" />
-    <meta name="author" content="Jens Klenke" />
-    <meta name="date" content="2022-06-20" />
+    <meta name="author" content="Martin Arnold" />
+    <meta name="author" content="Martin Schmelzer" />
+    <meta name="date" content="2025-05-09" />
     <script src="MeasuringProfiling_files/header-attrs/header-attrs.js"></script>
     <link href="MeasuringProfiling_files/remark-css/default.css" rel="stylesheet" />
     <script src="MeasuringProfiling_files/clipboard/clipboard.min.js"></script>
     <link href="MeasuringProfiling_files/xaringanExtra-clipboard/xaringanExtra-clipboard.css" rel="stylesheet" />
     <script src="MeasuringProfiling_files/xaringanExtra-clipboard/xaringanExtra-clipboard.js"></script>
     <script>window.xaringanExtraClipboard(null, {"button":"<i class=\"fa fa-clipboard\"><\/i>","success":"<i class=\"fa fa-check\" style=\"color: #00ff00\"><\/i>","error":"<i class=\"fa fa-times-circle\" style=\"color: #F94144\"><\/i>"})</script>
-    <link href="MeasuringProfiling_files/font-awesome/css/all.css" rel="stylesheet" />
-    <link href="MeasuringProfiling_files/font-awesome/css/v4-shims.css" rel="stylesheet" />
+    <link href="MeasuringProfiling_files/font-awesome/css/all.min.css" rel="stylesheet" />
+    <link href="MeasuringProfiling_files/font-awesome/css/v4-shims.min.css" rel="stylesheet" />
     <script type="text/x-mathjax-config">
       MathJax.Hub.Config({
         TeX: { equationNumbers: { autoNumber: "AMS" } },
@@ -43,22 +43,7 @@ class: title-slide title-measuring center middle
 
 # Advanced R for Econometricians
 ## Measuring Performance and Profiling
-### Martin C. Arnold, Jens Klenke
-
----
-## What's up next? &amp;mdash; Overview
-
-**Now:**
-
-- Measuring Performance: Profiling and Microbenchmarking
-
-- (Why) is `R` slow?
-
-**Remaining classes:**
-
-- Improving Performance
-
-- How to speed things up using `Rcpp` (and hopefully `RcppArmadillo`) 
+### Martin Arnold, Martin Schmelzer
 
 ---
 class: segue-red
@@ -68,7 +53,7 @@ class: segue-red
 ## Prerequisites
 
 
-```r
+``` r
 # packages needed
 library(profvis)
 library(bench)
@@ -135,7 +120,7 @@ writeLines(readLines(tmp))
 Profile a call of `f()` and visualise the results using `profvis::profvis()`.
 
 
-```r
+``` r
 # define some (nested) example functions
 f &lt;- function() {
   pause(0.1)
@@ -177,7 +162,7 @@ h &lt;- function() {
 #### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example: profiling linear regression
 
 
-```r
+``` r
 profvis({
   
   dat &lt;- data.frame(
@@ -221,7 +206,7 @@ The following code generates a large number of short-lived objects by **copy-on-
 What does `profvis()` reveal?
 
 
-```r
+``` r
 profvis({
   
   x &lt;- integer()
@@ -255,7 +240,7 @@ Sometimes code statements seem fairly innocent but are very inefficient both whe
 Can you explain why execution of the third line needs 762.9MB memory?
 
 
-```r
+``` r
 profvis({
   x &lt;- matrix(nrow = 1e4, ncol = 1e4)
   x[1, 1] &lt;- 0
@@ -330,7 +315,7 @@ class: segue-red
 #### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example: "the fastest square root"
 
 
-```r
+``` r
 x &lt;- runif(100)
 
 (lb &lt;- bench::mark(
@@ -343,12 +328,12 @@ x &lt;- runif(100)
 ## # A tibble: 2 × 6
 ##   expression      min   median `itr/sec` mem_alloc `gc/sec`
 ##   &lt;bch:expr&gt; &lt;bch:tm&gt; &lt;bch:tm&gt;     &lt;dbl&gt; &lt;bch:byt&gt;    &lt;dbl&gt;
-## 1 sqrt(x)       123ns 164.15ns  3232274.      848B        0
-## 2 x^0.5         943ns   1.02µs   864867.      848B        0
+## 1 sqrt(x)      82.1ns 164.03ns  4034957.      848B        0
+## 2 x^0.5         902ns   1.02µs   870070.      848B        0
 ```
 
 
-```r
+``` r
 plot(lb)
 ```
 ]
@@ -371,7 +356,7 @@ plot(lb)
 #### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example: non-equivalent code
 
 
-```r
+``` r
 set.seed(42)
 
 dat &lt;- data.frame(
@@ -414,7 +399,7 @@ Sometimes it is useful to benchmark against a parameter grid. This can be done u
 Benchmark subsetting functions for dataframes generated by `create_df()` for combination of `rows = c(10000, 100000)` and `cols = c(10, 100)`.
 
 
-```r
+``` r
 create_df &lt;- function(rows, cols) {
   as.data.frame(
     matrix(
@@ -432,7 +417,7 @@ create_df &lt;- function(rows, cols) {
 
 1. Instead of using `bench::mark()`, you could use the built-in function `system.time()` which is, however, much less precise, so you’ll need to repeat each operation many times with a loop, and then divide to find the average time of each operation, as in the code below.
     
-    ```r
+    ``` r
     x &lt;- runif(100)
     n &lt;- 1e6
     system.time(for (i in 1:n) sqrt(x)) / n
@@ -443,7 +428,7 @@ create_df &lt;- function(rows, cols) {
 
 2. Here are two other ways to compute the square root of a numeric vector. Which do you think will be fastest? Use microbenchmarking to verify.
 
-```r
+``` r
     x^(1/2)
     exp(log(x)/2)
 ```
@@ -479,7 +464,7 @@ But:
 #### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example: extreme dynamism
 
 
-```r
+``` r
 x &lt;- 0L
 for (i in 1:1e6) {
   x &lt;- x + 1L
@@ -531,23 +516,25 @@ for (i in 1:1e6) {
 The interpreter asks: which environment does the value of `z` come from?
 
 
-```r
+``` r
 f &lt;- function(x, y) {
   x + y / z
 }
 ```
 
 
-```r
+``` r
 # print search list
 search()
 ```
 
 ```
-##  [1] ".GlobalEnv"             "package:emoji"          "package:beeswarm"       "package:icons"          "package:tidyr"          "package:dplyr"         
-##  [7] "package:tictoc"         "package:parallel"       "package:microbenchmark" "tools:rstudio"          "package:stats"          "package:graphics"      
-## [13] "package:grDevices"      "package:utils"          "package:datasets"       "package:methods"        "Autoloads"              "org:r-lib"             
-## [19] "package:base"
+##  [1] ".GlobalEnv"             "package:emoji"          "package:icons"         
+##  [4] "package:tidyr"          "package:dplyr"          "package:tictoc"        
+##  [7] "package:beeswarm"       "package:microbenchmark" "package:stats"         
+## [10] "package:graphics"       "package:grDevices"      "package:utils"         
+## [13] "package:datasets"       "package:methods"        "Autoloads"             
+## [16] "package:base"
 ```
 
 ]]
@@ -564,7 +551,7 @@ search()
 Interpreter asks: which environment does the value of `z` come from?
 
 
-```r
+``` r
 z &lt;- 1                 # global environment
 
 f &lt;- function() {      # f() is parent to g()
@@ -689,7 +676,7 @@ Remember that function arguments are lazy &amp;mdash; they are only evaluated wh
 #### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example: lazy evaluation
 
 
-```r
+``` r
 f1 &lt;- function(a) {
   force(a) # why not simply write 'a'?
   NULL
@@ -701,7 +688,7 @@ f1(stop("My dog speaks Chinese"))
 vs.
 
 
-```r
+``` r
 f1 &lt;- function(a) NULL
 
 f1(stop("My dog speaks Chinese"))
@@ -720,7 +707,7 @@ Promises are very convenient but should be avoided if speed is crucial.
 #### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example: lazy evaluation &amp;mdash; ctd.
 
 
-```r
+``` r
 f1 &lt;- function(a) NULL
 f2 &lt;- function(a = 1, b = 2, c = 4, d = 4, e = 5) NULL
 bench::mark(f1(), f2())
@@ -730,8 +717,8 @@ bench::mark(f1(), f2())
 ## # A tibble: 2 × 6
 ##   expression      min   median `itr/sec` mem_alloc `gc/sec`
 ##   &lt;bch:expr&gt; &lt;bch:tm&gt; &lt;bch:tm&gt;     &lt;dbl&gt; &lt;bch:byt&gt;    &lt;dbl&gt;
-## 1 f1()              0     82ns 10318877.        0B        0
-## 2 f2()          123ns    205ns  4135334.        0B        0
+## 1 f1()              0   41.1ns  8100084.        0B        0
+## 2 f2()           82ns    164ns  3531013.        0B        0
 ```
 
 Arguments trigger promises each time the function is *called*. Superfluous arguments thus lead to avoidable overhead.
@@ -749,7 +736,7 @@ Arguments trigger promises each time the function is *called*. Superfluous argum
 
 - We are (mostly) happy to accept the slower speed for the time saved from not having to reinvent the wheel each time we want to implement a new function that, e.g., computes a test statistic.
 
-    (meanwhile (2022-06-20) there are 18244 packages available on [CRAN](https://cran.r-project.org/) with many useful functions waiting to be discovered by you!)
+    (meanwhile (2025-05-09) there are 22390 packages available on [CRAN](https://cran.r-project.org/) with many useful functions waiting to be discovered by you!)
 
 - We cannot overcome the idiosyncrasies of `R` described in this section. However, there are a few things and tricks to keep in mind if you want to write performant code. We'll discuss these in the next Lecture.
 
@@ -761,17 +748,18 @@ class: segue-red
     </textarea>
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
 <script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script src="../assets/navigate_home.js"></script>
 <script src="../assets/remark-zoom.js"></script>
 <script src="../xaringan_files/macros.js"></script>
 <script src="https://platform.twitter.com/widgets.js"></script>
 <script>var slideshow = remark.create({
-"highlightStyle": "github",
-"highlightLines": true,
-"countIncrementalSlides": false,
-"ratio": "16:9",
-"navigation": {
-"scroll": false
-}
+  "highlightStyle": "github",
+  "highlightLines": true,
+  "countIncrementalSlides": false,
+  "ratio": "16:9",
+  "navigation": {
+    "scroll": false
+  }
 });
 if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
   window.dispatchEvent(new Event('resize'));

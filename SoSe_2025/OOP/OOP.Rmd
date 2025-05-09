@@ -122,7 +122,9 @@ We 'sail the seas of OOP' using the `sloop` package. It provides helper function
 install.packages('sloop')
 library('sloop')
 ```
-    
+</br>
+Some Examples:
+
 ```{r, echo=T}
 otype(base::abs)
 otype(3:1)
@@ -137,17 +139,18 @@ class: left, top
 .smaller[
 <br>
 <blockquote>
-Everything that exists in R is an object. 
+*Everything* that exists in R is an object. 
 .right[&mdash; <cite>John Chambers</cite>]
 </blockquote>
 <br>
-
-Thus far we have used the term 'object' somewhat sloppily &mdash; not every R object is *object-oriented*:
+Thus far we have used the term 'object' somewhat sloppily &mdash; not every R object is *object-oriented*.
 
 <br>
 
+<center>
 ![:image 35%](../img/oo-venn.png)
 ![:source 2019](Wickham)
+</center>
 ]
 
 ---
@@ -155,7 +158,9 @@ class: left, top
 ## Base Types vs OO Objects
 
 .smaller[
-`is.object()` and `sloop::otype()` are useful for identifying objects in the wild.
+`base::is.object()` and `sloop::otype()` are useful for identifying objects in the wild.
+
+</br>
 
 ```{r, echo=T}
 # base object
@@ -173,6 +178,8 @@ class: left, top
 
 **Only OO objects have a `class` attribute.**
 
+</br>
+
 ```{r, echo=T}
 attr(1L, "class")
 attr(ggplot2::diamonds, "class")
@@ -183,13 +190,17 @@ class: left, top
 ## Base Types vs OO Objects
 
 .smaller[
-- There are alternate functions for checking the `class` argument
+- There are alternate functions for checking the `class` argument 
+    </br>
+    </br>
     ```{r, echo=T}
     s3_class(ggplot2::diamonds)
     class(ggplot2::diamonds)
     ```
-
+    </br>
 - Be careful with `class()`
+    </br>
+    </br>
     ```{r, echo=T}
     class(1L)
     ```
@@ -197,11 +208,16 @@ class: left, top
 
 ???
 
-- `class()` can be misleading when used with base objects which is why we use `sloop::s3_class()`
+- `class()` can be misleading when used with base objects which is why we use `sloop::s3_class()`: `integer` is an *atomic type*, not an S3 class.
+    ```{r, echo = T}
+    is.object(1L)
+    attributes(1L)
+    ```
+
 
 - `sloop::s3_class()` works safely with base, S3 and S4 objects. 
 
-    (returns the implicit class used by the respective system)
+    (it returns the implicit class used by the respective system)
 
 ---
 class: left, top
@@ -210,6 +226,8 @@ class: left, top
 **Every R object has a base type** of which there are 25.
 
 Important types are `NULL`, `logical`, `integer`, `double` , `complex`, `character`, `list` and `closure`
+
+</br>
 
 ```{r, echo=T}
 typeof(1L)
@@ -244,13 +262,13 @@ class: left, top
 
 **What is S3?**
 
-- C++ and Java use *message-passing style* where objects **encapsulate** data and functions that may modify the data. 
+- C++ and Java use ***message-passing style*** where ***objects encapsulate data*** and **functions** that may **modify** the data. 
   
-    A typical function call looks like `object.method(argument)`.
+    A typical function call looks like **`object.method(arguments)`**.
 
-- S3 implements a *functional style* where the associated functions (called **generics**) live *outside* the object. A generic decides which method to call based on the object passed. 
+- S3 implements a ***functional style*** where the associated functions (**generics**) live ***outside the object***. A generic decides which method to call based on the object passed. 
 
-    A typical function call looks like `generic(object, argument)`.
+    A typical function call looks like **`generic(object, arguments)`**.
 
 **Why discussing S3?**
 
@@ -258,7 +276,7 @@ class: left, top
 
 - It's used in `base` and `stats` and is the most commonly used system on CRAN.
 
-- This sections provides you with a working knowledge of the system and its limitations. Being familiar with S3 is a good starting point for engaging with the other systems, if necessary for your work.
+- This lecture provides you with a working knowledge of the system and its limitations. Being familiar with S3 is a good starting point for engaging with the other systems, if necessary for your work.
 ]
 
 ---
@@ -266,7 +284,10 @@ class: left, top
 ## S3 &mdash; Basics
 
 .medium[
-Every S3 object has a base type and at least one class.
+Every S3 object has a **base type** and **at least one class**.
+
+</br>
+
 .blockquote.exercise[
 #### `r desktop` Example: class and type of factor object
 
@@ -291,13 +312,15 @@ Check that `class` is simply an `attribute` of `f` using `attribute()`.
 class: left, top
 ## S3 &mdash; Generics
 
-- A generic function (**generic**) is an interface. It behaves dependent on the class of the passed S3 object. 
+</br>
 
-  This concept is called **polymorphism** (many shapes).
+- A generic function (***generic***) is an interface. It behaves depending on the **class** of the S3 object. 
 
-- The behavior when a S3 object is passed to a generic may be very different from the underlying base type: class-specific methods may do weird stuff!
+  This concept is called ***polymorphism*** (many shapes).
 
-- The process of looking for a class-specific implementation (**method**) upon a generic function call is called **method dispatch**
+- The behavior when an S3 object is passed to a generic may be very different from the underlying base type: Class-specific methods may do weird stuff!
+
+- The process of looking for a class-specific function (***method***) upon a generic function call is called ***method dispatch***
 
 
 ---
@@ -329,6 +352,8 @@ class: left, top
 .smaller[
 - S3 methods follow the name convention `generic.class()`
 
+
+
 - We may use `s3_dispatch()` to investigate the process of method dispatch for an S3 object
   ```{r, echo = T}
   s3_dispatch(print(f))
@@ -336,7 +361,9 @@ class: left, top
   
     `=>` indicates the method used  
     `*` idicates that the method is defined (but not used)
-      
+
+
+
 - Methods are sometimes exported from the package namespace (like `print.factor()`) but generally should not be used directly
   ```{r, echo = T}
   ftype(print.factor) # check if method 
@@ -348,7 +375,9 @@ class: left, top
 ## S3 &mdash; Method Dispatch
 
 .smaller[
-Use `s3_get_method()` to see the source code of a method which is not exported.
+Use `s3_get_method()` to see the source code of **methods that are not exported**.
+
+</br>
 
 .blockquote.exercise[
 #### `r desktop` Example: `lm.print()`
@@ -359,6 +388,16 @@ typeof(mod)
 class(mod)
 ```
 ]]
+
+???
+
+- When a package is loaded, only exported functions and objects are added to the user’s search path.
+
+- Non-exported functions/methods are internal to the package and must be accessed explicitly (e.g., via `pkgname:::function_name()`).
+
+- In S3, methods are functions with names like `generic.class`, e.g., `print.lm()` or `summary.glm()`.
+
+- Sometimes, these methods are not exported, meaning they don’t appear in the package’s namespace for direct access
 
 ---
 class: left, top
@@ -380,7 +419,7 @@ class: left, top
 
 1. Describe the difference between `t.test()` and `t.data.frame()`. When is each function called?
 
-2. What class of object does the following code return? What base type is it built on? What attributes does it use?
+2. What class does the following code return? What base type is it built on? What attributes does it use?
   ```{r, echo=T, eval=F}
   x <- ecdf(rpois(100, 10))
   x
@@ -412,13 +451,13 @@ class: left, top
 
 We recommended to follow the following conventions when creating your own classes:
 
-- Avoid `.` in class names to prevent confusion with generics
+- Avoid '`.`' in class names to **prevent confusion with generics**
 
-- Provide a **constructor** function, `new_classname()`, which generates objects with the desired structure
+- **Provide a constructor** function, which generates objects with the **required structure**: schema `new_classname()`
 
-- Use a **validator** function, `validate_classname()` to check that objects of your class have correct values
+- **Use a validator** function to check that objects of your class have **correct values**: schema `validate_classname()`
 
-- "Sharing is caring": provide a user-friendly **helper**, `classname()`, which makes it easy for others to generate objects of your class
+- "Sharing is caring": Provide a user-friendly **helper function**, `classname()`, which makes it easy for others to **generate objects of your class**
 
 ---
 class: left, top
@@ -429,7 +468,7 @@ We now demonstrate how to implement a simple S3 class for prime numbers.
 .blockquote.exercise[
 #### S3 &mdash; constructur function for `prime` class
 
-Let's start with a constructor function which accepts integer input and returns an object with classes 'data frame' and 'prime'.
+Start with a constructor function that accepts `integer` input and returns an object of class `prime`.
 
 ```{r, echo=T}
 new_prime <- function(x = integer()) {
@@ -453,9 +492,9 @@ class: left, top
 .blockquote.exercise[
 #### S3 &mdash; validator function for `prime` class
 
-The validator function should check whether the values of a `prime` object are indeed prime numbers.
+The validator function checks if the values of a `prime` object are indeed prime numbers.
 
-Note that the integer $z>2$ is a prime number if $$z\,\text{mod}\,y > 0 \, \forall \, y\in[2,3,...,z-1].$$
+An integer $z>2$ is a prime number if $$z\,\text{mod}\,y > 0 \, \forall \, y\in[2,3,...,z-1].$$
 
 ```{r, echo=T}
 validate_prime <- function(x = list()) {
@@ -478,11 +517,13 @@ class: left, top
 .blockquote.exercise[
 #### S3 &mdash; helper function for `prime` class
 
-At last we provide a user-friendly helper function which generates and validates `prime` objects.
+At last we provide a user-friendly helper function to **generate and validate** `prime` objects.
 
 ```{r, echo=T}
 prime <- function(x = integer()) {
-    validate_prime(new_prime(x))
+    validate_prime(
+      new_prime(x)
+    )
 }
 ```
 
@@ -500,14 +541,15 @@ class: left, top
 ## S3 Generics and Methods
 
 .smaller[
-- Many prominent R functions are generics, e.g. `mean()`. Method dispatch is done by `UseMethod()`.
+- Many prominent R functions are generics. Method dispatch is handled by `base::UseMethod()`.
   ```{r, echo = T}
   mean
   ```
   
-- Let's see the dispatch for `mean(x)` if `x` has class `Date`:
+- Let's see the dispatch for `mean(x)` where `x` has class `Date`:
   ```{r, echo = T}
-  x <- Sys.Date
+  x <- Sys.Date()
+  class(x)
   s3_dispatch(mean(x))
   ```
 ]
@@ -517,9 +559,9 @@ class: left, top
 ## S3 Generics and Methods
 
 .smaller[
-- Note that the pseudo-class `default` for standard fallback could be used for `Date` objects but there is a specific method `mean.Date()` which is called instead
+- The pseudo-class `default` should not be used for `Date` objects (why?) and there is a specific method `mean.Date()` which is called instead
 
-- Use `s3_methods_generic()` to see all available methods of a generic
+- `sloop::s3_methods_generic()` lists available **methods for a generic**
   ```{r, echo = T}
   s3_methods_generic('mean')
   ```
@@ -529,7 +571,7 @@ class: left, top
 class: left, top
 ## S3 Generics and Methods
 
-`s3_method_class()` provides all registered methods for a given class.
+`s3_method_class()` provides all registered **methods for a class**.
 
 ```{r, echo = T}
 head(
@@ -552,12 +594,12 @@ my_generic <- function(x) {
 }
 ```
   
-`UseMethod()` dispatches based on `x` by default. Dispatch based on a second argument is optional.
+`UseMethod(x)` dispatches based on `x` by default. Dispatch based on a second argument is optional.
 
-Let's define methods for default behavior and `my_class`
+Let's define methods for default behavior and for a class `my_class`
 ```{r, echo=T}
 my_generic.default <- function(x) {
-  x
+  cat("Output for default method:\n", x)
 }
 
 my_generic.my_class <- function(x) {
@@ -581,8 +623,13 @@ class: left, top
 We next check that method dispatch works as desired:
 
 ```{r, echo=T}
-y <- structure(x<-1, class = 'my_class')
+x <- 1
+y <- structure(x, class = 'my_class')
+
+# first for x
 s3_dispatch(my_generic(x))
+
+# then for y
 s3_dispatch(my_generic(y))
 ```
 ]]
@@ -598,7 +645,6 @@ class: left, top
 We next check that method dispatch works as desired:
 
 ```{r, echo=T}
-y <- structure(x<-1, class = 'my_class')
 my_generic(x)
 my_generic(y)
 ```
@@ -648,14 +694,16 @@ class: left, top
 
 Let's write a method for objects of class `prime` for the generic `plot()`. The method should 
 
-- take objects of class prime and all additional arguments which can be passed to `plot()`
+- take objects of class prime and all additional arguments which can be passed to `plot()`.
 
-- be able to visualise a prime number $p$ in Cartesian and polar coordinates 
+- be able to visualise a prime number $p$ in Cartesian and polar coordinates. 
 
 <br>
+<center>
 ![:image 40%](../img/polar.gif)
 
 ![:source_url](http://www.maths.usyd.edu.au/)
+</center>
 
 ---
 class: left, top
@@ -680,16 +728,18 @@ plot.prime <- function(x = list(), coord, ...) {
 }
 ```
 
-Note that we may pass additional arguments to `plot()` using `...`
+Note that we may pass additional arguments to `plot()` using via `...` (ellipsis operator). 
 
 ---
 class: left, top
 ## Case Study &mdash; A Plot Method for `prime` Objects
 
 ```{r, echo=T, eval=F, cache=T}
+library(purrr)
+
 # Subset of all prime numbers in 2,...,1e4
 x <- 2:1e4
-x <- x[sapply(unique(x), function(z) all(z %% 2:(z-1) > 0))]
+x <- x[map_lgl(x, \(x) x > 1 && all(x %% 2:(x - 1) > 0))]
 
 # Assign 'prime' class
 x <- prime(x)
@@ -706,7 +756,7 @@ class: left, top
 ## Case Study &mdash; A Plot Method for `prime` Objects
 
 ```{r, echo=T, fig.align='center', dpi=170, out.width='40%', cache=T}
-plot(x, coord = "polar", pch = 19, cex = 0.5, col = "red")
+plot(x, coord = "polar", pch = 19, cex = 0.5, col = "red", axes = F, xlab = "", ylab = "")
 ```
 
 ---
@@ -727,7 +777,7 @@ class: left, top, exercise_slide
 class: left, top
 ## S3 Inheritance
 
-- In OOP, the concept of **Inheritance** allows us to derive a new class (child) from an existing one (parent).
+- **Inheritance** in OOP allows us to derive a new class (child) from an existing one (parent).
 
 - Using inheritance we don't need to start from scratch: the parent may share data, methods etc. with the child 
 
@@ -745,7 +795,9 @@ class: left, top
 
 - Method dispatch *always* starts with the first element of the class vector and proceeds with subsequent classes if a method is not found.
 
-  This clarifies the informality of the S3 system: there is no formal definition of how classes relate to each other.
+  This clarifies the **informality of S3**: 
+  
+  **There is no formal definition of how classes relate to each other.**
 
 ---
 class: left, top
@@ -756,11 +808,17 @@ class: left, top
 g <- function(x) UseMethod("g", x)
 
 # Methods for classes 'A' and 'B'
-g.A <- function(x) "A"; g.B <- function(x) "B"
+g.A <- function(x) "A"
+g.B <- function(x) "B"
 
-# Two objects with different inheritance hierachies
-ab <- structure(1, class = c("A", "B")); ba <- structure(1, class = c("B", "A"))
+# Two objects with different inheritance hierarchies
+ab <- structure(1, class = c("A", "B"))
+ba <- structure(1, class = c("B", "A"))
+
+# Class A comes first
 g(ab)
+
+# Class B comes first
 g(ba)
 ```
 
@@ -768,7 +826,7 @@ g(ba)
 class: left, top
 ## S3 Inheritance
 
-It's possible to force delegation to the method of the subsequent class (if defined) using `NextMethod()`. This provides a simple inheritance mechanism:
+It's possible to **force delegation** to the method of the subsequent class (if defined) using `NextMethod()`. This provides a simple inheritance mechanism:
 
 ```{r, echo=T}
 g.C <- function(x) NextMethod()
@@ -788,7 +846,7 @@ class: left, top
 ## S3 Inheritance
 
 .smaller[
-We may use these mechanics to implement 2 (child) classes which inherit (parts of) their `print()` method from the `prime` class.
+We may use these mechanics to implement  (child) classes which inherit (parts of) their `print()` method from the `prime` class.
 
 .blockquote.exercise[
 #### `r desktop` Example: Inheritance of `print()` method
@@ -803,11 +861,17 @@ print.prime <- function(x) {
 print.mersenne <- function(x) {
   cat('Mersenne primes:', NextMethod(x))
 }
+```
 
+```{r, echo = T}
 print.fermat <- function(x) {
   cat('Fermat primes:', NextMethod(x))
 }
 ```
+
+</br>
+
+(Wiki for [Mersenne primes](https://en.wikipedia.org/wiki/Mersenne_prime) and [Fermat primes](https://en.wikipedia.org/wiki/Fermat_number#Primality))
 
 ]
 ]
@@ -821,14 +885,14 @@ class: left, top
 #### `r desktop` Example: Inheritance of `print()` method  &mdash; ctd.
 
 ```{r, echo = T}
-x <- prime(c(3L, 7L, 31L))
-class(x) <- c('mersenne', class(x))
+mers <- prime(c(3L, 7L, 31L))
+class(mers) <- c('mersenne', class(mers))
 
-y <- prime(c(3L, 5L, 17L, 257L))
-class(y) <- c('fermat', class(y))
+ferm <- prime(c(3L, 5L, 17L, 257L))
+class(ferm) <- c('fermat', class(ferm))
 
-x
-y
+mers
+ferm
 ```
 
 ]]
@@ -841,9 +905,9 @@ class: left, top
 .blockquote.exercise[
 #### `r desktop` Example: Inheritance of `print()` method  &mdash; ctd.
 ```{r, echo = T}
-s3_dispatch(print(x))
-s3_dispatch(print(y))
+s3_dispatch(print(mers))
+s3_dispatch(print(ferm))
 ```
 
-`->` indicates the method the call to the original method has been delegated to. 
+'`->`' indicates the method the call to the original method ('`=>`') has been delegated to. 
 ]]

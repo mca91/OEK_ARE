@@ -2,8 +2,8 @@
 title: "Advanced R for Econometricians"
 subtitle: "Measuring Performance and Profiling"
 author:
-  - "Martin C. Arnold"
-  - "Jens Klenke"
+  - "Martin Arnold"
+  - "Martin Schmelzer"
 date: "`r Sys.Date()`"
 output:
   xaringan::moon_reader:
@@ -13,7 +13,7 @@ output:
     includes:
       in_header: "../assets/mathjax-equation-numbers.html"
     nature:
-      beforeInit: ["../assets/remark-zoom.js", "../xaringan_files/macros.js", "https://platform.twitter.com/widgets.js"]
+      beforeInit: ["../assets/navigate_home.js", "../assets/remark-zoom.js", "../xaringan_files/macros.js", "https://platform.twitter.com/widgets.js"]
       highlightStyle: github
       highlightLines: true
       countIncrementalSlides: false
@@ -58,21 +58,6 @@ class: title-slide title-measuring center middle
 # `r rmarkdown::metadata$title`
 ## `r rmarkdown::metadata$subtitle`
 ### `r rmarkdown::metadata$author`
-
----
-## What's up next? &mdash; Overview
-
-**Now:**
-
-- Measuring Performance: Profiling and Microbenchmarking
-
-- (Why) is `R` slow?
-
-**Remaining classes:**
-
-- Improving Performance
-
-- How to speed things up using `Rcpp` (and hopefully `RcppArmadillo`) 
 
 ---
 class: segue-red

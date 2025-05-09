@@ -5,7 +5,7 @@
     <meta charset="utf-8" />
     <meta name="author" content="Martin Arnold" />
     <meta name="author" content="Martin Schmelzer" />
-    <meta name="date" content="2025-04-25" />
+    <meta name="date" content="2025-05-09" />
     <script src="OOP_files/header-attrs/header-attrs.js"></script>
     <link href="OOP_files/remark-css/default.css" rel="stylesheet" />
     <script src="OOP_files/clipboard/clipboard.min.js"></script>
@@ -110,7 +110,9 @@ We 'sail the seas of OOP' using the `sloop` package. It provides helper function
 ## install.packages('sloop')
 library('sloop')
 ```
-    
+&lt;/br&gt;
+Some Examples:
+
 
 ``` r
 otype(base::abs)
@@ -144,17 +146,18 @@ class: left, top
 .smaller[
 &lt;br&gt;
 &lt;blockquote&gt;
-Everything that exists in R is an object. 
+*Everything* that exists in R is an object. 
 .right[&amp;mdash; &lt;cite&gt;John Chambers&lt;/cite&gt;]
 &lt;/blockquote&gt;
 &lt;br&gt;
-
-Thus far we have used the term 'object' somewhat sloppily &amp;mdash; not every R object is *object-oriented*:
+Thus far we have used the term 'object' somewhat sloppily &amp;mdash; not every R object is *object-oriented*.
 
 &lt;br&gt;
 
+&lt;center&gt;
 ![:image 35%](../img/oo-venn.png)
 ![:source 2019](Wickham)
+&lt;/center&gt;
 ]
 
 ---
@@ -162,7 +165,9 @@ class: left, top
 ## Base Types vs OO Objects
 
 .smaller[
-`is.object()` and `sloop::otype()` are useful for identifying objects in the wild.
+`base::is.object()` and `sloop::otype()` are useful for identifying objects in the wild.
+
+&lt;/br&gt;
 
 
 ``` r
@@ -206,6 +211,8 @@ class: left, top
 
 **Only OO objects have a `class` attribute.**
 
+&lt;/br&gt;
+
 
 ``` r
 attr(1L, "class")
@@ -228,7 +235,9 @@ class: left, top
 ## Base Types vs OO Objects
 
 .smaller[
-- There are alternate functions for checking the `class` argument
+- There are alternate functions for checking the `class` argument 
+    &lt;/br&gt;
+    &lt;/br&gt;
     
     ``` r
     s3_class(ggplot2::diamonds)
@@ -245,8 +254,10 @@ class: left, top
     ```
     ## [1] "tbl_df"     "tbl"        "data.frame"
     ```
-
+    &lt;/br&gt;
 - Be careful with `class()`
+    &lt;/br&gt;
+    &lt;/br&gt;
     
     ``` r
     class(1L)
@@ -259,11 +270,28 @@ class: left, top
 
 ???
 
-- `class()` can be misleading when used with base objects which is why we use `sloop::s3_class()`
+- `class()` can be misleading when used with base objects which is why we use `sloop::s3_class()`: `integer` is an *atomic type*, not an S3 class.
+    
+    ``` r
+    is.object(1L)
+    ```
+    
+    ```
+    ## [1] FALSE
+    ```
+    
+    ``` r
+    attributes(1L)
+    ```
+    
+    ```
+    ## NULL
+    ```
+
 
 - `sloop::s3_class()` works safely with base, S3 and S4 objects. 
 
-    (returns the implicit class used by the respective system)
+    (it returns the implicit class used by the respective system)
 
 ---
 class: left, top
@@ -272,6 +300,8 @@ class: left, top
 **Every R object has a base type** of which there are 25.
 
 Important types are `NULL`, `logical`, `integer`, `double` , `complex`, `character`, `list` and `closure`
+
+&lt;/br&gt;
 
 
 ``` r
@@ -326,13 +356,13 @@ class: left, top
 
 **What is S3?**
 
-- C++ and Java use *message-passing style* where objects **encapsulate** data and functions that may modify the data. 
+- C++ and Java use ***message-passing style*** where ***objects encapsulate data*** and **functions** that may **modify** the data. 
   
-    A typical function call looks like `object.method(argument)`.
+    A typical function call looks like **`object.method(arguments)`**.
 
-- S3 implements a *functional style* where the associated functions (called **generics**) live *outside* the object. A generic decides which method to call based on the object passed. 
+- S3 implements a ***functional style*** where the associated functions (**generics**) live ***outside the object***. A generic decides which method to call based on the object passed. 
 
-    A typical function call looks like `generic(object, argument)`.
+    A typical function call looks like **`generic(object, arguments)`**.
 
 **Why discussing S3?**
 
@@ -340,7 +370,7 @@ class: left, top
 
 - It's used in `base` and `stats` and is the most commonly used system on CRAN.
 
-- This sections provides you with a working knowledge of the system and its limitations. Being familiar with S3 is a good starting point for engaging with the other systems, if necessary for your work.
+- This lecture provides you with a working knowledge of the system and its limitations. Being familiar with S3 is a good starting point for engaging with the other systems, if necessary for your work.
 ]
 
 ---
@@ -348,7 +378,10 @@ class: left, top
 ## S3 &amp;mdash; Basics
 
 .medium[
-Every S3 object has a base type and at least one class.
+Every S3 object has a **base type** and **at least one class**.
+
+&lt;/br&gt;
+
 .blockquote.exercise[
 #### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example: class and type of factor object
 
@@ -393,13 +426,15 @@ Check that `class` is simply an `attribute` of `f` using `attribute()`.
 class: left, top
 ## S3 &amp;mdash; Generics
 
-- A generic function (**generic**) is an interface. It behaves dependent on the class of the passed S3 object. 
+&lt;/br&gt;
 
-  This concept is called **polymorphism** (many shapes).
+- A generic function (***generic***) is an interface. It behaves depending on the **class** of the S3 object. 
 
-- The behavior when a S3 object is passed to a generic may be very different from the underlying base type: class-specific methods may do weird stuff!
+  This concept is called ***polymorphism*** (many shapes).
 
-- The process of looking for a class-specific implementation (**method**) upon a generic function call is called **method dispatch**
+- The behavior when an S3 object is passed to a generic may be very different from the underlying base type: Class-specific methods may do weird stuff!
+
+- The process of looking for a class-specific function (***method***) upon a generic function call is called ***method dispatch***
 
 
 ---
@@ -453,6 +488,8 @@ class: left, top
 .smaller[
 - S3 methods follow the name convention `generic.class()`
 
+
+
 - We may use `s3_dispatch()` to investigate the process of method dispatch for an S3 object
   
   ``` r
@@ -466,7 +503,9 @@ class: left, top
   
     `=&gt;` indicates the method used  
     `*` idicates that the method is defined (but not used)
-      
+
+
+
 - Methods are sometimes exported from the package namespace (like `print.factor()`) but generally should not be used directly
   
   ``` r
@@ -483,7 +522,9 @@ class: left, top
 ## S3 &amp;mdash; Method Dispatch
 
 .smaller[
-Use `s3_get_method()` to see the source code of a method which is not exported.
+Use `s3_get_method()` to see the source code of **methods that are not exported**.
+
+&lt;/br&gt;
 
 .blockquote.exercise[
 #### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example: `lm.print()`
@@ -506,6 +547,16 @@ class(mod)
 ## [1] "lm"
 ```
 ]]
+
+???
+
+- When a package is loaded, only exported functions and objects are added to the user’s search path.
+
+- Non-exported functions/methods are internal to the package and must be accessed explicitly (e.g., via `pkgname:::function_name()`).
+
+- In S3, methods are functions with names like `generic.class`, e.g., `print.lm()` or `summary.glm()`.
+
+- Sometimes, these methods are not exported, meaning they don’t appear in the package’s namespace for direct access
 
 ---
 class: left, top
@@ -535,7 +586,7 @@ s3_get_method(print.lm)
 ##     cat("\n")
 ##     invisible(x)
 ## }
-## &lt;bytecode: 0x1066a7018&gt;
+## &lt;bytecode: 0x11ec10608&gt;
 ## &lt;environment: namespace:stats&gt;
 ```
 ]]
@@ -546,7 +597,7 @@ class: left, top
 
 1. Describe the difference between `t.test()` and `t.data.frame()`. When is each function called?
 
-2. What class of object does the following code return? What base type is it built on? What attributes does it use?
+2. What class does the following code return? What base type is it built on? What attributes does it use?
   
   ``` r
   x &lt;- ecdf(rpois(100, 10))
@@ -588,13 +639,13 @@ class: left, top
 
 We recommended to follow the following conventions when creating your own classes:
 
-- Avoid `.` in class names to prevent confusion with generics
+- Avoid '`.`' in class names to **prevent confusion with generics**
 
-- Provide a **constructor** function, `new_classname()`, which generates objects with the desired structure
+- **Provide a constructor** function, which generates objects with the **required structure**: schema `new_classname()`
 
-- Use a **validator** function, `validate_classname()` to check that objects of your class have correct values
+- **Use a validator** function to check that objects of your class have **correct values**: schema `validate_classname()`
 
-- "Sharing is caring": provide a user-friendly **helper**, `classname()`, which makes it easy for others to generate objects of your class
+- "Sharing is caring": Provide a user-friendly **helper function**, `classname()`, which makes it easy for others to **generate objects of your class**
 
 ---
 class: left, top
@@ -605,7 +656,7 @@ We now demonstrate how to implement a simple S3 class for prime numbers.
 .blockquote.exercise[
 #### S3 &amp;mdash; constructur function for `prime` class
 
-Let's start with a constructor function which accepts integer input and returns an object with classes 'data frame' and 'prime'.
+Start with a constructor function that accepts `integer` input and returns an object of class `prime`.
 
 
 ``` r
@@ -630,9 +681,9 @@ class: left, top
 .blockquote.exercise[
 #### S3 &amp;mdash; validator function for `prime` class
 
-The validator function should check whether the values of a `prime` object are indeed prime numbers.
+The validator function checks if the values of a `prime` object are indeed prime numbers.
 
-Note that the integer `\(z&gt;2\)` is a prime number if `$$z\,\text{mod}\,y &gt; 0 \, \forall \, y\in[2,3,...,z-1].$$`
+An integer `\(z&gt;2\)` is a prime number if `$$z\,\text{mod}\,y &gt; 0 \, \forall \, y\in[2,3,...,z-1].$$`
 
 
 ``` r
@@ -656,12 +707,14 @@ class: left, top
 .blockquote.exercise[
 #### S3 &amp;mdash; helper function for `prime` class
 
-At last we provide a user-friendly helper function which generates and validates `prime` objects.
+At last we provide a user-friendly helper function to **generate and validate** `prime` objects.
 
 
 ``` r
 prime &lt;- function(x = integer()) {
-    validate_prime(new_prime(x))
+    validate_prime(
+      new_prime(x)
+    )
 }
 ```
 
@@ -689,7 +742,7 @@ class: left, top
 ## S3 Generics and Methods
 
 .smaller[
-- Many prominent R functions are generics, e.g. `mean()`. Method dispatch is done by `UseMethod()`.
+- Many prominent R functions are generics. Method dispatch is handled by `base::UseMethod()`.
   
   ``` r
   mean
@@ -698,20 +751,28 @@ class: left, top
   ```
   ## function (x, ...) 
   ## UseMethod("mean")
-  ## &lt;bytecode: 0x12be64a40&gt;
+  ## &lt;bytecode: 0x11efd7840&gt;
   ## &lt;environment: namespace:base&gt;
   ```
   
-- Let's see the dispatch for `mean(x)` if `x` has class `Date`:
+- Let's see the dispatch for `mean(x)` where `x` has class `Date`:
   
   ``` r
-  x &lt;- Sys.Date
+  x &lt;- Sys.Date()
+  class(x)
+  ```
+  
+  ```
+  ## [1] "Date"
+  ```
+  
+  ``` r
   s3_dispatch(mean(x))
   ```
   
   ```
-  ##    mean.function
-  ## =&gt; mean.default
+  ## =&gt; mean.Date
+  ##  * mean.default
   ```
 ]
 
@@ -720,9 +781,9 @@ class: left, top
 ## S3 Generics and Methods
 
 .smaller[
-- Note that the pseudo-class `default` for standard fallback could be used for `Date` objects but there is a specific method `mean.Date()` which is called instead
+- The pseudo-class `default` should not be used for `Date` objects (why?) and there is a specific method `mean.Date()` which is called instead
 
-- Use `s3_methods_generic()` to see all available methods of a generic
+- `sloop::s3_methods_generic()` lists available **methods for a generic**
   
   ``` r
   s3_methods_generic('mean')
@@ -746,7 +807,7 @@ class: left, top
 class: left, top
 ## S3 Generics and Methods
 
-`s3_method_class()` provides all registered methods for a given class.
+`s3_method_class()` provides all registered **methods for a class**.
 
 
 ``` r
@@ -787,13 +848,13 @@ my_generic &lt;- function(x) {
 }
 ```
   
-`UseMethod()` dispatches based on `x` by default. Dispatch based on a second argument is optional.
+`UseMethod(x)` dispatches based on `x` by default. Dispatch based on a second argument is optional.
 
-Let's define methods for default behavior and `my_class`
+Let's define methods for default behavior and for a class `my_class`
 
 ``` r
 my_generic.default &lt;- function(x) {
-  x
+  cat("Output for default method:\n", x)
 }
 
 my_generic.my_class &lt;- function(x) {
@@ -818,7 +879,10 @@ We next check that method dispatch works as desired:
 
 
 ``` r
-y &lt;- structure(x&lt;-1, class = 'my_class')
+x &lt;- 1
+y &lt;- structure(x, class = 'my_class')
+
+# first for x
 s3_dispatch(my_generic(x))
 ```
 
@@ -829,6 +893,7 @@ s3_dispatch(my_generic(x))
 ```
 
 ``` r
+# then for y
 s3_dispatch(my_generic(y))
 ```
 
@@ -850,12 +915,12 @@ We next check that method dispatch works as desired:
 
 
 ``` r
-y &lt;- structure(x&lt;-1, class = 'my_class')
 my_generic(x)
 ```
 
 ```
-## [1] 1
+## Output for default method:
+##  1
 ```
 
 ``` r
@@ -873,7 +938,7 @@ my_generic(y)
 class: left, top
 ## Case Study &amp;mdash; A Plot Method for `prime` Objects
 
-&lt;img src="OOP_files/figure-html/unnamed-chunk-32-1.png" width="50%" style="display: block; margin: auto;" /&gt;
+&lt;img src="OOP_files/figure-html/unnamed-chunk-33-1.png" width="50%" style="display: block; margin: auto;" /&gt;
 
 ---
 class: left, top
@@ -894,14 +959,16 @@ class: left, top
 
 Let's write a method for objects of class `prime` for the generic `plot()`. The method should 
 
-- take objects of class prime and all additional arguments which can be passed to `plot()`
+- take objects of class prime and all additional arguments which can be passed to `plot()`.
 
-- be able to visualise a prime number `\(p\)` in Cartesian and polar coordinates 
+- be able to visualise a prime number `\(p\)` in Cartesian and polar coordinates. 
 
 &lt;br&gt;
+&lt;center&gt;
 ![:image 40%](../img/polar.gif)
 
 ![:source_url](http://www.maths.usyd.edu.au/)
+&lt;/center&gt;
 
 ---
 class: left, top
@@ -927,17 +994,19 @@ plot.prime &lt;- function(x = list(), coord, ...) {
 }
 ```
 
-Note that we may pass additional arguments to `plot()` using `...`
+Note that we may pass additional arguments to `plot()` using via `...` (ellipsis operator). 
 
 ---
 class: left, top
 ## Case Study &amp;mdash; A Plot Method for `prime` Objects
 
 
-```r
+``` r
+library(purrr)
+
 # Subset of all prime numbers in 2,...,1e4
 x &lt;- 2:1e4
-x &lt;- x[sapply(unique(x), function(z) all(z %% 2:(z-1) &gt; 0))]
+x &lt;- x[map_lgl(x, \(x) x &gt; 1 &amp;&amp; all(x %% 2:(x - 1) &gt; 0))]
 
 # Assign 'prime' class
 x &lt;- prime(x)
@@ -960,11 +1029,11 @@ class: left, top
 ## Case Study &amp;mdash; A Plot Method for `prime` Objects
 
 
-```r
-plot(x, coord = "polar", pch = 19, cex = 0.5, col = "red")
+``` r
+plot(x, coord = "polar", pch = 19, cex = 0.5, col = "red", axes = F, xlab = "", ylab = "")
 ```
 
-&lt;img src="OOP_files/figure-html/unnamed-chunk-36-1.png" width="40%" style="display: block; margin: auto;" /&gt;
+&lt;img src="OOP_files/figure-html/unnamed-chunk-37-1.png" width="40%" style="display: block; margin: auto;" /&gt;
 
 ---
 class: left, top, exercise_slide
@@ -984,7 +1053,7 @@ class: left, top, exercise_slide
 class: left, top
 ## S3 Inheritance
 
-- In OOP, the concept of **Inheritance** allows us to derive a new class (child) from an existing one (parent).
+- **Inheritance** in OOP allows us to derive a new class (child) from an existing one (parent).
 
 - Using inheritance we don't need to start from scratch: the parent may share data, methods etc. with the child 
 
@@ -1003,7 +1072,9 @@ class: left, top
 
 - Method dispatch *always* starts with the first element of the class vector and proceeds with subsequent classes if a method is not found.
 
-  This clarifies the informality of the S3 system: there is no formal definition of how classes relate to each other.
+  This clarifies the **informality of S3**: 
+  
+  **There is no formal definition of how classes relate to each other.**
 
 ---
 class: left, top
@@ -1015,10 +1086,14 @@ class: left, top
 g &lt;- function(x) UseMethod("g", x)
 
 # Methods for classes 'A' and 'B'
-g.A &lt;- function(x) "A"; g.B &lt;- function(x) "B"
+g.A &lt;- function(x) "A"
+g.B &lt;- function(x) "B"
 
-# Two objects with different inheritance hierachies
-ab &lt;- structure(1, class = c("A", "B")); ba &lt;- structure(1, class = c("B", "A"))
+# Two objects with different inheritance hierarchies
+ab &lt;- structure(1, class = c("A", "B"))
+ba &lt;- structure(1, class = c("B", "A"))
+
+# Class A comes first
 g(ab)
 ```
 
@@ -1027,6 +1102,7 @@ g(ab)
 ```
 
 ``` r
+# Class B comes first
 g(ba)
 ```
 
@@ -1038,7 +1114,7 @@ g(ba)
 class: left, top
 ## S3 Inheritance
 
-It's possible to force delegation to the method of the subsequent class (if defined) using `NextMethod()`. This provides a simple inheritance mechanism:
+It's possible to **force delegation** to the method of the subsequent class (if defined) using `NextMethod()`. This provides a simple inheritance mechanism:
 
 
 ``` r
@@ -1070,7 +1146,7 @@ class: left, top
 ## S3 Inheritance
 
 .smaller[
-We may use these mechanics to implement 2 (child) classes which inherit (parts of) their `print()` method from the `prime` class.
+We may use these mechanics to implement  (child) classes which inherit (parts of) their `print()` method from the `prime` class.
 
 .blockquote.exercise[
 #### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example: Inheritance of `print()` method
@@ -1087,11 +1163,18 @@ print.prime &lt;- function(x) {
 print.mersenne &lt;- function(x) {
   cat('Mersenne primes:', NextMethod(x))
 }
+```
 
+
+``` r
 print.fermat &lt;- function(x) {
   cat('Fermat primes:', NextMethod(x))
 }
 ```
+
+&lt;/br&gt;
+
+(Wiki for [Mersenne primes](https://en.wikipedia.org/wiki/Mersenne_prime) and [Fermat primes](https://en.wikipedia.org/wiki/Fermat_number#Primality))
 
 ]
 ]
@@ -1106,13 +1189,13 @@ class: left, top
 
 
 ``` r
-x &lt;- prime(c(3L, 7L, 31L))
-class(x) &lt;- c('mersenne', class(x))
+mers &lt;- prime(c(3L, 7L, 31L))
+class(mers) &lt;- c('mersenne', class(mers))
 
-y &lt;- prime(c(3L, 5L, 17L, 257L))
-class(y) &lt;- c('fermat', class(y))
+ferm &lt;- prime(c(3L, 5L, 17L, 257L))
+class(ferm) &lt;- c('fermat', class(ferm))
 
-x
+mers
 ```
 
 ```
@@ -1120,7 +1203,7 @@ x
 ```
 
 ``` r
-y
+ferm
 ```
 
 ```
@@ -1138,7 +1221,7 @@ class: left, top
 #### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example: Inheritance of `print()` method  &amp;mdash; ctd.
 
 ``` r
-s3_dispatch(print(x))
+s3_dispatch(print(mers))
 ```
 
 ```
@@ -1148,7 +1231,7 @@ s3_dispatch(print(x))
 ```
 
 ``` r
-s3_dispatch(print(y))
+s3_dispatch(print(ferm))
 ```
 
 ```
@@ -1157,7 +1240,7 @@ s3_dispatch(print(y))
 ##  * print.default
 ```
 
-`-&gt;` indicates the method the call to the original method has been delegated to. 
+'`-&gt;`' indicates the method the call to the original method ('`=&gt;`') has been delegated to. 
 ]]
     </textarea>
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>

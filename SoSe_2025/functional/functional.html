@@ -189,7 +189,7 @@ randomise(mean)
 ```
 
 ```
-## [1] 0.01400805
+## [1] -0.01331963
 ```
 
 ``` r
@@ -197,7 +197,7 @@ randomise(sum)
 ```
 
 ```
-## [1] -2.049086
+## [1] 11.53047
 ```
 
 ]
@@ -574,13 +574,13 @@ map(1:3, rnorm, mean = c(100, 10, 1))
 
 ```
 ## [[1]]
-## [1] 100.377
+## [1] 100.3796
 ## 
 ## [[2]]
-## [1] 100.19771  10.34204
+## [1] 100.457075   7.665122
 ## 
 ## [[3]]
-## [1] 100.128917   9.127044   2.074025
+## [1] 101.465695  10.325873   1.764735
 ```
 ]]]
 
@@ -625,7 +625,7 @@ map_dbl(trims, ~ mean(x, trim = .x))
 ```
 
 ```
-## [1] -0.92137522 -0.11047099 -0.04935014  0.01056176
+## [1] 1.12971066 0.04254869 0.04533093 0.05402832
 ```
 
 This is equivalent to:
@@ -636,7 +636,7 @@ map_dbl(trims, function(trim) mean(x, trim = trim))
 ```
 
 ```
-## [1] -0.92137522 -0.11047099 -0.04935014  0.01056176
+## [1] 1.12971066 0.04254869 0.04533093 0.05402832
 ```
 
 ]]]
@@ -650,7 +650,7 @@ map_dbl(trims, function(trim) mean(x, trim = trim))
 
 1. `map(1:3, ~ runif(2))` is a useful pattern for generating random numbers, but `map(1:3, runif(2))` is not. Why not? Can you explain why it returns the result that it does?
 
-2. The following code simulates the performance of a t-test for non-normal data. Extract the p-value from each test, then visualise.
+2. The following code simulates t-tests for non-normal data. Extract the p-value from each test, then visualise.
     
     ``` r
     trials &lt;- map(1:100, ~ t.test(rpois(10, 10), rpois(10, 7)))
@@ -1469,7 +1469,7 @@ rlang::env_print(cube_root)     # inspect enclosing environment
 ```
 
 ```
-## &lt;environment: 0x12227bbd8&gt;
+## &lt;environment: 0x140cb8fa0&gt;
 ## Parent: &lt;environment: global&gt;
 ## Bindings:
 ## • n: &lt;dbl&gt;
