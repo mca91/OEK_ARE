@@ -525,7 +525,7 @@ How do we find the CSS selectors
 ---
 ## Dynamically injected content
 
-Modern webpages often dynamically incect content. Take
+Modern webpages often dynamically inject content. Take
 [ESPN NBA Player statistics](https://www.espn.com/nba/stats/player) as an example.
 
 In such cases you can make use of a "headless" (no graphical user interface) browser. `rvest::read_html_live` uses the `chromote` package which is an R implementation of the Chrome DevTools Protocol.
