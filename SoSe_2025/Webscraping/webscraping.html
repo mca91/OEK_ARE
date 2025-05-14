@@ -554,40 +554,54 @@ How do we find the CSS selectors
    the [Selector Gadget](https://rvest.tidyverse.org/articles/selectorgadget.html).
 
 
+
 ---
-## A real example: trustpilot.com
+## Dynamically injected content
 
-.font80[
-We want to write a function that for each review extracts
+Modern webpages often dynamically incect content. Take
+[ESPN NBA Player statistics](https://www.espn.com/nba/stats/player) as an example.
 
-- the name of the reviewer
-- the number of stars
-- the date
-- the review title
-- the review text
-]
+In such cases you can make use of a "headless" (no graphical user interface) browser. `rvest::read_html_live` uses the `chromote` package which is an R implementation of the Chrome DevTools Protocol.
 
---
+Instead of reading the DOM (the source code) into R, a headless instance of a Chromium based browser (usually Chrome) opens the URL in the background.
 
-.font80[
-The final function to extract data from one URL might look like this: 
 
 .blockquote.exercise[
 #### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example
 
 ``` r
-get_reviews &lt;- function(url){
-  doc &lt;- read_html(url)
-  tibble(
-    name   = get_name(doc),
-    rating = get_rating(doc), 
-    date   = get_date(doc), 
-    title  = get_title(doc),
-    text   = get_text(doc)
-  )
-}
+# Static
+doc &lt;- read_html("https://www.espn.com/nba/stats/player")
+
+# Dynamic
+sess &lt;- read_html_live("https://www.espn.com/nba/stats/player")
 ```
-]]
+]
+
+---
+## Dynamically injected content
+.blockquote.exercise[
+#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example
+
+``` r
+players_xpath &lt;- "/html/body/div[1]/div/div/div/div/main/div[2]/div[2]/div/div/section/div/div[3]/div[1]/div/table"
+# Static
+doc %&gt;%
+  html_elements(players_xpath) %&gt;%
+  html_table()
+
+# Dynamic
+sess %&gt;%
+  html_elements(players_xpath) %&gt;%
+  html_table()
+
+# Load more rows
+sess$click(".loadMore__link")
+sess %&gt;%
+  html_elements(players_xpath) %&gt;%
+  html_table()
+```
+]
 
 
 ---
@@ -605,8 +619,7 @@ combine the data in a tibble.
 
 3. Scrape multiple pages (add pagination). We know that there are 50 pages, but can
 you make the scraper flexible in case there are more pages in the future?
-*Hint:* Use `httr::GET` and `httr::status_code`.
-
+*Hint:* use `httr::GET` and `httr::status_code`.
 
 
 
