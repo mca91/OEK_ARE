@@ -191,7 +191,7 @@ To extract data from a website it is necessary to understand the basics of how a
 
 .font90[
 We will start by scraping the simple HTML page from before. 
-Create a new HTML document and copy the code from the last slide into it.
+Create a new HTML document and copy the code from the previous slide into it.
 ]
 
 ---
@@ -200,7 +200,7 @@ Create a new HTML document and copy the code from the last slide into it.
 
 The `rvest` package leverages the structure of an HTML document to extract relevant information.
 
-The first step is to load the website into R using `xml2::read_html()`. Since `rvest` depends on `xml2`, the `xml2` package is automatically loaded when `rvest` is loaded.
+The first step is to load the website into R using `read_html()`.
 
 <br>
 
@@ -211,8 +211,8 @@ The first step is to load the website into R using `xml2::read_html()`. Since `r
 
 ```{r, eval = T}
 library(rvest)
-URL <- here::here("SoSe_2025/Webscraping/examples/simple_html_page.html")
-(page <- read_html(URL))
+page_url <- here::here("SoSe_2025/Webscraping/examples/simple_html_page.html")
+(doc <- rvest::read_html(page_url))
 ```
 ]
 
@@ -233,18 +233,17 @@ knitr::include_graphics("xml_structure1.png")
 - We call everything surrounded by a rectangle with rounded corners data. 
 ]
 ---
-## `html_node()`
+## `html_element()`
 
-We can navigate through the `xml` object using `rvest::html_node()`.
+We can navigate through the `xml` object using `rvest::html_element()` and `rvest::html_elements()`.
 
--  Get all `p` nodes
-
+- Get all `p` nodes
 
 .font80.blockquote.exercise[
 #### `r desktop` Example
 
 ```{r, eval = T}
-page %>% html_nodes("p")
+doc %>% html_elements("p")
 ```
 ]
 
@@ -257,9 +256,9 @@ page %>% html_nodes("p")
 #### `r desktop` Example
 
 ```{r, eval = T}
-page %>% 
-  html_nodes("div") %>% 
-  html_nodes("p")
+doc %>% 
+  html_elements("div") %>% 
+  html_elements("p")
 ```
 ]
 
@@ -278,9 +277,9 @@ extract the data (i.e. the text between the tags) as a normal character vector.
 .font90.blockquote.exercise[
 #### `r desktop` Example
 ```{r, eval = T}
-page %>% 
-  html_nodes("div") %>% 
-  html_nodes("p") %>%  
+doc %>% 
+  html_elements("div") %>% 
+  html_elements("p") %>%  
   html_text()
 ```
 ]
@@ -401,11 +400,11 @@ Let's say we want to select all paragraphs (`p`) which are a descendant of an el
 .font90.blockquote.exercise[
 #### `r desktop` Example
 ```{r, eval = T}
-url <- here::here("SoSe_2025/Webscraping/examples/simple_html_page_with_css.html")
-page <- url %>% read_html()
-page %>%  
-  html_nodes(".red") %>% 
-  html_nodes("p") %>%
+page_url <- here::here("SoSe_2025/Webscraping/examples/simple_html_page_with_css.html")
+doc <- read_html(page_url)
+doc %>%  
+  html_elements(".red") %>% 
+  html_elements("p") %>%
   html_text()
 ```
 ]
@@ -417,8 +416,8 @@ or in short
 #### `r desktop` Example
 
 ```{r}
-page %>%  
-  html_nodes(".red p") %>% 
+doc %>%  
+  html_elements(".red p") %>% 
   html_text()
 ```
 ]
@@ -456,13 +455,13 @@ With `html_attrs()` and `html_attr()`  we can extract these information.
 #### `r desktop` Example
 ```{r}
 # Get all attributes
-page %>%  
-  html_nodes(".red") %>% 
+doc %>%  
+  html_elements(".red") %>% 
   html_attrs()
 
 # Get a specific attribute
-page %>%  
-  html_nodes(".red") %>% 
+doc %>%  
+  html_elements(".red") %>% 
   html_attr("class")
 ```
 ]
@@ -471,7 +470,7 @@ page %>%
 ## HTML tables 
 
 .font80[
-Since data are often stored in tables, `rvest` provides the function `html_table()` which parses a HTML table into a data frame. Tables in HTML look like this: 
+Since data is often stored in tables, `rvest` provides the function `html_table()` which parses an HTML table into a data frame. Tables in HTML look like this: 
 ]
 --
 .pull-left-1[
@@ -515,7 +514,8 @@ Since data are often stored in tables, `rvest` provides the function `html_table
 
 How do we find the CSS selectors
 
-1. Looking into the source code (depending on your web browser you can right click on the webpage and click e.g. source code, inspect, ...)
+1. Looking into the source code (depending on your web browser you can right click on
+   the webpage and click e.g. source code, inspect, ...)
 
 2. Digging through the source code is often not necessary. If you use Chrome install 
    the [Selector Gadget](https://rvest.tidyverse.org/articles/selectorgadget.html).
@@ -543,31 +543,35 @@ The final function to extract data from one URL might look like this:
 #### `r desktop` Example
 ```{r, eval = FALSE}
 get_reviews <- function(url){
-  page <- read_html(url)
+  doc <- read_html(url)
   tibble(
-  name   = get_name(page),
-  rating = get_rating(page), 
-  date   = get_date(page), 
-  title  = get_title(page),
-  text   = get_text(page)
+    name   = get_name(doc),
+    rating = get_rating(doc), 
+    date   = get_date(doc), 
+    title  = get_title(doc),
+    text   = get_text(doc)
   )
 }
 ```
 ]]
 
+
 ---
 class: exercise_slide
-## Exercise: 
-
-#### A real example: `trustpilot.com`
-
-Not only do we want to scrape all reviews from one URL but all reviews for a company which 
-are distributed over many URLs. Can you write a function which can do this?
+## Exercise
 
 
+Checkout https://books.toscrape.com/ which is a great and safe sandbox to learn
+about webscraping.
 
+1. Scrape all book titles from the landing page.
 
+2. Additionally, scrape prices and star ratings, format the data appropriately and
+combine the data in a tibble.
 
+3. Scrape multiple pages (add pagination). We know that there are 50 pages, but can
+you make the scraper flexible in case there are more pages in the future?
+*Hint:* use `httr::GET` and `httr::status_code`.
 
 
 
