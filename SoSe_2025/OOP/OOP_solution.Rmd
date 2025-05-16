@@ -14,7 +14,7 @@ library(sloop)
 
 ### 1. 
 
-Because of S3’s `generic.class()`` naming scheme, both functions may initially look similar, while they are in fact unrelated.
+Because of S3’s `generic.class` naming scheme, both functions may initially look similar, while they are in fact unrelated.
 
 `t.test()` is a generic function that performs a t-test. `t.data.frame()` is a method that gets called by the generic `t()` to transpose dataframe input.
 Due to `R`’s S3 dispatch rules, `t.test()` would also get called when `t()` is applied to an object of class test

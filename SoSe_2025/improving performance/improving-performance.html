@@ -3,17 +3,17 @@
   <head>
     <title>Advanced R for Econometricians</title>
     <meta charset="utf-8" />
-    <meta name="author" content="Martin C. Arnold" />
-    <meta name="author" content="Jens Klenke" />
-    <meta name="date" content="2022-07-09" />
+    <meta name="author" content="Martin Arnold" />
+    <meta name="author" content="Martin Schmelzer" />
+    <meta name="date" content="2025-05-16" />
     <script src="improving-performance_files/header-attrs/header-attrs.js"></script>
     <link href="improving-performance_files/remark-css/default.css" rel="stylesheet" />
     <script src="improving-performance_files/clipboard/clipboard.min.js"></script>
     <link href="improving-performance_files/xaringanExtra-clipboard/xaringanExtra-clipboard.css" rel="stylesheet" />
     <script src="improving-performance_files/xaringanExtra-clipboard/xaringanExtra-clipboard.js"></script>
     <script>window.xaringanExtraClipboard(null, {"button":"<i class=\"fa fa-clipboard\"><\/i>","success":"<i class=\"fa fa-check\" style=\"color: #00ff00\"><\/i>","error":"<i class=\"fa fa-times-circle\" style=\"color: #F94144\"><\/i>"})</script>
-    <link href="improving-performance_files/font-awesome/css/all.css" rel="stylesheet" />
-    <link href="improving-performance_files/font-awesome/css/v4-shims.css" rel="stylesheet" />
+    <link href="improving-performance_files/font-awesome/css/all.min.css" rel="stylesheet" />
+    <link href="improving-performance_files/font-awesome/css/v4-shims.min.css" rel="stylesheet" />
     <script type="text/x-mathjax-config">
       MathJax.Hub.Config({
         TeX: { equationNumbers: { autoNumber: "AMS" } },
@@ -45,14 +45,14 @@ class: title-slide title-performance center middle
 
 # Advanced R for Econometricians
 ## Improving Performance
-### Martin C. Arnold, Jens Klenke
+### Martin Arnold, Martin Schmelzer
 
 ---
 class: left
 ## Improving Performance
 
 
-```r
+``` r
 # packages needed
 library(tidyverse) # for `bench` package
 library(furrr)
@@ -75,21 +75,20 @@ We should forget about small efficiencies, say about 97% of the time: premature 
 
 We already learned how to identify bottlenecks in our code. In the following, we will discuss some techniques that are broadly useful for resolving them:
 
-1. **Look for existing solutions.**
+1. **Use existing solutions**  
+   Don’t reinvent the wheel. A quick search can save hours.
 
-    Searching google can save you lots of time. The benefit of finding a faster (but possibly suboptimal) solution on your own may be small.
+2. **Be precise**  
+   Use optimized functions for specific tasks.
 
-2. **Do as little as possible. Be precise.**
+3. **Vectorise**  
+   Avoid loops where possible.
 
-    Using optimised functions tailored for specific tasks often makes a big difference.
+4. **Parallelise**  
+   Use multiple cores for independent tasks.
 
-3. **Vectorise your code.**
-
-    This often relates to avoiding loops and the associated inefficiencies.
-
-4. **Parallelise (if possible).**
-
-    Using multiple CPU(s)/cores/threads in parallel is enormously helpful when the computation involves a large number of tasks that may be solved independently.
+5. **Use AI tools to get hints**  
+   Tools like Copilot or ChatGPT can suggest improvements / identify common mistakes.
 
 ---
 ## 1. Look for Existing Solutions
@@ -123,7 +122,7 @@ Before we continue, we introduce a rule we have already followed implicitly: the
 ![:image 30%](../img/goldenR.png)
 &lt;/center&gt;
 
-The techniques discussed next follow this paradigm. If this is not enough, we still may rewrite (some of) the code in `C++` using the `Rcpp` package (discussed in the next chapter).
+The techniques discussed next follow this paradigm. If this is not enough, we still may rewrite (some of) the code in `C++` using the `Rcpp` package (discussed in the Rcpp lecture).
 
 ---
 ## 2. Do as Little as Possible
@@ -148,7 +147,7 @@ Y &lt;- as.data.frame(X)
 Which approach is faster and why?
 
 
-```r
+``` r
 apply(X, 1, sum)
 apply(Y, 1, sum)
 ```
@@ -174,7 +173,7 @@ A function is faster than an alternative if it has less to do &amp;mdash; obviou
 Which approach is faster and why?
 
 
-```r
+``` r
 rowSums(X)
 apply(X, 1, sum)
 ```
@@ -184,36 +183,39 @@ apply(X, 1, sum)
 ---
 ## 2. Do as Little as Possible
 
-.vcenter[
+&lt;/br&gt;
+&lt;/br&gt;
+&lt;/br&gt;
 .smaller[
 .blockquote.exercise[
 #### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Exercise: searching a vector
 
 What is the fastest way to check if `10` is an element of `1:100`?
 
-]]]
+]]
 
 ---
 ## 2. Do as Little as Possible
-
-&lt;br&gt;
 
 .smaller[
 .blockquote.exercise[
 #### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Exercise: Linear Regression &amp;mdash; computation of `\(SE(\widehat\beta)\)`
 
-Which approach is faster and why? Name disadvantages of the fastest one.
+Which approach is faster and why? Elaborate disadvantages of the fastest one.
 
 
-```r
+``` r
 set.seed(1)
+
 X &lt;- matrix(rnorm(100), ncol = 1)
 Y &lt;- X + rnorm(100)
 
+# Approach a
 a &lt;- function() {
   coefficients(summary(lm(Y ~ X - 1)))[1, 2]  
 }
 
+# Approach b
 b &lt;- function() {
   fit &lt;- lm.fit(X, Y)
   c(
@@ -237,7 +239,7 @@ Be as explicit as possible.
 #### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example: method dispatch takes time
 
 
-```r
+``` r
 x &lt;- runif(1e2)
 
 bench::mark(
@@ -250,8 +252,8 @@ bench::mark(
 ## # A tibble: 2 × 6
 ##   expression           min   median `itr/sec` mem_alloc `gc/sec`
 ##   &lt;bch:expr&gt;      &lt;bch:tm&gt; &lt;bch:tm&gt;     &lt;dbl&gt; &lt;bch:byt&gt;    &lt;dbl&gt;
-## 1 mean(x)           1.15µs   1.27µs   742310.    22.7KB     74.2
-## 2 mean.default(x) 574.16ns 656.12ns  1351616.        0B    135.
+## 1 mean(x)           1.39µs    1.6µs   574796.    23.3KB     57.5
+## 2 mean.default(x) 861.01ns   1.02µs   865135.        0B     86.5
 ```
 ]]
 
@@ -267,7 +269,7 @@ Benchmark against alternatives that rely on primitive functions.
 .blockquote.exercise[
 #### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example: primitives are faster
 
-```r
+``` r
 bench::mark(
   mean.default(x),
   sum(x)/length(x)
@@ -278,8 +280,8 @@ bench::mark(
 ## # A tibble: 2 × 6
 ##   expression            min   median `itr/sec` mem_alloc `gc/sec`
 ##   &lt;bch:expr&gt;       &lt;bch:tm&gt; &lt;bch:tm&gt;     &lt;dbl&gt; &lt;bch:byt&gt;    &lt;dbl&gt;
-## 1 mean.default(x)     615ns    697ns   531943.        0B     53.2
-## 2 sum(x)/length(x)    246ns    287ns  3174647.        0B      0
+## 1 mean.default(x)     861ns   1.02µs   906053.        0B     90.6
+## 2 sum(x)/length(x)    205ns 287.08ns  2954333.        0B      0
 ```
 ]]
 
@@ -295,7 +297,7 @@ bench::mark(
 
 3. `rowSums2()` is an alternative implementation of `rowSums()`. Is it faster for the input `df`? Why?
     
-    ```r
+    ``` r
     rowSums2 &lt;- function(df) {
       out &lt;- df[[1L]]
       if (ncol(df) == 1) return(out)
@@ -317,17 +319,19 @@ bench::mark(
 
 .smaller[
 
-**What is vectorisation?** 
+**What is vectorization?** 
 
-- Vectorisation is the process of converting an algorithm from operating on a single value at a time to operating on a **set of values** (like a vector) at one time.
+- Vectorization means converting an algorithm from operating on a single value at a time to **operating on a set of values** (a vector) at one time.
 
-- It makes problems simpler: code that operates on vectors instead of single entries of an array is often less complex to write.
+- Vectorization simplifies: Code that operates on vectors instead of single entries of an array is often less complex to write.
 
 **Why is it efficient?** 
 
-(on the lowest level where functions map closely to processor instructions)
+On a low level, where functions map closely to processor instructions:
 
-- Your computer is designed to run vectorised operations: a vectorised function may run multiple operations from a single instruction which is faster than sending individual instructions for each operation.  
+- **Computers run vectorised operations** 
+
+- A vectorised function may run **multiple operations from a single instruction** which is faster than sending individual instructions for each operation.  
 
 ]
 
@@ -340,7 +344,9 @@ bench::mark(
 
 Many languages (including R) work on arrays that are stored in the memory in [column-major order](https://en.m.wikipedia.org/wiki/Row-_and_column-major_order).
 
+&lt;center&gt;
 ![:image 60%](../img/rowcolumnarrays.jpg)
+&lt;/center&gt;
 
 Disregarding these patterns by writing code which operates on `\(1\times1\)` vectors thus means 'fighting the language'.
 
@@ -357,13 +363,13 @@ Disregarding these patterns by writing code which operates on `\(1\times1\)` vec
 
 `$$\begin{pmatrix} 1 \\ 2\\ 3 \end{pmatrix}+\begin{pmatrix} 4 \\ 5\\ 6 \end{pmatrix} = \begin{pmatrix} 5 \\ 7\\ 9 \end{pmatrix}$$`
 
-- **Slow:** three instructions, three operations
+- **Slow:** three instructions, **three seperate operations**
 
     - *add `\(\ 1\)` and `\(\ 4\)`*
     - *add `\(\ 2\)` and `\(\ 5\)`*
     - *add `\(\ 3\)` and `\(\ 6\)`*
 
-- **Fast:** one instruction, one vectorised operation:
+- **Fast:** one instruction, **one vectorised operation**:
 
     - *add `\(\begin{pmatrix} 1 \ 2 \  3 \end{pmatrix}'\)` and `\(\begin{pmatrix} 4 \ 5 \  6 \end{pmatrix}'\)`*
 
@@ -381,22 +387,22 @@ Again, less related to R itself but to what the CPU does.
 .smaller[
 **What does it mean to write 'vectorised' code in `R`?**
 
-Remember that there are no 'real' scalars in `R`. Everything that looks like a scalar is actually a `\(1\times1\)` vector.
+Remember that there are no 'real' scalars in `R`. Everything that looks like a scalar is a vector.
 
 &lt;center&gt;
 ![:image 23%](../img/atomic_vectors.png)
 &lt;/center&gt;
 
+Otherwise, this shouldn't work:
 
-```r
-# otherwise this shouldn't work:
+``` r
 1[1]
 ```
 
 ```
 ## [1] 1
 ```
-Thus 'scalar' operations work on vector *elements* which is (often) needlessly cumbersome.
+Therefore, 'scalar' operations work on vector *elements* which is (often) needlessly cumbersome.
 ]
 
 ---
@@ -406,16 +412,18 @@ Thus 'scalar' operations work on vector *elements* which is (often) needlessly c
 
 **What does it mean to write 'vectorised' code in `R`?**
 
-By 'vectorised' we mean that the function works on vectors, i.e., performs vector arithmetic and calls functions which work on vectors.
+By 'vectorised' we mean that the function works on vectors: performing vector arithmetic and calling functions which work on vectors.
 
 &lt;br&gt;
 
 .blockquote.exercise[
 #### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example: scalar vs. vectorised computation of euclidean norm
 
+$$f(\boldsymbol{x}) = \lVert \boldsymbol{x}\rVert := \sqrt{\sum x_i^2} $$
+
 .pull-left[
 
-```r
+``` r
 L2_scalar &lt;- function(x) {
   out &lt;- numeric(1)
   for(i in 1:length(x)) {
@@ -428,7 +436,7 @@ L2_scalar &lt;- function(x) {
 
 .pull-right[
 
-```r
+``` r
 L2_vec &lt;- function(x) {
  return(
    sqrt(
@@ -448,7 +456,7 @@ L2_vec &lt;- function(x) {
 
 **What does it mean to write 'vectorised' code in `R`?**
 
-By 'vectorised' we mean that the function works on vectors, i.e., performs vector arithmetic and calls functions which work on vectors.
+By 'vectorised' we mean that the function works on vectors: performing vector arithmetic and calling functions which work on vectors.
 
 &lt;br&gt;
 
@@ -482,7 +490,7 @@ bench::mark(
 
 - **Use functions from base R that work on vectors**
 
-    Vectorisation may avoid loops in `R`. Loops in many 'vectorised' R functions are carried out in *C* and thus are much faster. 
+    Vectorisation may avoid loops in `R`. Loops in many 'vectorised' R functions are carried out in `C` and thus are much faster. 
 
     The following functions are prominent examples:
 
@@ -490,7 +498,7 @@ bench::mark(
 
 - **Use matrix algebra**
 
-    Most matrix operations that involve loops are executed by highly optimised external *Fortran* and *C* libraries. See, e.g., [BLAS](https://en.wikipedia.org/wiki/Basic_Linear_Algebra_Subprograms).
+    Most matrix operations that involve loops are executed by highly optimised external `FORTRAN` and `C` libraries. See, e.g., [BLAS](https://en.wikipedia.org/wiki/Basic_Linear_Algebra_Subprograms).
 
 ]
 
@@ -521,12 +529,15 @@ Allocate the required storage before the loop and *fill* (*do not grow!*) the ob
 ## 3. Vectorise your code
 
 .blockquote.exercise[
-#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example: avoid growing objects
+#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example: avoid growing objects &amp;mdash; `\(\mathcal{O}(n^2)\)` vs. `\(\mathcal{O(n)}\)`
 
 
 
+&lt;center&gt;
 ![:image 80%](../img/growing_objects.png)
+&lt;/center&gt;
 ]
+
 
 
 ---
@@ -538,7 +549,7 @@ Allocate the required storage before the loop and *fill* (*do not grow!*) the ob
 #### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example: good and bad `for()` loops
 .pull-left[.smaller[
 
-```r
+``` r
 # Bad: c()/cbind()/rbind()
 rw_bad &lt;- function(N) {
   set.seed(1)
@@ -566,7 +577,7 @@ rw_bad &lt;- function(N) {
 #### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example: good and bad `for()` loops
 .pull-left[.smaller[
 
-```r
+``` r
 # Good: proper initialisation/iteration
 rw_good &lt;- function(N) {
   set.seed(1)
@@ -585,8 +596,6 @@ rw_good &lt;- function(N) {
 ![:image 48%](../img/good.png)
 ]]
 
-???
-
 ---
 ## 3. Vectorise your code
 
@@ -595,17 +604,19 @@ rw_good &lt;- function(N) {
 .blockquote.exercise[
 #### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example: good and bad `for()` loops
 
-```r
-bench::mark(rw_good(1e4), 
-            rw_bad(1e4))
+``` r
+bench::mark(
+  "good" = rw_good(1e4), 
+  "bad" = rw_bad(1e4)
+)
 ```
 
 ```
 ## # A tibble: 2 × 6
-##   expression          min   median `itr/sec` mem_alloc `gc/sec`
-##   &lt;bch:expr&gt;     &lt;bch:tm&gt; &lt;bch:tm&gt;     &lt;dbl&gt; &lt;bch:byt&gt;    &lt;dbl&gt;
-## 1 rw_good(10000)   8.63ms   13.1ms     81.8     24.5MB     48.7
-## 2 rw_bad(10000)  122.39ms  127.5ms      7.79   406.3MB     77.9
+##   expression      min   median `itr/sec` mem_alloc `gc/sec`
+##   &lt;bch:expr&gt; &lt;bch:tm&gt; &lt;bch:tm&gt;     &lt;dbl&gt; &lt;bch:byt&gt;    &lt;dbl&gt;
+## 1 good          4.7ms   5.18ms    177.       123KB     33.9
+## 2 bad         131.8ms 136.77ms      7.32     382MB     64.0
 ```
 ]
 
@@ -619,14 +630,14 @@ bench::mark(rw_good(1e4),
 .blockquote.exercise[
 #### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example: `for()` vs. `apply()`
 
-```r
+``` r
 X &lt;- matrix(rnorm(1e4), ncol = 1e4)
 
 colmax &lt;- function(x) {
   out &lt;- numeric(ncol(x))
   
   for(j in 1:ncol(x)) {
-    out[j] &lt;- max(x[,j])
+    out[j] &lt;- max(x[, j])
   }
   
   return(out)
@@ -644,19 +655,19 @@ colmax &lt;- function(x) {
 .blockquote.exercise[
 #### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example: `for()` vs. `apply()` &amp;mdash; ctd. 
 
-```r
+``` r
 bench::mark(
-  colmax(X),
-  apply(X, 2, max)
+  "colmax" = colmax(X),
+  "apply" = apply(X, 2, max)
 )
 ```
 
 ```
 ## # A tibble: 2 × 6
-##   expression            min   median `itr/sec` mem_alloc `gc/sec`
-##   &lt;bch:expr&gt;       &lt;bch:tm&gt; &lt;bch:tm&gt;     &lt;dbl&gt; &lt;bch:byt&gt;    &lt;dbl&gt;
-## 1 colmax(X)          3.19ms   3.24ms      222.     152KB     111.
-## 2 apply(X, 2, max)   4.72ms    5.1ms      138.     313KB     120.
+##   expression      min   median `itr/sec` mem_alloc `gc/sec`
+##   &lt;bch:expr&gt; &lt;bch:tm&gt; &lt;bch:tm&gt;     &lt;dbl&gt; &lt;bch:byt&gt;    &lt;dbl&gt;
+## 1 colmax       3.03ms   3.36ms      298.     138KB     91.6
+## 2 apply         4.6ms   4.99ms      195.     313KB     90.6
 ```
 ]
 
@@ -682,32 +693,32 @@ bench::mark(
 
 **What is parallelisation?**
 
-- In the simplest sense, parallelisation means the simultaneous use of multiple hardware resources for solving a computational problem.
+- In the simplest sense, parallelisation means the **simultaneous use of multiple hardware resources** for solving a computational problem.
 
-- In the following we refer to parallelisation as the distribution of computing tasks over several CPUs in a shared memory system (a system where multiple CPUs access the same memory).
+- In the following we refer to parallelisation as the **distribution of computing tasks over several CPUs/cores/threads** in a **shared memory system** (a system where multiple CPUs access the same memory).
 
 **Does `R` perform parallelisation by default?**
 
-No. The 'stock' `R` version on `CRAN` is a single-threaded program, i.e., `R` does not benefit from modern multi-threaded CPUs, multiple cores let alone multiple CPUs.
+No. The 'stock' `R` version on `CRAN` is a single-threaded program: it does not benefit from modern multi-threading, multiple cores let alone multiple CPUs in most cases.
 
 ---
 ## 4. Parallelisation &amp;mdash; FAQs
 
 **Is it complicated to parallelise code?**
 
-- In general, yes. Fortunately, there are `R` packages for the most common platforms that do the work for us. These packages facilitate the process *substantially*. 
+- In general, yes. Fortunately, there are **`R` packages** that **do the work for us**. These packages facilitate the process *substantially*. 
 
 - In most cases, we don't even have to adjust our code in order for it to be executable in parallel.
 
 **Which tasks can be done in parallel?**
 
-- In principle, all operations that can be executed independently. 
+- In principle, all **operations that can be executed *independently***. 
 
-- Parallel computing is often used in MC simulations which require computation of a large number of homogeneous and independent tasks.
+- **Parallel computing in statistics** is often used in **simulations** which require computation of a large number of **homogeneous and independent tasks**.
 
 **Is parallelisation always faster than 'serial' computation?**
 
-No. The cost of managing the computations (the *overhead*) may offset or even surpass time savings gained by parallel computation. This occurs, e.g., when a small number of simple tasks is solved in parallel. We will discuss an example.
+No. The cost of managing the computations (the **overhead**) may **offset or even surpass time benefits** from parallel computation. This occurs, e.g., when a small number of simple tasks is solved in parallel. We will discuss an example.
 
 ---
 ## 4. Parallelisation &amp;mdash; the `parallel` package
@@ -728,7 +739,7 @@ detectCores()
 The notebook used to compile this script has an Apple M1 processor with 10 physical CPUs:
 
 
-```r
+``` r
 # detect number of physical cores
 detectCores(logical = F)
 ```
@@ -746,8 +757,8 @@ Note that the behavior of `detectCores()` is platform specific and not always re
 .blockquote.exercise[
 #### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example: send them cores to sleep (on MacOS)
 
-```r
-r &lt;- mclapply(1:8, function(i) Sys.sleep(20), mc.cores = 7)
+``` r
+res &lt;- mclapply(1:8, \(i) Sys.sleep(20), mc.cores = 10)
 ```
 
 &lt;center&gt;
@@ -757,20 +768,20 @@ r &lt;- mclapply(1:8, function(i) Sys.sleep(20), mc.cores = 7)
 ]]
 
 ---
-## 4. Parallelisation - `parallel::mclapply()`
+## 4. Parallelisation &amp;mdash; `parallel::mclapply()`
 
 .smaller[
 .blockquote.exercise[
 #### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example: send them cores to sleep (on MacOS) &amp;mdash; ctd.
 What happened?
 
-- The `R` session (the main process) opened 8 sub-processes, so-called *forks* (labeled `rsession` in the activity monitor)
+- The `R` session (the main process) opened 10 sub-processes, so-called *forks* (labeled `rsession` in the activity monitor)
 
 - The forks operate independently from the main process (but they 'know' about each other). Each fork operates on a separate core.
 
 - `mclapply()` passes a call of `function(i) Sys.sleep(20)` to each fork. Computation (or rather doing nothing for 20 seconds) now proceeds in parallel.
 
-- After 20 seconds the results are gathered in `r` and all forks are killed. Note that `r` is just a list with `NULL` entries.
+- After 20 seconds the results are gathered in `res` and all forks are killed. Note that `res` is just a list with `NULL` entries.
 ]]
   
 ---
@@ -783,13 +794,16 @@ What happened?
 An alternative on Windows is to use `parallel::parLapply()`. The setup is somewhat more complex.
 
 
-```r
+``` r
 # set number of cores to be used
 cores &lt;- detectCores(logical = TRUE) - 1
+
 # initialise cluster
 cl &lt;- makeCluster(cores)
+
 # run lapply in parallel
-parLapply(cl, 1:8, function(i) Sys.sleep(20))
+parLapply(cl, 1:cores, function(i) Sys.sleep(20))
+
 # stop cluster
 stopCluster(cl)
 ```
@@ -810,17 +824,13 @@ stopCluster(cl)
 ---
 ## 4. Parallelisation
 
-&lt;br&gt;
-
 .smaller[
 .blockquote.exercise[
-#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example: too much overhead
-
-Parallelisation may be inefficient:
+#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example: too much overhead &amp;mdash; parallelisation may be inefficient
 
 
-```r
-system.time(mclapply(1:1e5, sqrt, mc.cores = 8))
+``` r
+system.time(mclapply(1:1e5, sqrt, mc.cores = 10))
 ```
 
 
@@ -832,7 +842,7 @@ system.time(mclapply(1:1e5, sqrt, mc.cores = 8))
 ```
 
 
-```r
+``` r
 system.time(lapply(1:1e5, sqrt))
 ```
 
@@ -844,7 +854,7 @@ system.time(lapply(1:1e5, sqrt))
 ## 
 ```
 
-This is because the cost of the individual computations is low, and additional work is needed to send the computation to the different cores and to collect the results: The overhead exceeds the time savings. 
+This is because the cost of the individual computations is low, and additional work is needed to send the computation to the different cores and to collect the results. This **overhead** exceeds the time savings. 
 ]]
 
 ---
@@ -864,17 +874,18 @@ class: segue-red
     </textarea>
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
 <script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script src="../assets/navigate_home.js"></script>
 <script src="../assets/remark-zoom.js"></script>
 <script src="../xaringan_files/macros.js"></script>
 <script src="https://platform.twitter.com/widgets.js"></script>
 <script>var slideshow = remark.create({
-"highlightStyle": "github",
-"highlightLines": true,
-"countIncrementalSlides": false,
-"ratio": "16:9",
-"navigation": {
-"scroll": false
-}
+  "highlightStyle": "github",
+  "highlightLines": true,
+  "countIncrementalSlides": false,
+  "ratio": "16:9",
+  "navigation": {
+    "scroll": false
+  }
 });
 if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
   window.dispatchEvent(new Event('resize'));
