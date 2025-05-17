@@ -117,6 +117,8 @@ You should be careful if...
 
 **Important**: avoid troubles by limiting the number of requests to a reasonable amount (e.g. 1 request every 10 seconds). Otherwise it could be considered as a denial of service attack (DoS). 
 
+???
+Example: In 2023 Google reported to have blocked the biggest DDoS attack so far with over 398 million request per second. so we are a small fish.
 
 ---
 ## The Structure of a Website
@@ -232,6 +234,10 @@ knitr::include_graphics("xml_structure1.png")
 - We call everything surrounded by a rectangle or a circle a node. 
 - We call everything surrounded by a rectangle with rounded corners data. 
 ]
+
+???
+xml2::xml_structure()
+
 ---
 ## `html_element()`
 
@@ -428,7 +434,7 @@ doc %>%
 .font70[
 Sometimes we are not interested in the text between element tags but the relevant information is hidden in the tag attributes. 
 
-Attributes are everything that is defined in the opening tag, e.g in 
+Attributes are everything that is defined in the opening tag, e.g. in 
 ]
 
 --

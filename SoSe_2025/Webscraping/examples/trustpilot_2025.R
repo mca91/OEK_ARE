@@ -20,7 +20,7 @@ get_review_cards <- function(page_url) {
 }
 
 extract_page_data <- function(company, page_url) {
-  cards <- get_review_cards(url)
+  cards <- get_review_cards(page_url)
   
   tibble(
     company = company,
@@ -49,7 +49,8 @@ get_company_reviews <- function(company, num_pages) {
 }
 
 # Main execution ---------------------------------------------------------
-df <- map_dfr(names(cmpns), get_company_reviews, num_pages = 2)
+df <- map_dfr(names(cmpns), get_company_reviews, num_pages = 20)
+
 
 # Visualization ----------------------------------------------------------
 df %>%
