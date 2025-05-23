@@ -1,0 +1,102 @@
+---
+title: "Monthly Report on Crime"
+author: "Martin"
+output: 
+  gelsentemplates::handout:
+    folio: yes
+    frontpage:
+      cover: "2"
+    margin_content:
+      top_left: "''"
+      top_right: "''"
+      bottom_right: "'R3/1 Statistik & Monitoring'"
+      bottom_left: "'Seite ' counter(page)"
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r SETUP}
+library(tidyverse)
+library(gt)
+library(gtsummary)
+library(gelsentemplates)
+```
+
+```{r LOADDATA, cache=TRUE}
+boston_crime <- readr::read_csv(here::here("SoSe_2025/Rmarkdown/Exercise/2025/BostonCrime.csv"))
+
+crime_description <- readxl::read_xlsx(here::here("SoSe_2025/Rmarkdown/Exercise/2025/rmscrimeincidentfieldexplanation.xlsx"))
+```
+
+
+
+# Data Overview
+
+```{r, results='asis'}
+crime_description %>%
+  separate_wider_regex(
+    `Field Name, Data Type, Required`,
+    patterns = c(
+      `Field Name` = "^\\[.*?\\]",
+      `Data Type` = "\\s?\\[\\w+\\]\\s?\\(.*?\\)",
+      `Required` = "\\s?N?O?T? NULL"
+    ), too_few = "align_start"
+  ) %>%
+  mutate(across(everything(), \(x) { gsub(pattern = "\\[|\\]", replacement = "", trimws(x)) } )) %>%
+  gelsentemplates::gt_ge()
+```
+
+# Explorative Data Analysis
+
+## Burglaries
+
+```{r}
+tbl_df <- boston_crime %>%
+  filter(grepl(pattern = "BURGLARY", OFFENSE_DESCRIPTION)) %>%
+  mutate(TimeOfDay = ifelse(HOUR < 12, "AM", "PM")) %>%
+  select(TimeOfDay, DISTRICT)
+
+summary_tbl <- tbl_df %>% tbl_summary(
+    by = TimeOfDay,
+    statistic = list(
+      all_categorical() ~ "{p}%"
+    ),
+    missing = "no"
+  ) %>%
+  add_overall() %>%
+  bold_labels()
+
+summary_tbl_df <- summary_tbl %>%
+  as_tibble() %>%
+  drop_na() %>%
+  rename("C1" = 1, "C2" = 2, "C3" = 3, "C4" = 4) %>%
+  mutate(across(2:4, parse_number))
+
+
+gt_obj <- summary_tbl %>%
+  as_gt() %>%
+  gt::tab_caption("Burglaries by district and time of day.") %>%
+  gelsentemplates::tab_options_ge() 
+
+
+gt_obj
+```
+
+As can be seen above, district(s) **`r summary_tbl_df %>% slice_max(n = 1, order_by = C2) %>% pull(C1) %>% paste0(collapse = "** and **")`** has/have the highest rates in burglaries overall. Between midnight and noon, district(s) **`r summary_tbl_df %>% slice_max(n = 1, order_by = C3) %>% pull(C1) %>% paste0(collapse = "** and **")`** is/are at the top of the list.
+From 12 p.m. on until midnight **`r summary_tbl_df %>% slice_max(n = 1, order_by = C4) %>% pull(C1) %>% paste0(collapse = "** and **")`** marks the top spot.
+
+
+
+##  Incidents by Day of the Week
+
+```{r, fig.cap="Incidents by day of the week"}
+boston_crime %>%
+  dplyr::mutate(DAY_OF_WEEK = as.factor(DAY_OF_WEEK)) %>%
+  ggplot2::ggplot() +
+  ggplot2::geom_bar(ggplot2::aes(x = DAY_OF_WEEK, fill = DISTRICT)) +
+  labs(x = "Weekday", y = "Count", fill = "District") +
+  theme_minimal()
+
+
+```
+
