@@ -1281,11 +1281,52 @@ output: pagedown::html_paged
 class: left, top
 ## Custom formats
 
+Custom formats in R Markdown allow users or developers to create tailored output types beyond the default ones (HTML, PDF, Word, etc.).
+
+- Customize look and feel (themes, templates)
+- Standardize document appearance for a team or organization
+- Extend R Markdown with new functionality
+
+Example Use Cases: Company-branded reports, Academic journal templates
+
+
 - You can create your own customized formats that build on exisiting ones like `pdf_document` or `pagedown::html_paged`.
 
 - After creation, you can easily distribute them within your department
 
-- More on that here [https://bookdown.org/yihui/rmarkdown/new-formats.html](Creating New Formats)
+- More on that here: [https://bookdown.org/yihui/rmarkdown/new-formats.html](Creating New Formats)
+
+
+---
+class: left, top
+## Custom formats
+
+.font90[
+1. Build on top of `rmarkdown::pdf_document()` and customize options.
+2. Wrap with a function
+
+.blockquote.exercise[
+#### `r desktop` Example
+```{r, eval = FALSE, echo=TRUE}
+my_pdf_format <- function(...) {
+    rmarkdown::pdf_document(
+      toc = TRUE,
+      number_sections = TRUE,
+      latex_engine = "xelatex",
+      keep_tex = TRUE,
+      template = "my_template.tex"  # modify the tex template
+      ...
+    )
+}
+```
+]
+
+<ol start="3"> 
+<li>Package your format or save it in a script.</li>
+
+<li>Use it in your YAML: `output: mypackage::my_pdf_format` or as an argument to  `rmarkdown::render()`.</li>
+</ol>
+]
 
 
 
