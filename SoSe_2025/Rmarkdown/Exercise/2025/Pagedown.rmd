@@ -5,7 +5,7 @@ output:
   gelsentemplates::handout:
     folio: yes
     frontpage:
-      cover: "2"
+      cover: "1"
     margin_content:
       top_left: "''"
       top_right: "''"

@@ -478,14 +478,17 @@ knitr::include_graphics("git4.PNG")
 ---
 ## Remote Repository
 3. Give your repository a name and click `Create repository`
-4. Copy and paste the lines below ***"…or push an existing repository from the command line"*** in the terminal of your local project to connect it with the repository on Github. For me it is 
+
+4. Follow the instruction [here](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens#creating-a-personal-access-token-classic) to create a personal access token.
+
+5. Copy and paste the lines below ***"…or push an existing repository from the command line"*** in the terminal of your local project to connect it with the repository on Github. For me it is 
 .blockquote.exercise[
 ```terminal
 git remote add origin https://github.com/alexandergerber/test.git
 git push -u origin master
 ```
 ]
-5. Provide your Github username and password. 
+5. Provide your Github username and the personal access token. 
 6. Take a look at the repository on Github. What do you find? 
 
 ---

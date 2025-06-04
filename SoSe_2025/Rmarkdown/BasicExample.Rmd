@@ -1,0 +1,72 @@
+---
+title: "Diamond sizes"
+date: 2016-08-25
+output: 
+  html_document:
+    number_sections: yes
+editor_options: 
+  chunk_output_type: console
+---
+
+
+```{r SETUP, include=FALSE}
+knitr::opts_chunk$set(echo=FALSE, warning=FALSE, message=T)
+
+myname <- "Martin"
+```
+
+
+
+
+```{r, echo=TRUE}
+knitr::knit_hooks$set(small.mar = function(before) {
+    if (before) par(mar = c(5, 5, 5, 5))  
+})
+```
+
+
+```{r}
+plot(rnorm(1000))
+```
+
+```{r, small.mar = TRUE}
+plot(rnorm(1000))
+```
+
+
+
+```{r}
+default_message_hook <- knitr::knit_hooks$get("message")
+print(default_message_hook)
+knitr::knit_hooks$set(
+  message = function(x, options) {
+    return(sprintf("<span style='color: red;'>%s</span>", x))
+  }
+)
+```
+
+
+```{r}
+message("Hi Martin")
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
