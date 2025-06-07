@@ -4,16 +4,16 @@
     <title>Advanced R for Econometricians</title>
     <meta charset="utf-8" />
     <meta name="author" content="Martin C. Arnold" />
-    <meta name="author" content="Jens Klenke" />
-    <meta name="date" content="2022-07-09" />
+    <meta name="author" content="Martin Schmelzer" />
+    <meta name="date" content="2025-06-07" />
     <script src="SpeedRcpp_files/header-attrs/header-attrs.js"></script>
     <link href="SpeedRcpp_files/remark-css/default.css" rel="stylesheet" />
     <script src="SpeedRcpp_files/clipboard/clipboard.min.js"></script>
     <link href="SpeedRcpp_files/xaringanExtra-clipboard/xaringanExtra-clipboard.css" rel="stylesheet" />
     <script src="SpeedRcpp_files/xaringanExtra-clipboard/xaringanExtra-clipboard.js"></script>
     <script>window.xaringanExtraClipboard(null, {"button":"<i class=\"fa fa-clipboard\"><\/i>","success":"<i class=\"fa fa-check\" style=\"color: #00ff00\"><\/i>","error":"<i class=\"fa fa-times-circle\" style=\"color: #F94144\"><\/i>"})</script>
-    <link href="SpeedRcpp_files/font-awesome/css/all.css" rel="stylesheet" />
-    <link href="SpeedRcpp_files/font-awesome/css/v4-shims.css" rel="stylesheet" />
+    <link href="SpeedRcpp_files/font-awesome/css/all.min.css" rel="stylesheet" />
+    <link href="SpeedRcpp_files/font-awesome/css/v4-shims.min.css" rel="stylesheet" />
     <script type="text/x-mathjax-config">
       MathJax.Hub.Config({
         TeX: { equationNumbers: { autoNumber: "AMS" } },
@@ -41,7 +41,7 @@ class: title-slide title-rcpp center middle
 
 # Advanced R for Econometricians
 ## Speeding Things Up with `Rcpp`
-### Martin C. Arnold, Jens Klenke
+### Martin C. Arnold, Martin Schmelzer
 
 ---
 ## `Rcpp` &amp;mdash; FAQs
@@ -110,7 +110,7 @@ Typical bottlenecks in `R` that be addressed using `C++` are:
 We need `Rcpp` from CRAN as well as a working `C++` [compiler](https://en.wikipedia.org/wiki/Compiler). Installation is OS-dependent for the latter.
 
 
-```r
+``` r
 ## # get the Rcpp package from CRAN
 ## install.packages("Rcpp")
 library(Rcpp)
@@ -145,7 +145,7 @@ library(Rcpp)
 **Example: Syntax in `C++` &amp;mdash; 1**
 
 
-```cpp
+``` cpp
 int one() {
   return 1;
 }
@@ -174,7 +174,7 @@ Note that:
 
 .pull-left[
 
-```r
+``` r
 # R function
 isOdd_r &lt;- function(num = 10L) {
   result &lt;- (num %% 2L == 1L)
@@ -190,7 +190,7 @@ isOdd_r(42L)
 
 .pull-right[
 
-```cpp
+``` cpp
 # C++ equivalent 
 # (not yet executable!)
 bool isOdd_cpp(int num = 10) {
@@ -216,7 +216,7 @@ bool isOdd_cpp(int num = 10) {
 Small self-contained functions are easily compiled and linked using `cppFunction()`.
 
 
-```r
+``` r
 Rcpp::cppFunction('
 bool isOdd_cpp(int num = 10) {
   bool result = (num % 2 == 1);
@@ -227,7 +227,7 @@ bool isOdd_cpp(int num = 10) {
 `isOdd_cpp()` now works like a regular `R` function.
 
 
-```r
+``` r
 isOdd_cpp(42L)
 ```
 
@@ -247,13 +247,13 @@ What happened?
 - `Rcpp` generates a wrapper function in `R`. It then compiles and links the `C++` function to the wrapper. The function is now available in `R` under its `C++` name.
 
 
-```r
+``` r
 isOdd_cpp
 ```
 
 ```
 ## function (num = 10L) 
-## .Call(&lt;pointer: 0x107b5c300&gt;, num)
+## .Call(&lt;pointer: 0x11118c680&gt;, num)
 ```
 
 We see that `isOdd_cpp()` uses `.call()` to invoke the `C++` version of the function which is stored in the specified pointer.
@@ -274,7 +274,7 @@ You will be prompted with the following file:
 
 .font80[
 
-```cpp
+``` cpp
 #include &lt;Rcpp.h&gt;
 using namespace Rcpp;
 
@@ -305,7 +305,7 @@ NumericVector timesTwo(NumericVector x) {
 
 .pull-left[
 
-```r
+``` r
 sum_R &lt;- function(x) {
   total &lt;- 0
   
@@ -319,7 +319,7 @@ sum_R &lt;- function(x) {
 
 .pull-right[
 
-```cpp
+``` cpp
 double sum_C(NumericVector x) {
   int n = x.size();
   double total = 0;
@@ -395,7 +395,7 @@ The following code is 'pure' `C++` and can be handled by `R`: `Rcpp` maps `std::
 (Note that we use `::` to access objects from the `std` namespace)
 
 
-```cpp
+``` cpp
 std::vector&lt;int&gt; zeros_STL(int N) {
   std::vector&lt;int&gt; X(N);
   return X;
@@ -404,7 +404,7 @@ std::vector&lt;int&gt; zeros_STL(int N) {
 The above requires a copy of `X` which is avoided if we use &lt;tt&gt;IntegerVector&lt;/tt&gt; or &lt;tt&gt;NumericVector&lt;/tt&gt; instead.
 
 
-```cpp
+``` cpp
 NumericVector zeros_Rcpp(int N) {
   NumericVector X(N);
   return X;
@@ -423,7 +423,7 @@ NumericVector zeros_Rcpp(int N) {
 We compare both functions after sourcing using `cppFunction()`.
 
 
-```r
+``` r
 x &lt;- 1e6L
 bench::mark(
   zeros_Rcpp(x),
@@ -451,7 +451,7 @@ Sometimes it will be convenient to generate objects using the STL and use `wrap(
 **Example: `wrap()`**
 
 
-```cpp
+``` cpp
 // using STL constructor function
 NumericVector iota(int N) {
   std::vector&lt;int&gt; X(N, 1);
@@ -461,7 +461,7 @@ NumericVector iota(int N) {
 &lt;it&gt;vs.&lt;/it&gt;
 
 
-```cpp
+``` cpp
 // using Rcpp constructor
 NumericVector iota(int N) {
   NumericVector X(N);
@@ -478,7 +478,7 @@ NumericVector iota(int N) {
 **Example: `rowSumsC()` **
 
 
-```cpp
+``` cpp
 NumericVector rowSumsC(NumericMatrix x) {
 *  int nrow = x.nrow(), ncol = x.ncol();
   NumericVector out(nrow);
@@ -508,7 +508,7 @@ NumericVector rowSumsC(NumericMatrix x) {
 The function below extracts the residuals from a linear model of class `lm`.
 
 
-```cpp
+``` cpp
 NumericVector residuals(List mod) {
   NumericVector resids = as&lt;NumericVector&gt;(mod["residuals"]);
   return resids;
@@ -529,7 +529,7 @@ We may return selected entries of an `lm` object in a `list`
 (note that the `Rcpp` class is `List` with a capital `L`)
 
 
-```cpp
+``` cpp
 List components(List mod) {
   
   NumericVector resids = as&lt;NumericVector&gt;(mod["residuals"]);
@@ -566,7 +566,7 @@ In `C++` a *pass by value* happens by default.
 (The functions below have return type `void`, i.e., they do not return anything.)
 
 
-```cpp
+``` cpp
 void test(int A) {   // A is passed by value
   int B = A;         // B is a copy of A
   A = 2 * A;         // A is altered inside the function
@@ -575,7 +575,7 @@ void test(int A) {   // A is passed by value
 *Pass by reference* is invoked using the *address-of operator* `&amp;`.
 
 
-```cpp
+``` cpp
 void test(int&amp; A) {  // A is passed by reference, no copy is created
   int B = A;         // B is a copy of A
   A = 2 * A;         // A is altered inside AND outside the function
@@ -590,13 +590,13 @@ void test(int&amp; A) {  // A is passed by reference, no copy is created
 We may protect inputs from being altered inside and outside the function.
 
 
-```cpp
+``` cpp
 void test(const int A) {  // A is passed by value
   int B = 2 * A;          // and cannot be altered
 }
 ```
 
-```cpp
+``` cpp
 void test(const int&amp; A) { // A is passed by reference
   int B = 2 * A;          // and cannot be altered
 }
@@ -605,7 +605,7 @@ void test(const int&amp; A) { // A is passed by reference
 Note that it is admissible to use the address-of operator `&amp;` in variable assignment.
 
 
-```cpp
+``` cpp
 int&amp; B = A;               // B is a reference to A
 ```
 
@@ -617,7 +617,7 @@ int&amp; B = A;               // B is a reference to A
 The behavior is somewhat different in `Rcpp`.
 
 
-```cpp
+``` cpp
 #include&lt;Rcpp.h&gt;
 
 // [[Rcpp::export]]
@@ -646,7 +646,7 @@ void test_reference(NumericVector A) {
 
 
 
-```r
+``` r
 x &lt;- 1:3/10
 test_reference(x)
 ```
@@ -670,7 +670,7 @@ test_reference(x)
 We find that `x` was modified *outside* the function.
 
 
-```r
+``` r
 print(x) # check that x was modified
 ```
 
@@ -694,7 +694,7 @@ Using `clone()` we may bypass the reference on assignment and work with the copy
 
 
 
-```cpp
+``` cpp
 #include&lt;Rcpp.h&gt;
 
 // [[Rcpp::export]]
@@ -717,7 +717,7 @@ void test_clone(NumericVector A) {
 **Digression: *pass by reference* vs. *pass by value* in `Rcpp`**
 
 
-```r
+``` r
 x &lt;- 1:3/10
 test_clone(x)
 ```
@@ -731,7 +731,7 @@ test_clone(x)
 ## B: 0.1 0.5 0.3
 ```
 
-```r
+``` r
 print(x) # check that x was not modified
 ```
 
@@ -745,7 +745,7 @@ print(x) # check that x was not modified
 Find out why the following code gives a compile error:
 
 
-```cpp
+``` cpp
 #include&lt;Rcpp.h&gt;
 // [[Rcpp::plugins("cpp11")]]
 
@@ -761,7 +761,7 @@ double y = x[id]; // produces compile error
 Benchmark the functions below against each other for `x&lt;-rnorm(1e2)`, `x&lt;-rnorm(1e4)` and `x&lt;-rnorm(1e6)`. Comment on the results.
 
 
-```cpp
+``` cpp
 NumericVector test_clone_return(NumericVector A) {
   NumericVector B = clone(A);
   B[1] = 0.5;
@@ -769,7 +769,7 @@ NumericVector test_clone_return(NumericVector A) {
 }
 ```
 
-```cpp
+``` cpp
 NumericVector test_reference_return(NumericVector A) {
   A[1] = 0.5;
   return A;
@@ -786,7 +786,7 @@ See the (unofficial) [list of sugar functions](https://thecoatlessprofessor.com/
 **Binary arithmetic, logical and unary operators**
 
 
-```cpp
+``` cpp
 NumericVector x, y;
 
 //arithmetic
@@ -810,7 +810,7 @@ LogicalVector res = ! ( y &lt; z );
 **Logical summary functions**
 
 
-```cpp
+``` cpp
 // at least one element
 is_true( any(x &lt;= y) );
 is_false( any(x &lt;= y) );
@@ -835,7 +835,7 @@ bool res = is_false( all(x &lt;= y) );
 `Rcpp` provides functions which give vector 'views' more efficiently than their `R` equivalents since they use pointers instead of copies.
 
 
-```cpp
+``` cpp
 head(x)
 tail(x)
 rep_each(x, 10)
@@ -853,21 +853,21 @@ seq_len(10)
 Most math operations, scalar and vector summaries, and search algorithms have performant sugar equivalents.
 
 
-```cpp
+``` cpp
 // some examples of mathematical sugar implementations
 abs(), ceil(), ceiling(), choose(), exp(), factorial(), floor(), 
 log(), sin(), sinh(), sqrt() 
 ```
 
 
-```cpp
+``` cpp
 // some examples of scalar and vector summary functions
 mean(), min(), max(), sum(), sd(), var(), cumsum(), diff(), 
 pmin(), pmax()
 ```
 
 
-```cpp
+``` cpp
 // finding values
 match(), self_match(), which_max(), which_min()
 ```
@@ -875,7 +875,7 @@ match(), self_match(), which_max(), which_min()
 Very convenient: the d/p/q/r functions for standard distributions are implemented, too.
 
 
-```cpp
+``` cpp
 NumericVector x = rnorm(100);
 ```
 
@@ -895,7 +895,7 @@ exclude: true
 Since the area of the unit circle is `\(\pi\)` we may use that `$$\frac{1}{N}\sum_{i=1}^N \mathcal{I}_{\left\{x_i^2+y_i^2\leq1\right\}} \xrightarrow{p} \pi/4$$` for `\(x_i, y_i \overset{i.i.d.}{\sim} \mathcal{U}[0,1]\)`, where `\(\mathcal{I}_{\{\cdot\}}\)` is the indicator function.
 
 
-```r
+``` r
 pi_R &lt;- function(N) {
   x &lt;- runif(N)
   y &lt;- runif(N)
@@ -921,7 +921,7 @@ exclude: true
 A compact `Rcpp` version is easily implemented using sugar functions. 
 
 
-```cpp
+``` cpp
 #include &lt;Rcpp.h&gt;
 using namespace Rcpp;
 
@@ -938,7 +938,7 @@ double pi_Sugar(const int N) {
 
 
 
-```r
+``` r
 set.seed(123)
 sapply(10^(3:6), pi_sugar)
 ```
@@ -980,7 +980,7 @@ exclude: true
 - Thinning is computationally expensive in `R` because it requires a nested loop
 
 
-```r
+``` r
 # base R implementation
 Gibbs_R &lt;- function(N, thin) {
   
@@ -1009,7 +1009,7 @@ Thanks to sugar functions, the `Rcpp` version looks very similar...
 
 
 
-```cpp
+``` cpp
 #include &lt;Rcpp.h&gt;
 using namespace Rcpp;	
 
@@ -1100,7 +1100,7 @@ Iterator objects come with operators that allow to iterate over a range elements
 **Example: NumericVector::iterator**
 
 
-```cpp
+``` cpp
 #include &lt;Rcpp.h&gt;
 using namespace Rcpp;
 
@@ -1128,7 +1128,7 @@ There are functions which accept iterators as arguments.
 **Example: `apply()`-style functions**
 
 
-```cpp
+``` cpp
 #include &lt;numeric&gt;
 #include &lt;Rcpp.h&gt;
 using namespace Rcpp;
@@ -1153,7 +1153,7 @@ A very useful STL algorithm is `transform()` which applies an operation sequenti
 We may use `transform()` to square all elements of a vector.
 
 
-```cpp
+``` cpp
 #include &lt;Rcpp.h&gt;
 using namespace Rcpp;
 
@@ -1177,7 +1177,7 @@ Note that we do not need to export `f()` because it is only a subroutine of `squ
 The following `Rcpp` function returns a *copy* of the input vector with the first `n` elements sorted.
 
 
-```cpp
+``` cpp
 // [[Rcpp::export]]
 NumericVector nth_partial_sort(NumericVector x, int nth) {
   NumericVector y = clone(x);
@@ -1228,7 +1228,7 @@ sections (by writing entire functions) with `C++` for performance improvement.
 
 1. Implement the `R` function below using `Rcpp` for integer input (and output) and benchmark both versions.
     
-    ```r
+    ``` r
     f &lt;- function(n) {
       if(n &lt; 3) return(n)
       return(f(n-1) + f(n-2))
@@ -1253,13 +1253,13 @@ class: segue-red
 <script src="../xaringan_files/macros.js"></script>
 <script src="https://platform.twitter.com/widgets.js"></script>
 <script>var slideshow = remark.create({
-"highlightStyle": "github",
-"highlightLines": true,
-"countIncrementalSlides": false,
-"ratio": "16:9",
-"navigation": {
-"scroll": false
-}
+  "highlightStyle": "github",
+  "highlightLines": true,
+  "countIncrementalSlides": false,
+  "ratio": "16:9",
+  "navigation": {
+    "scroll": false
+  }
 });
 if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
   window.dispatchEvent(new Event('resize'));

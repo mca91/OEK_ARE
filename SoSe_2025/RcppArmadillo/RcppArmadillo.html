@@ -4,16 +4,16 @@
     <title>Advanced R for Econometricians</title>
     <meta charset="utf-8" />
     <meta name="author" content="Martin C. Arnold" />
-    <meta name="author" content="Jens Klenke" />
-    <meta name="date" content="2022-07-11" />
+    <meta name="author" content="Martin Schmelzer" />
+    <meta name="date" content="2025-06-07" />
     <script src="RcppArmadillo_files/header-attrs/header-attrs.js"></script>
     <link href="RcppArmadillo_files/remark-css/default.css" rel="stylesheet" />
     <script src="RcppArmadillo_files/clipboard/clipboard.min.js"></script>
     <link href="RcppArmadillo_files/xaringanExtra-clipboard/xaringanExtra-clipboard.css" rel="stylesheet" />
     <script src="RcppArmadillo_files/xaringanExtra-clipboard/xaringanExtra-clipboard.js"></script>
     <script>window.xaringanExtraClipboard(null, {"button":"<i class=\"fa fa-clipboard\"><\/i>","success":"<i class=\"fa fa-check\" style=\"color: #00ff00\"><\/i>","error":"<i class=\"fa fa-times-circle\" style=\"color: #F94144\"><\/i>"})</script>
-    <link href="RcppArmadillo_files/font-awesome/css/all.css" rel="stylesheet" />
-    <link href="RcppArmadillo_files/font-awesome/css/v4-shims.css" rel="stylesheet" />
+    <link href="RcppArmadillo_files/font-awesome/css/all.min.css" rel="stylesheet" />
+    <link href="RcppArmadillo_files/font-awesome/css/v4-shims.min.css" rel="stylesheet" />
     <script type="text/x-mathjax-config">
       MathJax.Hub.Config({
         TeX: { equationNumbers: { autoNumber: "AMS" } },
@@ -42,7 +42,7 @@ class: title-slide title-rcpparmadillo center middle
 
 # Advanced R for Econometricians
 ## First Steps with `RcppArmadillo`
-### Martin C. Arnold, Jens Klenke
+### Martin C. Arnold, Martin Schmelzer
 
 ---
 class: center, middle
@@ -82,14 +82,14 @@ Armadillo is a templated high-quality linear algebra library for `C++` with good
 
 - The package requires a development toolchain which should be already setup if `C++` integration with `Rcpp` works fine. Setting up `RcppArmadillo` then boils down to installing the package from `CRAN`
     
-    ```r
+    ``` r
     install.packages('RcppArmadillo')
     library(RcppArmadillo)
     ```
 
 - It is straighfowrd to verify if it works by setting `'RcppArmadillo'` as a dependency in `Rcpp::cppFunction()` or `Rcpp::evalCpp()`.
     
-    ```r
+    ``` r
     Rcpp::evalCpp("1 + 1", depends = 'RcppArmadillo')
     #&gt; [1] 2
     ```
@@ -103,7 +103,7 @@ Armadillo is a templated high-quality linear algebra library for `C++` with good
 
 - As for `Rcpp` the preferred method for compiling Armadillo code is to use a `C++` file with a modified header. The following lines replace the default header:
     
-    ```cpp
+    ``` cpp
     #include &lt;RcppArmadillo.h&gt;
     // [[Rcpp::depends(RcppArmadillo)]]
     ```
@@ -114,7 +114,7 @@ Armadillo is a templated high-quality linear algebra library for `C++` with good
 
     We may, however, specify that the Armadillo package namespace is used by default.
     
-    ```cpp
+    ``` cpp
     using namespace arma;
     ```
 
@@ -129,7 +129,7 @@ Armadillo is a templated high-quality linear algebra library for `C++` with good
 
 - The most important Armadillo classes store elements as `double`:
     
-    ```cpp
+    ``` cpp
     arma::mat, arma::vec (arma::colvec, arma::rowvec)
     ```
     Other types are available, e.g. `arma::uvec` and `arma::umat` which store unsigned integers.
@@ -140,7 +140,7 @@ Armadillo is a templated high-quality linear algebra library for `C++` with good
 
     **Example: Attributes and Methods**
     
-    ```cpp
+    ``` cpp
     arma::mat I(10, 10);   // initialise 10x10 matrix
     int n = I.n_rows();    // get number of rows
     I.eye();               // transform to identity matrix
@@ -156,7 +156,7 @@ Armadillo is a templated high-quality linear algebra library for `C++` with good
 **Example: inner vector product**
 
 
-```cpp
+``` cpp
 // using Rcpp
 double inner_prod_rcpp(NumericVector x, NumericVector y) {
   int K = x.length();
@@ -173,7 +173,7 @@ double inner_prod_rcpp(NumericVector x, NumericVector y) {
 Here is how to do it with `Armadillo`:
 
 
-```cpp
+``` cpp
 // using RcppArmadillo
 double inner_prod_rcpparma(arma::vec x, arma::vec y) {
   arma::mat out = x.t() * y;
@@ -228,14 +228,14 @@ bench::mark(
 
 
 
-```cpp
+``` cpp
 arma::vec Eigenvals_Armadillo(arma::mat A) {
   return arma::eig_sym(A);
 }
 ```
 
 
-```r
+``` r
 X &lt;- rnorm(1000); X &lt;- X %*% t(X)
 bench::mark(
   eigen(X)$values,
@@ -248,8 +248,8 @@ bench::mark(
 ## # A tibble: 2 × 4
 ##   expression                  min   median `itr/sec`
 ##   &lt;bch:expr&gt;             &lt;bch:tm&gt; &lt;bch:tm&gt;     &lt;dbl&gt;
-## 1 eigen(X)$values           1.01s    1.01s     0.987
-## 2 Eigenvals_Armadillo(X) 286.23ms 286.25ms     3.49
+## 1 eigen(X)$values           1.07s    1.07s     0.938
+## 2 Eigenvals_Armadillo(X) 294.78ms 295.47ms     3.38
 ```
 
 ]
@@ -287,7 +287,7 @@ We recommend a similar procedure as for `Rcpp`:
 - For the latter to work we pass a pointer as input to the constructor and set `copy_aux_mem = false` (see the [documentation](http://arma.sourceforge.net/docs.html#Mat))
 
 
-```cpp
+``` cpp
 #include &lt;RcppArmadillo.h&gt;
 using namespace Rcpp;
 
@@ -317,7 +317,7 @@ List fastReg_TwoCasts(NumericMatrix Xr,  NumericVector yr) {
 `Armadillo` input *by value* / `Rcpp` return
 
 
-```cpp
+``` cpp
 #include &lt;RcppArmadillo.h&gt;
 using namespace Rcpp;
 
@@ -344,7 +344,7 @@ List fastReg_OneCast(arma::mat X, arma::colvec y) {
 `Armadillo` input *by constant reference* / `Rcpp` return
 
 
-```cpp
+``` cpp
 #include &lt;RcppArmadillo.h&gt;
 using namespace Rcpp;
 
@@ -371,7 +371,7 @@ List fastReg_ConstRef(const arma::mat&amp; X, const arma::colvec&amp; y) {
 `Armadillo` input *by constant reference* / `Armadillo` return
 
 
-```cpp
+``` cpp
 #include &lt;RcppArmadillo.h&gt;
 using namespace Rcpp;
 
@@ -449,7 +449,7 @@ bench::mark(
 Let's check that the DGP generates stable processes.
 
 
-```r
+``` r
 A &lt;- matrix(c(0.8, 0.15, 0.15, 0.8), ncol = 2)
 all(Eigenvals_Armadillo(A) &lt; 1)
 ```
@@ -461,7 +461,7 @@ all(Eigenvals_Armadillo(A) &lt; 1)
 We write the DGP as an `R` function of the coefficient matrix and the error process.
 
 
-```r
+``` r
 VARSim_R &lt;- function(A, epsilon) {
    out &lt;- matrix(0, nrow(epsilon), ncol(epsilon))
    for (i in 2:nrow(epsilon)) {
@@ -483,7 +483,7 @@ VARSim_R &lt;- function(A, epsilon) {
 An `Armadillo` version is readily implemented.
 
 
-```cpp
+``` cpp
 #include &lt;RcppArmadillo.h&gt;
 // [[Rcpp::depends(RcppArmadillo)]]
 
@@ -510,7 +510,7 @@ arma::mat VARSim_Rcpp(arma::mat coef, arma::mat epsilon) {
 **Example: simulating a VAR(1) process &amp;mdash; ctd.**
 
 
-```r
+``` r
 epsilon &lt;- matrix(rnorm(500), ncol = 2)
 df &lt;- data.frame(VARSim_Rcpp(A, epsilon)) %&gt;% 
   mutate(time = row_number()) %&gt;% 
@@ -634,13 +634,13 @@ class: segue-red
 <script src="../xaringan_files/macros.js"></script>
 <script src="https://platform.twitter.com/widgets.js"></script>
 <script>var slideshow = remark.create({
-"highlightStyle": "github",
-"highlightLines": true,
-"countIncrementalSlides": false,
-"ratio": "16:9",
-"navigation": {
-"scroll": false
-}
+  "highlightStyle": "github",
+  "highlightLines": true,
+  "countIncrementalSlides": false,
+  "ratio": "16:9",
+  "navigation": {
+    "scroll": false
+  }
 });
 if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
   window.dispatchEvent(new Event('resize'));

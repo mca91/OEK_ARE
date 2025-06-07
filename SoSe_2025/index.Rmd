@@ -46,6 +46,7 @@ class: title-slide title-index
   <li><a href="Webscraping/webscraping.html">Web Scraping</a></li>
   <li><a href="Rmarkdown/rmarkdown.html">Rmarkdown</a></li>
   <li><a href="Git/git_vcs.html">Git and Github</a></li>
+  <li><a href="Rcpp/SpeedRcpp.html">Rcpp</a> and <a href="RcppArmadillo/RcppArmadillo.html">RcppArmadillo</a></li>
 </ol>
 ]
 
