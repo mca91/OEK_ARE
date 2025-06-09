@@ -5,7 +5,7 @@
     <meta charset="utf-8" />
     <meta name="author" content="Martin C. Arnold" />
     <meta name="author" content="Martin Schmelzer" />
-    <meta name="date" content="2025-06-07" />
+    <meta name="date" content="2025-06-09" />
     <script src="SpeedRcpp_files/header-attrs/header-attrs.js"></script>
     <link href="SpeedRcpp_files/remark-css/default.css" rel="stylesheet" />
     <script src="SpeedRcpp_files/clipboard/clipboard.min.js"></script>
@@ -37,6 +37,7 @@
 
 
 
+
 class: title-slide title-rcpp center middle
 
 # Advanced R for Econometricians
@@ -50,10 +51,12 @@ class: title-slide title-rcpp center middle
 
 The `Rcpp` package allows to implement and easily invoke `C++` functions in `R` by providing a clean and approachable API.
 
+&lt;/br&gt;
 **Who should use it?**
 
 Anyone who is interested in eliminating bottlenecks which cannot be sped-up in vanilla `R`. 
 
+&lt;/br&gt;
 **Is `Rcpp` a self-contained language?**
 
 No. To write code using `Rcpp` basically means to write `C++` code using special `C++` classes that allow interfacing with `R`.
@@ -69,22 +72,22 @@ The official [quick reference](https://cran.r-project.org/web/packages/Rcpp/vign
 
 - The package allows to write C++ code in a style similar to R &amp;mdash; *syntactic sugar*: 
 
-    `Rcpp` comes with well tested functions which look and behave very similar to their R equivalent. Sugar versions of arithmetic and logical operators, vector views and many base R functions facilitate the first steps in programming with `Rcpp` tremendously.
+    `Rcpp` has well-tested functions that look and behave very similar to their R equivalents. *Sugar* versions of arithmetic and logical operators, vector views and many base R functions facilitate the first steps in programming with `Rcpp` tremendously.
 
-- In what follows we will not spend much time on advanced stuff like OO-`C++` programming or templates but focus on writing small, self-contained functions.
+- We will not spend much time on advanced stuff like OO-`C++` programming or templates but focus on writing small, self-contained functions.
 
     [learnCpp](https://www.learncpp.com/) is a good source for details on these subjects. 
 
 ---
 ## `Rcpp` &amp;mdash; FAQs
 
-**When is rewriting code using `C++` an attractive alternative?**
+**When is switching to `C++` an attractive alternative to 'pure' R code?**
 
 Typical bottlenecks in `R` that be addressed using `C++` are:
 
-- Loops that can’t be easily vectorised because subsequent iterations depend on previous ones.
+- Loops that can’t be easily vectorised as subsequent iterations depend on previous ones
   
-  (e.g., algorithms for Markov chain Monte Carlo in Bayesian models)
+  (like algorithms for Markov chain Monte Carlo in Bayesian models)
 
 
 - Recursive functions/problems which involve calling functions a large number of times. The overhead of calling functions in `C++` is *much* lower than that in `R`.
@@ -135,14 +138,14 @@ library(Rcpp)
 
 **So how does it work?**
 
-- We use `C++` functions which *generate* and *modify* SEXP objects faster than `R` is able to. 
+- We use `C++` functions that *generate* and *modify* SEXP objects more efficiently than R can. 
 
 - `Rcpp` allows a seamless transfer between `C++` and an SEXP objects with low cost by passing pointers (pass by reference) to `C++` functions using special classes which enclose SEXPs (we will introduce these in a bit).
 
 ---
 ## `Rcpp` &amp;mdash; C++ Syntax Basics
 
-**Example: Syntax in `C++` &amp;mdash; 1**
+**Example: Syntax in `C++` &amp;mdash; Function Definition**
 
 
 ``` cpp
@@ -151,26 +154,26 @@ int one() {
 }
 ```
 
-Note that:
+Note:
 
-- We do *not* use assignment to create functions in `C++`!
+- **No assignment** necessary to create functions in `C++`!
 
-- We need to declare the type returned by the function (and also for its arguments)
+- We **need to declare the return *type*** (also for function arguments)
 
-- Scalars and vectors are different objects! There are also differences w.r.t. scalar types: 
+- The **&lt;tt&gt;return&lt;/tt&gt; statement** *must* be used to return a value!
 
-    `numeric`, `integer`, `character` and `logical` (`R`)
+- We **conclude statement with &lt;tt&gt;;&lt;/tt&gt;**
+
+- **Scalars and vectors are different objects**! There are also differences w.r.t. scalar types: 
+
+    `numeric`, `integer`, `character` and `logical` (in `R`)
     
-    &lt;tt&gt;double&lt;/tt&gt;, &lt;tt&gt;int&lt;/tt&gt;, &lt;tt&gt;string&lt;/tt&gt;, &lt;tt&gt;bool&lt;/tt&gt; (`C++`)
-
-- The &lt;tt&gt;return&lt;/tt&gt; statement *must* be used to return a value!
-
-- Every statement *must* be followed by a &lt;tt&gt;;&lt;/tt&gt;
+    `double`, `int`, `string`, `bool` (in `C++`)
 
 ---
 ## `Rcpp` &amp;mdash; C++ Syntax Basics
 
-**Example: Syntax in `C++` &amp;mdash; 2**
+**Example: Syntax in `C++` &amp;mdash; Function Definition ctd.**
 
 .pull-left[
 
@@ -200,6 +203,8 @@ bool isOdd_cpp(int num = 10) {
 ```
 ]
 
+More `C++` rules:
+
 - Assignment is done using the &lt;tt&gt;=&lt;/tt&gt; operator
 
 - *Binary* arithmetic and logical operators work as in `R`. More on this later.
@@ -211,20 +216,21 @@ bool isOdd_cpp(int num = 10) {
 ---
 ## `Rcpp` &amp;mdash; Inline Compilation
 
-**Example: cppFunction() **
+**Example: `Rcpp::cppFunction()`**
 
 Small self-contained functions are easily compiled and linked using `cppFunction()`.
 
 
 ``` r
 Rcpp::cppFunction('
-bool isOdd_cpp(int num = 10) {
-  bool result = (num % 2 == 1);
-  return result;
-}')
+  bool isOdd_cpp(int num = 10) {
+    bool result = (num % 2 == 1);
+    return result;
+  }'
+)
 ```
 
-`isOdd_cpp()` now works like a regular `R` function.
+`isOdd_cpp()` can now be invoked in `R`.
 
 
 ``` r
@@ -238,25 +244,27 @@ isOdd_cpp(42L)
 ---
 ## `Rcpp` &amp;mdash; Inline Compilation
 
-**Example: `cppFunction()`**
+**Example: `Rcpp::cppFunction()` &amp;mdash; ctd.**
 
 What happened?
 
-- Our function `isOdd_cpp()` is sourced by `Rcpp`.
+1. Our `C++` function `isOdd_cpp()` is sourced by `Rcpp`.
 
-- `Rcpp` generates a wrapper function in `R`. It then compiles and links the `C++` function to the wrapper. The function is now available in `R` under its `C++` name.
+2. `Rcpp` generates a *wrapper* in `R`. It then compiles and links the `C++` function to the wrapper. 
+3. The wrapper is made available in `R` under its `C++` name.
 
 
 ``` r
+# check wrapper function definition
 isOdd_cpp
 ```
 
 ```
 ## function (num = 10L) 
-## .Call(&lt;pointer: 0x1063d0680&gt;, num)
+## .Call(&lt;pointer: 0x104fec680&gt;, num)
 ```
 
-We see that `isOdd_cpp()` uses `.call()` to invoke the `C++` version of the function which is stored in the specified pointer.
+We see that `isOdd_cpp()` uses `.Call()` to invoke the `C++` version of the function which is stored in the specified pointer.
 
 ---
 ## `Rcpp` &amp;mdash; Sourcing a `.cpp`-file via *RStudio*
@@ -312,7 +320,7 @@ sum_R &lt;- function(x) {
   for (i in seq_along(x)) {
     total &lt;- total + x[i]
   }
-  total
+  return(total)
 }
 ```
 ]
@@ -333,14 +341,14 @@ double sum_C(NumericVector x) {
 
 
 
-- **Indices start at 0!**
+- **Indices start at 0 in `C++`!**
 
-- C++ methods are called with a full stop, e.g. `.size()`
+- C++ methods are called with a full stop, for example `x.size()`
 
 - Syntax in `for()`: `for(initialize; check; increment)`  
 
 - In-place modification: `total += x[i]` is equivalent to 
-`total = total[i-1] + x[i]`
+`total = total + x[i]`
 
 ---
 ## `Rcpp` &amp;mdash; Loops
@@ -348,8 +356,9 @@ double sum_C(NumericVector x) {
 **Example: Summation &amp;mdash; ctd.**
 
 
-```r
+``` r
 x &lt;- runif(1e3)
+
 bench::mark(
   sum(x),
   sum_C(x),
@@ -361,12 +370,14 @@ bench::mark(
 ## # A tibble: 3 × 6
 ##   expression      min   median `itr/sec` mem_alloc `gc/sec`
 ##   &lt;bch:expr&gt; &lt;bch:tm&gt; &lt;bch:tm&gt;     &lt;dbl&gt; &lt;bch:byt&gt;    &lt;dbl&gt;
-## 1 sum(x)       1.56µs   1.64µs   582125.        0B        0
-## 2 sum_C(x)     1.56µs   1.76µs   460865.    2.49KB        0
-## 3 sum_R(x)    14.47µs  15.05µs    65413.   19.74KB        0
+## 1 sum(x)       1.56µs   1.64µs   585035.        0B        0
+## 2 sum_C(x)     1.23µs   1.31µs   683320.        0B        0
+## 3 sum_R(x)    19.97µs  20.09µs    48848.    22.9KB        0
 ```
 
-`sum_C()` is competitive with the highly optimised primitive `sum()`. `sum_R()` is considerably slower.
+&lt;br&gt;
+
+`\(\Rightarrow\)` `sum_C()` is competitive with the highly optimized primitive `sum()`. `sum_R()` is considerably slower.
 
 ---
 ## `Rcpp` &amp;mdash; Vectors and Matrices
@@ -386,13 +397,11 @@ bench::mark(
 ---
 ## `Rcpp` &amp;mdash; Vectors and Matrices
 
-.font90[
-
 **Example: STL-type mapping**
 
-The following code is 'pure' `C++` and can be handled by `R`: `Rcpp` maps `std::vector&lt;type&gt;` to `NumericVector`. 
+The following code is pure `C++` and can be handled by `Rcpp`: `std::vector&lt;type&gt;` is mapped to `NumericVector`. 
 
-(Note that we use `::` to access objects from the `std` namespace)
+(We use `::` to access objects from the `std` namespace)
 
 
 ``` cpp
@@ -405,18 +414,15 @@ The above requires a copy of `X` which is avoided if we use &lt;tt&gt;IntegerVec
 
 
 ``` cpp
-NumericVector zeros_Rcpp(int N) {
-  NumericVector X(N);
+IntegerVector zeros_Rcpp(int N) {
+  IntegerVector X(N);
   return X;
 }
 ```
 
-]
 
 ---
 ## `Rcpp` &amp;mdash; Vectors and Matrices
-
-.font90[
 
 **Example: STL-type mapping &amp;mdash; ctd.**
 
@@ -437,16 +443,14 @@ bench::mark(
 ## # A tibble: 2 x 13
 ##   expression         min   median `itr/sec` mem_alloc `gc/sec`    
 ##   &lt;bch:expr&gt;    &lt;bch:tm&gt; &lt;bch:tm&gt;     &lt;dbl&gt; &lt;bch:byt&gt;    &lt;dbl&gt;    
-## 1 zeros_Rcpp(x)  729.5µs   1.02ms      307.    7.63MB     5.44
-## 2 zeros_STL(x)    1.85ms   3.31ms      225.    3.82MB     2.64
+## 1 zeros_Rcpp(x)  729.5µs   1.02ms      307.    3.81MB     5.44
+## 2 zeros_STL(x)    1.85ms   3.31ms      225.    3.81MB     2.64
 ```
-
-]
 
 ---
 ## `Rcpp` &amp;mdash; Vectors and Matrices
 
-Sometimes it will be convenient to generate objects using the STL and use `wrap()` before returning them.
+It may be convenient to generate objects using the STL and use `wrap()` before returning them.
 
 **Example: `wrap()`**
 
@@ -471,6 +475,7 @@ NumericVector iota(int N) {
 ```
 
 ---
+exclude: true
 ## `Rcpp` &amp;mdash; Vectors and Matrices
 
 `C++` implementations that heavily rely on loops can often compete with `R` primitives in terms of speed.
@@ -505,7 +510,7 @@ NumericVector rowSumsC(NumericMatrix x) {
 
 **Example: extracting data from `lm` object**
 
-The function below extracts the residuals from a linear model of class `lm`.
+The function below extracts the residuals from a linear model `mod` of class `lm`.
 
 
 ``` cpp
@@ -524,7 +529,7 @@ NumericVector residuals(List mod) {
 
 **Example: extract data from `lm` object &amp;mdash; ctd.**
 
-We may return selected entries of an `lm` object in a `list` 
+We may return selected entries of an `lm` object in a `List` 
 
 (note that the `Rcpp` class is `List` with a capital `L`)
 
@@ -742,44 +747,44 @@ print(x) # check that x was not modified
 ---
 ## `Rcpp` &amp;mdash; Exercises Part 1
 
-Find out why the following code gives a compile error:
+1.Find out why the following script yields errors on compilation and fix these:
 
-
-``` cpp
-#include&lt;Rcpp.h&gt;
-// [[Rcpp::plugins("cpp11")]]
-
-NumericVector x{1, 2, 3, 4, 5};
-IntegerVector id{1};
-
-double y = x[id]; // produces compile error
-```
+  
+  ``` cpp
+  #include&lt;Rcpp.h&gt;
+  // [[Rcpp::plugins("cpp11")]]
+  
+  NumericVector x{1, 2, 3, 4, 5};
+  IntegerVector id{1};
+  
+  double y = x[id]
+  ```
 
 ---
 ## `Rcpp` &amp;mdash; Exercises Part 1
 
-Benchmark the functions below against each other for `x&lt;-rnorm(1e2)`, `x&lt;-rnorm(1e4)` and `x&lt;-rnorm(1e6)`. Comment on the results.
+2.Benchmark the functions below against each other for `x&lt;-rnorm(1e2)`, `x&lt;-rnorm(1e4)` and `x&lt;-rnorm(1e6)`. Comment on the results.
 
-
-``` cpp
-NumericVector test_clone_return(NumericVector A) {
-  NumericVector B = clone(A);
-  B[1] = 0.5;
-  return B;
-}
-```
-
-``` cpp
-NumericVector test_reference_return(NumericVector A) {
-  A[1] = 0.5;
-  return A;
-}
-```
+  
+  ``` cpp
+  NumericVector test_clone_return(NumericVector A) {
+    NumericVector B = clone(A);
+    B[1] = 0.5;
+    return B;
+  }
+  ```
+  
+  ``` cpp
+  NumericVector test_reference_return(NumericVector A) {
+    A[1] = 0.5;
+    return A;
+  }
+  ```
 
 ---
 ## `Rcpp` &amp;mdash; Syntactic Sugar
 
-Another benefit of using `Rcpp` classes is *Rcpp sugar* &amp;mdash; more efficient high-level syntax similar that is similar to `R`. We give simple examples for the most important features.
+Another benefit of using `Rcpp` classes is *Rcpp sugar* &amp;mdash; more efficient high-level syntax similar to `R`. We give simple examples for the most important features.
 
 See the (unofficial) [list of sugar functions](https://thecoatlessprofessor.com/programming/unofficial-rcpp-api-documentation/) for more examples.
 
@@ -789,17 +794,17 @@ See the (unofficial) [list of sugar functions](https://thecoatlessprofessor.com/
 ``` cpp
 NumericVector x, y;
 
-//arithmetic
+// arithmetic
 NumericVector res = x / y;
 NumericVector res = 2.0 - x;
 NumericVector res = x / ( y * y );
 
-//comparison
+// comparison
 LogicalVector res = x &lt;= y;
 LogicalVector res = x &lt; 2;
 LogicalVector res = ( x + y ) &lt; ( x*x );
 
-//negation
+// negation
 NumericVector res = -x;
 LogicalVector res = ! ( y &lt; z );
 ```
@@ -823,25 +828,31 @@ is_false( all(x &lt;= y) );
 bool res = is_false( all(x &lt;= y) );
 ```
 
-- There is *no recycling*: vectors need to have equal lengths, otherwise the compiler will return an error.
+- There is **no recycling: vectors need to have equal lengths**, otherwise the compiler will return an error.
 
-- Note that the conversion to &lt;tt&gt;bool&lt;/tt&gt; using &lt;tt&gt;is_true()&lt;/tt&gt; or &lt;tt&gt;is_false()&lt;/tt&gt; is *mandatory*. Omission will result in a compiler error.
+- Note that the **conversion to &lt;tt&gt;bool&lt;/tt&gt; using &lt;tt&gt;is_true()&lt;/tt&gt; or &lt;tt&gt;is_false()&lt;/tt&gt; is mandatory**. Omission will result in a compiler error.
 
 ---
 ## `Rcpp` &amp;mdash; Syntactic Sugar
 
 **Vector views**
 
-`Rcpp` provides functions which give vector 'views' more efficiently than their `R` equivalents since they use pointers instead of copies.
+`Rcpp` provides functions which give 'vector views' more efficiently than their `R` equivalents since they use pointers instead of copies.
 
 
 ``` cpp
 head(x)
+
 tail(x)
+
 rep_each(x, 10)
+
 rep_len(x, 3)
+
 rev(x)
+
 seq_along(x)
+
 seq_len(10)
 ```
 
@@ -905,7 +916,7 @@ pi_R &lt;- function(N) {
 ```
 
 
-```r
+``` r
 set.seed(123)
 sapply(10^(3:6), pi_R)
 ```
@@ -1039,7 +1050,7 @@ exclude: true
 ... but is considerably faster. `Rcpp` really shines here:
 
 
-```r
+``` r
 bench::mark(
     Gibbs_R(2000, 200),
     Gibbs_Rcpp(2000, 200),
@@ -1051,8 +1062,8 @@ bench::mark(
 ## # A tibble: 2 × 4
 ##   expression                 min   median `itr/sec`
 ##   &lt;bch:expr&gt;            &lt;bch:tm&gt; &lt;bch:tm&gt;     &lt;dbl&gt;
-## 1 Gibbs_R(2000, 200)       1.22s    1.22s     0.820
-## 2 Gibbs_Rcpp(2000, 200)  36.07ms  36.39ms    27.4
+## 1 Gibbs_R(2000, 200)     565.7ms  565.7ms      1.77
+## 2 Gibbs_Rcpp(2000, 200)   38.8ms   39.2ms     25.5
 ```
 
 ---
@@ -1067,6 +1078,7 @@ exclude: true
 &lt;br&gt;
 &lt;iframe width="700" height="400" frameborder="0" scrolling="no" src="https://www.plot.ly/~mca_unidue/57.embed?showlink=false"&gt;&lt;/iframe&gt;
 &lt;/div&gt;
+
 ---
 exclude: true
 ## `Rcpp` &amp;mdash; Case Study: Gibbs Sampler
@@ -1090,14 +1102,14 @@ The following collections are recommended for beginners to start with:
 
 - [algorithm](http://www.cplusplus.com/reference/algorithm/) &amp;mdash; functions which work on ranges of elements using iterators
 
-The following examples show .cpp-files as some require a different header than included by default
+The following examples show .cpp-files as some require a different header than included by default.
 
 ---
-## `Rcpp` &amp;mdash; STL Iterators
+## `Rcpp` &amp;mdash; STL Compatible Iterators
 
-Iterator objects come with operators that allow to iterate over a range elements in in a more abstract way than a classic `for()` loop does with an indexing variable.
+Iterator objects come with operators that allow to iterate over a elements in an abstract way.
 
-**Example: NumericVector::iterator**
+**Example: NumericVector::iterator &amp;mdash; 1**
 
 
 ``` cpp
@@ -1121,11 +1133,11 @@ double sum_it(NumericVector x) {
 - Note that we use the *dereference operator* `*it` to get the value of the current element
 
 ---
-## `Rcpp` &amp;mdash; STL Iterators
+## `Rcpp` &amp;mdash; STL Compatible Iterators
 
 There are functions which accept iterators as arguments.
 
-**Example: `apply()`-style functions**
+**Example: NumericVector::iterator &amp;mdash; 2**
 
 
 ``` cpp
@@ -1146,7 +1158,7 @@ double sum_accu(NumericVector x) {
 ---
 ## `Rcpp` &amp;mdash; STL Algorithms
 
-A very useful STL algorithm is `transform()` which applies an operation sequentially to elements in (up to two) ranges and stores the result in another range.
+A very useful STL algorithm is `transform()`, which applies an operation sequentially to elements in (up to two) ranges and stores the result in another range.
 
 **Example: `std::transform()`**
 
@@ -1172,7 +1184,7 @@ Note that we do not need to export `f()` because it is only a subroutine of `squ
 ---
 ## `Rcpp` &amp;mdash; STL Algorithms
 
-**Example: (partial) sort**
+**Example: (Partial) sort**
 
 The following `Rcpp` function returns a *copy* of the input vector with the first `n` elements sorted.
 
@@ -1192,36 +1204,44 @@ NumericVector nth_partial_sort(NumericVector x, int nth) {
 ---
 ## `Rcpp` &amp;mdash; STL Algorithms
 
-**Example: (partial) sort**
+**Example: (Partial) sort &amp;mdash; ctd.**
 
 Let's benchmark `nth_partial_sort()` against R's `sort()` for a full sort.
 
 
-```r
+``` r
 x &lt;- rnorm(100)
+
 bench::mark(
-        nth_partial_sort(x, 100),
-        sort(x),
-        relative = T)
+  nth_partial_sort(x, 100),
+  sort(x),
+  relative = T
+)
 ```
 
 ```
 ## # A tibble: 2 × 6
 ##   expression                 min median `itr/sec` mem_alloc `gc/sec`
 ##   &lt;bch:expr&gt;               &lt;dbl&gt;  &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;
-## 1 nth_partial_sort(x, 100)   1      1        10.5      2.62     10.5
-## 2 sort(x)                   12.9   11.8       1        1         1
+## 1 nth_partial_sort(x, 100)   1      1        13.5      1         NaN
+## 2 sort(x)                   15.8   15.4       1        1.53      Inf
 ```
 
 ---
 ## `Rcpp` &amp;mdash; Programming Strategy
 
-- Write most of your code in `R` to take advantage of its high abstraction level
+**So how should we use `Rcpp` in everyday `R` programming? &amp;mdash; A few suggestions**
 
-- Profile your code, identify bottlenecks and replace those
-sections (by writing entire functions) with `C++` for performance improvement. 
+1. Use a functional programming approach
 
-- Make sure that your `C++` routines have the same call signature as their slow `R` equivalents.
+2. Write your code to **take advantage of R's high abstraction level**
+
+3. **Profile your code**, identify bottlenecks and **replace slow
+parts (by writing entire functions) with `C++`** for performance improvement. 
+
+4. Make sure that your `C++` routines have the **same call signature** as their slow `R` equivalents.
+
+5. Provide fail-save wrappers for others.
 
 ---
 ## `Rcpp` &amp;mdash; Exercises Part 2
@@ -1237,7 +1257,7 @@ sections (by writing entire functions) with `C++` for performance improvement.
 
 2. Reconsider the function `nth_partial_sort()`. Compare its performance with that of `R`'s `sort()` for large vectors. Explain your findings.
 
-3. Convert `all()`, `range()` and `var()` into `C++`. You may assume that the inputs have no missing values.
+3. Convert `all()`, `range()` and `var()` into `C++`. Assume that the inputs have no missing values.
 
 ---
 class: segue-red
