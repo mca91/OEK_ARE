@@ -5,7 +5,7 @@
     <meta charset="utf-8" />
     <meta name="author" content="Martin C. Arnold" />
     <meta name="author" content="Martin Schmelzer" />
-    <meta name="date" content="2025-06-09" />
+    <meta name="date" content="2025-06-13" />
     <script src="SpeedRcpp_files/header-attrs/header-attrs.js"></script>
     <link href="SpeedRcpp_files/remark-css/default.css" rel="stylesheet" />
     <script src="SpeedRcpp_files/clipboard/clipboard.min.js"></script>
@@ -158,17 +158,21 @@ Note:
 
 - **No assignment** necessary to create functions in `C++`!
 
-- We **need to declare the return *type*** (also for function arguments)
+- We **need to declare the return *type*** (also the type of function arguments)
 
 - The **&lt;tt&gt;return&lt;/tt&gt; statement** *must* be used to return a value!
 
-- We **conclude statement with &lt;tt&gt;;&lt;/tt&gt;**
+- We **conclude statements with &lt;tt&gt;;&lt;/tt&gt;**
 
-- **Scalars and vectors are different objects**! There are also differences w.r.t. scalar types: 
+- **Scalars and vectors are different objects**! There are differences w.r.t. scalar types: 
 
-    `numeric`, `integer`, `character` and `logical` (in `R`)
-    
-    `double`, `int`, `string`, `bool` (in `C++`)
+  &lt;pre&gt;
+    &lt;b&gt;R&lt;/b&gt;   : numeric   integer   character   logical
+    &lt;b&gt;C++&lt;/b&gt; : double    int       string      bool
+  &lt;/pre&gt;
+
+
+
 
 ---
 ## `Rcpp` &amp;mdash; C++ Syntax Basics
@@ -185,17 +189,13 @@ isOdd_r &lt;- function(num = 10L) {
 }
 isOdd_r(42L)
 ```
-
-```
-## [1] FALSE
-```
 ]
 
 .pull-right[
 
 ``` cpp
-# C++ equivalent 
-# (not yet executable!)
+// C++ equivalent 
+// (not yet executable!)
 bool isOdd_cpp(int num = 10) {
   bool result = (num % 2 == 1);
   return result;
@@ -261,7 +261,7 @@ isOdd_cpp
 
 ```
 ## function (num = 10L) 
-## .Call(&lt;pointer: 0x104fec680&gt;, num)
+## .Call(&lt;pointer: 0x104665d40&gt;, num)
 ```
 
 We see that `isOdd_cpp()` uses `.Call()` to invoke the `C++` version of the function which is stored in the specified pointer.
@@ -392,16 +392,16 @@ bench::mark(
     
     - &lt;tt&gt;NumericMatrix&lt;/tt&gt;, &lt;tt&gt;IntegerMatrix&lt;/tt&gt;, &lt;tt&gt;CharacterMatrix&lt;/tt&gt; and &lt;tt&gt;LogicalMatrix&lt;/tt&gt;
 
-- Using classes from the C++ Standard Template Library (STL) will not pose a problem, but requires a *deep copy* (pass-by-value) whereas using the appropriate `Rcpp` class results in a modification of the object (pass-by-reference)
+- STL classes work but require deep copies (*pass-by-value*), while Rcpp classes allow in-place modification (*pass-by-reference*).
 
 ---
 ## `Rcpp` &amp;mdash; Vectors and Matrices
 
 **Example: STL-type mapping**
 
-The following code is pure `C++` and can be handled by `Rcpp`: `std::vector&lt;type&gt;` is mapped to `NumericVector`. 
+The following code is pure `C++` and can be handled by `Rcpp`: 
 
-(We use `::` to access objects from the `std` namespace)
+`std::vector&lt;type&gt;` is mapped to `NumericVector`. 
 
 
 ``` cpp

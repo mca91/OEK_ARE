@@ -132,7 +132,8 @@ The second appearance of `x.begin()` refers to the beginning of the output range
     bench::mark(
       f = f(20),
       f_rec_cpp(20),
-      f_cpp = f_cpp(20)
+      f_cpp = f_cpp(20),
+      relative = T
     )
     ```
 
@@ -160,7 +161,9 @@ The second appearance of `x.begin()` refers to the beginning of the output range
     # benchmark n^th partial sort
     bench::mark(
       nth_partial_sort(v, n),
-      sort(v, partial = 1:n), check = F
+      sort(v, partial = 1:n), 
+      check = F,
+      relative = T
     )
     ```
 

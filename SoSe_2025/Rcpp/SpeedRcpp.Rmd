@@ -171,17 +171,21 @@ Note:
 
 - **No assignment** necessary to create functions in `C++`!
 
-- We **need to declare the return *type*** (also for function arguments)
+- We **need to declare the return *type*** (also the type of function arguments)
 
 - The **<tt>return</tt> statement** *must* be used to return a value!
 
-- We **conclude statement with <tt>;</tt>**
+- We **conclude statements with <tt>;</tt>**
 
-- **Scalars and vectors are different objects**! There are also differences w.r.t. scalar types: 
+- **Scalars and vectors are different objects**! There are differences w.r.t. scalar types: 
 
-    `numeric`, `integer`, `character` and `logical` (in `R`)
-    
-    `double`, `int`, `string`, `bool` (in `C++`)
+  <pre>
+    <b>R</b>   : numeric   integer   character   logical
+    <b>C++</b> : double    int       string      bool
+  </pre>
+
+
+
 
 ---
 ## `Rcpp` &mdash; C++ Syntax Basics
@@ -189,7 +193,7 @@ Note:
 **Example: Syntax in `C++` &mdash; Function Definition ctd.**
 
 .pull-left[
-```{r}
+```{r, results='hide'}
 # R function
 isOdd_r <- function(num = 10L) {
   result <- (num %% 2L == 1L)
@@ -201,8 +205,8 @@ isOdd_r(42L)
 
 .pull-right[
 ```{Rcpp, eval=F}
-# C++ equivalent 
-# (not yet executable!)
+// C++ equivalent 
+// (not yet executable!)
 bool isOdd_cpp(int num = 10) {
   bool result = (num % 2 == 1);
   return result;
@@ -384,16 +388,16 @@ $\Rightarrow$ `sum_C()` is competitive with the highly optimized primitive `sum(
     
     - <tt>NumericMatrix</tt>, <tt>IntegerMatrix</tt>, <tt>CharacterMatrix</tt> and <tt>LogicalMatrix</tt>
 
-- Using classes from the C++ Standard Template Library (STL) will not pose a problem, but requires a *deep copy* (pass-by-value) whereas using the appropriate `Rcpp` class results in a modification of the object (pass-by-reference)
+- STL classes work but require deep copies (*pass-by-value*), while Rcpp classes allow in-place modification (*pass-by-reference*).
 
 ---
 ## `Rcpp` &mdash; Vectors and Matrices
 
 **Example: STL-type mapping**
 
-The following code is pure `C++` and can be handled by `Rcpp`: `std::vector<type>` is mapped to `NumericVector`. 
+The following code is pure `C++` and can be handled by `Rcpp`: 
 
-(We use `::` to access objects from the `std` namespace)
+`std::vector<type>` is mapped to `NumericVector`. 
 
 ```{cpp, eval=F}
 std::vector<int> zeros_STL(int N) {
