@@ -2,7 +2,7 @@
 ICONS <- list()
 ICONS$desktop <- fontawesome::fa("desktop", fill = "#004c93")
 ICONS$checker_green <- fontawesome::fa("check", fill = "green")
-ICONS$times_red <- fontawesome::fa("times", fill = "red")
+ICONS$incorrect <- fontawesome::fa("times", fill = "red")
 
 # PROGRESSBAR
 xaringanExtra::use_progress_bar(color = "#004c93", location = "bottom")
