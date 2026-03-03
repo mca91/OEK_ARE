@@ -1,0 +1,197 @@
+---
+title: "Exercise Solutions data wrangling"
+author: 'Jens Klenke' 
+output: 
+  html_document:
+   css: ["../assets/ude_fonts.css", "../assets/ude.css", "../assets/title_slides.css", "../assets/custom.css"]
+---
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
+```
+
+```{r xaringanExtra-clipboard_2, echo=FALSE}
+# copy button styles mainly in ude.css 
+# https://github.com/gadenbuie/xaringanExtra
+htmltools::tagList(
+  xaringanExtra::use_clipboard(
+    button_text = "<i class=\"fa fa-clipboard\"></i>",
+    success_text = "<i class=\"fa fa-check\" style=\"color: #00ff00\"></i>",
+    error_text = "<i class=\"fa fa-times-circle\" style=\"color: #F94144\"></i>"),
+  rmarkdown::html_dependency_font_awesome() 
+  )
+```
+
+```{r packages}
+library(tidyverse)
+library(nycflights13)
+library(ggplot2)
+library(readr)
+library(here)
+```
+
+
+1.  Load the <code>nycflights13::flights</code> data set. Does it come formatted as a tibble? 
+
+```{r}
+data("flights")
+class(flights)
+```
+
+2. Find all flights that 
+
+  - Had an arrival delay of two or more hours.
+
+```{r}
+filter(flights, arr_delay >= 120)
+```
+
+  - Flew to Houston (IAH or HOU)
+
+
+```{r}
+filter(flights, dest %in% c("IAH", "HOU"))
+```
+
+  - Were delayed by at least an hour, but made up over 30 minutes in flight.
+
+```{r}
+filter(flights, dep_delay >= 60 & arr_delay <= dep_delay - 30)
+```
+
+  - Departed between midnight and 6am.
+
+```{r}
+filter(flights , between(dep_time, 0, 600) | dep_time == 2400)
+```
+  
+3. Which flights took the longest and which the shortest?
+
+```{r}
+slice(flights, which.max(air_time))
+slice_max(flights, air_time)
+```
+
+```{r}
+slice(flights, which.min(air_time))
+dplyr::slice_min(flights, air_time)
+```
+
+
+4.  Brainstorm as many ways as possible to select <code>dep_time</code>, <code>dep_delay</code>, <code>arr_time</code>, and <code>arr_delay</code>.
+
+```{r}
+selection <- c("dep_time", "dep_delay", "arr_time", "arr_delay")
+flights[ ,selection]
+
+flights %>% select(selection)
+```
+
+5. Create a new variable <code>first_flight</code> which takes the value <code>TRUE</code> if it is the first flight of the day. 
+
+```{r}
+flights <-  mutate(flights, first_flight = if_else(day - lag(day) != 0 | is.na(day - lag(day)), TRUE, FALSE )) 
+filter(flights, first_flight == TRUE)
+
+flights %>%
+  group_by(year, month, day) %>%
+  mutate(first_flight = if_else(row_number() == 1, TRUE, FALSE)) %>%
+  select(first_flight)
+```
+
+6. Find out in which district the most incidents were reported.
+
+```{r}
+crime <- readr::read_csv(here::here('SoSe_2022/datasets/BostonCrime.csv'))
+
+crime %>% 
+  group_by(DISTRICT) %>%
+  summarise(N = n()) %>% 
+  arrange(desc(N))
+```
+7. Create an ordered list of the top ten districts according to the number of drug violations. Start with the district with most drug violations. 
+
+```{r}
+crime %>% 
+  filter(OFFENSE_CODE_GROUP == "Drug Violation") %>% 
+  group_by(DISTRICT) %>% 
+  summarise(N = n()) %>% 
+  arrange(desc(N)) 
+```
+
+8. What was the most dangerous hour of the week according to the number of homicides (<code>OFFENSE_CODE_GROUP == 'Homicide'</code>)? 
+
+```{r}
+crime %>% 
+  filter(OFFENSE_CODE_GROUP == "Homicide") %>% 
+  group_by(HOUR, DAY_OF_WEEK) %>%
+  summarise(N = n()) %>% 
+  arrange(desc(N))
+```
+
+9. Calculate for each district the proportion of motor vehicle accidents to all reported incidents (<code>OFFENSE_CODE_GROUP == 'Motor Vehicle Accident Response'</code>). 
+
+```{r}
+ crime %>% 
+  group_by(DISTRICT) %>%  
+  transmute(prop_accidents = sum(OFFENSE_CODE_GROUP == "Motor Vehicle Accident Response") / n()) 
+```
+
+10. Sort the data set chronologically by year and month. Then take the first 10.000 observations and compute the proportion of incidents where a shooting was involved for each district. Now take a random sample of size 10.000. Is there a noteworthy difference? <i>Hint:</i> There is a variable called <code>SHOOTING</code>.
+
+```{r}
+crime  %>%
+  arrange(desc(YEAR), desc(MONTH)) %>%
+  slice(1:10000) %>%
+  mutate(SHOOTING = ifelse(is.na(SHOOTING), 0, SHOOTING)) %>%
+  summarise(porpotion = mean(SHOOTING == "Y"))
+```
+
+
+```{r}
+set.seed(1245)
+
+crime  %>%
+  slice_sample(n = 10000) %>%
+  mutate(SHOOTING = ifelse(is.na(SHOOTING), 0, SHOOTING)) %>%
+  summarise(porpotion = mean(SHOOTING == "Y"))
+```
+
+11. Compute the TB rate for table2, table4a and table4b.
+
+```{r}
+table2 %>%
+  tidyr::pivot_wider(names_from = type, values_from = count) %>%
+  dplyr::mutate(rate = cases/population)
+```
+
+```{r}
+table4a %>%
+  tidyr::pivot_longer(cols = c(`1999`, `2000`), 
+                      names_to = 'year', 
+                      values_to = 'cases') %>%
+  dplyr::left_join(table4b %>%  
+                      tidyr::pivot_longer(cols = c(`1999`, `2000`), 
+                                          names_to = 'year', 
+                                          values_to = 'population'), 
+                   by = c('country', 'year')) %>%
+  dplyr::mutate(rate = cases/population)
+```
+
+12. Recreate the plot given by the code below using `table2` instead of `table1`. 
+
+```{r}
+ggplot(table1, aes(year, cases)) + 
+  geom_line(aes(group = country), colour = "grey50") + 
+  geom_point(aes(colour = country))
+```
+
+
+
+
+```{r}
+table2 %>% 
+  filter(type == "cases") %>%
+  ggplot( aes(x = year, y = count)) +
+    geom_line(aes( group = country)) +
+    geom_point(aes(color = country))
+```

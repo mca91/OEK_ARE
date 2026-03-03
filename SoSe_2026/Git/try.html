@@ -1,0 +1,837 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>Advanced R for Econometricians</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Martin C. Arnold" />
+    <meta name="author" content="Jens Klenke" />
+    <meta name="date" content="2022-05-19" />
+    <script src="try_files/header-attrs/header-attrs.js"></script>
+    <link href="try_files/remark-css/default.css" rel="stylesheet" />
+    <script src="try_files/xaringanExtra-progressBar/progress-bar.js"></script>
+    <script src="try_files/clipboard/clipboard.min.js"></script>
+    <link href="try_files/xaringanExtra-clipboard/xaringanExtra-clipboard.css" rel="stylesheet" />
+    <script src="try_files/xaringanExtra-clipboard/xaringanExtra-clipboard.js"></script>
+    <script>window.xaringanExtraClipboard(null, {"button":"<i class=\"fa fa-clipboard\"><\/i>","success":"<i class=\"fa fa-check\" style=\"color: #00ff00\"><\/i>","error":"<i class=\"fa fa-times-circle\" style=\"color: #F94144\"><\/i>"})</script>
+    <link href="try_files/font-awesome/css/all.css" rel="stylesheet" />
+    <link href="try_files/font-awesome/css/v4-shims.css" rel="stylesheet" />
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        TeX: { equationNumbers: { autoNumber: "AMS" } },
+      });
+    </script>
+    <style>
+    .mjx-mrow a {
+      color: black;
+      pointer-events: none;
+      cursor: default;
+    }
+    </style>
+    <link rel="stylesheet" href="../assets/ude_fonts.css" type="text/css" />
+    <link rel="stylesheet" href="../assets/ude.css" type="text/css" />
+    <link rel="stylesheet" href="../assets/title_slides.css" type="text/css" />
+    <link rel="stylesheet" href="../assets/custom.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+
+class: title-slide title-git center middle
+
+<style>.xe__progress-bar__container {
+  bottom:0;
+  opacity: 1;
+  position:absolute;
+  right:0;
+  left: 0;
+}
+.xe__progress-bar {
+  height: 0.25em;
+  background-color: #004c93;
+  width: calc(var(--slide-current) / var(--slide-total) * 100%);
+}
+.remark-visible .xe__progress-bar {
+  animation: xe__progress-bar__wipe 200ms forwards;
+  animation-timing-function: cubic-bezier(.86,0,.07,1);
+}
+@keyframes xe__progress-bar__wipe {
+  0% { width: calc(var(--slide-previous) / var(--slide-total) * 100%); }
+  100% { width: calc(var(--slide-current) / var(--slide-total) * 100%); }
+}</style>
+
+
+
+
+
+
+
+# Advanced R for Econometricians
+## Version Control with Git
+### Martin C. Arnold, Jens Klenke
+
+---
+## What is Git?
+
+- Git is an extremly popular version control system. 
+- A version control system keeps track of all changes to your project and stores 
+all versions in a data base. 
+
+&lt;img src="git1.PNG" width="450px" style="display: block; margin: auto;" /&gt;
+
+---
+## What is Git?
+
+.font90[
+- Git allows to move back to previous versions of your project if necessary. 
+- You could achieve something similar with:
+]
+
+
+
+&lt;img src="git2.PNG" width="200px" style="display: block; margin: auto auto auto 0;" /&gt;
+
+--
+
+#### Why you should use Git instead of a simple folder structure?
+
+.font90[
+- Git can tell you what changed in each version.
+- Git helps to synchronize different variants of a version. 
+- Git makes collaborating safer since it prevents overwriting each other and helps to solve conflicts (you might know the problem from e.g. Dropbox).
+- Git reminds you to document your changes so others or your future you knows why you did something.
+]
+
+---
+## Where can I get help? 
+
+On the Git hompage ([Git documentation](https://git-scm.com/doc)) you find
+- a comprehensive documentation
+- the well written book Pro Git, which served as the main source of the slides
+- tutorial videos 
+
+---
+## First Steps 
+
+Before we can use Git we need to install it:
+- Look for current releases on https://git-scm.com/downloads. 
+- To check if Git was successfully installed open the terminal and run the command `git --version`.
+
+.blockquote.exercise[ 
+```terminal
+$ git --version
+git version 2.34.1.windows.1
+```
+]
+--
+
+- Next, set your user name and email address.
+
+.blockquote.exercise[ 
+```terminal
+git config --global user.name "John Doe"
+git config --global user.email johndoe@example.com
+```
+]
+  - You need to do this once on each computer. 
+
+---
+## Setup a Git Repository 
+
+.font90[
+There are two ways to get a Git repository: 
+
+1. Turn a directory on your PC into a Git repository. 
+2. `clone` an existing repository. 
+
+We start by creating a Git repository from scratch:
+
+- Create a new directory e.g. on Windows `C:\myProject`. 
+- Use your terminal to navigate to that directory.
+
+.blockquote.exercise[ 
+```terminal
+c:
+cd myProject
+```
+]]
+
+--
+
+.font90[
+- Initialize a new git repository in this folder with 
+
+.blockquote.exercise[ 
+```terminal
+git init
+```
+]]
+
+---
+## Setup a Git Repository 
+
+- `git init` creates a new subdirectory named `.git` that contains all repository files.
+
+- Git dosen't keep track of all your changes automatically. You have to tell 
+Git when you want to save (`commit`) a new status. 
+
+- Before we can `commit` anything we need to create some files. E.g., a `HelloGit.txt` file with the content
+
+.blockquote.exercise[ 
+```
+Hello World!
+How are you?
+```
+]
+
+---
+## `git status`
+
+`git status` is the first git command you will constantly use. 
+It gives you a short overview about what changed since your last
+`commit`.
+
+.code90.blockquote.exercise[ 
+```terminal
+C:\myProject&gt;git status
+
+On branch master
+
+Initial commit
+
+Untracked files:
+  (use "git add &lt;file&gt;..." to include in what will be committed)
+
+        HelloGit.txt
+
+nothing added to commit but untracked files present (use "git add" to track)
+```
+] 
+
+--
+
+The nice thing about `git status` is that it tells you what to do next to 
+commit changes to the Git repository. 
+
+---
+## `git add`
+
+The first step to commit changes to the repository is to  use `git add &lt;files_to_add&gt;`. 
+
+.blockquote.exercise[ 
+```terminal
+git add HelloGit.txt
+```
+]
+
+--
+
+Running `git status` again gives
+
+.blockquote.exercise[ 
+```terminal
+Changes to be committed:
+  (use "git rm --cached &lt;file&gt;..." to unstage)
+
+        new file:   HelloGit.txt
+```
+]
+
+The listed files (in our case there is only one) are ready to be committed. 
+The files are now in the so called **staging area**.
+
+---
+## `git commit`
+
+With the basic command `git commit` all files in the **staging area** are commited to the git repository. There are some things to note: 
+- Git wants you to document your commit by writing a so called commit message.
+- Running ` git commit` in the terminal by default opens the text editor VIM.  
+
+&lt;img src="git3.PNG" width="300px" style="display: block; margin: auto auto auto 0;" /&gt;
+
+--
+
+- If you don't want to spend time on learning VIM in order to write commit messages you should change the default editor. On windows you might switch to 
+Notepad. 
+
+.blockquote.exercise[ 
+```terminal
+git config --global core.editor notepad
+```
+]
+
+---
+## Commit Message
+
+- The first line of what you type in the editor should have less than 50 characters. It is used as the title of the commit.
+
+- After a blank line you can give a more thorough description of what you have done. 
+
+- If you don't want to give a long description than you can also use 
+
+.blockquote.exercise[ 
+```terminal
+git commit -m "A short commit message"
+```
+]
+
+to commit the files in the staging area without opening an editor.  
+
+--
+
+- For the first commit in our example we could do something like 
+
+.blockquote.exercise[ 
+```terminal
+git commit - m "initial commit"
+```
+]
+
+---
+## The lifecycle of the status of your files
+&lt;br&gt;
+&lt;br&gt;
+.center[
+&lt;img src="git5.PNG" width="800px" /&gt;
+&lt;br&gt;
+Source: [Pro Git](https://git-scm.com/book/en/v2/Git-Basics-Recording-Changes-to-the-Repository)
+]
+
+---
+class: exercise_slide
+
+## Exercises
+
+1. Change the `HelloGit.txt` by replacing `Hello World!` with `Hello Git!`
+2. Add the changed file to the staging area. 
+3. Commit your changes to the repository. 
+
+---
+## `git log`
+
+- The command `git log` returns the commit history of your project. We see by whom and when a commit was made together with a short commit message. 
+- Each commit has a SHA value which can be used to address this commit. 
+
+.blockquote.exercise[
+```terminal
+C:\MyProject&gt;git log
+commit dfc8e86ac16116ed574884d171769b6e0e35c2f9
+Author: jens.klenke &lt;jens.klenke@uni-due.de&gt;
+Date:   Tue Apr 19 15:26:58 2022 +0200
+
+    Welcome Git with Hello Git!
+
+commit 2f17088a3831efd6870ffc8ca54c93df6b39035d
+Author: jens.klenke &lt;jens.klenke@uni-due.de
+Date:   Wed Apr 13 15:02:02 2022 +0200
+
+    Initial commit!
+```
+]
+
+Learn more about [`git log`](https://git-scm.com/book/en/v2/Git-Basics-Viewing-the-Commit-History).
+
+---
+## `git diff`
+
+- With `git diff` we can compare files before and after a commit. To 
+know what exactly changed in our last commit we compare it to our first commit:
+
+.blockquote.exercise[
+```terminal
+C:\MyProject&gt;git diff 2f17..dfc8
+
+diff --git a/HelloGit.txt b/HelloGit.txt
+index 4f6866b..71e6eca 100644
+--- a/HelloGit.txt
++++ b/HelloGit.txt
+@@ -1,2 +1,2 @@
+-Hello World!
++Hello Git!
+```
+]
+
+--
+
+- Note that we don't need the full SHA. Usually it is enough to provide the first 4 signs. If two or more SHA values started with the same 4 signs then git would tell us to provide more signs until the result gets unambiguous.  
+
+---
+## `git diff`
+
+Change again something in the `HelloGit.txt` file. If you now run 
+
+.blockquote.exercise[
+```terminal
+git diff
+```
+]
+
+you see all unstaged (everything that is not added yet) changes since the last commit. 
+
+---
+## `git rm`
+
+- Use `git rm` to remove files from git. The command does 2 things: 
+    - deletes a file from your working directory
+    - removes the file from your tracked files. 
+
+- After using `git rm` you have to commit the removal doing a standard commit. 
+
+.blockquote.exercise[
+```terminal
+git rm HelloGit.txt
+git commit -m "remove HelloGit.txt"
+```
+]
+
+--
+
+- If you only want to remove a file from the tracked files but keep it in your working directory run 
+
+.blockquote.exercise[
+```terminal
+git rm --cached HelloGit.txt
+```
+]
+
+---
+## `git checkout`
+
+- Consider the following commit history: 
+
+.blockquote.exercise[
+```terminal 
+C:\MyProject&gt;git log --pretty=oneline
+
+332fa3c6ea743a8d9ac34f3c5db94ed6c9e9ed20 add important file
+c3ed28cbdf6f7419242ad0747806d309954211f9 important change
+5d3eb1b76baf5921b0b8babc2ba7c3fffb82666a added newFile.txt
+86214741766959936c09b1ecaf213dd6d749ef60 deleted HelloGit.txt
+27d048c3bebda441db44b9506080b4784dcc728b initial commit
+```
+]
+
+---
+
+- Let's say you regret deleting `HelloGit.txt` and you want it back. 
+With the command `git checkout &lt;SHA&gt;&lt;path&gt;` files can be brought back to their state of the specified commit. 
+
+.blockquote.exercise[
+```terminal
+git checkout 27d048 newFile.txt
+```
+]
+
+---
+## `git reset`
+
+- If you want the whole project back at the state of a past commit you can do
+
+.blockquote.exercise[
+```terminal
+git reset --hard 27d048 
+```
+]
+
+- However, all changes after that commit will be discarded. 
+
+--
+
+- To keep changes in the directory of your computer use 
+
+.blockquote.exercise[
+```terminal
+git reset 27d048 
+```
+]
+
+- After running this you can decide which changes after commit `27d048` you want to keep or discard since they are now all in the modified files stage. 
+
+---
+class: exercise_slide
+
+## Exercises
+4. Make some changes to `HelloGit.txt` in your repository and add it to the staging area. 
+5. Now, you remember that you forgot some important changes and you want to unstage `HelloGit.txt`. For this, remove first `HelloGit.txt` from the staging area (`git status` will help you). Now make some changes and commit them. 
+6. Restore the initial state of the `HelloGit.txt` file (i.e. the state after your initial commit).  
+4. Create a new text file with arbitrary content. Add and commit your changes. 
+
+
+---
+## Remote Repository
+
+- Until now our repository only lives on our local machine.
+To collaborate with others you want to use a remote repository which everybody has access to. 
+
+- [Github](https://github.com) provides a platform where you can host your remote repository for free. 
+
+Set up a remote repository: 
+
+1. Go to Github.com and create a new account.
+2. Login to your Github account and go to + 	&amp;rarr; New repository
+
+    &lt;img src="git4.PNG" width="300px" style="display: block; margin: auto auto auto 0;" /&gt;
+
+---
+## Remote Repository
+3. Give your repository a name and click `Create repository`
+4. Copy and paste the lines below ***"…or push an existing repository from the command line"*** in the terminal of your local project to connect it with the repository on Github. For me it is 
+.blockquote.exercise[
+```terminal
+git remote add origin https://github.com/alexandergerber/test.git
+git push -u origin master
+```
+]
+5. Provide your Github username and password. 
+6. Take a look at the repository on Github. What do you find? 
+
+---
+## `git push`
+
+- Every `commit` changes the Git repository on your local machine. To update 
+the remote repository on Github you also need to `push` your local commits. 
+
+- Add a new file to your repository. Then add, commit and push the new file.   
+
+.blockquote.exercise[
+```terminal 
+C:\myProject&gt;git push
+```
+]
+
+- The first time you push something to a remote repository you need `git push -u origin master`. 
+  After that `git push` is enough and `origin` is used as the default upstream branch. In case you start
+  working with branches you need to learn more about this.  
+
+
+---
+## Collaborate
+
+Find somebody in the classroom to collaborate with.  
+&lt;br&gt;
+
+--
+Person A adds the other to his Github repository.
+- Settings &amp;rarr; Collaborators  
+
+--
+
+The one who was added to the repository clones the repository on his local machine: 
+1. Use the terminal to navigate to the folder where you want to have the repository. 
+2. Use `git clone` like below (change the repository url to that of your collaborator). 
+
+.blockquote.exercise[
+```terminal 
+git clone https://github.com/jens-klenke/HelloGit.git
+```
+]
+
+--
+
+Now both can work on the same project. 
+
+---
+## `git fetch` and `git merge`
+
+- If more than one person works on a project it will happen that you are locally behind the remote repository. 
+
+- To update your local repository to the newest status: 
+    1. Download everything that happened since you last synchronized with the remote repository using `git fetch`. 
+    2. Merge the new changes to your repository with `git merge`. 
+
+This should run smoothly if you didn't work on the project in the meantime. 
+
+---
+class: exercise_slide
+## Exercise
+
+1. Person A makes a change to the shared repository (add, commit, push). Afterwards Person B fetches the changes, runs `git status`
+(inspect the result) and merges the changes into his repository. Then do the same thing the other way arround. 
+
+---
+## Github Desktop
+
+.pull-left[
+- You can also use the [Github Desktop](https://desktop.github.com/) GUI 
+  - Easier to use
+  - All main features available
+  - Tracks and Highlights changes
+  - History and version comparison in one window
+]
+
+.pull-right[
+&lt;img src="github_desktop.png" width="700px" style="display: block; margin: auto 0 auto auto;" /&gt;
+]
+
+---
+## Solving conflicts
+
+- The original `HelloGit.txt` file looked like this
+
+.blockquote.exercise[
+```terminal
+Hello Git
+How are you?
+```
+]
+--
+
+- Two people working on the project didn't like this and changed it independently from each other. 
+
+Change of Person A
+
+.blockquote.exercise[
+```terminal
+Hello Git,
+
+How are you? I think I shoudld work on this file.  
+```
+]
+
+--
+
+Change of Person B
+
+.blockquote.exercise[
+```terminal
+Hello Git!
+How are you? I hope you don't run into too many conflicts. 
+```
+]
+---
+## Solving conflicts
+
+.font90[
+- Person B pushed her changes first to the remote server. There was no problem because she worked with 
+the most recent status. 
+
+- However, Person A is now behind by one commit. If she tries to push a new commit, Git will tell her that 
+she first needs to `git pull` which is short for `git fetch` and `git merge`.  
+
+- If Person A does this Git will try to solve the conflict automatically. 
+However, in our case git won't be able to do so because the exactly same parts of a file were changed and you don't
+want a machine to decide what to keep and what to discard. 
+]
+
+.blockquote.exercise[
+```terminal
+C:\Users\AlexanderGerber\myProject&gt;git merge
+Auto-merging HelloGit.txt
+CONFLICT (content): Merge conflict in HelloGit.txt
+Automatic merge failed; fix conflicts and then commit the result.
+```
+]
+
+---
+## Solving conflicts
+
+- Instead of solving the conflict, Git will prepare the file in a way that makes it easy for you to solve the conflict yourself. Look for everything starting with `&lt;&lt;&lt;&lt;&lt;&lt;&lt; HEAD` and ending with   
+
+.blockquote.exercise[
+`&gt;&gt;&gt;&gt;&gt;&gt;&gt; refs/...`. 
+
+```terminal
+&lt;&lt;&lt;&lt;&lt;&lt;&lt; HEAD
+Hello Git,
+
+How are you? I think I shoudld work on this file.  
+=======
+Hello Git!
+How are you? I hope you don't run into too many conflicts. 
+&gt;&gt;&gt;&gt;&gt;&gt;&gt; refs/remotes/origin/master
+```
+]
+
+- Decide what to keep and then remove everything Git included as helper for you to solve the conflict. 
+- The final results can be commited and pushed to the remote repository.  
+
+---
+class: exercise_slide
+
+## Exercise
+1. Produce a merge confilict in your project. Then solve it.   
+
+
+---
+## .gitignore
+
+- Not everything in our working directory should be tracked by Git. 
+- As a rule of thumb only track source files (e.g. only the `.rmd` but not the generated `.html` file)
+- Git ignores all files which are specified in the file `.gitignore`.
+- Since it would be cumbersome to specify each file that shouldn't be tracked separately Git allows the usage of patterns.
+- Learn more about it in the [gitignore documentation](https://git-scm.com/docs/gitignore).
+
+#### Example `.gitignore` file
+
+.blockquote.exercise[
+```terminal
+ .Rhistory
+ *.html
+ Packages/example/
+```
+]
+
+---
+## Branching
+
+- There is a pretty important concept which we didn't cover at all named **Branching**.
+
+- It allows you to diverge form the linear development of your project to having multiple parallel versions at the same time. 
+
+- If you want to dig deeper into Git this would be one of the key features you should learn about after you digested the basics (which should be enough for this course.)
+
+
+
+
+
+
+
+```terminal
+Changes not staged for commit:
+  (use "git add &lt;file&gt;..." to update what will be committed)
+  (use "git restore &lt;file&gt;..." to discard changes in working directory)
+
+        modified:   HelloGit.txt
+        deleted:    byeGit.txt
+        
+Untracked files:
+  (use "git add &lt;file&gt;..." to include in what will be committed)
+  
+        assignment_1.sqlite3
+        rent_advertisements.RData
+```
+
+
+
+
+
+
+
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script src="../assets/remark-zoom.js"></script>
+<script src="../xaringan_files/macros.js"></script>
+<script src="https://platform.twitter.com/widgets.js"></script>
+<script>var slideshow = remark.create({
+"highlightStyle": "github",
+"highlightLines": true,
+"countIncrementalSlides": false,
+"ratio": "16:9",
+"navigation": {
+"scroll": false
+}
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>

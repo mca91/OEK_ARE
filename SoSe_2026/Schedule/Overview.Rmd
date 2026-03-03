@@ -1,0 +1,82 @@
+---
+title: "Advanced R for Econometricians"
+subtitle: "Semester overview"
+author:
+- name: M.Sc. Martin C. Arnold
+- name: M.Sc. Jens Klenke 
+date: "`r format(Sys.time(), '%B %d, %Y')`"
+output:
+  pdf_document:
+    citation_package: natbib
+    fig_caption: yes
+    keep_tex: yes
+    latex_engine: pdflatex
+    template: assets/svm-latex-ms.tex
+  html_document:
+    df_print: paged
+geometry: margin=1in
+term: Summer 2022
+endnote: no
+show_solutions: yes
+tables: yes
+---
+
+```{r setup, eval = T, echo=F, purl=F, warning=FALSE, message=FALSE}
+knitr::opts_chunk$set(message = FALSE, warning = FALSE)
+
+library(ggplot2)
+library(dplyr)
+library(kableExtra)
+# Show R solution code
+sol <- T
+```
+
+# Course Schedule 
+
+```{r, echo = FALSE}
+options(knitr.kable.NA = '')
+overview <- readxl::read_xlsx(here::here('SoSe_2022/Schedule/Semester_overview.xlsx'))
+ 
+overview |>
+knitr::kable(booktabs = TRUE, linesep = "", escape = FALSE,) |>
+  kable_styling(latex_options = c("striped", "hold_position")) |>
+  add_footnote("We still reserve the right to modify the schedule if necessary.", notation = "number")
+```
+
+# Assignments 
+
+ **Please note that the schedule is tentative: assignments may be postponed with respect to course progress. Given so, you will be informed about any changes in due time via Moodle and in class.** 
+
+- There will be two assignments, each contributing 10% of the final grade.
+
+- The first assignment will be issued on **May 16$^{th}$**. The submission deadline is **May 30$^{th}$**. 
+
+- The second assignment will be issued on **June 13$^{th}$**. The submission deadline is **June 27$^{th}$**. 
+
+# Final Group Project 
+
+- The final projects should deal with the topics discussed in class but may go beyond that. Since this is a programming course, you should---regardless of the specific topic of your project---demonstrate proficiency in the main paradigms taught (tidy / OOP / FP / efficient programming), if applicable.
+
+- You may work in groups of up to 3 students. We expect you to work collaboratively, preferably via Git. The final project code should be made available in private repositories (more on this later). You should specify the contributions of each group member.
+
+- The final project is to be documented in the style of a seminar paper / reproducible research report of approx. 30 pages. We will provide a rmarkdown template from which you will benefit the most if you pay attention to Jens' rmarkdown lesson :-). You must submit your final project and the report by **September 9$^{th}$**.
+
+- Projects will be presented in oral presentations (approx. 20 minutes). The presentation will be held in the week from **October 4$^{th}$ -- October 7$^{th}$**. Further info follows.
+
+# Grading
+
+The final grade will be the weighted average of the two assignments (20% each), the group project (50%) and the presentations (30%).
+
+# Topics
+
+- Topic proposals will be posted on Moodle on **June 10$^{th}$**. 
+
+- We encourage you to propose your own project ideas. Please come forward with your suggestions as early as possible so that we can discuss them and give you timely feedback. 
+
+- Projects should be registered with us until **June 17$^{th}$**. We will set up a form on Moodle.
+
+Please do not hesitate to ask if you have further questions.
+
+
+
+

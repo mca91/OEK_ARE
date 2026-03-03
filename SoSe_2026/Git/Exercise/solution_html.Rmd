@@ -1,0 +1,26 @@
+---
+title: "Git Exercise Solution"
+author: 
+  - "Jens Klenke"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+output: 
+  html_document:
+    css: ["../../assets/ude_fonts.css", "../../assets/ude.css", "../../assets/title_slides.css", "../../assets/custom.css"]
+---
+
+# Slide 13
+
+1. Modify `.txt` -> no problem
+2. `git add HelloGit.txt` or `git add .` .
+3. `git commit -m"Text change"`
+
+# Slide 21
+1. Modify `.txt` and use `git add`
+2. `git rm --cached HelloGit.txt` -> `git commit`
+3. `git reset <sha>`
+
+
+# Old content
+
+5. Remove the file but do not commit. 
+6. Try to restore the file. 

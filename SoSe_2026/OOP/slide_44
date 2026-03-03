@@ -1,0 +1,12 @@
+---
+class: left, top
+## S3 Inheritance &mdash; Exercises
+
+1. Adjust the constructor function `new_prime()` such that it allows for subclasses. Then implement a constructor function `new_fermat()` for objects with subclass `fermat`.
+
+2. What happens if you subset `x` (generated as below) using `[[`?
+    ```{r, echo = T}
+    x <- prime(c(2L, 3L, 5L))
+    ```
+
+3. Implement a `[[` method which preserves the `prime` class.

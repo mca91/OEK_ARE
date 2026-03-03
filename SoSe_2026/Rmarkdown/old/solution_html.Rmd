@@ -1,0 +1,86 @@
+---
+title: "Solution"
+author: "Alexander Gerber & Martin Arnold"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+output: html_document
+---
+
+# Obtain the Crime Incidents Data
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+First, we download the data and import it to R.
+
+```{r, cache=TRUE}
+library(tidyverse)
+library(data.table)
+crime <- data.table::fread("https://data.boston.gov/dataset/6220d948-eae2-4e4b-8723-2dc8e67722a3/resource/12cb3883-56f5-47de-afa5-3b1cf61b257b/download/tmppj4rb047.csv")
+var_exp <- readxl::read_xlsx(here::here("Rmarkdown","Exercises","rmscrimeincidentfieldexplanation.xlsx"))
+
+crime_description <- readxl::read_xlsx(here::here("Rmarkdown","Exercises","rmscrimeincidentfieldexplanation.xlsx"))
+```
+
+Let's have a look at the variable description:
+
+```{r}
+knitr::kable(crime_description)
+```
+
+# Exploratory data analysis (EDA)
+
+First we want to get an overview of the data.
+
+```{r, cache=T}
+glimpse(crime)
+```
+
+As we can see, the dataset consists of `r dim(crime)[1]` Observations in `r dim(crime)[2]` Variables.
+
+Lets focus on the DAY_OC_WEEK.
+
+```{r, cache= T}
+# OFFENSE_CODE should be a factor
+crime <- crime %>% mutate(DAY_OF_WEEK = as_factor(DAY_OF_WEEK))
+
+ggplot(crime) +
+  geom_bar(aes(x = DAY_OF_WEEK, fill = DISTRICT))
+
+```
+
+Some districts have more crimes than others and the crime is a little bit lazy on sundays.
+
+## Nested ordered list for HTML output
+
+https://stackoverflow.com/questions/10405945/html-ordered-list-1-1-1-2-nested-counters-and-scope-not-working
+
+```{r, echo=F, eval = TRUE, results='asis'}
+cat('
+<style>
+  ol {
+    counter-reset: item;
+    content: counters(item, "."); 
+  }
+  li {
+    margin: 10px 0;
+    display: block;
+  }
+  li:before { 
+    content: counters(item, ".") ". "; 
+    counter-increment: item 
+  }
+</style>
+
+<ol>
+  <li> Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum.
+      <ol>
+          <li>Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum.</li>
+      </ol>
+  </li>
+
+  <li>Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum.</li>
+
+</ol>
+')
+```

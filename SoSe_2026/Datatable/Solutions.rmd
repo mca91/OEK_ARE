@@ -1,0 +1,90 @@
+```{r, include = FALSE}
+knitr::opts_chunk$set(echo=TRUE, warning=FALSE, message=FALSE, eval = TRUE)
+```
+
+## Data Wrangling with `dplyr` and `tidyr`
+
+1. Load the nycflights13::flights data set.
+
+    ```{r}
+library(data.table)
+flights <- as.data.table(nycflights13::flights)
+    ```
+
+2. Find all flights that
+    - had an arrival delay of two or more hours.
+    ```{r}
+    flights[arr_delay >= 120]
+    ```
+        
+   -  Flew to Houston (IAH or HOU).
+    ```{r}
+    flights[dest %in% c("IAH", "HOU")]
+    ```
+   - were delayed by at least an hour, but made up over 30 minutes in flight.
+    ```{r}
+     flights[dep_delay > 60 & arr_delay <= dep_delay - 30]
+    ```
+   - departed between midnight and 6 am.
+    ```{r}
+     flights[dep_time %between% c(0, 600) | dep_time == 2400 ]
+    ```
+   
+3. Which flights took the longest and which the shortest? 
+    ```{r}
+    flights[air_time == max(air_time, na.rm = T)]
+    flights[air_time == min(air_time, na.rm = T)]
+    ```
+
+4. Brainstorm as many ways as possible to select `dep_time`, `dep_delay`, `arr_time`, and `arr_delay`.
+
+    ```{r}
+selection <- c("dep_time", "dep_delay", "arr_time", "arr_delay")
+flights[ ,..selection]
+flights[ ,.SD  ,.SDcols = selection]
+    ```
+
+5. Create a new variable `first_flight` which takes the value `TRUE` if it is the first flight of the day.
+    ```{r}
+flights[ ,first_flight := ifelse(day - shift(day) != 0 | is.na(day - shift(day)), TRUE, FALSE ) ]
+
+# A solution using by
+flights[ , first_flight2 := FALSE]
+flights[flights[ , .I[1] ,by = day]$V1, first_flight2 := TRUE]
+    ```
+
+6. Find out in which district the most incident where reported.
+    ```{r}
+crime <- fread(here::here("datasets", "BostonCrime.csv"))
+crime[ , .N,by = DISTRICT][order(-N)]
+    ```
+
+7. Create an ordered list of the top ten districts according to the number of drug violations. Start with the district with most drug violations.
+    ```{r}
+crime[OFFENSE_CODE_GROUP == "Drug Violation", .N, by = DISTRICT][order(-N)][1:10]
+    ```
+
+8. What was the most dangerous hour of the week according to the number of homicides (OFFENSE_CODE_GROUP == "Homicide")?
+    ```{r}
+  crime[OFFENSE_CODE_GROUP == "Homicide", .N ,by = c("HOUR", "DAY_OF_WEEK")][order(-N)]
+    ```
+
+10. Calculate for each district the proportion of motor vehicle accidents to all reported incidents.
+    ```{r}
+crime[ , .(prop_accidents = sum(OFFENSE_CODE_GROUP == "Motor Vehicle Accident Response") / .N), by = DISTRICT]
+    ```
+
+11. Sort the data set chronologically by year and month. Then take the first 10.000 observations and compute the proportion of incidents where a shooting was involved for each district. Now take a random sample of size 10.000. Is there a noteworthy difference?
+    ```{r}
+set.seed(1245)
+crime[1:10000, .(shooting = mean(SHOOTING == "Y")) ]
+crime[sample(1:nrow(crime), 10000), .(shooting = mean(SHOOTING == "Y")) ]
+    ```
+
+
+
+
+
+   
+   
+        

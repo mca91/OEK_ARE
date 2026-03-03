@@ -1,0 +1,66 @@
+---
+title: "Advanced R for Econometricians"
+author: 
+  - "Martin Arnold"
+  - "Martin Schmelzer"
+date: '`r Sys.Date()`'
+output:
+  xaringan::moon_reader:
+    seal: false
+    includes:
+      in_header: "assets/meta.html"
+    self_contained: false # if true, fonts will be stored locally
+    lib_dir: libs
+    css: ["default", "assets/ude_fonts.css", "assets/ude.css", "assets/custom.css", "assets/title_slides.css"]
+    nature:
+      highlightStyle: github
+      highlightLines: true
+      countIncrementalSlides: false
+      ratio: "16:9"
+---
+class: title-slide title-index 
+.font70[
+# Advanced `R` for Econometricians 
+
+### Outline
+
+.pull-left[
+1. [Introduction](Introduction/Introduction.html)
+2. [Data Visualisation with ggplot](ggplot2/ggplot2.html)
+3. [Data Wrangling with dplyr](Wrangling/Wrangling.html)
+4. [Databases](databases/databases.html)
+5. Advanced R Programming
+  - [Advanced Concepts](Advanced R concepts/Advanced.html)
+  - [Functional Programming](functional/functional.html)
+  - [Object Oriented Programming](OOP/OOP.html)
+]
+
+
+.pull-right[
+<ol start = "6">
+  <li> Performance </li> 
+  <ul>
+    <li> <a href="measuring and profiling/MeasuringProfiling.html">Profiling and Benchmarking</a></li> 
+    <li> <a href="improving performance/improving-performance.html">Improving Performance</a></li>
+  </ul>
+  <li><a href="Webscraping/webscraping.html">Web Scraping</a></li>
+  <li><a href="Rmarkdown/rmarkdown.html">Rmarkdown</a></li>
+  <li><a href="Git/git_vcs.html">Git and Github</a></li>
+  <li><a href="Rcpp/SpeedRcpp.html">Rcpp</a> and <a href="RcppArmadillo/RcppArmadillo.html">RcppArmadillo</a></li>
+</ol>
+]
+
+
+
+<br>
+
+.pull-down-small_margin.font70[
+<br>
+### Additional Topics for self-study
+
+<ol start = "10">
+  <li> <a href = Datatable/datatable.html>data.table</a> </li>
+  <li> <a href = Shiny/Shiny.html>Shiny</a> </li>
+  <li> <a href = Packages/Packages.html>Writing Packages</a> </li>
+</ol>
+]]

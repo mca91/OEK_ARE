@@ -1,0 +1,7 @@
+https://www.overleaf.com/learn/latex/Mathematical_expressions
+
+chrome-extension://efaidnbmnnnibpcajpcglclefindmkaj/viewer.html?pdfurl=https%3A%2F%2Fwww.ece.iastate.edu%2F~hongwei%2Fgroup%2Fmiscl%2FLaTEX-shortIntro.pdf&clen=106877&chunk=true
+
+https://www.ece.iastate.edu/~hongwei/group/miscl/LaTEX-shortIntro.pdf
+
+https://tex.stackexchange.com/questions/239199/latex-distributions-what-are-their-main-differences
