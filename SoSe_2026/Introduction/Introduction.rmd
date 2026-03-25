@@ -22,7 +22,6 @@ output:
         scroll: false # disable slide transitions by scrolling
 ---
 class: title-slide title-rintro center middle
-class: title-slide title-rintro center middle
 ```{r setup, echo = F, eval = T, warning = F}
 knitr::opts_chunk$set(echo = TRUE, eval = FALSE, warning = FALSE)
 source(here::here("SoSe_2026/utils.R"))
@@ -90,21 +89,20 @@ What do you know about R?
 2. Data Wrangling with dplyr
 3. Data Visualisation with ggplot
 4. RMarkdown
-5. Databases & Web Scraping
-6. Git and GitHub
-7. Shiny
+5. Databases 
+6. Web Scraping
+7. Git and GitHub
+
+
 ]
 
 .pull-right[
 <ol start = "8">
-  <li> Advanced Concepts </li> 
-  <ul>
-    <li>Advanced Concepts</li>
-    <li>Functional Programming</li>
-    <li>Object Oriented Programming</li>
-    <li>Profiling and Benchmarking</li> 
-    <li>Improving Performance</li>
-  </ul>
+  <li>Shiny</li>
+  <li>AI & R</li>
+  <li>Object Oriented Programming</li>
+  <li>Profiling and Benchmarking</li> 
+  <li>Improving Performance</li>
 </ol>
 ]
 

@@ -31,13 +31,17 @@ class: title-slide title-index
 4. [RMarkdown](Rmarkdown/rmarkdown.html)
 5. [Databases](databases/databases.html)
 6. [Web Scraping](Webscraping/webscraping.html)
-7. [Git & Github](Git/Git/git_vcs.html)
-8  [Shiny](Shiny/Shiny.html)
-9. [AI & R](AI/ai.html)
-10. Advanced R Programming
-  - [Advanced Concepts](Advanced R concepts/Advanced.html)
-  - [Functional Programming](functional/functional.html)
-  - [Object Oriented Programming](OOP/OOP.html)
+7. [Git & Github](Git/git_vcs.html)
+]
+
+.pull-right[
+<ol start = "8">
+  <li><a href="Shiny/Shiny.html">Shiny</a></li>
+  <li><a href="AI/ai.html">AI & R</a></li>
+  <li>Object Oriented Programming</li>
+  <li>Profiling and Benchmarking</li> 
+  <li>Improving Performance</li>
+</ol>
 ]
 
 
