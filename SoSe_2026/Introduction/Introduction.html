@@ -5,7 +5,7 @@
     <meta charset="utf-8" />
     <meta name="author" content="Martin Arnold" />
     <meta name="author" content="Martin Schmelzer" />
-    <meta name="date" content="2026-03-03" />
+    <meta name="date" content="2026-03-25" />
     <script src="Introduction_files/header-attrs-2.30/header-attrs.js"></script>
     <link href="Introduction_files/remark-css-0.0.1/default.css" rel="stylesheet" />
     <script type="text/x-mathjax-config">
@@ -90,8 +90,8 @@ What do you know about R?
 3. Data Visualisation with ggplot
 4. RMarkdown
 5. Databases &amp; Web Scraping
-6. Shiny
-7. Git and GitHub
+6. Git and GitHub
+7. Shiny
 ]
 
 .pull-right[
@@ -113,7 +113,7 @@ What do you know about R?
 .pull-right[.pull-down-small_margin.font90[
 #### Additional Topics for self-study
 
-&lt;ol start = "8"&gt;
+&lt;ol start = "9"&gt;
   &lt;li&gt;data.table&lt;/li&gt;
   &lt;li&gt;Shiny&lt;/li&gt;
   &lt;li&gt;Writing Packages&lt;/li&gt;
@@ -154,7 +154,7 @@ class: top, left
 - Chances are that someone has already solved a problem that you’re working on, and you can benefit from their work by downloading their package.
 
 #### The main sources for packages are:
-  - CRAN (Comprehensive R Archive Network) with as of now ca. 23.278 available packages
+  - CRAN (Comprehensive R Archive Network) with as of now ca. 23.422 available packages
   - GitHub (that is the place where packages are developed before getting published on CRAN) 
   - Bioconductor
 
@@ -628,10 +628,14 @@ square_3 &lt;- function(x) {
 square_3()
 ```
 ]]
+???
 
 --
 
 - When a function and a non-function share the same name, R ignores non-function objects in a function call.
+
+???
+Even though the variable square_2 is defined within the scope of the function square_3(), R ignores it because it as found a function named square_2 in the enclosing (global) environment)
 
 ---
 ## Scoping Rules: A Fresh Start
@@ -674,6 +678,9 @@ x &lt;- 2
 f1()
 ```
 ]
+
+???
+Lexical Scoping: R looks up the values of names based on how a function is defined, not how it is called
 
 --
 

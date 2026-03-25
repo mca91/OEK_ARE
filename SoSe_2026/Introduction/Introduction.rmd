@@ -91,8 +91,8 @@ What do you know about R?
 3. Data Visualisation with ggplot
 4. RMarkdown
 5. Databases & Web Scraping
-6. Shiny
-7. Git and GitHub
+6. Git and GitHub
+7. Shiny
 ]
 
 .pull-right[
@@ -114,9 +114,8 @@ What do you know about R?
 .pull-right[.pull-down-small_margin.font90[
 #### Additional Topics for self-study
 
-<ol start = "8">
+<ol start = "9">
   <li>data.table</li>
-  <li>Shiny</li>
   <li>Writing Packages</li>
 </ol>
 ]]
