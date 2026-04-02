@@ -5,7 +5,7 @@
     <meta charset="utf-8" />
     <meta name="author" content="Martin Arnold" />
     <meta name="author" content="Martin Schmelzer" />
-    <meta name="date" content="2026-03-25" />
+    <meta name="date" content="2026-03-30" />
     <script src="Introduction_files/header-attrs-2.30/header-attrs.js"></script>
     <link href="Introduction_files/remark-css-0.0.1/default.css" rel="stylesheet" />
     <script type="text/x-mathjax-config">
@@ -44,7 +44,7 @@ class: title-slide title-rintro center middle
 .pull-left-1[**Contact Information:**  ]
 
 .pull-right-2[
-&lt;p&gt; &lt;span style="margin-bottom: -7px;"&gt;Martin Schmelzer &lt;/span&gt;&lt;span&gt;&lt;a href = "mailto: martin.schmelzer@outlook.com"&gt;martin.schmelzer@outlook.com&lt;/a&gt;&lt;/span&gt;&lt;/p&gt; 
+&lt;p&gt; &lt;span style="margin-bottom: -7px;"&gt;Martin Schmelzer &lt;/span&gt;&lt;span&gt;&lt;a href = "mailto: martin.schmelzer@outlook.com"&gt;schmelzer.martin@gmx.de&lt;/a&gt;&lt;/span&gt;&lt;/p&gt; 
 
 &lt;p style="margin: 25px;"&gt;&lt;/p&gt;
 
@@ -151,7 +151,7 @@ class: top, left
 - Chances are that someone has already solved a problem that you’re working on, and you can benefit from their work by downloading their package.
 
 #### The main sources for packages are:
-  - CRAN (Comprehensive R Archive Network) with as of now ca. 23.422 available packages
+  - CRAN (Comprehensive R Archive Network) with as of now ca. 23.419 available packages
   - GitHub (that is the place where packages are developed before getting published on CRAN) 
   - Bioconductor
 
@@ -370,32 +370,20 @@ You should also be familiar with the basic data types (character, double, intege
 
 1. list can store different data types
 2. data frames can store different values with different types
-3. class()
+3. typeof()
 4. is.character()
 
 
 
 ``` r
-object.size(1:1000)
-object.size(as.numeric(1:1000))
+x &lt;- c(1, 2, 3)
+typeof(x)
 
-char_vector &lt;- c("Hi", "there")
-typeof(char_vector)
-class(char_vector)
+# What happens if we try this?
+x &lt;- c(1, "2", 3)
 
-num_matrix &lt;- matrix(rnorm(4), ncol = 2)
-typeof(num_matrix)
-class(num_matrix)
-is.numeric(num_matrix)
-
-
-plus &lt;- function(a, b) {
-  if(!is.numeric(a)) stop("a is not numeric")
-  if(!is.numeric(b)) stop("b is not numeric")
-  a + b
-}
-
-plus(1, "a")
+y &lt;- list(1, "2", 3)
+lapply(y, class)
 ```
 
 
@@ -428,18 +416,10 @@ Have you ever encountered `@`?
 
 1. A positive integer selects the value at that position. A negative integer *de*selects the value at that position. With a logical subsetting vector we can filter based on their position using TRUE (select) and FALSE (unselect). A character vector leads to errors ...
 
-2.[] = always returns object of same class -&gt; we get a list
-[[]] = can extract one element from a list or data frame
-list_a &lt;- list(a = 2, b = "hallo")
-list_a["a"]
-list_a[["a"]]
-list_a$a
-
-2. 
+2.[] = always returns object of same class -&gt; we get a list, [[]] = can extract one element from a list or data frame
 [ selects sub-lists. It always returns a list; if you use it with a single positive integer, it returns a list of length one. [[ selects an element within a list. $ is a convenient shorthand: x$y is equivalent to x[["y"]].
 
-3. 
-Use drop = FALSE if you are subsetting a matrix, array, or data frame and you want to preserve the original dimensions. You should almost always use it when subsetting inside a function.
+3. Use drop = FALSE if you are subsetting a matrix, array, or data frame and you want to preserve the original dimensions. You should almost always use it when subsetting inside a function.
 
 
 ``` r
@@ -474,7 +454,7 @@ The basic control flows are conditionals (choices) and loops.
 ]
 
 ???
-ifelse () is a vectorized function that is applied in each value of a vector while
+ifelse () is a vectorized function that is applied on each value of a vector while
 if() expects one logical value and is used to control the flow of a script
 
 
@@ -513,13 +493,23 @@ class: top, left
 - Write a function that takes a number `x` and returns the square of `x`.  
 ]
 
+
+???
+
+``` r
+calc_square &lt;- function(x) {
+  x^2
+}
+```
+
+
 --
 
 #### Scoping
 
 .font90[
 - An important concept and also a source of trouble is scoping, the act of finding the value associated with a name. 
-- R uses lexical scoping:  it looks up the values of names based on how a function is defined, not how it is called.
+- R uses lexical scoping:  R looks up the values of names where the function was defined, not where it is called from.
 ]
 
 --
@@ -624,12 +614,14 @@ square_3 &lt;- function(x) {
 
 square_3()
 ```
+
 ]]
-???
+
 
 --
-
+.small[
 - When a function and a non-function share the same name, R ignores non-function objects in a function call.
+]
 
 ???
 Even though the variable square_2 is defined within the scope of the function square_3(), R ignores it because it as found a function named square_2 in the enclosing (global) environment)
@@ -996,10 +988,9 @@ class: exercise_slide
 &lt;/ol&gt;
 
 ``` r
-df_list &lt;- lapply(0:4, function(j) data.frame(c1 = (1:5) + 5 * j,
-                                              c2 = letters[(1:5) + 5 * j]
-                                              )
-                  )
+df_list &lt;- lapply(0:4, function(j) {
+  data.frame(c1 = (1:5) + 5 * j, c2 = letters[(1:5) + 5 * j])
+})
 ```
 
 &lt;ol start = "2" &gt;
@@ -1020,6 +1011,15 @@ mtcars[mtcars$cyl == 4 | 6, ]
 &lt;ol start = "4" &gt;
 &lt;li&gt;How would you randomly permute the columns of a data frame?&lt;/li&gt;
 &lt;/ol&gt;
+
+
+???
+
+``` r
+do.call(what = rbind, args = df_list)
+rbind(df_list[[1]], df_list[[2]], df_list[[3]], df_list[[4]], df_list[[5]])
+```
+
 
 ---
 class: exercise_slide

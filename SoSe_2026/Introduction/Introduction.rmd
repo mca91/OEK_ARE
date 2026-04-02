@@ -45,7 +45,7 @@ xaringan::inf_mr()
 .pull-left-1[**Contact Information:**  ]
 
 .pull-right-2[
-<p> <span style="margin-bottom: -7px;">Martin Schmelzer </span><span><a href = "mailto: martin.schmelzer@outlook.com">martin.schmelzer@outlook.com</a></span></p> 
+<p> <span style="margin-bottom: -7px;">Martin Schmelzer </span><span><a href = "mailto: martin.schmelzer@outlook.com">schmelzer.martin@gmx.de</a></span></p> 
 
 <p style="margin: 25px;"></p>
 
@@ -324,31 +324,19 @@ You should also be familiar with the basic data types (character, double, intege
 
 1. list can store different data types
 2. data frames can store different values with different types
-3. class()
+3. typeof()
 4. is.character()
 
 
 ```{r}
-object.size(1:1000)
-object.size(as.numeric(1:1000))
+x <- c(1, 2, 3)
+typeof(x)
 
-char_vector <- c("Hi", "there")
-typeof(char_vector)
-class(char_vector)
+# What happens if we try this?
+x <- c(1, "2", 3)
 
-num_matrix <- matrix(rnorm(4), ncol = 2)
-typeof(num_matrix)
-class(num_matrix)
-is.numeric(num_matrix)
-
-
-plus <- function(a, b) {
-  if(!is.numeric(a)) stop("a is not numeric")
-  if(!is.numeric(b)) stop("b is not numeric")
-  a + b
-}
-
-plus(1, "a")
+y <- list(1, "2", 3)
+lapply(y, class)
 ```
 
 
@@ -381,18 +369,10 @@ Have you ever encountered `@`?
 
 1. A positive integer selects the value at that position. A negative integer *de*selects the value at that position. With a logical subsetting vector we can filter based on their position using TRUE (select) and FALSE (unselect). A character vector leads to errors ...
 
-2.[] = always returns object of same class -> we get a list
-[[]] = can extract one element from a list or data frame
-list_a <- list(a = 2, b = "hallo")
-list_a["a"]
-list_a[["a"]]
-list_a$a
-
-2. 
+2.[] = always returns object of same class -> we get a list, [[]] = can extract one element from a list or data frame
 [ selects sub-lists. It always returns a list; if you use it with a single positive integer, it returns a list of length one. [[ selects an element within a list. $ is a convenient shorthand: x$y is equivalent to x[["y"]].
 
-3. 
-Use drop = FALSE if you are subsetting a matrix, array, or data frame and you want to preserve the original dimensions. You should almost always use it when subsetting inside a function.
+3. Use drop = FALSE if you are subsetting a matrix, array, or data frame and you want to preserve the original dimensions. You should almost always use it when subsetting inside a function.
 
 ```{r}
 
@@ -426,7 +406,7 @@ y <- if(x) 3
 ]
 
 ???
-ifelse () is a vectorized function that is applied in each value of a vector while
+ifelse () is a vectorized function that is applied on each value of a vector while
 if() expects one logical value and is used to control the flow of a script
 
 ```{r}
@@ -464,13 +444,22 @@ class: top, left
 - Write a function that takes a number `x` and returns the square of `x`.  
 ]
 
+
+???
+```{r}
+calc_square <- function(x) {
+  x^2
+}
+```
+
+
 --
 
 #### Scoping
 
 .font90[
 - An important concept and also a source of trouble is scoping, the act of finding the value associated with a name. 
-- R uses lexical scoping:  it looks up the values of names based on how a function is defined, not how it is called.
+- R uses lexical scoping:  R looks up the values of names where the function was defined, not where it is called from.
 ]
 
 --
@@ -571,12 +560,14 @@ square_3 <- function(x) {
 
 square_3()
 ```
+
 ]]
-???
+
 
 --
-
+.small[
 - When a function and a non-function share the same name, R ignores non-function objects in a function call.
+]
 
 ???
 Even though the variable square_2 is defined within the scope of the function square_3(), R ignores it because it as found a function named square_2 in the enclosing (global) environment)
@@ -926,10 +917,10 @@ class: exercise_slide
 <li> Combine all elements of <code>df_list</code> to one data frame. The result should be only a single line of code. </li>
 </ol>
 ```{r}
-df_list <- lapply(0:4, function(j) data.frame(c1 = (1:5) + 5 * j,
-                                              c2 = letters[(1:5) + 5 * j]
-                                              )
-                  )
+df_list <- lapply(0:4, function(j) {
+  data.frame(c1 = (1:5) + 5 * j, c2 = letters[(1:5) + 5 * j])
+})
+                  
 ```
 
 <ol start = "2" >
@@ -949,6 +940,22 @@ mtcars[mtcars$cyl == 4 | 6, ]
 <ol start = "4" >
 <li>How would you randomly permute the columns of a data frame?</li>
 </ol>
+
+
+???
+```{r}
+# 1.
+do.call(what = rbind, args = df_list)
+rbind(df_list[[1]], df_list[[2]], df_list[[3]], df_list[[4]], df_list[[5]])
+
+# 2.
+mtcars[mtcars$cyl == 4, ]
+mtcars[-c(1:4), ]
+mtcars[mtcars$cyl <= 5, ]
+mtcars[mtcars$cyl == 4 | mtcars$cyl == 6, ]  # Or: mtcars[mtcars$cyl %in% c(4, 6), ]
+
+```
+
 
 ---
 class: exercise_slide

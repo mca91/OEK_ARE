@@ -22,8 +22,9 @@ output:
         scroll: false # disable slide transitions by scrolling
 ---
 class: title-slide title-wrangling center middle
-```{r xaringanExtra_progress-bar, echo = FALSE}
-xaringanExtra::use_progress_bar(color = "#004c93", location = "bottom")
+```{r setup, echo = F, eval = T, warning = F}
+knitr::opts_chunk$set(echo = TRUE, eval = FALSE, warning = FALSE)
+source(here::here("SoSe_2026/utils.R"))
 ```
 
 ```{r moon_reader, include=FALSE, eval = FALSE}
@@ -33,29 +34,9 @@ options(servr.interval = 0.5)
 xaringan::inf_mr()
 ```
 
-```{r xaringanExtra-clipboard_2, echo=FALSE}
-# copy button styles mainly in ude.css
-htmltools::tagList(
-  xaringanExtra::use_clipboard(
-    button_text = "<i class=\"fa fa-clipboard\"></i>",
-    success_text = "<i class=\"fa fa-check\" style=\"color: #00ff00\"></i>",
-    error_text = "<i class=\"fa fa-times-circle\" style=\"color: #F94144\"></i>"
-  ),
-  rmarkdown::html_dependency_font_awesome()
-)
-```
 
-```{r setup, include=FALSE}
-options(htmltools.dir.version = FALSE)
-knitr::opts_chunk$set(echo = FALSE, warning=FALSE, message=FALSE)
 
-library(icons)
 
-# pre-define icons
-desktop <- icon_style(icons::fontawesome$solid$desktop, fill = "#004c93")
-checker_green <- icons::icon_style(fontawesome$solid$check, fill = "green")
-times_red <- icons::icon_style(fontawesome$solid$times, fill = "red")
-```
 
 # `r rmarkdown::metadata$title`
 ## `r rmarkdown::metadata$subtitle`
@@ -133,7 +114,7 @@ print(mtcars_tibble)
 - more consistent subsetting behavior
 
 .blockquote.exercise.font80[
-#### `r desktop` Example
+#### `r ICONS$desktop` Example
 
 ```{r, echo = TRUE, eval = FALSE}
 mtcars[ ,1:2] # returns a data.frame
@@ -149,7 +130,7 @@ mtcars_tibble[ ,1]   # returns a tibble
 - lazy and sequential evaluation 
 
 .blockquote.exercise[
-#### `r desktop` Example
+#### `r ICONS$desktop` Example
 ```{r, echo = TRUE, eval = FALSE}
 data.frame(x = 1:3, y = x^2) # not working
 tibble(x = 1:3, y = x^2)
@@ -161,7 +142,7 @@ tibble(x = 1:3, y = x^2)
 - higher flexibility with nested data
 
 .blockquote.exercise[
-#### `r desktop` Example
+#### `r ICONS$desktop` Example
 ```{r, echo = TRUE, eval = FALSE}
 data_df  <- data.frame(days = 1:3,
                        data = list(mtcars)) # not working
@@ -653,7 +634,7 @@ It is also possible to use `group_by()` together with a lot of other single tabl
 --
  
 .blockquote.exercise[
-#### `r desktop` Example
+#### `r ICONS$desktop` Example
 
 ```{r, echo = TRUE, eval = FALSE}
 by_cyl <- group_by(mtcars_tibble, cyl)
@@ -688,7 +669,7 @@ We could do it like this:
 
 .blockquote.exercise[ 
 
-#### `r times_red` Bad
+#### `r ICONS$incorrect` Bad
 ```{r, echo = TRUE}
 filtered   <- filter(mtcars_tibble, cyl <= 8)
 mutated    <- mutate(filtered, gpm = 1/mpg)
@@ -712,7 +693,7 @@ class: top, left
 We could nest all those functions to get rid of the intermediate result.
 
 .blockquote.exercise[ 
-#### `r desktop` Example
+#### `r ICONS$desktop` Example
 ```{r, echo = TRUE}
 summarise(group_by(mutate(filter(mtcars_tibble, cyl <= 8), gpm = 1/mpg)), 
           count = n(), 
@@ -736,7 +717,7 @@ The value on the left side of the operator becomes the input to the function on 
 --
 
 .blockquote.exercise.font80[ 
-#### `r desktop` Example
+#### `r ICONS$desktop` Example
 ```{r, echo = TRUE, eval = FALSE}
 mtcars_tibble %>% 
   mutate(gpm = 1/mpg) %>%
@@ -807,6 +788,7 @@ d2  <- crime %>% arrange(YEAR) %>% sample_n(10000) %>% group_by(DISTRICT) %>% su
 plot(x = factor(d1$DISTRICT), d1$N)
 points(x = factor(d2$DISTRICT), d2$N)
 ```
+
 
 ```{r, eval = FALSE}
 plot(table(crime$DISTRICT[1:10000])/sum(table(crime$DISTRICT[1:10000])))
