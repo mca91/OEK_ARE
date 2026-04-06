@@ -1,5 +1,5 @@
 ---
-title: "Rcpp --- Solutions to Exercises"
+title: "Rcpp --- Solutions to Exercises on Lecture Slides"
 output: pdf_document
 ---
 
@@ -22,7 +22,9 @@ knitr::opts_chunk$set(echo = TRUE, eval = FALSE)
 
     **Solution:**
     
-    `x[id]` returns a subview class of `Rcpp::Vector` which is *not* a double. It is important to note that coercion to another type is not as easily done as in `R`!
+    The namespace should be referenced after including the headerfile `Rcpp.h`: `using namespace Rcpp;`
+    
+    `x[id]` returns a subview class of `Rcpp::Vector` which is *not* a double. It is important to note that coercion to another type is not as easily done as in `R`! We need to get the integer entry from the numeric vector `id` for subsetting: `x[id[0]]`
 
 - Benchmark the functions below against each other for `x<-rnorm(1e2)`, `x<-rnorm(1e4)` and `x<-rnorm(1e6)`. Comment on the results.
     ```{r, echo = F}
@@ -72,7 +74,7 @@ knitr::opts_chunk$set(echo = TRUE, eval = FALSE)
     )
     ```
     
-Obviously, cloning (that is, copying on function call) is a bad idea!
+  Obviously, cloning (that is, copying on function call) is a bad idea!
 
 ## Slide 40: `Rcpp` -- STL Algorithms
 
