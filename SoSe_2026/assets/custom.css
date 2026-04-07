@@ -32,6 +32,12 @@ a, a > code {
     text-decoration: none;
 }
 
+a.disabled {
+    pointer-events: none;
+    color: inherit;
+    cursor: default;
+}
+
 /* in  conflict to ude_fonts.css 
 .small {
   font-size: 65%
@@ -93,4 +99,34 @@ strong {
 
 .remark-slide-content strong {
   color: #004c93;
+}
+
+.title-slide strong {
+  color: #FFFFFF;
+}
+
+/* Full-width table: stretches to fill parent container */
+.table-full table {
+  width: 100%;
+  margin-left: 0;
+  margin-right: 0;
+}
+
+.table-full td {
+  text-align: center;
+}
+}
+
+/* Title index (outline) slide: spacing */
+.title-index h3 {
+  margin-bottom: 14px;
+}
+
+.title-index .pull-left p,
+.title-index .pull-right p {
+  margin-bottom: 5px;
+}
+
+.title-index li {
+  line-height: 1.9;
 }
