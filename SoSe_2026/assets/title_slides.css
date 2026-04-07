@@ -103,9 +103,9 @@
 }
 
 .title-ai {
-    background-image: url(../assets/ude_logo.png), url(../assets/rlogo.png);
+    background-image: url(../assets/ude_logo.png), url(../assets/ellmer.png);
     background-position: 7% 10%, 90% 90%;
-    background-size: 220px, 180px;
+    background-size: 220px, 160px;
     color: rgba(255, 255, 255, 0.68);
 }
 

@@ -90,8 +90,8 @@ You have likely used ChatGPT or similar tools in a web browser. Today we learn t
 An **API** (Application Programming Interface) lets your R code send requests to a server and receive responses — just like a website, but designed for programs instead of humans.
 
 .font90[
-<div id="htmlwidget-3653181d25f5df90ec32" style="width:90%;height:250px;" class="grViz html-widget"></div>
-<script type="application/json" data-for="htmlwidget-3653181d25f5df90ec32">{"x":{"diagram":"\ndigraph api_flow {\n  graph [rankdir=LR, bgcolor=white, fontname=\"Arial\", nodesep=1.0, ranksep=0.8]\n  node [shape=box, style=\"filled,rounded\", fontname=\"Arial\", fontsize=16,\n        penwidth=2, width=1.6, height=0.65]\n  edge [fontname=\"Arial\", fontsize=13, penwidth=1.8]\n\n  R   [label=\"Your R Script\", fillcolor=\"#004c93\", fontcolor=\"white\", color=\"#004c93\"]\n  API [label=\"API\",           fillcolor=\"#dce8f5\", fontcolor=\"#222\",  color=\"#004c93\"]\n  LLM [label=\"LLM Server\",   fillcolor=\"#dce8f5\", fontcolor=\"#222\",  color=\"#004c93\"]\n\n  R   -> API [label=\"  prompt + settings  \", color=\"#004c93\", fontcolor=\"#333\"]\n  API -> LLM [label=\"  forward request  \",   color=\"#004c93\", fontcolor=\"#333\"]\n  LLM -> R   [label=\"  generated text  \",    color=\"#888888\", fontcolor=\"#333\",\n               style=dashed, constraint=false]\n}\n","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
+<div id="htmlwidget-2091c6c603c23028e4d2" style="width:90%;height:250px;" class="grViz html-widget"></div>
+<script type="application/json" data-for="htmlwidget-2091c6c603c23028e4d2">{"x":{"diagram":"\ndigraph api_flow {\n  graph [rankdir=LR, bgcolor=white, fontname=\"Arial\", nodesep=1.0, ranksep=0.8]\n  node [shape=box, style=\"filled,rounded\", fontname=\"Arial\", fontsize=16,\n        penwidth=2, width=1.6, height=0.65]\n  edge [fontname=\"Arial\", fontsize=13, penwidth=1.8]\n\n  R   [label=\"Your R Script\", fillcolor=\"#004c93\", fontcolor=\"white\", color=\"#004c93\"]\n  API [label=\"API\",           fillcolor=\"#dce8f5\", fontcolor=\"#222\",  color=\"#004c93\"]\n  LLM [label=\"LLM Server\",   fillcolor=\"#dce8f5\", fontcolor=\"#222\",  color=\"#004c93\"]\n\n  R   -> API [label=\"  prompt + settings  \", color=\"#004c93\", fontcolor=\"#333\"]\n  API -> LLM [label=\"  forward request  \",   color=\"#004c93\", fontcolor=\"#333\"]\n  LLM -> R   [label=\"  generated text  \",    color=\"#888888\", fontcolor=\"#333\",\n               style=dashed, constraint=false]\n}\n","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
 ]
 
 Instead of typing into a chat window, your code sends a **prompt** to the API and gets back a **text response**. This means you can automate tasks, process data in bulk, and build custom tools!
@@ -165,43 +165,29 @@ That is all you need. No additional packages for environment variables or HTTP �
 | `ellmer` | Unified LLM client for R (includes Groq, OpenAI, Anthropic, ...) |
 ]
 
-Compare this to the Python approach which requires `groq` *and* `python-dotenv`. In R, environment variables are handled natively via `.Renviron`.
+ellmer handles HTTP communication, message formatting, and response parsing — no additional packages required.
 
 ---
 ## Setting Up: Your API Key
 
 1. Visit [console.groq.com](https://console.groq.com) and create a free account
 2. Go to **API Keys** and generate a new key
+3. Store the key in your `.Renviron` file. The easiest way: `usethis::edit_r_environ()`
 
-&lt;ol start="3"&gt;
-&lt;li&gt; Store the key in your &lt;code&gt;.Renviron&lt;/code&gt; file. The easiest way: &lt;/li&gt;
-&lt;/ol&gt;
+    This opens your `.Renviron` file. Add this line and save:
 
+    ```
+    GROQ_API_KEY=gsk_your_key_here
+    ```
 
-``` r
-usethis::edit_r_environ()
-```
+4. Restart R (Ctrl/Cmd + Shift + F10) so the variable is loaded.
+5. Verify it works:
 
-This opens your `.Renviron` file. Add this line and save:
-
-```
-GROQ_API_KEY=gsk_your_key_here
-```
-
-&lt;ol start="4"&gt;
-&lt;li&gt; Restart R (Ctrl/Cmd + Shift + F10) so the variable is loaded. &lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;ol start="5"&gt;
-&lt;li&gt; Verify it works: &lt;/li&gt;
-&lt;/ol&gt;
-
-
-``` r
-# Check that the key is available (don't print the full key!)
-key &lt;- Sys.getenv("GROQ_API_KEY")
-cat(substr(key, 1, 10), "...\n")
-```
+    ```r
+    # Check that the key is available (don't print the full key!)
+    key &lt;- Sys.getenv("GROQ_API_KEY")
+    cat(substr(key, 1, 10), "...\n")
+    ```
 
 ---
 ## Setting Up: Security
@@ -221,7 +207,7 @@ Anyone who sees your code (e.g., on GitHub) could use and abuse your key. The `.
 - Add `.Renviron` to your `.gitignore` file
 - Never print or `cat()` the full key
 
-**Why `.Renviron` instead of Python's `.env` file?**
+**Why `.Renviron`?**
 
 - R loads `.Renviron` automatically on startup — no extra packages needed
 - `Sys.getenv()` reads any environment variable
@@ -465,45 +451,54 @@ Each time you call `$chat()`, ellmer sends **all previous messages** to the API 
 ---
 ## Multi-Turn Conversations: Under the Hood
 
-The Chat object manages the conversation history for you. In Python, you would have to manually build a list of message dictionaries:
+The Chat object manages the conversation history for you. Each call to `$chat()` **appends two new turns**: your message and the assistant's response.
 
 .pull-left[
-**Python (manual)**
-.code70[
-```python
-messages = [
-  {"role": "system",
-   "content": "You are a tutor."},
-  {"role": "user",
-   "content": "What is a factor?"},
-  {"role": "assistant",
-   "content": "A factor is ..."},
-  {"role": "user",
-   "content": "Give an example."},
-]
-response = client.chat.completions
-  .create(messages=messages, ...)
-```
-]]
-
-.pull-right[
-**R with ellmer (automatic)**
+**After 1 turn**
 .code70[
 
 ``` r
 chat &lt;- chat_groq(
   system_prompt = "You are a tutor."
 )
-
 chat$chat("What is a factor?")
-# history updated automatically
-
-chat$chat("Give an example.")
-# previous turns included
+print(chat)
+```
+```
+## &lt;Chat Groq turns=3 tokens=15/87&gt;
+## ── system ─────────
+## You are a tutor.
+## ── user ───────────
+## What is a factor?
+## ── assistant ──────
+## A factor is ...
 ```
 ]]
 
-ellmer's R6 object stores and sends the full history automatically — less boilerplate, fewer bugs.
+.pull-right[
+**After 2 turns**
+.code70[
+
+``` r
+chat$chat("Give an example.")
+print(chat)
+```
+```
+## &lt;Chat Groq turns=5 tokens=22/168&gt;
+## ── system ─────────
+## You are a tutor.
+## ── user ───────────
+## What is a factor?
+## ── assistant ──────
+## A factor is ...
+## ── user ───────────
+## Give an example.
+## ── assistant ──────
+## Here is an example ...
+```
+]]
+
+Each turn includes the full prior context — the LLM "remembers" all previous messages automatically.
 
 ---
 ## Inspecting the Conversation
@@ -993,25 +988,39 @@ Always wrap API calls in `tryCatch()` for production code. The error messages he
 **Prompt engineering** — the art of writing effective instructions for LLMs — is a skill in itself. The better your system prompt, the better the results. Experiment!
 
 ---
-## Comparison: R (ellmer) vs. Python (groq)
+## Local LLMs with Ollama
 
-.font80[
+For privacy-sensitive data — or to avoid API costs — run an LLM on your own machine with **Ollama**:
 
-| Task | R (ellmer) | Python (groq) |
-|------|-----------|---------------|
-| Install | `install.packages("ellmer")` | `pip install groq python-dotenv` |
-| API key storage | `.Renviron` (built-in) | `.env` + `python-dotenv` |
-| Create client | `chat_groq(system_prompt = ...)` | `Groq(api_key=...)` |
-| Send message | `chat$chat("Hello")` | `client.chat.completions.create(messages=[...])` |
-| Conversation | Automatic (R6 state) | Manual message list |
-| Switch provider | Change `chat_groq` → `chat_openai` | Different library + API |
-| Structured data | `$chat_structured(type = ...)` | Parse JSON manually |
-| Interactive chat | `live_console(chat)` | Custom while loop |
-| Token tracking | `token_usage()` | `response.usage.total_tokens` |
+1. Install Ollama from [ollama.com](https://ollama.com) — free, runs locally
+2. Pull a model: run `ollama pull llama3.2` in your terminal
+3. Use it from R via `chat_ollama()` — the interface is **identical** to cloud providers:
 
+
+``` r
+# Exactly the same workflow — just a different provider function
+chat &lt;- chat_ollama(
+  model = "llama3.2",
+  system_prompt = "You are a helpful assistant."
+)
+chat$chat("What is heteroskedasticity?")
+```
+
+.pull-left[
+**Cloud (Groq, OpenAI, ...)**
+- More powerful models
+- Fast inference
+- Requires API key
+- Data leaves your machine
 ]
 
-The R approach is more concise and higher-level: **ellmer abstracts away** the HTTP requests, message formatting, and response parsing that you must handle manually in Python.
+.pull-right[
+**Local via Ollama**
+- Completely private
+- Always free to run
+- Requires decent hardware
+- Same `ellmer` interface
+]
 
 ---
 ## Summary
