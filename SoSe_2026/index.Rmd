@@ -30,10 +30,10 @@ class: title-slide title-index
 1. [Introduction](Introduction/Introduction.html)
 2. [Data Wrangling with dplyr](Wrangling/Wrangling.html)
 3. [Data Visualisation with ggplot](ggplot2/ggplot2.html)
-4. [RMarkdown](Rmarkdown/rmarkdown.html)
-5. [Databases](databases/databases.html)
-6. [Web Scraping](Webscraping/webscraping.html)
-7. [Git & Github](Git/git_vcs.html)
+4. RMarkdown <!--[RMarkdown](Rmarkdown/rmarkdown.html)-->
+5. Databases <!--[Databases](databases/databases.html)-->
+6. Web Scraping <!--[Web Scraping](Webscraping/webscraping.html)-->
+7. Git & Github <!--[Git & Github](Git/git_vcs.html)-->
 ]
 
 .pull-right[
