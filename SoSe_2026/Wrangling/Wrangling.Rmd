@@ -36,8 +36,6 @@ xaringan::inf_mr()
 
 
 
-
-
 # `r rmarkdown::metadata$title`
 ## `r rmarkdown::metadata$subtitle`
 ### `r rmarkdown::metadata$author`
@@ -54,9 +52,9 @@ Tibbles are the main data structure used in the `tidyverse` and can be viewed as
 
 
 .blockquote.exercise.font90[
-```{r, echo = TRUE, eval = TRUE}
-    library(tidyverse)
-    new_tibble <- tibble(x = 1:3, y = letters[1:3])
+```{r, echo = TRUE, eval = TRUE, warning=F, message=F}
+library(tidyverse)
+new_tibble <- tibble(x = 1:3, y = letters[1:3])
 ```
 ]
 
@@ -94,7 +92,7 @@ class: top, left
 .blockquote.exercise.font90[
 ```{r, echo = TRUE}
 data(mtcars) 
-mtcars_tibble <- as_tibble(mtcars)
+mtc_tib <- as_tibble(mtcars)
 ```
 ]
 
@@ -105,9 +103,13 @@ mtcars_tibble <- as_tibble(mtcars)
 .blockquote.exercise.font90[
 ```{r, echo = TRUE, eval = FALSE}
 print(mtcars)
-print(mtcars_tibble)
+print(mtc_tib)
 ```
 ]
+
+???
+- Shows data types
+- Shows dimensions
 
 --
 
@@ -117,10 +119,10 @@ print(mtcars_tibble)
 #### `r ICONS$desktop` Example
 
 ```{r, echo = TRUE, eval = FALSE}
-mtcars[ ,1:2] # returns a data.frame
-mtcars[ ,1]   # returns a vector 
-mtcars_tibble[ ,1:2] # returns a tibble
-mtcars_tibble[ ,1]   # returns a tibble
+mtcars[ ,1:2] 
+mtcars[ ,1]    
+mtc_tib[ ,1:2]
+mtc_tib[ ,1] 
 ```
 ]
 ---
@@ -132,10 +134,11 @@ mtcars_tibble[ ,1]   # returns a tibble
 .blockquote.exercise[
 #### `r ICONS$desktop` Example
 ```{r, echo = TRUE, eval = FALSE}
-data.frame(x = 1:3, y = x^2) # not working
+data.frame(x = 1:3, y = x^2)  # not working
 tibble(x = 1:3, y = x^2)
 ```
 ]
+
 
 --
 
@@ -175,6 +178,9 @@ The core characteristics of the package:
 - verbose compared to base R which leads to longer but easier to read code
 - consistent syntax. 
 
+???
+With every update, the developers try to increase the readability and decrease code length
+
 --
 
 You can compare the functionality to that of a  relational database which provides methods to work with single tables and multiple tables. 
@@ -185,13 +191,18 @@ class: top, left
 
 First, we look at functions that work on a single table. 
  
-- `filter()` to select rows based on their values.
+- `filter()`/`filter_out()` to select/deselect rows based on their values.
 
 .blockquote.exercise[
 ```{r, echo = TRUE, eval = FALSE}
-filter(mtcars_tibble, hp >= 100 & mpg >= 20)
+filter(mtc_tib, hp >= 100 & mpg >= 20)
+filter_out(mtc_tib, hp >= 100 & mpg >= 20)
 ```
 ]
+
+???
+filter_out was addes in the last major update
+filter(mtc_tib, hp < 100 | mpg < 20)
 
 --
 
@@ -199,7 +210,7 @@ filter(mtcars_tibble, hp >= 100 & mpg >= 20)
 
 .blockquote.exercise[
 ```{r, eval = FALSE, echo = TRUE}
-slice(mtcars_tibble, 10:15)
+slice(mtc_tib, 10:15)
 ```
 ]
 
@@ -209,7 +220,7 @@ slice(mtcars_tibble, 10:15)
 
 .blockquote.exercise[
 ```{r, echo = TRUE, eval = FALSE}
-select(mtcars_tibble, cyl, hp)
+select(mtc_tib, cyl, hp)
 ```
 ]
 
@@ -221,8 +232,8 @@ class: top, left
 
 .blockquote.exercise[
 ```{r, echo = TRUE, eval = FALSE}
-arrange(mtcars_tibble, cyl)
-arrange(mtcars_tibble, desc(cyl))
+arrange(mtc_tib, cyl)
+arrange(mtc_tib, desc(cyl))
 ```
 ]
 
@@ -232,9 +243,9 @@ arrange(mtcars_tibble, desc(cyl))
 
 .blockquote.exercise[
 ```{r, echo = TRUE, eval = FALSE}
-relocate(mtcars_tibble, gear)
-relocate(mtcars_tibble, gear, .after = last_col())
-relocate(mtcars_tibble, gear, .before = cyl)
+relocate(mtc_tib, gear)
+relocate(mtc_tib, gear, .after = last_col())
+relocate(mtc_tib, gear, .before = cyl)
 ```
 ]
 
@@ -248,8 +259,8 @@ class: top, left
 .blockquote.exercise[
 
 ```{r, echo = TRUE, eval = FALSE}
-mutate(mtcars_tibble, gpm = 1/mpg)
-transmute(mtcars_tibble, gpm = 1/mpg) 
+mutate(mtc_tib, gpm = 1/mpg)
+transmute(mtc_tib, gpm = 1/mpg) 
 ```
 ]
 
@@ -259,7 +270,7 @@ transmute(mtcars_tibble, gpm = 1/mpg)
 
 .blockquote.exercise[
 ```{r, echo = TRUE, eval = FALSE}
-summarise(mtcars_tibble, mean_hp = mean(hp), max_mpg = max(mpg))
+summarise(mtc_tib, mean_hp = mean(hp), max_mpg = max(mpg))
 ```
 ]
 
@@ -271,8 +282,8 @@ class: top, left
 
 .blockquote.exercise[
 ```{r, echo = TRUE, eval = FALSE}
-slice_sample(mtcars_tibble, n = 10)
-slice_sample(mtcars_tibble, prop = 0.1)
+slice_sample(mtc_tib, n = 10)
+slice_sample(mtc_tib, prop = 0.1)
 ```
 ]
 
@@ -282,8 +293,8 @@ slice_sample(mtcars_tibble, prop = 0.1)
 
 .blockquote.exercise[
 ```{r, echo = TRUE, eval = FALSE}
-tibble_with_duplicates    <- tibble(x = c(1,1,2,3), 
-                                    y = c(4,4,5,6))
+tibble_with_duplicates    <- tibble(x = c(1, 1, 2, 3), 
+                                    y = c(4, 4, 5, 6))
 tibble_without_duplicates <- distinct(tibble_with_duplicates)
 ```
 ]
@@ -294,8 +305,8 @@ tibble_without_duplicates <- distinct(tibble_with_duplicates)
 
 .blockquote.exercise[
 ```{r, echo = TRUE, eval = FALSE}
-count(mtcars_tibble); count(mtcars_tibble, cyl)
-tally(mtcars_tibble); tally(mtcars_tibble, cyl)
+count(mtc_tib); count(mtc_tib, cyl)
+tally(mtc_tib); tally(mtc_tib, cyl)
 ```
 ]
 
@@ -311,7 +322,7 @@ The function `filter()` selects rows based on their values.
 
 .blockquote.exercise[
 ```{r, echo = TRUE, eval = FALSE}
-filter(mtcars_tibble, hp == 100)
+filter(mtc_tib, hp == 100)
 ```
 ]]
 
@@ -322,8 +333,8 @@ filter(mtcars_tibble, hp == 100)
 
 .blockquote.exercise[
 ```{r, echo = TRUE, eval = FALSE}
-filter(mtcars_tibble, hp > 100 & cyl == 4)
-filter(mtcars_tibble, hp > 100 | cyl == 4)
+filter(mtc_tib, hp > 100 & cyl == 4)
+filter(mtc_tib, hp > 100 | cyl == 4)
 ```
 ]]
 
@@ -334,7 +345,7 @@ filter(mtcars_tibble, hp > 100 | cyl == 4)
 
 .blockquote.exercise[
 ```{r, echo = TRUE, eval = FALSE}
-filter(mtcars_tibble, hp > 100, cyl == 4)
+filter(mtc_tib, hp > 100, cyl == 4)
 ```
 ]]
 
@@ -345,10 +356,46 @@ filter(mtcars_tibble, hp > 100, cyl == 4)
 
 .blockquote.exercise[
 ```{r, echo = TRUE, eval = FALSE}
-filter(mtcars_tibble, x >= 90 & x <= 110)
-filter(mtcars_tibble, between(hp, 90, 110))
+filter(mtc_tib, x >= 90 & x <= 110)
+filter(mtc_tib, between(hp, 90, 110))
 ```
 ]]
+
+---
+class: top, left
+
+.font80[
+## Filter 
+
+- Since `dplyr 1.2.0` you easily invert your filter by replacing `filter()` with `filter_out()`
+
+.blockquote.exercise[
+```{r, echo = TRUE, eval = FALSE}
+filter(mtc_tib, hp > 110 | cyl == 4)
+filter_out(mtc_tib, hp > 110 | cyl == 4)
+```
+]
+
+- Also new are the helper functions `when_any` and `when_all`
+
+.blockquote.exercise[
+```{r, echo = TRUE, eval = FALSE}
+filter(mtc_tib, when_any(
+  mpg > 25 & wt < 2.5,
+  hp > 200 & wt > 3.5
+))
+
+filter(mtc_tib, when_all(
+  hp > 150,
+  mpg > 15,
+  cyl == 8 & am == 0
+))
+```
+]]
+
+
+
+
 
 ---
 ## Select
@@ -360,8 +407,8 @@ The function `select()` selects columns based on their name.
 
 .blockquote.exercise[
 ```{r, echo = TRUE, eval = FALSE}
-select(mtcars_tibble, disp, vs) 
-select(mtcars_tibble, "disp", "vs") 
+select(mtc_tib, disp, vs) 
+select(mtc_tib, "disp", "vs") 
 ```
 ]]
 
@@ -372,7 +419,7 @@ select(mtcars_tibble, "disp", "vs")
 
 .blockquote.exercise[
 ```{r, echo = TRUE, eval = FALSE}
-select(mtcars_tibble, c("disp", "vs"))
+select(mtc_tib, c("disp", "vs"))
 ```
 ]]
 
@@ -383,8 +430,8 @@ select(mtcars_tibble, c("disp", "vs"))
 
 .blockquote.exercise[
 ```{r, echo = TRUE, eval = FALSE}
-select(mtcars_tibble, -disp, -vs) 
-select(mtcars_tibble, -c("disp", "vs")) 
+select(mtc_tib, -disp, -vs) 
+select(mtc_tib, -c("disp", "vs")) 
 ```
 ]
 
@@ -480,7 +527,7 @@ The function `mutate()` adds new columns or replaces old columns based on existi
 
 .blockquote.exercise[
 ```{r, echo=TRUE, eval = FALSE}
-mutate(mtcars_tibble,
+mutate(mtc_tib,
        gpm = 1/mpg,
        disp =  disp - mean(disp) # replaces disp 
        )
@@ -506,7 +553,7 @@ mutate(rw, increments =  y - lag(y, k = 1))
 
 .blockquote.exercise[
 ```{r, echo=TRUE, eval = FALSE}
-mutate(mtcars_tibble,
+mutate(mtc_tib,
        hp_rank_smallest_first = min_rank(hp),
        hp_rank_largest_first  = min_rank(desc(hp))
   )
@@ -531,7 +578,7 @@ mutate(mtcars_tibble,
 .blockquote.exercise[.font80[
 
 ```{r, echo = TRUE, eval = FALSE}
-summarise(mtcars_tibble,
+summarise(mtc_tib,
           mean_hp    = mean(hp),
           max_wt     = max(wt), 
           n          = n(),            
@@ -561,14 +608,14 @@ summarise(by_cyl, my_variance(mpg))
 
 .blockquote.exercise[
 ```{r, eval = FALSE, echo = TRUE}
-two_return_vaules <- function(x) c(mean(x), sd(x))
+two_return_values <- function(x) c(mean(x), sd(x))
 summarise(by_cyl, two_return_vaules(mpg))
 ```
 ]
 
 --
 
-- The function can take multiple variable or fixed inputs.
+- The function can take multiple variables or fixed inputs.
 
 .blockquote.exercise[
     ```{r, echo = TRUE, eval = FALSE}
@@ -608,22 +655,33 @@ filter(flights, day == 1)
 class: top, left
 ## Grouping
 
-To exploit the full potential of `summarise()` we pair it with `group_by()`. 
+- To exploit the full potential of `summarise()` we pair it with `group_by()`. 
 
 --
 
 .blockquote.exercise[
 ```{r, echo = TRUE, results='markup'}
-by_cyl <- group_by(mtcars_tibble, cyl)
-print(summarise(by_cyl, mean(mpg)))
+by_cyl <- group_by(mtc_tib, cyl)
+summarise(by_cyl, mean(mpg))
 ```
 ]
 
 --
 
-<br>
+- `.by` as an alternative to `group_by`:
 
-Use `ungroup()` to remove the grouping, when you want to work on the whole data set again. 
+.blockquote.exercise[
+```{r, echo = TRUE, results='markup'}
+summarise(mtc_tib, mean(mpg), .by = cyl)
+```
+]
+
+--
+
+- Use `ungroup()` to remove the grouping, when you want to work on the whole data set again. 
+
+
+
 
 ---
 class: top, left
@@ -637,7 +695,7 @@ It is also possible to use `group_by()` together with a lot of other single tabl
 #### `r ICONS$desktop` Example
 
 ```{r, echo = TRUE, eval = FALSE}
-by_cyl <- group_by(mtcars_tibble, cyl)
+by_cyl <- group_by(mtc_tib, cyl)
 
 # group mean is used for centering
 mutate(by_cyl, centered_mpg = mpg - mean(mpg))   
@@ -671,7 +729,7 @@ We could do it like this:
 
 #### `r ICONS$incorrect` Bad
 ```{r, echo = TRUE}
-filtered   <- filter(mtcars_tibble, cyl <= 8)
+filtered   <- filter(mtc_tib, cyl <= 8)
 mutated    <- mutate(filtered, gpm = 1/mpg)
 grouped    <- group_by(mutated, gear)
 summarized <- summarise(grouped, count = n(), 
@@ -695,7 +753,7 @@ We could nest all those functions to get rid of the intermediate result.
 .blockquote.exercise[ 
 #### `r ICONS$desktop` Example
 ```{r, echo = TRUE}
-summarise(group_by(mutate(filter(mtcars_tibble, cyl <= 8), gpm = 1/mpg)), 
+summarise(group_by(mutate(filter(mtc_tib, cyl <= 8), gpm = 1/mpg)), 
           count = n(), 
           mean_hp = mean(hp),
           mean_gpm = mean(gpm))
@@ -719,15 +777,17 @@ The value on the left side of the operator becomes the input to the function on 
 .blockquote.exercise.font80[ 
 #### `r ICONS$desktop` Example
 ```{r, echo = TRUE, eval = FALSE}
-mtcars_tibble %>% 
+mtc_tib %>% 
   mutate(gpm = 1/mpg) %>%
-  group_by(gear) %>% 
   summarise(count = n(), 
             mean_hp = mean(hp),
-            mean_gpm = mean(gpm)) 
-  
+            mean_gpm = mean(gpm), 
+            .by = gear) 
 ```
 ]
+
+???
+and made use of .by
 
 --
 
@@ -743,7 +803,7 @@ The pipe operator is not limited to `dplyr` or the `tidyverse`
 --
 
 .font90[
-Different pipe operator for more flexbility. 
+The package `magrittr` offers different pipe operators for more flexbility:
 
 - `%<>%` combines the pipe and `<-`
 - `%T>%` to do something on the side, i.g. generating a plot
@@ -751,12 +811,12 @@ Different pipe operator for more flexbility.
 ]
 
 ???
+Originally the pipe operators were developed in magrittr
 
-Examnples:
+Examples:
 
-#### overvwriting object
-cars %<>%
-  dplyr::summarise(mean(hp))
+#### Overwriting an object
+mtc_tib %<>% dplyr::summarise(mean(hp))
 
 
 
@@ -775,7 +835,7 @@ cars %>%
   
 
 
-```{r, eval = FALSE, cache=TRUE}
+```{r, eval = FALSE, cache=F}
 library(data.table)
 library(tidyverse)
 crime <- fread("https://data.boston.gov/dataset/6220d948-eae2-4e4b-8723-2dc8e67722a3/resource/12cb3883-56f5-47de-afa5-3b1cf61b257b/download/tmppj4rb047.csv")
@@ -808,23 +868,20 @@ We often perform operations on all or several columns at once. Most helpful are 
 ```{r, eval = FALSE, echo = TRUE}
 iris %>% summarise(across(c(Sepal.Length, Sepal.Width), mean))
 iris %>% summarise(across(c(Sepal.Length, Sepal.Width), ~ mean(.x, na.rm = TRUE)))
-# summarise with multipe values 
+# summarise with multiple functions 
 iris %>% summarise(across(c(Sepal.Length, Sepal.Width), list(mean = mean, sd = sd)))
 ```
 ]
 
 --
 
-- Inside the `across()` function we can use the helper function for select which we already saw on the previous slides. 
+- Inside the `across()` function we can use the helper functions for select which we already saw on the previous slides. 
 
 .blockquote.exercise[ 
 ```{r, eval = FALSE, echo = TRUE}
 iris %>% summarise(across(ends_with('Width'), mean))
 ```
 ]
-
-
-
 
 ???
 
@@ -838,7 +895,7 @@ functions are pedestrian. Most helpful are the scoped versions of  `summarise()`
 
 - Use `summarise_all()`to summarise every column.
     ```{r, eval = FALSE, echo = TRUE}
-mtcars_tibble %>% summarise_all(mean)
+mtc_tib %>% summarise_all(mean)
     ```
 
 - Use `summarise_if()` to logically subset the columns to be summarised. 
