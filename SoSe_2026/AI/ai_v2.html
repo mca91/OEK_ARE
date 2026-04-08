@@ -1,0 +1,1225 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>Advanced R for Econometricians</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Martin Arnold" />
+    <meta name="author" content="Martin Schmelzer" />
+    <meta name="date" content="2026-04-07" />
+    <script src="ai_v2_files/header-attrs-2.29/header-attrs.js"></script>
+    <link href="ai_v2_files/remark-css-0.0.1/default.css" rel="stylesheet" />
+    <script src="ai_v2_files/htmlwidgets-1.6.4/htmlwidgets.js"></script>
+    <script src="ai_v2_files/viz-1.8.2/viz.js"></script>
+    <link href="ai_v2_files/DiagrammeR-styles-0.2/styles.css" rel="stylesheet" />
+    <script src="ai_v2_files/grViz-binding-1.0.11/grViz.js"></script>
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        TeX: { equationNumbers: { autoNumber: "AMS" } },
+      });
+    </script>
+    <style>
+    .mjx-mrow a {
+      color: black;
+      pointer-events: none;
+      cursor: default;
+    }
+    </style>
+    <link rel="stylesheet" href="../assets/ude_fonts.css" type="text/css" />
+    <link rel="stylesheet" href="../assets/ude.css" type="text/css" />
+    <link rel="stylesheet" href="../assets/title_slides.css" type="text/css" />
+    <link rel="stylesheet" href="../assets/custom.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+
+class: title-slide title-ai center middle
+
+
+
+
+# Advanced R for Econometricians
+## GenAI Applications with R
+### Martin Arnold, Martin Schmelzer
+
+---
+## Chapter Overview
+
+- Understanding what **Large Language Models (LLMs)** are
+- Communicating with LLMs through **APIs**
+- Setting up the **ellmer** package  
+- Sending prompts and processing responses
+- Using **system prompts** to shape LLM behavior
+- Building multi-turn **conversations**
+- Extracting **structured data** from text
+- Building an **AI-powered study assistant** in R
+
+---
+## What Are Large Language Models?
+
+A **Large Language Model (LLM)** is an AI system trained on vast amounts of text. Given a prompt, it generates a human-like response — think of it as an extremely well-read conversation partner.
+
+.pull-left[
+**What LLMs can do**
+
+- Answer questions
+- Summarize long texts
+- Translate languages
+- Generate creative writing
+- Explain complex topics
+- Help with coding
+]
+
+.pull-right[
+**Popular LLMs**
+
+.table-full[
+| Model | Provider |
+|-------|----------|
+| GPT-4 | OpenAI |
+| Claude | Anthropic |
+| Llama | Meta |
+| Gemini | Google |
+]
+]
+
+You have likely used ChatGPT or similar tools in a web browser. Today we learn to control these models **programmatically** with R!
+
+---
+## How Programs Talk to LLMs: APIs
+
+An **API** (Application Programming Interface) lets your R code send requests to a server and receive responses — just like a website, but designed for programs instead of humans.
+
+.font90[
+<div id="htmlwidget-2091c6c603c23028e4d2" style="width:90%;height:250px;" class="grViz html-widget"></div>
+<script type="application/json" data-for="htmlwidget-2091c6c603c23028e4d2">{"x":{"diagram":"\ndigraph api_flow {\n  graph [rankdir=LR, bgcolor=white, fontname=\"Arial\", nodesep=1.0, ranksep=0.8]\n  node [shape=box, style=\"filled,rounded\", fontname=\"Arial\", fontsize=16,\n        penwidth=2, width=1.6, height=0.65]\n  edge [fontname=\"Arial\", fontsize=13, penwidth=1.8]\n\n  R   [label=\"Your R Script\", fillcolor=\"#004c93\", fontcolor=\"white\", color=\"#004c93\"]\n  API [label=\"API\",           fillcolor=\"#dce8f5\", fontcolor=\"#222\",  color=\"#004c93\"]\n  LLM [label=\"LLM Server\",   fillcolor=\"#dce8f5\", fontcolor=\"#222\",  color=\"#004c93\"]\n\n  R   -> API [label=\"  prompt + settings  \", color=\"#004c93\", fontcolor=\"#333\"]\n  API -> LLM [label=\"  forward request  \",   color=\"#004c93\", fontcolor=\"#333\"]\n  LLM -> R   [label=\"  generated text  \",    color=\"#888888\", fontcolor=\"#333\",\n               style=dashed, constraint=false]\n}\n","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
+]
+
+Instead of typing into a chat window, your code sends a **prompt** to the API and gets back a **text response**. This means you can automate tasks, process data in bulk, and build custom tools!
+
+---
+## Why Groq?
+
+**Groq** is an API provider that gives you access to powerful open-source LLMs (like Meta's Llama models) with a generous **free tier** — perfect for learning.
+
+| Feature | Details |
+|---------|---------|
+| **Free API key** | Sign up at [console.groq.com](https://console.groq.com) |
+| **Fast responses** | Groq's hardware is optimized for speed |
+| **Model access** | Llama 3.3 70B, Llama 3.1 8B, and more |
+
+We will use the **ellmer** package — a tidyverse-compatible R package that provides a unified interface to many LLM providers, including Groq.
+
+.font90[
+The skills you learn with Groq transfer directly to other providers. Switching from Groq to OpenAI or Google Gemini is a one-line change!
+]
+
+---
+## The ellmer Package
+
+**ellmer** is developed by Hadley Wickham and the Posit team. It makes it easy to use LLMs from R.
+
+.pull-left[
+**Key Features**
+
+- Unified interface for 15+ providers
+- Stateful conversation objects (R6)
+- Streaming output
+- Structured data extraction
+- Tool/function calling
+]
+
+.pull-right[
+**Supported Providers**
+
+.font80[
+| Function | Provider |
+|----------|----------|
+| `chat_groq()` | Groq |
+| `chat_openai()` | OpenAI |
+| `chat_anthropic()` | Anthropic |
+| `chat_google_gemini()` | Google |
+| `chat_ollama()` | Ollama (local) |
+| `chat_github()` | GitHub Models |
+]
+]
+
+All providers share the **same interface** — learn the pattern once, use it everywhere.
+
+![:source_url https://ellmer.tidyverse.org](https://ellmer.tidyverse.org)
+
+---
+## Setting Up: Installation
+
+Install the ellmer package from CRAN:
+
+
+``` r
+install.packages("ellmer")
+```
+
+That is all you need. No additional packages for environment variables or HTTP — ellmer handles everything.
+
+.font90[
+| Package | Purpose |
+|---------|---------|
+| `ellmer` | Unified LLM client for R (includes Groq, OpenAI, Anthropic, ...) |
+]
+
+ellmer handles HTTP communication, message formatting, and response parsing — no additional packages required.
+
+---
+## Setting Up: Your API Key
+
+1. Visit [console.groq.com](https://console.groq.com) and create a free account
+2. Go to **API Keys** and generate a new key
+3. Store the key in your `.Renviron` file. The easiest way: `usethis::edit_r_environ()`
+
+    This opens your `.Renviron` file. Add this line and save:
+
+    ```
+    GROQ_API_KEY=gsk_your_key_here
+    ```
+
+4. Restart R (Ctrl/Cmd + Shift + F10) so the variable is loaded.
+5. Verify it works:
+
+    ```r
+    # Check that the key is available (don't print the full key!)
+    key &lt;- Sys.getenv("GROQ_API_KEY")
+    cat(substr(key, 1, 10), "...\n")
+    ```
+
+---
+## Setting Up: Security
+
+.content-box-white[
+
+**Never put API keys directly in your code!**
+
+Anyone who sees your code (e.g., on GitHub) could use and abuse your key. The `.Renviron` file keeps secrets safe because it lives outside your project files.
+
+]
+
+.font90[
+**Best practices:**
+
+- Store keys in `.Renviron` — not in your R scripts
+- Add `.Renviron` to your `.gitignore` file
+- Never print or `cat()` the full key
+
+**Why `.Renviron`?**
+
+- R loads `.Renviron` automatically on startup — no extra packages needed
+- `Sys.getenv()` reads any environment variable
+- `usethis::edit_r_environ()` makes editing easy
+- ellmer reads the key automatically from the environment
+]
+
+---
+## Your First API Call
+
+Let's send a message to an LLM and get a response:
+
+
+``` r
+library(ellmer)
+
+*chat &lt;- chat_groq(
+* system_prompt = "You are a helpful assistant."
+*) 
+
+chat$chat("What is R in one sentence?")
+```
+
+```
+## R is a programming language and software environment for statistical
+## computing and graphics, widely used among statisticians and data miners
+## for data analysis and developing statistical software.
+```
+
+Let's break this down step by step on the next slides.
+
+---
+## Breaking It Down
+
+**Step 1: Create a Chat object**
+
+
+``` r
+chat &lt;- chat_groq(
+  system_prompt = "You are a helpful assistant."
+)
+```
+
+The **Chat object** connects to Groq's servers and stores the entire conversation history.
+
+**Step 2: Send a message**
+
+
+``` r
+chat$chat("What is R in one sentence?")
+```
+
+The `$chat()` method sends your prompt and streams the LLM's response to the console.
+
+**Step 3: That's it!** No need to build message lists or parse JSON — ellmer handles everything.
+
+.font80[
+.blockquote.exercise[
+#### <svg aria-hidden="true" role="img" viewBox="0 0 576 512" style="height:1em;width:1.12em;vertical-align:-0.125em;margin-left:auto;margin-right:auto;font-size:inherit;fill:#004c93;overflow:visible;position:relative;"><path d="M64 0C28.7 0 0 28.7 0 64V352c0 35.3 28.7 64 64 64H240l-10.7 32H160c-17.7 0-32 14.3-32 32s14.3 32 32 32H416c17.7 0 32-14.3 32-32s-14.3-32-32-32H346.7L336 416H512c35.3 0 64-28.7 64-64V64c0-35.3-28.7-64-64-64H64zM512 64V288H64V64H512z"/></svg> Try it yourself
+
+Change the question to something related to your studies. Try: `"What is the difference between correlation and causation?"`
+]]
+
+---
+## The Chat Object
+
+The **Chat** object is an **R6 object** — a stateful, mutable object. This is different from typical R objects.
+
+
+``` r
+chat &lt;- chat_groq(system_prompt = "You are a helpful tutor.")
+```
+
+
+``` r
+# Send a message — the response is printed AND stored
+chat$chat("What is a data frame?")
+```
+
+
+``` r
+# The Chat object remembers everything
+print(chat)
+```
+
+```
+## &lt;Chat Groq/llama-3.3-70b-versatile turns=3 tokens=23/92&gt;
+## ── system ────────────────────────────────────────────────
+## You are a helpful tutor.
+## ── user ──────────────────────────────────────────────────
+## What is a data frame?
+## ── assistant ─────────────────────────────────────────────
+## A data frame is a two-dimensional data structure in R ...
+```
+
+Notice the summary: **turns**, **tokens used**, and the full conversation history. This is how ellmer keeps track of context.
+
+---
+## Understanding Tokens
+
+**Tokens** are the units LLMs use to process text. On average, one English word requires about **1.5 tokens**.
+
+
+``` r
+# See token usage for the current session
+token_usage()
+```
+
+```
+##   provider              model input output price
+## 1     Groq llama-3.3-70b-versatile    23     92 $0.00
+```
+
+| Concept | Approximate Tokens |
+|---------|-------------------|
+| A word | ~1.5 tokens |
+| A sentence | ~20 tokens |
+| A page of text | ~375–400 tokens |
+| A full book | ~75,000–150,000 tokens |
+
+API providers typically charge per million tokens. Groq's free tier is generous for learning, but it is good practice to monitor usage.
+
+---
+## Disabling Streaming
+
+By default, `$chat()` streams the response to the console as it arrives. For **programmatic use**, you can disable this:
+
+
+``` r
+# Capture the response silently
+chat &lt;- chat_groq(
+  system_prompt = "Be concise.",
+* echo = "none"
+)
+response &lt;- chat$chat("What is GDP?")
+```
+
+
+``` r
+# response is a character string you can work with
+cat(response)
+nchar(response)
+```
+
+| `echo` Setting | Behavior |
+|----------------|----------|
+| `"output"` | Stream response to console (default in interactive use) |
+| `"none"` | Return silently — best for scripts and functions |
+| `"all"` | Echo both input and output |
+
+---
+## System Prompts
+
+The **system prompt** sets the LLM's behavior and personality. Think of it as giving the model its "job description."
+
+
+``` r
+chat &lt;- chat_groq(
+* system_prompt = "You are a statistics tutor for graduate students."
+)
+chat$chat("Explain heteroskedasticity.")
+```
+
+The system prompt is powerful — it shapes how the LLM responds to **everything** that follows. 
+
+.font90[
+.blockquote.exercise[
+#### <svg aria-hidden="true" role="img" viewBox="0 0 576 512" style="height:1em;width:1.12em;vertical-align:-0.125em;margin-left:auto;margin-right:auto;font-size:inherit;fill:#004c93;overflow:visible;position:relative;"><path d="M64 0C28.7 0 0 28.7 0 64V352c0 35.3 28.7 64 64 64H240l-10.7 32H160c-17.7 0-32 14.3-32 32s14.3 32 32 32H416c17.7 0 32-14.3 32-32s-14.3-32-32-32H346.7L336 416H512c35.3 0 64-28.7 64-64V64c0-35.3-28.7-64-64-64H64zM512 64V288H64V64H512z"/></svg> Try it yourself
+
+Create Chat objects with different system prompts and ask the same question:
+
+
+``` r
+q &lt;- "What is the Pythagorean theorem?"
+
+chat1 &lt;- chat_groq(system_prompt = "Explain like I am 5 years old.")
+chat1$chat(q)
+
+chat2 &lt;- chat_groq(system_prompt = "Answer in exactly one sentence.")
+chat2$chat(q)
+
+chat3 &lt;- chat_groq(system_prompt = "You are a pirate. Answer in pirate speak.")
+chat3$chat(q)
+```
+]]
+
+---
+## Shaping Behavior with System Prompts
+
+Let's write a helper function that makes it easy to try different system prompts:
+
+
+``` r
+ask &lt;- function(system_message, user_question) {
+  chat &lt;- chat_groq(
+    system_prompt = system_message,
+    echo = "none"
+  )
+  chat$chat(user_question)
+}
+```
+
+
+``` r
+# Try different "personalities"
+question &lt;- "What is OLS regression?"
+
+ask("Explain like I am 5 years old.", question)
+ask("Answer in exactly one sentence.", question)
+ask("You are a strict statistics professor. Be formal and precise.", question)
+```
+
+Notice the pattern: **same question, different system prompts, completely different responses.** This is the core of **prompt engineering**.
+
+---
+## Multi-Turn Conversations
+
+Unlike a simple function call, the Chat object **remembers** the entire conversation. Each new message builds on the previous context.
+
+
+``` r
+chat &lt;- chat_groq(system_prompt = "You are a helpful R tutor.")
+
+chat$chat("What is a factor in R?")
+```
+
+
+``` r
+# The follow-up uses context from the previous exchange
+*chat$chat("Can you give me an example?")
+```
+
+
+``` r
+# And another follow-up
+*chat$chat("How is it different from a character vector?")
+```
+
+Each time you call `$chat()`, ellmer sends **all previous messages** to the API so the LLM understands the full context. The conversation grows automatically.
+
+---
+## Multi-Turn Conversations: Under the Hood
+
+The Chat object manages the conversation history for you. Each call to `$chat()` **appends two new turns**: your message and the assistant's response.
+
+.pull-left[
+**After 1 turn**
+.code70[
+
+``` r
+chat &lt;- chat_groq(
+  system_prompt = "You are a tutor."
+)
+chat$chat("What is a factor?")
+print(chat)
+```
+```
+## &lt;Chat Groq turns=3 tokens=15/87&gt;
+## ── system ─────────
+## You are a tutor.
+## ── user ───────────
+## What is a factor?
+## ── assistant ──────
+## A factor is ...
+```
+]]
+
+.pull-right[
+**After 2 turns**
+.code70[
+
+``` r
+chat$chat("Give an example.")
+print(chat)
+```
+```
+## &lt;Chat Groq turns=5 tokens=22/168&gt;
+## ── system ─────────
+## You are a tutor.
+## ── user ───────────
+## What is a factor?
+## ── assistant ──────
+## A factor is ...
+## ── user ───────────
+## Give an example.
+## ── assistant ──────
+## Here is an example ...
+```
+]]
+
+Each turn includes the full prior context — the LLM "remembers" all previous messages automatically.
+
+---
+## Inspecting the Conversation
+
+You can inspect the conversation history at any time:
+
+
+``` r
+# Print the Chat object to see the full history
+print(chat)
+```
+
+
+``` r
+# Get all turns as a list
+turns &lt;- chat$get_turns()
+length(turns)  # number of turns
+```
+
+
+``` r
+# Access individual turns
+turns[[1]]  # system turn
+turns[[2]]  # first user turn
+turns[[3]]  # first assistant response
+```
+
+This is useful for logging, debugging, or post-processing the conversation.
+
+---
+## Interactive Chat
+
+For an interactive, ChatGPT-like experience directly in your R console, use `live_console()`:
+
+
+``` r
+chat &lt;- chat_groq(system_prompt = "You are a friendly R tutor.")
+*live_console(chat)
+```
+
+```
+## ╔══════════════════════════════════════════════════════════╗
+## ║  Entering chat console. Use """ for multi-line input.   ║
+## ║  Press Ctrl+C to quit.                                  ║
+## ╚══════════════════════════════════════════════════════════╝
+## &gt;&gt;&gt; What is a tibble?
+## A tibble is a modern version of a data frame in R ...
+```
+
+After exiting (Ctrl+C), the conversation history is preserved in the `chat` object — you can continue programmatically.
+
+For a richer experience, `live_browser()` opens a chat interface in your **web browser**:
+
+
+``` r
+chat &lt;- chat_groq(system_prompt = "You are a data science assistant.")
+*live_browser(chat)  # requires shinychat: install.packages("shinychat")
+```
+
+---
+## Controlling Output: Temperature
+
+The **temperature** parameter controls how creative vs. predictable the LLM's responses are.
+
+| Temperature | Behavior | Best For |
+|-------------|----------|----------|
+| `0.0` | Deterministic, focused | Factual answers, summaries |
+| `0.5` | Balanced | General-purpose use |
+| `1.0` | Creative, varied | Brainstorming, creative writing |
+| `&gt; 1.0` | Very random | Experimental, playful |
+
+
+``` r
+# Temperature is set when creating the Chat object
+# Low temperature — deterministic
+*chat &lt;- chat_groq(echo = "none", params = params(temperature = 0))
+chat$chat("Write a haiku about coding.")
+
+# High temperature — creative, varied
+*chat &lt;- chat_groq(echo = "none", params = params(temperature = 1.5))
+chat$chat("Write a haiku about coding.")
+```
+
+.font80[
+.blockquote.exercise[
+#### <svg aria-hidden="true" role="img" viewBox="0 0 576 512" style="height:1em;width:1.12em;vertical-align:-0.125em;margin-left:auto;margin-right:auto;font-size:inherit;fill:#004c93;overflow:visible;position:relative;"><path d="M64 0C28.7 0 0 28.7 0 64V352c0 35.3 28.7 64 64 64H240l-10.7 32H160c-17.7 0-32 14.3-32 32s14.3 32 32 32H416c17.7 0 32-14.3 32-32s-14.3-32-32-32H346.7L336 416H512c35.3 0 64-28.7 64-64V64c0-35.3-28.7-64-64-64H64zM512 64V288H64V64H512z"/></svg> Try it yourself
+
+Create two Chat objects with `temperature = 0` and `temperature = 1.5`. Ask both the same question twice — which temperature gives more consistent results? **Tip:** Start with `temperature = 0` for study tasks.
+]]
+
+---
+## Switching Providers
+
+One of ellmer's strengths: **switching providers is a one-line change.** The rest of your code stays identical.
+
+
+``` r
+# Using Groq (free, fast)
+*chat &lt;- chat_groq(system_prompt = "You are a helpful assistant.")
+
+# Using OpenAI's GPT-4
+*chat &lt;- chat_openai(system_prompt = "You are a helpful assistant.")
+
+# Using Anthropic's Claude
+*chat &lt;- chat_anthropic(system_prompt = "You are a helpful assistant.")
+
+# Using Google Gemini (generous free tier)
+*chat &lt;- chat_google_gemini(system_prompt = "You are a helpful assistant.")
+
+# Using a local model via Ollama (free, private)
+*chat &lt;- chat_ollama(system_prompt = "You are a helpful assistant.")
+```
+
+After creating the chat object, the rest is **identical** — `$chat()`, `$get_turns()`, `live_console()`, etc. Each provider needs its own API key in `.Renviron` (see `?chat_openai`).
+
+---
+## Use Case 1: Summarize Your Notes
+
+University students deal with long readings and lecture notes. Let's build a text summarizer:
+
+.code80[
+
+``` r
+summarize_text &lt;- function(text, length = "short") {
+  system_msg &lt;- paste(
+    "You are a study assistant. Summarize the following text in a",
+    length, "and clear way. Use bullet points for key ideas."
+  )
+  
+  chat &lt;- chat_groq(system_prompt = system_msg, echo = "none")
+  chat$chat(text)
+}
+```
+]
+
+
+``` r
+# Summarize text directly
+summarize_text("Heteroskedasticity means the variance of the error
+  term is not constant across observations. This violates one of the
+  Gauss-Markov assumptions and makes OLS estimators inefficient...")
+```
+
+
+``` r
+# Or read from a file first
+notes &lt;- readLines("my_notes.txt") |&gt; paste(collapse = "\n")
+cat(summarize_text(notes))
+```
+
+---
+## Use Case 2: Generate Flashcards
+
+Flashcards are a proven study technique. Let's have the LLM create them automatically:
+
+
+``` r
+generate_flashcards &lt;- function(topic, count = 5) {
+  system_msg &lt;- paste0(
+    "You are a study assistant. Generate exactly ", count,
+    " flashcards for the given topic. ",
+    "Format each as:\nQ: [question]\nA: [concise answer]\n"
+  )
+  
+  chat &lt;- chat_groq(system_prompt = system_msg, echo = "none")
+  chat$chat(paste("Create flashcards about:", topic))
+}
+```
+
+
+``` r
+cat(generate_flashcards("R data structures: vectors, lists, and data frames"))
+```
+
+```
+## Q: What is the key difference between an atomic vector and a list?
+## A: Atomic vectors can only contain elements of a single type,
+##    while lists can contain elements of different types.
+## ...
+```
+
+---
+## Use Case 3: Improve Your Writing
+
+Whether it is an essay, lab report, or email — the LLM can suggest improvements:
+
+
+``` r
+*focus_instructions &lt;- list(
+  clarity  = "Make the text clearer and easier to understand.",
+  academic = "Make the text more formal and academic in tone.",
+  concise  = "Make the text shorter while keeping the key message.",
+  grammar  = "Fix grammar and spelling errors only."
+)
+```
+
+
+``` r
+improve_writing &lt;- function(text, focus = "clarity") {
+  instruction &lt;- focus_instructions[[focus]]
+  system_msg &lt;- paste("You are a writing tutor.", instruction)
+  
+  chat &lt;- chat_groq(system_prompt = system_msg, echo = "none")
+  chat$chat(text)
+}
+```
+
+
+``` r
+draft &lt;- "the experiment showed that like the thing we thought
+  would happen did happen mostly"
+
+cat(improve_writing(draft, focus = "academic"))
+```
+
+---
+## A Reusable Helper Function
+
+Notice the pattern? Every LLM task follows the **same structure**. Let's create a reusable helper:
+
+
+``` r
+ask_llm &lt;- function(user_message,
+                    system_message = "You are a helpful assistant.",
+                    temperature = 0.5) {
+  chat &lt;- chat_groq(
+    system_prompt = system_message,
+    echo = "none",
+    params = params(temperature = temperature)
+  )
+  chat$chat(user_message)
+}
+```
+
+Now building new tools becomes a one-liner:
+
+
+``` r
+# Summarize (assuming long_text holds your notes)
+ask_llm(long_text, system_message = "Summarize in 3 bullet points.")
+
+# Translate
+ask_llm("Hello world", system_message = "Translate to German.")
+
+# Quiz me
+ask_llm("R loops", system_message = "Ask me a quiz question about this topic.")
+```
+
+---
+## Structured Data Extraction
+
+One of ellmer's most powerful features: you can ask the LLM to return **structured R objects** instead of free text.
+
+
+``` r
+*chat &lt;- chat_openai(echo = "none")  # Groq does not support structured data
+
+result &lt;- chat$chat_structured(
+  "My name is Susan and I'm 13 years old",
+* type = type_object(
+*   name = type_string(),
+*   age  = type_number()
+* )
+)
+```
+
+```
+## List of 2
+##  $ name: chr "Susan"
+##  $ age : num 13
+```
+
+Instead of parsing text, you get a **named list** — ready for analysis. You define the desired structure with `type_object()`, `type_string()`, `type_number()`, etc.
+
+---
+## Structured Data: Data Frames
+
+Entire **data frames** can be extracted from unstructured text:
+
+.code80[
+
+``` r
+prompt &lt;- "
+  John Smith: Age 30. Income $55,000. Education: B.A.
+  Jane Doe: Age 25. Income $42,000. Education: M.Sc.
+  Jose Rodriguez: Age 40. Income $78,000. Education: Ph.D.
+"
+
+type_person &lt;- type_object(
+  name      = type_string("Full name"),
+  age       = type_integer("Age in years"),
+  income    = type_number("Annual income in USD"),
+  education = type_enum(c("B.A.", "M.Sc.", "Ph.D."), "Highest degree")
+)
+
+chat &lt;- chat_openai(echo = "none")
+people &lt;- chat$chat_structured(prompt, type = type_array(type_person))
+```
+]
+
+```
+## # A tibble: 3 × 4
+##   name             age income education
+##   &lt;chr&gt;          &lt;int&gt;  &lt;dbl&gt; &lt;fct&gt;    
+## 1 John Smith        30  55000 B.A.     
+## 2 Jane Doe          25  42000 M.Sc.    
+## 3 Jose Rodriguez    40  78000 Ph.D.    
+```
+
+---
+## Structured Data: Type Specifications
+
+.font90[
+The `type_*()` functions define what structure you expect from the LLM:
+
+| Function | R Equivalent | Example |
+|----------|-------------|---------|
+| `type_string()` | `character(1)` | `"hello"` |
+| `type_number()` | `numeric(1)` | `3.14` |
+| `type_integer()` | `integer(1)` | `42L` |
+| `type_boolean()` | `logical(1)` | `TRUE` |
+| `type_enum(values)` | `factor` | One of `c("A", "B", "C")` |
+| `type_array(item_type)` | `vector` or `list` | `c(1, 2, 3)` |
+| `type_object(...)` | `named list` | `list(name = "X", age = 30)` |
+]
+
+**Key insight:** A `type_array()` of `type_object()`s becomes a **tibble** — this is how you extract tabular data from unstructured text.
+
+.font80[
+.blockquote.exercise[
+#### <svg aria-hidden="true" role="img" viewBox="0 0 576 512" style="height:1em;width:1.12em;vertical-align:-0.125em;margin-left:auto;margin-right:auto;font-size:inherit;fill:#004c93;overflow:visible;position:relative;"><path d="M64 0C28.7 0 0 28.7 0 64V352c0 35.3 28.7 64 64 64H240l-10.7 32H160c-17.7 0-32 14.3-32 32s14.3 32 32 32H416c17.7 0 32-14.3 32-32s-14.3-32-32-32H346.7L336 416H512c35.3 0 64-28.7 64-64V64c0-35.3-28.7-64-64-64H64zM512 64V288H64V64H512z"/></svg> Try it yourself
+
+Use `$chat_structured()` with `chat_openai()` or `chat_anthropic()` to extract the **sentiment** (positive/negative/neutral) and a **confidence score** from a product review. (Groq does not support structured extraction.)
+]]
+
+---
+## Building the Study Assistant
+
+Let's combine everything into a complete interactive program. We use our `ask_llm()` helper and R's `readline()` for user input:
+
+.code80[
+
+``` r
+show_menu &lt;- function() {
+  cat("\n=== Study Assistant ===\n")
+  cat("1 - Summarize text\n")
+  cat("2 - Generate flashcards\n")
+  cat("3 - Improve my writing\n")
+  cat("4 - Ask a question\n")
+  cat("q - Quit\n")
+  readline("Choose an option: ")
+}
+```
+]
+
+---
+## Building the Study Assistant: Main Loop
+
+The `repeat` loop calls `show_menu()` and dispatches to the appropriate helper:
+
+.code60[
+
+``` r
+# Assumes ask_llm() is defined as on the previous slide
+
+repeat {
+  choice &lt;- show_menu()
+  
+  if (choice == "q") {
+    cat("Happy studying!\n")
+    break
+  }
+  
+  switch(choice,
+    "1" = {
+      text &lt;- readline("Enter text to summarize: ")
+      cat("\nSummary:\n")
+      cat(ask_llm(text, "Summarize in clear bullet points.", temperature = 0.3))
+    },
+    "2" = {
+      topic &lt;- readline("Enter a topic: ")
+      count &lt;- readline("How many flashcards? (default: 5) ")
+      if (count == "") count &lt;- "5"
+      sys_msg &lt;- paste0("Generate ", count, " flashcards. Format: Q: ... / A: ...")
+      cat(ask_llm(topic, sys_msg, temperature = 0.5))
+    },
+    "3" = {
+      text &lt;- readline("Enter text to improve: ")
+      style &lt;- readline("Focus (clarity/academic/concise): ")
+      if (style == "") style &lt;- "clarity"
+      sys_msg &lt;- paste("Improve this text. Focus on", style, ". Show improved version.")
+      cat(ask_llm(text, sys_msg, temperature = 0.3))
+    },
+    "4" = {
+      question &lt;- readline("Your question: ")
+      cat(ask_llm(question))
+    },
+    cat("Invalid option. Try again.\n")
+  )
+}
+```
+]
+
+---
+## Building the Study Assistant (continued)
+
+This program uses concepts from across the course:
+
+| Concept | How It's Used |
+|---------|---------------|
+| **Functions** | `ask_llm()`, `show_menu()` |
+| **Named lists** | `focus_instructions` |
+| **Control flow** | `repeat` loop, `switch()`, `break` |
+| **String manipulation** | `paste()`, `paste0()`, `cat()` |
+| **R6 objects** | Chat objects inside `ask_llm()` |
+| **API interaction** | `chat_groq()`, `$chat()` |
+
+.font90[
+.blockquote.exercise[
+#### <svg aria-hidden="true" role="img" viewBox="0 0 576 512" style="height:1em;width:1.12em;vertical-align:-0.125em;margin-left:auto;margin-right:auto;font-size:inherit;fill:#004c93;overflow:visible;position:relative;"><path d="M64 0C28.7 0 0 28.7 0 64V352c0 35.3 28.7 64 64 64H240l-10.7 32H160c-17.7 0-32 14.3-32 32s14.3 32 32 32H416c17.7 0 32-14.3 32-32s-14.3-32-32-32H346.7L336 416H512c35.3 0 64-28.7 64-64V64c0-35.3-28.7-64-64-64H64zM512 64V288H64V64H512z"/></svg> Extension ideas
+
+1. Add a "conversation mode" using `live_console()` 
+2. Read text from a file with `readLines()` for option 1
+3. Add a "translate" option
+4. Log the conversation to a file
+]]
+
+---
+## Error Handling for API Calls
+
+API calls can fail — the network might be down, your key might be invalid, or you might hit rate limits. Use `tryCatch()`:
+
+.code80[
+
+``` r
+ask_llm_safe &lt;- function(user_message,
+                         system_message = "You are a helpful assistant.") {
+  tryCatch(
+    {
+      chat &lt;- chat_groq(system_prompt = system_message, echo = "none")
+      chat$chat(user_message)
+    },
+    error = function(e) {
+      msg &lt;- conditionMessage(e)
+      if (grepl("401|authentication|unauthorized", msg, ignore.case = TRUE)) {
+        "Error: Invalid API key. Check your .Renviron file."
+      } else if (grepl("429|rate.limit", msg, ignore.case = TRUE)) {
+        "Error: Too many requests. Wait a moment and try again."
+      } else if (grepl("connection|network|timeout", msg, ignore.case = TRUE)) {
+        "Error: Cannot reach the API. Check your internet connection."
+      } else {
+        paste("Error:", msg)
+      }
+    }
+  )
+}
+```
+]
+
+Always wrap API calls in `tryCatch()` for production code. The error messages help users diagnose the problem.
+
+---
+## Best Practices
+
+.pull-left[
+**Prompt Engineering**
+
+| Tip | Example |
+|-----|---------|
+| Be specific | "List 5 key points" not "Summarize" |
+| Set the format | "Answer in bullet points" |
+| Give examples | "Format like: Q: ... A: ..." |
+| Set constraints | "Use max 100 words" |
+]
+
+.pull-right[
+**Security &amp; Cost**
+
+| Tip | Why |
+|-----|-----|
+| Use `.Renviron` | Keep keys out of code |
+| Add to `.gitignore` | Prevent accidental sharing |
+| Monitor `token_usage()` | Free tiers have limits |
+| Use low temperature | More focused output |
+]
+
+**Prompt engineering** — the art of writing effective instructions for LLMs — is a skill in itself. The better your system prompt, the better the results. Experiment!
+
+---
+## Local LLMs with Ollama
+
+For privacy-sensitive data — or to avoid API costs — run an LLM on your own machine with **Ollama**:
+
+1. Install Ollama from [ollama.com](https://ollama.com) — free, runs locally
+2. Pull a model: run `ollama pull llama3.2` in your terminal
+3. Use it from R via `chat_ollama()` — the interface is **identical** to cloud providers:
+
+
+``` r
+# Exactly the same workflow — just a different provider function
+chat &lt;- chat_ollama(
+  model = "llama3.2",
+  system_prompt = "You are a helpful assistant."
+)
+chat$chat("What is heteroskedasticity?")
+```
+
+.pull-left[
+**Cloud (Groq, OpenAI, ...)**
+- More powerful models
+- Fast inference
+- Requires API key
+- Data leaves your machine
+]
+
+.pull-right[
+**Local via Ollama**
+- Completely private
+- Always free to run
+- Requires decent hardware
+- Same `ellmer` interface
+]
+
+---
+## Summary
+
+.font90[
+
+.pull-left[
+| Topic | Key Points |
+|-------|------------|
+| **LLMs** | AI models that generate text |
+| **APIs** | Send requests, get responses |
+| **ellmer** | `install.packages("ellmer")` |
+| **Chat object** | `chat_groq(system_prompt = ...)` |
+| **Send message** | `chat$chat("question")` |
+]
+
+.pull-right[
+| Topic | Key Points |
+|-------|------------|
+| **System prompt** | Shapes LLM behavior |
+| **Conversation** | Stateful R6 object |
+| **Temperature** | 0 = focused, 1+ = creative |
+| **Structured data** | `$chat_structured(type = ...)` |
+| **Error handling** | `tryCatch()` for API calls |
+]
+]
+
+&lt;div style="clear:both"&gt;&lt;/div&gt;
+
+You built an **AI-powered study assistant** using R concepts: functions, named lists, control flow, string manipulation, R6 objects, and error handling!
+
+.font90[
+**Further reading:**
+- [ellmer documentation](https://ellmer.tidyverse.org)
+- [Prompt design vignette](https://ellmer.tidyverse.org/articles/prompt-design.html)
+- [Structured data vignette](https://ellmer.tidyverse.org/articles/structured-data.html)
+]
+
+---
+class: exercise_slide
+
+## <svg aria-hidden="true" role="img" viewBox="0 0 576 512" style="height:1em;width:1.12em;vertical-align:-0.125em;margin-left:auto;margin-right:auto;font-size:inherit;fill:#004c93;overflow:visible;position:relative;"><path d="M64 0C28.7 0 0 28.7 0 64V352c0 35.3 28.7 64 64 64H240l-10.7 32H160c-17.7 0-32 14.3-32 32s14.3 32 32 32H416c17.7 0 32-14.3 32-32s-14.3-32-32-32H346.7L336 416H512c35.3 0 64-28.7 64-64V64c0-35.3-28.7-64-64-64H64zM512 64V288H64V64H512z"/></svg> Exercises
+
+.font90[
+&lt;ol&gt;
+&lt;li&gt; &lt;b&gt;Basic chat:&lt;/b&gt; Create a &lt;code&gt;chat_groq()&lt;/code&gt; object with a system prompt that makes the LLM act as an econometrics tutor. Ask it to explain the difference between fixed and random effects. &lt;/li&gt;
+
+&lt;li&gt; &lt;b&gt;System prompt comparison:&lt;/b&gt; Write a function &lt;code&gt;explain(topic, audience)&lt;/code&gt; that takes a topic and an audience description (e.g., "a 5 year old", "a PhD student") and returns an explanation tailored to that audience. Test it with "instrumental variables." &lt;/li&gt;
+
+&lt;li&gt; &lt;b&gt;Summarizer:&lt;/b&gt; Read a text file of your choice with &lt;code&gt;readLines()&lt;/code&gt; and use &lt;code&gt;ask_llm()&lt;/code&gt; to produce a bullet-point summary. Experiment with different temperature values (0, 0.5, 1.0) — how do the summaries differ? &lt;/li&gt;
+
+&lt;li&gt; &lt;b&gt;Multi-turn conversation:&lt;/b&gt; Build a conversation where you first ask "What is endogeneity?", then follow up with "Give me an example from labor economics", then "How would I test for it?". Print the Chat object to see the full history. &lt;/li&gt;
+
+&lt;li&gt; &lt;b&gt;Structured extraction:&lt;/b&gt; Use &lt;code&gt;chat_openai()&lt;/code&gt; (not Groq) and &lt;code&gt;$chat_structured()&lt;/code&gt; to extract country name, GDP (numeric), and continent from this text: &lt;i&gt;"Germany has a GDP of approximately 4.2 trillion USD and is located in Europe. Brazil's GDP is about 1.9 trillion USD, in South America."&lt;/i&gt; The result should be a tibble. &lt;/li&gt;
+
+&lt;li&gt; &lt;b&gt;Provider comparison:&lt;/b&gt; Use &lt;code&gt;chat_groq()&lt;/code&gt; and &lt;code&gt;chat_google_gemini()&lt;/code&gt; (or another provider) to answer the same question. Compare the responses and token usage with &lt;code&gt;token_usage()&lt;/code&gt;. &lt;/li&gt;
+&lt;/ol&gt;
+]
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script src="../assets/navigate_home.js"></script>
+<script src="../assets/remark-zoom.js"></script>
+<script src="../xaringan_files/macros.js"></script>
+<script src="https://platform.twitter.com/widgets.js"></script>
+<script>var slideshow = remark.create({
+  "highlightStyle": "github",
+  "highlightLines": true,
+  "countIncrementalSlides": false,
+  "ratio": "16:9",
+  "navigation": {
+    "scroll": false
+  }
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+// add `data-at-shortcutkeys` attribute to <body> to resolve conflicts with JAWS
+// screen reader (see PR #262)
+(function(d) {
+  let res = {};
+  d.querySelectorAll('.remark-help-content table tr').forEach(tr => {
+    const t = tr.querySelector('td:nth-child(2)').innerText;
+    tr.querySelectorAll('td:first-child .key').forEach(key => {
+      const k = key.innerText;
+      if (/^[a-z]$/.test(k)) res[k] = t;  // must be a single letter (key)
+    });
+  });
+  d.body.setAttribute('data-at-shortcutkeys', JSON.stringify(res));
+})(document);
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>
