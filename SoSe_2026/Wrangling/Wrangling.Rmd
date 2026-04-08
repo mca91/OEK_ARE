@@ -25,6 +25,7 @@ class: title-slide title-wrangling center middle
 ```{r setup, echo = F, eval = T, warning = F}
 knitr::opts_chunk$set(echo = TRUE, eval = FALSE, warning = FALSE)
 source(here::here("SoSe_2026/utils.R"))
+fontawesome::fa_html_dependency()
 ```
 
 ```{r moon_reader, include=FALSE, eval = FALSE}
@@ -748,7 +749,7 @@ This code has the disadvantage that we need to save intermediate results that we
 class: top, left
 ## The Pipe
 
-We could nest all those functions to get rid of the intermediate result.
+We could nest all those functions to get rid of the intermediate results.
 
 .blockquote.exercise[ 
 #### `r ICONS$desktop` Example
@@ -890,24 +891,6 @@ The ~ operator in R creates formula. So ~ lm(mpg ~ wt, data = .) is a formula. F
 
 purrr-style formula? 
 
-We often perform operations on all or several columns at once. In this case the standard 
-functions are pedestrian. Most helpful are the scoped versions of  `summarise()`, `mutate()` and `select()`.
-
-- Use `summarise_all()`to summarise every column.
-    ```{r, eval = FALSE, echo = TRUE}
-mtc_tib %>% summarise_all(mean)
-    ```
-
-- Use `summarise_if()` to logically subset the columns to be summarised. 
-    ```{r, eval = FALSE, echo = TRUE}
-iris %>% summarise_if(is.numeric, mean)
-    ```
-
--  Use `summarise_at()` to summarise selected columns.
-    ```{r, eval = FALSE, echo = TRUE}
-iris %>% summarise_at(c("Sepal.Length", "Sepal.Width"), mean)
-    ```
-
 
 ---
 class: top, left
@@ -976,7 +959,7 @@ class: top, left
 - Two data frames
 
 .blockquote.exercise[ 
-```{r, echo = TRUE, results='markup'}
+```{r, echo = TRUE, eval=T, results='markup'}
 band_members   
 band_instruments
 ```
@@ -1087,6 +1070,8 @@ tidyr::table2
 
 Observations are scattered across multiple rows
 
+???
+The data.frame is in a long format.
 
 ---
 class: top, left
@@ -1108,6 +1093,9 @@ table2 %>%
 
 See the help file for more information
 
+???
+Many more arguments that allow to customize column naming or how NULL values should be handled
+
 ---
 ## Untidy Data
 
@@ -1119,7 +1107,7 @@ tidyr::table4b
 
 --
 
-- Columns do not contain variables and column names are values. 
+- Variables year and population are spread across multiple columns and column names are values. 
 
 ---
 ## Gathering (Lengthening)
@@ -1136,8 +1124,8 @@ The function `pivot_longer()` main arguments are
 
 .font90.blockquote.exercise[
 ```{r, echo = TRUE}
-table4a %>% 
-  pivot_longer(cols = c("1999", "2000"), names_to = "year", values_to = "value")
+table4b %>% 
+  pivot_longer(cols = c("1999", "2000"), names_to = "year", values_to = "population")
 ```
 ]
 
@@ -1158,6 +1146,11 @@ notice that year is a character variable
 tidyr::table3 
 ```
 ]
+
+???
+How woud you describe the structure of the data?
+
+--
 
 - One column contains two variables. 
 

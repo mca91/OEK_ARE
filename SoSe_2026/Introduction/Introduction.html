@@ -5,9 +5,11 @@
     <meta charset="utf-8" />
     <meta name="author" content="Martin Arnold" />
     <meta name="author" content="Martin Schmelzer" />
-    <meta name="date" content="2026-04-02" />
+    <meta name="date" content="2026-04-08" />
     <script src="Introduction_files/header-attrs-2.30/header-attrs.js"></script>
     <link href="Introduction_files/remark-css-0.0.1/default.css" rel="stylesheet" />
+    <link href="Introduction_files/font-awesome-6.5.2/css/all.min.css" rel="stylesheet" />
+    <link href="Introduction_files/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet" />
     <script type="text/x-mathjax-config">
       MathJax.Hub.Config({
         TeX: { equationNumbers: { autoNumber: "AMS" } },
@@ -35,7 +37,7 @@ class: title-slide title-rintro center middle
 
 
 
-#  Advanced R for Econometricians
+# Advanced R for Econometricians
 ## Introduction
 ### Martin Arnold, Martin Schmelzer
 ---
@@ -82,38 +84,37 @@ What do you know about R?
 
 ---
 ### Outline
-
+.font70[
 .pull-left[
-1. Introduction
-2. Data Wrangling with dplyr
-3. Data Visualisation with ggplot
-4. RMarkdown
-5. Databases 
-6. Web Scraping
-7. Git and GitHub
-
-
+&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;**Lecturer: Martin Schmelzer**
+1. [Introduction](Introduction/Introduction.html)
+2. [Data Wrangling with dplyr](Wrangling/Wrangling.html)
+3. [Data Visualisation with ggplot](ggplot2/ggplot2.html)
+4. [RMarkdown](Rmarkdown/rmarkdown.html)
+5. [Databases](databases/databases.html)
+6. [Web Scraping](Webscraping/webscraping.html)
+7. [Git &amp; Github](Git/git_vcs.html)
 ]
 
 .pull-right[
+&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;**Lecturer: Martin Arnold**
 &lt;ol start = "8"&gt;
-  &lt;li&gt;Shiny&lt;/li&gt;
-  &lt;li&gt;AI &amp; R&lt;/li&gt;
-  &lt;li&gt;Object Oriented Programming&lt;/li&gt;
-  &lt;li&gt;Profiling and Benchmarking&lt;/li&gt; 
-  &lt;li&gt;Improving Performance&lt;/li&gt;
+  &lt;li&gt;&lt;a href="Advanced R concepts/Advanced.html" class="disabled"&gt;Advanced Concepts&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href="functional/functional.html" class="disabled"&gt;Functional Programming Tools&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href="Shiny/Shiny.html" class="disabled"&gt;Shiny&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href="AI/ai.html" class="disabled"&gt;Building GenAI Applications&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href="Performance/Performance.html" class="disabled"&gt;Deep Dive: Performance&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href="Performance/Performance.html" class="disabled"&gt;Deep Dive: Debugging&lt;/a&gt;&lt;/li&gt;
 &lt;/ol&gt;
 ]
 
+.pull-down-small_margin.font70[
+&lt;br&gt;
+### Additional Topics for self-study
 
-
-
-.pull-right[.pull-down-small_margin.font90[
-#### Additional Topics for self-study
-
-&lt;ol start = "9"&gt;
-  &lt;li&gt;data.table&lt;/li&gt;
-  &lt;li&gt;Writing Packages&lt;/li&gt;
+&lt;ol start = "14"&gt;
+  &lt;li&gt; &lt;a href = Datatable/datatable.html&gt;data.table&lt;/a&gt; &lt;/li&gt;
+  &lt;li&gt; &lt;a href = Packages/Packages.html&gt;Writing Packages&lt;/a&gt; &lt;/li&gt;
 &lt;/ol&gt;
 ]]
 ---
@@ -151,7 +152,7 @@ class: top, left
 - Chances are that someone has already solved a problem that you’re working on, and you can benefit from their work by downloading their package.
 
 #### The main sources for packages are:
-  - CRAN (Comprehensive R Archive Network) with as of now ca. 23.486 available packages
+  - CRAN (Comprehensive R Archive Network) with as of now ca. 23.530 available packages
   - GitHub (that is the place where packages are developed before getting published on CRAN) 
   - Bioconductor
 

@@ -5,9 +5,11 @@
     <meta charset="utf-8" />
     <meta name="author" content="Martin Arnold" />
     <meta name="author" content="Martin Schmelzer" />
-    <meta name="date" content="2026-04-02" />
+    <meta name="date" content="2026-04-08" />
     <script src="Wrangling_files/header-attrs-2.30/header-attrs.js"></script>
     <link href="Wrangling_files/remark-css-0.0.1/default.css" rel="stylesheet" />
+    <link href="Wrangling_files/font-awesome-6.5.2/css/all.min.css" rel="stylesheet" />
+    <link href="Wrangling_files/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet" />
     <script type="text/x-mathjax-config">
       MathJax.Hub.Config({
         TeX: { equationNumbers: { autoNumber: "AMS" } },
@@ -792,7 +794,7 @@ This code has the disadvantage that we need to save intermediate results that we
 class: top, left
 ## The Pipe
 
-We could nest all those functions to get rid of the intermediate result.
+We could nest all those functions to get rid of the intermediate results.
 
 .blockquote.exercise[ 
 #### <svg aria-hidden="true" role="img" viewBox="0 0 576 512" style="height:1em;width:1.12em;vertical-align:-0.125em;margin-left:auto;margin-right:auto;font-size:inherit;fill:#004c93;overflow:visible;position:relative;"><path d="M64 0C28.7 0 0 28.7 0 64V352c0 35.3 28.7 64 64 64H240l-10.7 32H160c-17.7 0-32 14.3-32 32s14.3 32 32 32H416c17.7 0 32-14.3 32-32s-14.3-32-32-32H346.7L336 416H512c35.3 0 64-28.7 64-64V64c0-35.3-28.7-64-64-64H64zM512 64V288H64V64H512z"/></svg> Example
@@ -832,6 +834,9 @@ mtc_tib %&gt;%
 ```
 ]
 
+???
+and made use of .by
+
 --
 
 .font90[
@@ -847,7 +852,7 @@ The pipe operator is not limited to `dplyr` or the `tidyverse`
 --
 
 .font90[
-Different pipe operator for more flexbility. 
+The package `magrittr` offers different pipe operators for more flexbility:
 
 - `%&lt;&gt;%` combines the pipe and `&lt;-`
 - `%T&gt;%` to do something on the side, i.g. generating a plot
@@ -855,12 +860,12 @@ Different pipe operator for more flexbility.
 ]
 
 ???
+Originally the pipe operators were developed in magrittr
 
-Examnples:
+Examples:
 
-#### overvwriting object
-cars %&lt;&gt;%
-  dplyr::summarise(mean(hp))
+#### Overwriting an object
+mtc_tib %&lt;&gt;% dplyr::summarise(mean(hp))
 
 
 
@@ -915,14 +920,14 @@ We often perform operations on all or several columns at once. Most helpful are 
 ``` r
 iris %&gt;% summarise(across(c(Sepal.Length, Sepal.Width), mean))
 iris %&gt;% summarise(across(c(Sepal.Length, Sepal.Width), ~ mean(.x, na.rm = TRUE)))
-# summarise with multipe values 
+# summarise with multiple functions 
 iris %&gt;% summarise(across(c(Sepal.Length, Sepal.Width), list(mean = mean, sd = sd)))
 ```
 ]
 
 --
 
-- Inside the `across()` function we can use the helper function for select which we already saw on the previous slides. 
+- Inside the `across()` function we can use the helper functions for select which we already saw on the previous slides. 
 
 .blockquote.exercise[ 
 
@@ -931,36 +936,12 @@ iris %&gt;% summarise(across(ends_with('Width'), mean))
 ```
 ]
 
-
-
-
 ???
 
 The ~ operator in R creates formula. So ~ lm(mpg ~ wt, data = .) is a formula. Formulas are useful in R because they prevent immediate evaluation of symbols. For example you can define
 
 
 purrr-style formula? 
-
-We often perform operations on all or several columns at once. In this case the standard 
-functions are pedestrian. Most helpful are the scoped versions of  `summarise()`, `mutate()` and `select()`.
-
-- Use `summarise_all()`to summarise every column.
-    
-    ``` r
-    mtc_tib %&gt;% summarise_all(mean)
-    ```
-
-- Use `summarise_if()` to logically subset the columns to be summarised. 
-    
-    ``` r
-    iris %&gt;% summarise_if(is.numeric, mean)
-    ```
-
--  Use `summarise_at()` to summarise selected columns.
-    
-    ``` r
-    iris %&gt;% summarise_at(c("Sepal.Length", "Sepal.Width"), mean)
-    ```
 
 
 ---
@@ -1034,7 +1015,28 @@ class: top, left
 
 ``` r
 band_members   
+```
+
+```
+## # A tibble: 3 × 2
+##   name  band   
+##   &lt;chr&gt; &lt;chr&gt;  
+## 1 Mick  Stones 
+## 2 John  Beatles
+## 3 Paul  Beatles
+```
+
+``` r
 band_instruments
+```
+
+```
+## # A tibble: 3 × 2
+##   name  plays 
+##   &lt;chr&gt; &lt;chr&gt; 
+## 1 John  guitar
+## 2 Paul  bass  
+## 3 Keith guitar
 ```
 ]
 
@@ -1150,6 +1152,8 @@ tidyr::table2
 
 Observations are scattered across multiple rows
 
+???
+The data.frame is in a long format.
 
 ---
 class: top, left
@@ -1172,6 +1176,9 @@ table2 %&gt;%
 
 See the help file for more information
 
+???
+Many more arguments that allow to customize column naming or how NULL values should be handled
+
 ---
 ## Untidy Data
 
@@ -1184,7 +1191,7 @@ tidyr::table4b
 
 --
 
-- Columns do not contain variables and column names are values. 
+- Variables year and population are spread across multiple columns and column names are values. 
 
 ---
 ## Gathering (Lengthening)
@@ -1202,8 +1209,8 @@ The function `pivot_longer()` main arguments are
 .font90.blockquote.exercise[
 
 ``` r
-table4a %&gt;% 
-  pivot_longer(cols = c("1999", "2000"), names_to = "year", values_to = "value")
+table4b %&gt;% 
+  pivot_longer(cols = c("1999", "2000"), names_to = "year", values_to = "population")
 ```
 ]
 
@@ -1225,6 +1232,11 @@ notice that year is a character variable
 tidyr::table3 
 ```
 ]
+
+???
+How woud you describe the structure of the data?
+
+--
 
 - One column contains two variables. 
 
