@@ -46,7 +46,7 @@ xaringan::inf_mr()
 .pull-left-1[**Contact Information:**  ]
 
 .pull-right-2[
-<p> <span style="margin-bottom: -7px;">Martin Schmelzer </span><span><a href = "mailto: martin.schmelzer@outlook.com">schmelzer.martin@gmx.de</a></span></p> 
+<p> <span style="margin-bottom: -7px;">Martin Schmelzer </span><span><a href = "mailto: martin.schmelzer@outlook.com">Martin.Schmelzer@uni-due.de</a></span></p> 
 
 <p style="margin: 25px;"></p>
 
