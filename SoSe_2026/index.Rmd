@@ -29,7 +29,7 @@ class: title-slide title-index
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;**Lecturer: Martin Schmelzer**
 1. [Introduction](Introduction/Introduction.html)
 2. [Data Wrangling with dplyr](Wrangling/Wrangling.html)
-3. [Data Visualisation with ggplot](ggplot2/ggplot2.html)
+3. Data Visualisation with ggplot <!--(ggplot2/ggplot2.html)-->
 4. RMarkdown <!--[RMarkdown](Rmarkdown/rmarkdown.html)-->
 5. Databases <!--[Databases](databases/databases.html)-->
 6. Web Scraping <!--[Web Scraping](Webscraping/webscraping.html)-->
