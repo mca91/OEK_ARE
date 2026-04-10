@@ -57,7 +57,7 @@ xaringan::inf_mr()
 .pull-down[
 Slides, exercises and announcements will be provided on: 
 .center[
-  https://moodle.uni-due.de/course/view.php?id=12923  
+  https://lehre.moodle.uni-due.de/course/view.php?id=12923  
 ]
 <br>
 The password for the course is **"Hadley"**.  
