@@ -172,11 +172,24 @@ print(count)
 ```
   - note that $n$ has to be high enough
   - umstellen auf 95% sicherheit 
+  
+  $$p = P(6) = \frac{1}{6}$$
+  $$q = 1-P(6) = \frac{5}{6}$$
+  Probability of at least one success in n throws
+  
+  $$1 - \left(\frac{5}{6}\right)^n$$
+  $$1 - \left(\frac{5}{6}\right)^n \geq 0.95 $$
+  $$- \left(\frac{5}{6}\right)^n \geq -0.05$$
+   $$ \left(\frac{5}{6}\right)^n \leq 0.05$$
+   $$ n \ ln(5/6) \leq ln(0.05)$$
+  $$ n  \geq \frac{ln(0.05)}{ln(5/6)}$$
+  
 7. What is the problem here?
   - Curly braces are open and closed before the statement is past to the function
 8. What is the problem here? Can you debug it?
   - `df` will not be past to the final call and `fast_lm` is the wrong call
-  ```{r}
+  
+```{r}
   
 df <- mtcars
 
@@ -197,16 +210,7 @@ simple_lin_mod(df, "mpg", "cyl")
 
 
 
-## new 
 
-
-1. Hallo
-1. World
-2. Germany
-
-Hallo world!
-
-6. England
 
 
 

@@ -116,14 +116,17 @@ print(mtc_tib)
 
 - more consistent subsetting behavior
 
+???
+mtc_tib[, 1] stays a tibble
+
 .blockquote.exercise.font80[
 #### `r ICONS$desktop` Example
 
 ```{r, echo = TRUE, eval = FALSE}
-mtcars[ ,1:2] 
-mtcars[ ,1]    
-mtc_tib[ ,1:2]
-mtc_tib[ ,1] 
+mtcars[, 1:2] 
+mtcars[, 1]    
+mtc_tib[, 1:2]
+mtc_tib[, 1] 
 ```
 ]
 ---
@@ -151,8 +154,8 @@ tibble(x = 1:3, y = x^2)
 data_df  <- data.frame(days = 1:3,
                        data = list(mtcars)) # not working
 
-data_tib  <- tibble(days = 1:3, 
-                    data = list(mtcars))
+data_tib <- tibble(days = 1:3, 
+                   data = list(mtcars))
 ```
 ]
 
@@ -202,8 +205,8 @@ filter_out(mtc_tib, hp >= 100 & mpg >= 20)
 ]
 
 ???
-filter_out was addes in the last major update
-filter(mtc_tib, hp < 100 | mpg < 20)
+filter_out was added in the last major update
+filter_out(mtc_tib, hp < 100 | mpg < 20)
 
 --
 
@@ -327,6 +330,9 @@ filter(mtc_tib, hp == 100)
 ```
 ]]
 
+???
+Lets taker a closer look 
+
 --
 
 .font80[
@@ -395,7 +401,9 @@ filter(mtc_tib, when_all(
 ]]
 
 
-
+???
+You might wonder if you need them, you could just use & and |, but the main argument here is readability.
+If you have a big data.frame and your business logic requires many different logical comparisons, this might come in handy.
 
 
 ---
@@ -530,8 +538,7 @@ The function `mutate()` adds new columns or replaces old columns based on existi
 ```{r, echo=TRUE, eval = FALSE}
 mutate(mtc_tib,
        gpm = 1/mpg,
-       disp =  disp - mean(disp) # replaces disp 
-       )
+       disp = disp - mean(disp)) # replaces disp 
 ```
 ]]
 
@@ -550,14 +557,13 @@ mutate(rw, increments =  y - lag(y, k = 1))
 --
 
 .font80[
-- Use `min_rank()` to add a column with the rank (`?min_rank()` gives you an overview of further ranking functions).
+- Use `min_rank()` to add a column with the rank (`?min_rank` gives you an overview of further ranking functions).
 
 .blockquote.exercise[
 ```{r, echo=TRUE, eval = FALSE}
 mutate(mtc_tib,
        hp_rank_smallest_first = min_rank(hp),
-       hp_rank_largest_first  = min_rank(desc(hp))
-  )
+       hp_rank_largest_first  = min_rank(desc(hp)))
 ```
 ]]
 
@@ -570,9 +576,12 @@ mutate(mtc_tib,
 - base R functions such as `mean()`, `sd()`, `max()`
 - dplyr specific functions for
   - position `first()`, `nth()`, `last()`
-  - counts `n()`, `n_disticnt()`
+  - counts `n()`, `n_distinct()`
 
 ]
+
+???
+This is where it gets interesting, usuallly the last coommands
 
 --
 
@@ -583,10 +592,12 @@ summarise(mtc_tib,
           mean_hp    = mean(hp),
           max_wt     = max(wt), 
           n          = n(),            
-          third_cyl  = nth(cyl, 3) 
-          )
+          third_cyl  = nth(cyl, 3))
 ```
 ]]
+
+???
+Lets look at that
 
 --
 
@@ -602,6 +613,11 @@ summarise(by_cyl, my_variance(mpg))
 
 ]]
 
+???
+my_variance(1:10)
+n() works only inside data-masking verbs
+
+
 ---
 ## Summarise
 
@@ -610,7 +626,7 @@ summarise(by_cyl, my_variance(mpg))
 .blockquote.exercise[
 ```{r, eval = FALSE, echo = TRUE}
 two_return_values <- function(x) c(mean(x), sd(x))
-summarise(by_cyl, two_return_vaules(mpg))
+summarise(by_cyl, two_return_values(mpg))
 ```
 ]
 
@@ -638,10 +654,11 @@ class: exercise_slide
       <li> Flew to Houston (IAH or HOU).</li>
       <li> Were delayed by at least an hour, but made up over 30 minutes in flight.</li>
       <li> Departed between midnight and 6am.</li>
-    </ul>
+  </ul>
 <li> Which flights took the longest and which the shortest? </li>
-<li>  Brainstorm as many ways as possible to select <code>dep_time</code>, <code>dep_delay</code>, <code>arr_time</code>, and <code>arr_delay</code>. </li>
+<li> Brainstorm as many ways as possible to select <code>dep_time</code>, <code>dep_delay</code>, <code>arr_time</code>, and <code>arr_delay</code>. </li>
 <li>  Create a new variable <code>first_flight</code> which takes the value <code>TRUE</code> if it is the first flight of the day. </li>
+<li> Create a new variable called speed (in miles per hour) using <code>distance</code> and <code>air_time</code>. Note that <code>air_time</code> is in minutes. Identify the 10 fastest flights in the dataset and check if they belong to a specific carrier.</li>
 </ol>
 
 ```{r, echo=FALSE, eval = FALSE}
@@ -1212,11 +1229,25 @@ class: exercise_slide
 ## Exercises
 
 <ol start="11"> 
-<li>  Compute the rate for <code>table2</code>, and <code>table4a</code> + <code>table4b</code>.  </li>
-<li>  Recreate the plot given by the code below using <code>table2</code> instead of <code>table1</code>. </li>
+<li>Compute the rate for <code>table2</code>, and <code>table4a</code> + <code>table4b</code>.  </li>
+
+<li>Take the <code>tidyr::who</code> and <code>tidyr::who2</code> dataset.</li>
+<ul>
+<li>The who2 dataset is missing <code>iso2</code> and <code>iso3</code> codes. Create a lookup table using the original <code>tidyr::who</code> dataset that contains only the unique combinations of <code>country</code>, <code>iso2</code>, and <code>iso3</code>.</li>
+
+<li>Use a join to add these codes to your who2 dataset.</li>
+
+<li>Once joined, pivot the dataset so that all the tuberculosis measurement columns (from <code>sp_m_014</code> to <code>rel_f_65</code>) are moved into two columns: <code>category_code</code> and <code>count</code>.</li>
+
+<li>Use <code>separate()</code> to split the <code>category_code</code> into three distinct variables: <code>method</code>, <code>sex</code>, and <code>age_group</code>.</li>
+
+<li>The <code>age_group</code> codes are a bit messy (e.g., 014, 1524, 65). Use <code>mutate()</code> and <code>case_when()</code> to rename 014 to 00-14, 65 to 65+ and make all other groups use a hyphen (-) to seperate their limits.</li>
+
+</ul>
+<!--<li>  Recreate the plot given by the code below using <code>table2</code> instead of <code>table1</code>. </li>-->
 </ol>
 
-```{r, echo = TRUE, eval = FALSE}
+```{r, echo = F, eval = FALSE}
 library(ggplot2)
 ggplot(table1, aes(year, cases)) + 
   geom_line(aes(group = country), colour = "grey50") + 

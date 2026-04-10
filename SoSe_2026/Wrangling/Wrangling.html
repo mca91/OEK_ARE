@@ -5,7 +5,7 @@
     <meta charset="utf-8" />
     <meta name="author" content="Martin Arnold" />
     <meta name="author" content="Martin Schmelzer" />
-    <meta name="date" content="2026-04-08" />
+    <meta name="date" content="2026-04-10" />
     <script src="Wrangling_files/header-attrs-2.30/header-attrs.js"></script>
     <link href="Wrangling_files/remark-css-0.0.1/default.css" rel="stylesheet" />
     <link href="Wrangling_files/font-awesome-6.5.2/css/all.min.css" rel="stylesheet" />
@@ -125,15 +125,18 @@ print(mtc_tib)
 
 - more consistent subsetting behavior
 
+???
+mtc_tib[, 1] stays a tibble
+
 .blockquote.exercise.font80[
 #### <svg aria-hidden="true" role="img" viewBox="0 0 576 512" style="height:1em;width:1.12em;vertical-align:-0.125em;margin-left:auto;margin-right:auto;font-size:inherit;fill:#004c93;overflow:visible;position:relative;"><path d="M64 0C28.7 0 0 28.7 0 64V352c0 35.3 28.7 64 64 64H240l-10.7 32H160c-17.7 0-32 14.3-32 32s14.3 32 32 32H416c17.7 0 32-14.3 32-32s-14.3-32-32-32H346.7L336 416H512c35.3 0 64-28.7 64-64V64c0-35.3-28.7-64-64-64H64zM512 64V288H64V64H512z"/></svg> Example
 
 
 ``` r
-mtcars[ ,1:2] 
-mtcars[ ,1]    
-mtc_tib[ ,1:2]
-mtc_tib[ ,1] 
+mtcars[, 1:2] 
+mtcars[, 1]    
+mtc_tib[, 1:2]
+mtc_tib[, 1] 
 ```
 ]
 ---
@@ -163,8 +166,8 @@ tibble(x = 1:3, y = x^2)
 data_df  &lt;- data.frame(days = 1:3,
                        data = list(mtcars)) # not working
 
-data_tib  &lt;- tibble(days = 1:3, 
-                    data = list(mtcars))
+data_tib &lt;- tibble(days = 1:3, 
+                   data = list(mtcars))
 ```
 ]
 
@@ -215,8 +218,8 @@ filter_out(mtc_tib, hp &gt;= 100 &amp; mpg &gt;= 20)
 ]
 
 ???
-filter_out was addes in the last major update
-filter(mtc_tib, hp &lt; 100 | mpg &lt; 20)
+filter_out was added in the last major update
+filter_out(mtc_tib, hp &lt; 100 | mpg &lt; 20)
 
 --
 
@@ -350,6 +353,9 @@ filter(mtc_tib, hp == 100)
 ```
 ]]
 
+???
+Lets taker a closer look 
+
 --
 
 .font80[
@@ -423,7 +429,9 @@ filter(mtc_tib, when_all(
 ]]
 
 
-
+???
+You might wonder if you need them, you could just use &amp; and |, but the main argument here is readability.
+If you have a big data.frame and your business logic requires many different logical comparisons, this might come in handy.
 
 
 ---
@@ -569,8 +577,7 @@ The function `mutate()` adds new columns or replaces old columns based on existi
 ``` r
 mutate(mtc_tib,
        gpm = 1/mpg,
-       disp =  disp - mean(disp) # replaces disp 
-       )
+       disp = disp - mean(disp)) # replaces disp 
 ```
 ]]
 
@@ -590,15 +597,14 @@ mutate(rw, increments =  y - lag(y, k = 1))
 --
 
 .font80[
-- Use `min_rank()` to add a column with the rank (`?min_rank()` gives you an overview of further ranking functions).
+- Use `min_rank()` to add a column with the rank (`?min_rank` gives you an overview of further ranking functions).
 
 .blockquote.exercise[
 
 ``` r
 mutate(mtc_tib,
        hp_rank_smallest_first = min_rank(hp),
-       hp_rank_largest_first  = min_rank(desc(hp))
-  )
+       hp_rank_largest_first  = min_rank(desc(hp)))
 ```
 ]]
 
@@ -611,9 +617,12 @@ mutate(mtc_tib,
 - base R functions such as `mean()`, `sd()`, `max()`
 - dplyr specific functions for
   - position `first()`, `nth()`, `last()`
-  - counts `n()`, `n_disticnt()`
+  - counts `n()`, `n_distinct()`
 
 ]
+
+???
+This is where it gets interesting, usuallly the last coommands
 
 --
 
@@ -625,10 +634,12 @@ summarise(mtc_tib,
           mean_hp    = mean(hp),
           max_wt     = max(wt), 
           n          = n(),            
-          third_cyl  = nth(cyl, 3) 
-          )
+          third_cyl  = nth(cyl, 3))
 ```
 ]]
+
+???
+Lets look at that
 
 --
 
@@ -645,6 +656,11 @@ summarise(by_cyl, my_variance(mpg))
 
 ]]
 
+???
+my_variance(1:10)
+n() works only inside data-masking verbs
+
+
 ---
 ## Summarise
 
@@ -654,7 +670,7 @@ summarise(by_cyl, my_variance(mpg))
 
 ``` r
 two_return_values &lt;- function(x) c(mean(x), sd(x))
-summarise(by_cyl, two_return_vaules(mpg))
+summarise(by_cyl, two_return_values(mpg))
 ```
 ]
 
@@ -683,10 +699,11 @@ class: exercise_slide
       &lt;li&gt; Flew to Houston (IAH or HOU).&lt;/li&gt;
       &lt;li&gt; Were delayed by at least an hour, but made up over 30 minutes in flight.&lt;/li&gt;
       &lt;li&gt; Departed between midnight and 6am.&lt;/li&gt;
-    &lt;/ul&gt;
+  &lt;/ul&gt;
 &lt;li&gt; Which flights took the longest and which the shortest? &lt;/li&gt;
-&lt;li&gt;  Brainstorm as many ways as possible to select &lt;code&gt;dep_time&lt;/code&gt;, &lt;code&gt;dep_delay&lt;/code&gt;, &lt;code&gt;arr_time&lt;/code&gt;, and &lt;code&gt;arr_delay&lt;/code&gt;. &lt;/li&gt;
+&lt;li&gt; Brainstorm as many ways as possible to select &lt;code&gt;dep_time&lt;/code&gt;, &lt;code&gt;dep_delay&lt;/code&gt;, &lt;code&gt;arr_time&lt;/code&gt;, and &lt;code&gt;arr_delay&lt;/code&gt;. &lt;/li&gt;
 &lt;li&gt;  Create a new variable &lt;code&gt;first_flight&lt;/code&gt; which takes the value &lt;code&gt;TRUE&lt;/code&gt; if it is the first flight of the day. &lt;/li&gt;
+&lt;li&gt; Create a new variable called speed (in miles per hour) using &lt;code&gt;distance&lt;/code&gt; and &lt;code&gt;air_time&lt;/code&gt;. Note that &lt;code&gt;air_time&lt;/code&gt; is in minutes. Identify the 10 fastest flights in the dataset and check if they belong to a specific carrier.&lt;/li&gt;
 &lt;/ol&gt;
 
 
@@ -1301,17 +1318,25 @@ class: exercise_slide
 ## Exercises
 
 &lt;ol start="11"&gt; 
-&lt;li&gt;  Compute the rate for &lt;code&gt;table2&lt;/code&gt;, and &lt;code&gt;table4a&lt;/code&gt; + &lt;code&gt;table4b&lt;/code&gt;.  &lt;/li&gt;
-&lt;li&gt;  Recreate the plot given by the code below using &lt;code&gt;table2&lt;/code&gt; instead of &lt;code&gt;table1&lt;/code&gt;. &lt;/li&gt;
+&lt;li&gt;Compute the rate for &lt;code&gt;table2&lt;/code&gt;, and &lt;code&gt;table4a&lt;/code&gt; + &lt;code&gt;table4b&lt;/code&gt;.  &lt;/li&gt;
+
+&lt;li&gt;Take the &lt;code&gt;tidyr::who&lt;/code&gt; and &lt;code&gt;tidyr::who2&lt;/code&gt; dataset.&lt;/li&gt;
+&lt;ul&gt;
+&lt;li&gt;The who2 dataset is missing &lt;code&gt;iso2&lt;/code&gt; and &lt;code&gt;iso3&lt;/code&gt; codes. Create a lookup table using the original &lt;code&gt;tidyr::who&lt;/code&gt; dataset that contains only the unique combinations of &lt;code&gt;country&lt;/code&gt;, &lt;code&gt;iso2&lt;/code&gt;, and &lt;code&gt;iso3&lt;/code&gt;.&lt;/li&gt;
+
+&lt;li&gt;Use a join to add these codes to your who2 dataset.&lt;/li&gt;
+
+&lt;li&gt;Once joined, pivot the dataset so that all the tuberculosis measurement columns (from &lt;code&gt;sp_m_014&lt;/code&gt; to &lt;code&gt;rel_f_65&lt;/code&gt;) are moved into two columns: &lt;code&gt;category_code&lt;/code&gt; and &lt;code&gt;count&lt;/code&gt;.&lt;/li&gt;
+
+&lt;li&gt;Use &lt;code&gt;separate()&lt;/code&gt; to split the &lt;code&gt;category_code&lt;/code&gt; into three distinct variables: &lt;code&gt;method&lt;/code&gt;, &lt;code&gt;sex&lt;/code&gt;, and &lt;code&gt;age_group&lt;/code&gt;.&lt;/li&gt;
+
+&lt;li&gt;The &lt;code&gt;age_group&lt;/code&gt; codes are a bit messy (e.g., 014, 1524, 65). Use &lt;code&gt;mutate()&lt;/code&gt; and &lt;code&gt;case_when()&lt;/code&gt; to rename 014 to 00-14, 65 to 65+ and make all other groups use a hyphen (-) to seperate their limits.&lt;/li&gt;
+
+&lt;/ul&gt;
+&lt;!--&lt;li&gt;  Recreate the plot given by the code below using &lt;code&gt;table2&lt;/code&gt; instead of &lt;code&gt;table1&lt;/code&gt;. &lt;/li&gt;--&gt;
 &lt;/ol&gt;
 
 
-``` r
-library(ggplot2)
-ggplot(table1, aes(year, cases)) + 
-  geom_line(aes(group = country), colour = "grey50") + 
-  geom_point(aes(colour = country))
-```
 
     </textarea>
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>

@@ -1,72 +1,79 @@
 ---
 title: "Exercise Solutions data wrangling"
-author: 'Jens Klenke' 
+author: 'Jens Klenke & Martin Schmelzer'
 output: 
   html_document:
    css: ["../assets/ude_fonts.css", "../assets/ude.css", "../assets/title_slides.css", "../assets/custom.css"]
+   number_sections: true
 ---
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE, eval = F)
 ```
 
 ```{r xaringanExtra-clipboard_2, echo=FALSE}
-# copy button styles mainly in ude.css 
-# https://github.com/gadenbuie/xaringanExtra
-htmltools::tagList(
-  xaringanExtra::use_clipboard(
-    button_text = "<i class=\"fa fa-clipboard\"></i>",
-    success_text = "<i class=\"fa fa-check\" style=\"color: #00ff00\"></i>",
-    error_text = "<i class=\"fa fa-times-circle\" style=\"color: #F94144\"></i>"),
-  rmarkdown::html_dependency_font_awesome() 
-  )
+source(here::here("SoSe_2026/utils.R"))
+fontawesome::fa_html_dependency()
+```
+
+```{css, echo=FALSE}
+.header-section-number::after {
+  content: ".";
+}
 ```
 
 ```{r packages}
 library(tidyverse)
-library(nycflights13)
+library(nycflights23)
 library(ggplot2)
 library(readr)
 library(here)
 ```
 
-
-1.  Load the <code>nycflights13::flights</code> data set. Does it come formatted as a tibble? 
+## Load the <code>nycflights23::flights</code> data set. Does it come formatted as a tibble? 
 
 ```{r}
 data("flights")
 class(flights)
+nrow(flights)
 ```
 
-2. Find all flights that 
+## Find all flights that 
 
-  - Had an arrival delay of two or more hours.
+- **Had an arrival delay of two or more hours.**
 
 ```{r}
 filter(flights, arr_delay >= 120)
 ```
 
-  - Flew to Houston (IAH or HOU)
+- **Flew to Houston (IAH or HOU)**
 
 
 ```{r}
 filter(flights, dest %in% c("IAH", "HOU"))
 ```
 
-  - Were delayed by at least an hour, but made up over 30 minutes in flight.
+- **Were delayed by at least an hour, but made up over 30 minutes in flight.**
 
 ```{r}
 filter(flights, dep_delay >= 60 & arr_delay <= dep_delay - 30)
 ```
 
-  - Departed between midnight and 6am.
+- **Departed between midnight and 6am.**
 
 ```{r}
-filter(flights , between(dep_time, 0, 600) | dep_time == 2400)
+filter(flights, between(dep_time, 0, 600) | dep_time == 2400)
+filter(flights, when_any(
+  between(dep_time, 0, 600),
+  dep_time == 2400
+))
 ```
   
-3. Which flights took the longest and which the shortest?
+## Which flights took the longest and which the shortest?
 
 ```{r}
+flights %>%
+  arrange(desc(air_time)) %>%
+  slice(1)
 slice(flights, which.max(air_time))
 slice_max(flights, air_time)
 ```
@@ -77,38 +84,61 @@ dplyr::slice_min(flights, air_time)
 ```
 
 
-4.  Brainstorm as many ways as possible to select <code>dep_time</code>, <code>dep_delay</code>, <code>arr_time</code>, and <code>arr_delay</code>.
+## Brainstorm as many ways as possible to select <code>dep_time</code>, <code>dep_delay</code>, <code>arr_time</code>, and <code>arr_delay</code>.
 
 ```{r}
+# Basic selection
+select(flights, dep_time, dep_delay, arr_time, arr_delay)
+
+# BY character vector
 selection <- c("dep_time", "dep_delay", "arr_time", "arr_delay")
 flights[ ,selection]
+select(flights, selection)
 
-flights %>% select(selection)
+# String matching
+select(flights, starts_with("dep"), starts_with("arr"))
+select(flights, matches("^(dep|arr)_(time|delay)$"))
 ```
 
-5. Create a new variable <code>first_flight</code> which takes the value <code>TRUE</code> if it is the first flight of the day. 
+## Create a new variable <code>first_flight</code> which takes the value <code>TRUE</code> if it is the first flight of the day. 
 
 ```{r}
-flights <-  mutate(flights, first_flight = if_else(day - lag(day) != 0 | is.na(day - lag(day)), TRUE, FALSE )) 
-filter(flights, first_flight == TRUE)
+flights %>%
+  mutate(first_flight = if_else(day - lag(day) != 0 | is.na(day - lag(day)), TRUE, FALSE)) %>%
+  filter(first_flight == TRUE)
 
 flights %>%
   group_by(year, month, day) %>%
   mutate(first_flight = if_else(row_number() == 1, TRUE, FALSE)) %>%
-  select(first_flight)
+  filter(first_flight)
 ```
 
-6. Find out in which district the most incidents were reported.
+## Create a new variable called <code>speed</code> (in miles per hour) using <code>distance</code> and <code>air_time</code>. Note that <code>air_time</code> is in minutes. Identify the 10 fastest flights in the dataset and check if they belong to a specific carrier.
+
 
 ```{r}
-crime <- readr::read_csv(here::here('SoSe_2022/datasets/BostonCrime.csv'))
+flights %>%
+  mutate(speed = distance / (air_time / 60)) %>%
+  slice_max(speed, n = 10) %>%
+  select(carrier, origin, dest, speed) %>%
+  count(carrier)
+```
+
+
+
+
+## Find out in which district the most incidents were reported.
+
+```{r}
+crime <- readr::read_csv(here::here('SoSe_2026/datasets/BostonCrime.csv'))
 
 crime %>% 
   group_by(DISTRICT) %>%
   summarise(N = n()) %>% 
   arrange(desc(N))
 ```
-7. Create an ordered list of the top ten districts according to the number of drug violations. Start with the district with most drug violations. 
+
+## Create an ordered list of the top ten districts according to the number of drug violations. Start with the district with most drug violations. 
 
 ```{r}
 crime %>% 
@@ -118,7 +148,7 @@ crime %>%
   arrange(desc(N)) 
 ```
 
-8. What was the most dangerous hour of the week according to the number of homicides (<code>OFFENSE_CODE_GROUP == 'Homicide'</code>)? 
+## What was the most dangerous hour of the week according to the number of homicides (<code>OFFENSE_CODE_GROUP == 'Homicide'</code>)? 
 
 ```{r}
 crime %>% 
@@ -128,21 +158,21 @@ crime %>%
   arrange(desc(N))
 ```
 
-9. Calculate for each district the proportion of motor vehicle accidents to all reported incidents (<code>OFFENSE_CODE_GROUP == 'Motor Vehicle Accident Response'</code>). 
+## Calculate for each district the proportion of motor vehicle accidents to all reported incidents (<code>OFFENSE_CODE_GROUP == 'Motor Vehicle Accident Response'</code>). 
 
 ```{r}
- crime %>% 
+crime %>% 
   group_by(DISTRICT) %>%  
   transmute(prop_accidents = sum(OFFENSE_CODE_GROUP == "Motor Vehicle Accident Response") / n()) 
 ```
 
-10. Sort the data set chronologically by year and month. Then take the first 10.000 observations and compute the proportion of incidents where a shooting was involved for each district. Now take a random sample of size 10.000. Is there a noteworthy difference? <i>Hint:</i> There is a variable called <code>SHOOTING</code>.
+## Sort the data set chronologically by year and month. Then take the first 10.000 observations and compute the proportion of incidents where a shooting was involved for each district. Now take a random sample of size 10.000. Is there a noteworthy difference? <i>Hint:</i> There is a variable called <code>SHOOTING</code>.
 
 ```{r}
-crime  %>%
+crime %>%
   arrange(desc(YEAR), desc(MONTH)) %>%
   slice(1:10000) %>%
-  mutate(SHOOTING = ifelse(is.na(SHOOTING), 0, SHOOTING)) %>%
+  mutate(SHOOTING = replace_na(SHOOTING, "0")) %>%
   summarise(porpotion = mean(SHOOTING == "Y"))
 ```
 
@@ -152,32 +182,86 @@ set.seed(1245)
 
 crime  %>%
   slice_sample(n = 10000) %>%
-  mutate(SHOOTING = ifelse(is.na(SHOOTING), 0, SHOOTING)) %>%
-  summarise(porpotion = mean(SHOOTING == "Y"))
+  mutate(SHOOTING = replace_na(SHOOTING, "0")) %>%
+  summarise(propotion = mean(SHOOTING == "Y"))
 ```
 
-11. Compute the TB rate for table2, table4a and table4b.
+Selection bias -> temporal bias -> random sampling is crucial.
+Recent value relevant for forecasting -> population sample relevant for understanding base line
+
+## Compute the TB rate for table2 and table4a + table4b.
 
 ```{r}
 table2 %>%
   tidyr::pivot_wider(names_from = type, values_from = count) %>%
-  dplyr::mutate(rate = cases/population)
+  dplyr::mutate(rate = cases / population)
 ```
 
 ```{r}
 table4a %>%
   tidyr::pivot_longer(cols = c(`1999`, `2000`), 
-                      names_to = 'year', 
-                      values_to = 'cases') %>%
+                      names_to = "year", 
+                      values_to = "cases") %>%
   dplyr::left_join(table4b %>%  
                       tidyr::pivot_longer(cols = c(`1999`, `2000`), 
-                                          names_to = 'year', 
-                                          values_to = 'population'), 
-                   by = c('country', 'year')) %>%
-  dplyr::mutate(rate = cases/population)
+                                          names_to = "year", 
+                                          values_to = "population"), 
+                   by = c("country", "year")) %>%
+  dplyr::mutate(rate = cases / population)
 ```
 
-12. Recreate the plot given by the code below using `table2` instead of `table1`. 
+
+
+
+## Take the <code>tidyr::who</code> and <code>tidyr::who2</code> dataset.
+
+- **The who2 dataset is missing <code>iso2</code> and <code>iso3</code> codes. Create a lookup table using the original <code>tidyr::who</code> dataset that contains only the unique combinations of <code>country</code>, <code>iso2</code>, and <code>iso3</code>.**
+
+- **Use a left join to add these codes to your who2 dataset.**
+
+- **Once joined, pivot the dataset so that all the tuberculosis measurement columns (from <code>sp_m_014</code> to <code>rel_f_65</code>) are moved into two columns: <code>category_code</code> and <code>count</code>.**
+
+- **Use <code>separate()</code> to split the <code>category_code</code> into three distinct variables: <code>method</code>, <code>sex</code>, and <code>age_group</code>.**
+
+- **The age_group codes are a bit messy (e.g., 014, 1524, 65). Use <code>mutate()</code> and <code>case_when()</code> to rename 014 to 00-14, 65 to 65+ and make all other groups use a hyphen (-) to seperate their limits.**
+
+```{r}
+iso_lookup <- who %>%
+  distinct(country, iso2, iso3)
+
+who2_enriched <- who2 %>%
+  left_join(iso_lookup, by = "country") 
+
+who2_enriched_sep <- who2_enriched %>%
+  pivot_longer(sp_m_014:rel_f_65, names_to = "category_code", values_to = "count") %>%
+  separate(category_code, into = c("method", "sex", "age"), sep = "_")
+
+who2_enriched_sep %>%
+  mutate(age = case_when(
+    age == "014" ~ "00-14",
+    age == "1524" ~ "15-24",
+    age == "2534" ~ "25-34",
+    age == "3544" ~ "35-44",
+    age == "4554" ~ "45-54",
+    age == "5564" ~ "55-64",
+    age == "65" ~ "65+",
+    TRUE ~ age
+  ))
+  
+# OR
+who2_enriched_sep %>%
+  mutate(age = case_when(
+    age == "014" ~ "00-14",
+    age == "65"  ~ "65+",
+    str_length(age) == 4 ~ str_replace(age, "(\\d{2})(\\d{2})", "\\1-\\2"),
+    TRUE ~ age
+  ))
+
+```
+
+
+
+<!-- ## Recreate the plot given by the code below using `table2` instead of `table1`. 
 
 ```{r}
 ggplot(table1, aes(year, cases)) + 
@@ -186,12 +270,11 @@ ggplot(table1, aes(year, cases)) +
 ```
 
 
-
-
 ```{r}
 table2 %>% 
   filter(type == "cases") %>%
-  ggplot( aes(x = year, y = count)) +
+  ggplot(aes(x = year, y = count)) +
     geom_line(aes( group = country)) +
     geom_point(aes(color = country))
 ```
+-->
