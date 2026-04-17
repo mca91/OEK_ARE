@@ -32,7 +32,8 @@ fontawesome::fa_html_dependency()
 options(htmltools.dir.version = FALSE)
 
 library(magrittr)
-
+library(ggplot2)
+library(plotly)
 ```
 
 ```{r moon_reader, include=FALSE, eval = FALSE}
@@ -347,9 +348,9 @@ class: exercise_slide
 ## Exercises
 
 <ol start="5"> 
-<li> Use the `mtcars` data set and plot `mpg` vs. `hp`. Add a smoothing line to the plot. </li>
+<li> Use the <code>mtcars</code> data set and plot <code>mpg</code> vs. <code>hp</code>. Add a smoothing line to the plot. </li>
 <li> Add a smoothing function to the plot for each number of cylinders. </li>
-<li> Find out how to remove the confidence interval. (`?geom_smooth`) </li>
+<li> Find out how to remove the confidence interval. (<code>?geom_smooth</code>) </li>
 <li> Use a simple linear regression model and a quadratic regression model for smoothing.</li>
 </ol>
 
@@ -939,36 +940,30 @@ class: exercise_slide
 
 ## Exercises
 
-.font90[
-<ol start="6">
-<li> Download the Titanic data set from Moodle and </li>
+.font80[
+<ol start="9">
+  <li> Can you visualize the "Women and Children First" rule? (Titanic Data on Moodle) </li>
+  <ul>
+    <li> Create a bar plot showing the total number of survivors vs. non-survivors.
+    <li> Use the fill aesthetic to break down survival by Sex. Experiment with <code>position = "dodge"</code> vs <code>position = "stack"</code> — which makes the gender difference clearer?
+    <li>Use <code>facet_wrap(~ Pclass)</code> to see if your survival chances changed based on your ticket tier.
+    <li>Use a density plot or a boxplot to compare the age distribution of those who survived vs. those who didn't. Did being younger actually help?
+  </ul>
+  <li> Try to answer the following questions about the <code>mpg</code> dataset (comes with <code>ggplot2</code>) using <code>ggplot</code>.</li>
+  <ul>
+      <li> How are engine size and fuel economy related?</li>
+      <li> Do certain manufacturers care more about economy than others?</li>
+      <li> Has fuel economy improved in the last ten years?</li>
+  </ul>
+  <li> Compare the two data sets <code>economics</code> and <code>economics_long</code> (both come with ggplot) with respect to the ease of use when working with <code>ggplot</code>.</li>
 </ol>
-<ul>
-    <li> use a bar plot to show how many people survived the Titanic compared to those who didn't.</li>
-    <li> add a color coding to the previous plot to visualize the differences between the passengers' gender.</li>
-    <li> split the previous plot into three plots based on the passengers' class.</li>
-    <li> compare the age distribution between survivors and non-survivors.</li>
-</ul>
-
-
-<ol start="7">
-<li> Try to answer the following questions about the <TT>mpg</TT> dataset (comes with <TT>ggplot2</TT>) using <TT>ggplot</TT>.</li>
-</ol>
-<ul>
-    <li> How are engine size and fuel economy related?</li>
-    <li> Do certain manufacturers care more about economy than others?</li>
-    <li> Has fuel economy improved in the last ten years?</li>
-</ul>
-
-<ol start="8">
-<li> Compare the two data sets  <TT>economics</TT> and <TT>economics_long</TT> (both come with ggplot) with respect to the ease of use when working with <TT>ggplot</TT>.</li>
 ]
 
 ---
 class: exercise_slide
 
-<ol start="9">
-<li>Reproduce the plot created by the following code with <TT>ggplot</TT>.</li>
+<ol start="12">
+<li>Reproduce the plot created by the following code with <code>ggplot</code>.</li>
 
 ```{r, echo = TRUE, eval = FALSE}
 plot(mtcars$mpg ~ mtcars$wt, xlab = "wt", ylab = "mpg", pch = 19, ylim = c(5, 35))
@@ -1071,9 +1066,8 @@ Key Components:
 class: left, top
 ##  The Native Syntax: plot_ly()
 
-
-```{r, eval = T, echo = F, out.width='60%', out.height='80%'}
-library(plotly)
+<center>
+```{r, eval = T, echo = F, out.width='600px', out.height='400px'}
 plot_ly(data = mtcars, 
         x = ~hp, 
         y = ~mpg, 
@@ -1081,7 +1075,7 @@ plot_ly(data = mtcars,
         type = "scatter", 
         mode = "markers")
 ```
-
+</center>
 
 
 
@@ -1110,6 +1104,21 @@ ggplotly(p)
 Why use ggplotly()?
 
 - Speed: No need to learn a new syntax for basic plots.
-
 - Complexity: `ggplot2` is often better at handling complex faceting and statistical layers (like geom_smooth) which ggplotly can then render interactively.
+
+
+
+---
+class: left, top
+## Quick Conversion: ggplotly()
+
+<center>
+```{r Plotly2, eval = T, echo = F, cache = F, out.width='600px', out.height='400px'}
+p <- ggplot(mtcars, aes(x = wt, y = mpg, color = factor(gear))) +
+  geom_point() +
+  theme_minimal()
+
+ggplotly(p)
+``` 
+</center>
 

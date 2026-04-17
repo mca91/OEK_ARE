@@ -88,7 +88,7 @@ Size: Mapping a variable to size works best for continuous data, as it creates a
     geom_smooth()
 ```
     
-7. Find out how to remove the confidence interval.
+7. Find out how to remove the confidence interval. 
 
 ```{r}
   ggplot(mtcars, aes(hp, mpg, color = as.factor(cyl))) +
@@ -98,14 +98,15 @@ Size: Mapping a variable to size works best for continuous data, as it creates a
     
 8. Use a simple linear regression model and a quadratic regression model for smoothing.
 
-  - Simple linear regression model
+- Simple linear regression model
+
 ```{r}
     ggplot(mtcars, aes(hp, mpg, color = as.factor(cyl))) +
       geom_point() +
       geom_smooth(method = lm)
 ```
   
-  - Quadratic regression model
+- Quadratic regression model
   
 ```{r}
   ggplot(mtcars, aes(hp, mpg, color = as.factor(cyl))) +
@@ -113,71 +114,73 @@ Size: Mapping a variable to size works best for continuous data, as it creates a
     geom_smooth(method = lm, formula = y ~ I(x + x^2))
 ```
 
-6. Download the Titanic data set from Moodle and
+9. Can you visualize the "Women and Children First" rule? (Titanic Data on Moodle)
 
 ```{r}
-  titanic <- readr::read_csv(here::here("SoSe_2022/ggplot2/titanic.csv"))
+titanic <- readr::read_csv(here::here("SoSe_2026/ggplot2/titanic.csv"))
 ```
 
-  - use a bar plot to show how many people survived the Titanic compared to those who didn't.
+- Create a bar plot showing the total number of survivors vs. non-survivors.
 
 ```{r}
-  ggplot(titanic, aes(x = survived)) +
-    geom_bar()
+ggplot(titanic, aes(x = factor(survived))) + 
+  geom_bar()
 ```
 
-  - Add a color coding to the previous plot to visualize the differences between the passengers' gender.
+- Use the fill aesthetic to break down survival by Sex. Experiment with <code>position = "dodge"</code> vs <code>position = "stack"</code> — which makes the gender difference clearer?
 
 ```{r}
-  ggplot(titanic, aes(x = survived, fill = sex)) +
-    geom_bar()
+ggplot(titanic, aes(x = factor(survived), fill = sex)) + 
+  geom_bar(position = "dodge")
 ```
 
-  - Split the previous plot into three plots based on the passengers' class.
+- Use <code>facet_wrap(~ Pclass)</code> to see if your survival chances changed based on your ticket tier.
 
 ```{r}
-  ggplot(titanic, aes(x = survived, fill = sex)) +
-    geom_bar() +
-    facet_grid(.~pclass)
+ggplot(titanic, aes(x = factor(survived), fill = sex)) + 
+  geom_bar(position = "dodge") +
+  facet_wrap(~ pclass)
 ```
   
-  - Compare the age distribution between survivors and non-survivors.
+- Compare the age distribution between survivors and non-survivors.
 
 ```{r}
-  ggplot(titanic, aes(x = age, colour = survived, fill = survived)) +
-    geom_density(alpha = 0.5)
+ggplot(titanic, aes(x = age, fill = factor(survived))) + 
+  geom_density(alpha = 0.5)
 ```
 
-7. Try to answer the following questions about the `mpg` dataset (comes with ggplot2) using ggplot.
+10. Try to answer the following questions about the `mpg` dataset (comes with ggplot2) using ggplot.
 
-  - How are engine size and fuel economy related?
+- How are engine size and fuel economy related?
 
 ```{r}
-  ggplot(mpg, aes(x = displ, y = hwy)) +
-    geom_point()
+ggplot(mpg, aes(x = displ, y = hwy)) +
+  geom_point() +
+  geom_smooth() +
+  facet_wrap(~ year)
+# In general its a negative relationship:higher displacement (the bigger the engine) leads to less miles per gallon
 ```
 
-  - Do certain manufacturers care more about economy than others?
+- Do certain manufacturers care more about economy than others?
 
 ```{r}
-  ggplot(mpg, aes(x = hwy, fill = manufacturer)) +
-    geom_density(alpha = 0.75)
+ggplot(mpg, aes(x = hwy, fill = manufacturer)) +
+  geom_density(alpha = 0.75)
+# OR
+ggplot(mpg, aes(x = reorder(manufacturer, hwy), y = hwy)) + 
+  geom_boxplot() + 
+  coord_flip()
 ```
 
-  - Has fuel economy improved in the last ten years?
+- Has fuel economy improved in the last ten years?
 
 ```{r}
-  ggplot(mpg, aes(x = hwy, fill = factor(year))) +
-     geom_density(alpha = 0.5)
+ggplot(mpg, aes(x = hwy, fill = factor(year))) +
+  geom_density(alpha = 0.5)
 ```
     
-8. Compare the two data sets economics and economics_long (both come with ggplot) with respect to the ease of use when working with ggplot.
+11. Take the two data sets economics and economics_long (both come with ggplot). Using each on of them: try plotting all the econonmic variables (unemploy, pop, psavert, etc.) over time on a single line plot with different colors.
     
-```{r}
-  ggplot(economics_long, aes(x = date, y = value, color = variable)) + 
-    geom_line()
-```
-
 ```{r}
   ggplot(economics, aes(x = date)) + 
     geom_line(aes(y = pop), col = "darkgrey") + 
@@ -187,9 +190,16 @@ Size: Mapping a variable to size works best for continuous data, as it creates a
     geom_line(aes(y = unemploy), col = "green")
 ```
 
+```{r}
+  ggplot(economics_long, aes(x = date, y = value, color = variable)) + 
+    geom_line()
+```
+
+
+
 `ggplot2` likes long data. If you want to plot multiple variables with color coding and legend, then you should transform your data set into a format similar to `economics_long`. See `tidyr` for switching between long and wide data formats.
 
-9. Reproduce the plot created by the following code with ggplot.
+12. Reproduce the plot created by the following code with ggplot.
 
 ```{r}
     plot(mtcars$mpg ~ mtcars$wt, xlab = "wt", ylab = "mpg", pch = 19, ylim = c(5, 35))
