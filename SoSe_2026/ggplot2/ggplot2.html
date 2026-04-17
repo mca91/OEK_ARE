@@ -5,16 +5,20 @@
     <meta charset="utf-8" />
     <meta name="author" content="Martin Arnold" />
     <meta name="author" content="Martin Schmelzer" />
-    <meta name="date" content="2025-04-05" />
+    <meta name="date" content="2026-04-17" />
     <script src="ggplot2_files/header-attrs/header-attrs.js"></script>
     <link href="ggplot2_files/remark-css/default.css" rel="stylesheet" />
-    <script src="ggplot2_files/xaringanExtra-progressBar/progress-bar.js"></script>
-    <script src="ggplot2_files/clipboard/clipboard.min.js"></script>
-    <link href="ggplot2_files/xaringanExtra-clipboard/xaringanExtra-clipboard.css" rel="stylesheet" />
-    <script src="ggplot2_files/xaringanExtra-clipboard/xaringanExtra-clipboard.js"></script>
-    <script>window.xaringanExtraClipboard(null, {"button":"<i class=\"fa fa-clipboard\"><\/i>","success":"<i class=\"fa fa-check\" style=\"color: #00ff00\"><\/i>","error":"<i class=\"fa fa-times-circle\" style=\"color: #F94144\"><\/i>"})</script>
     <link href="ggplot2_files/font-awesome/css/all.min.css" rel="stylesheet" />
     <link href="ggplot2_files/font-awesome/css/v4-shims.min.css" rel="stylesheet" />
+    <link href="ggplot2_files/htmltools-fill/fill.css" rel="stylesheet" />
+    <script src="ggplot2_files/htmlwidgets/htmlwidgets.js"></script>
+    <script src="ggplot2_files/plotly-binding/plotly.js"></script>
+    <script src="ggplot2_files/typedarray/typedarray.min.js"></script>
+    <script src="ggplot2_files/jquery/jquery.min.js"></script>
+    <link href="ggplot2_files/crosstalk/css/crosstalk.min.css" rel="stylesheet" />
+    <script src="ggplot2_files/crosstalk/js/crosstalk.min.js"></script>
+    <link href="ggplot2_files/plotly-htmlwidgets-css/plotly-htmlwidgets.css" rel="stylesheet" />
+    <script src="ggplot2_files/plotly-main/plotly-latest.min.js"></script>
     <script type="text/x-mathjax-config">
       MathJax.Hub.Config({
         TeX: { equationNumbers: { autoNumber: "AMS" } },
@@ -39,28 +43,6 @@ class: title-slide title-ggplot2 center middle
 
 
 
-<style>.xe__progress-bar__container {
-  bottom:0;
-  opacity: 1;
-  position:absolute;
-  right:0;
-  left: 0;
-}
-.xe__progress-bar {
-  height: 0.25em;
-  background-color: #004c93;
-  width: calc(var(--slide-current) / var(--slide-total) * 100%);
-}
-.remark-visible .xe__progress-bar {
-  animation: xe__progress-bar__wipe 200ms forwards;
-  animation-timing-function: cubic-bezier(.86,0,.07,1);
-}
-@keyframes xe__progress-bar__wipe {
-  0% { width: calc(var(--slide-previous) / var(--slide-total) * 100%); }
-  100% { width: calc(var(--slide-current) / var(--slide-total) * 100%); }
-}</style>
-
-
 
 
 
@@ -79,7 +61,7 @@ R is a free software environment for statistical computing and  &lt;b&gt;graphic
 
 --
 
-There are three major graphical systems: 
+There are four major graphical systems: 
 
 - R base graphics
 - `lattice`
@@ -136,9 +118,9 @@ class: left, top
 
 .font90[.blockquote.exercise[
 
-#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example
+#### <svg aria-hidden="true" role="img" viewBox="0 0 576 512" style="height:1em;width:1.12em;vertical-align:-0.125em;margin-left:auto;margin-right:auto;font-size:inherit;fill:#004c93;overflow:visible;position:relative;"><path d="M64 0C28.7 0 0 28.7 0 64V352c0 35.3 28.7 64 64 64H240l-10.7 32H160c-17.7 0-32 14.3-32 32s14.3 32 32 32H416c17.7 0 32-14.3 32-32s-14.3-32-32-32H346.7L336 416H512c35.3 0 64-28.7 64-64V64c0-35.3-28.7-64-64-64H64zM512 64V288H64V64H512z"/></svg> Example
 
-```r
+``` r
 library(ggplot2)
 data("diamonds")
 ggplot(data = diamonds) + 
@@ -167,7 +149,7 @@ defines how variables in your data are mapped to visual properties.
 class: left, top
 ## A Basic Example
 
-&lt;img src="ggplot2_files/figure-html/unnamed-chunk-2-1.png" width="72%" style="display: block; margin: auto;" /&gt;
+&lt;img src="ggplot2_files/figure-html/unnamed-chunk-2-1.png" alt="" width="72%" style="display: block; margin: auto;" /&gt;
 
 ???
 
@@ -186,9 +168,9 @@ To make the (possibly nonlinear) relationship in the data easier visible we add 
 
 .font90[.blockquote.exercise[
 
-#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example
+#### <svg aria-hidden="true" role="img" viewBox="0 0 576 512" style="height:1em;width:1.12em;vertical-align:-0.125em;margin-left:auto;margin-right:auto;font-size:inherit;fill:#004c93;overflow:visible;position:relative;"><path d="M64 0C28.7 0 0 28.7 0 64V352c0 35.3 28.7 64 64 64H240l-10.7 32H160c-17.7 0-32 14.3-32 32s14.3 32 32 32H416c17.7 0 32-14.3 32-32s-14.3-32-32-32H346.7L336 416H512c35.3 0 64-28.7 64-64V64c0-35.3-28.7-64-64-64H64zM512 64V288H64V64H512z"/></svg> Example
 
-```r
+``` r
 ggplot(data = diamonds) + 
   geom_point(mapping = aes(x = carat, y = price)) +
   geom_smooth(mapping = aes(x = carat, y = price), method = 'loess')
@@ -212,9 +194,9 @@ The same mapping is then used for all layers (but can be overwritten if necessar
 
 .font90[.blockquote.exercise[
 
-#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example
+#### <svg aria-hidden="true" role="img" viewBox="0 0 576 512" style="height:1em;width:1.12em;vertical-align:-0.125em;margin-left:auto;margin-right:auto;font-size:inherit;fill:#004c93;overflow:visible;position:relative;"><path d="M64 0C28.7 0 0 28.7 0 64V352c0 35.3 28.7 64 64 64H240l-10.7 32H160c-17.7 0-32 14.3-32 32s14.3 32 32 32H416c17.7 0 32-14.3 32-32s-14.3-32-32-32H346.7L336 416H512c35.3 0 64-28.7 64-64V64c0-35.3-28.7-64-64-64H64zM512 64V288H64V64H512z"/></svg> Example
 
-```r
+``` r
 ggplot(diamonds, aes(carat, price)) + 
   geom_point() +
   geom_smooth(method = 'loess')
@@ -225,7 +207,7 @@ ggplot(diamonds, aes(carat, price)) +
 class: left, top
 ## Adding a Layer
 
-&lt;img src="ggplot2_files/figure-html/unnamed-chunk-5-1.png" width="72%" style="display: block; margin: auto;" /&gt;
+&lt;img src="ggplot2_files/figure-html/unnamed-chunk-5-1.png" alt="" width="72%" style="display: block; margin: auto;" /&gt;
 
 ---
 class: left, top
@@ -240,12 +222,10 @@ class: left, top
 
 .blockquote.exercise[
 
-#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example
+#### <svg aria-hidden="true" role="img" viewBox="0 0 576 512" style="height:1em;width:1.12em;vertical-align:-0.125em;margin-left:auto;margin-right:auto;font-size:inherit;fill:#004c93;overflow:visible;position:relative;"><path d="M64 0C28.7 0 0 28.7 0 64V352c0 35.3 28.7 64 64 64H240l-10.7 32H160c-17.7 0-32 14.3-32 32s14.3 32 32 32H416c17.7 0 32-14.3 32-32s-14.3-32-32-32H346.7L336 416H512c35.3 0 64-28.7 64-64V64c0-35.3-28.7-64-64-64H64zM512 64V288H64V64H512z"/></svg> Example
 
-```r
-ggplot(diamonds, aes(x = carat, y = price,
-                     color = color, 
-                     shape =  cut)) + 
+``` r
+ggplot(diamonds, aes(x = carat, y = price, color = color, shape = cut)) + 
   geom_point()
 ```
 ]
@@ -255,17 +235,24 @@ class: left, top
 ## Aesthetics
 
 
-&lt;img src="ggplot2_files/figure-html/unnamed-chunk-7-1.png" width="72%" style="display: block; margin: auto;" /&gt;
+&lt;img src="ggplot2_files/figure-html/unnamed-chunk-7-1.png" alt="" width="72%" style="display: block; margin: auto;" /&gt;
 
 ---
 class: exercise_slide
 ## Exercise
 
 
-1. Experiment with `geom_point()` using the `mtcars` data set. Try out different aesthetics with different variables. What do you note? 
+1. Create a scatter plot of `mpg` vs. `wt` from the mtcars dataset. Map the `hp` variable to the color aesthetic.
+
+2. Modify your previous plot. This time, map the `cyl` variable to the color aesthetic. Then, try mapping `cyl` to the shape aesthetic. If you encounter an error with shape, try wrapping the variable in `as.factor(cyl)`.
+
+3. Create one more plot mapping a continuous variable to size and a categorical variable to color.
+
+4. What key observations do you note (in regards to how ggplot2 treats variables)?
+
 
 ???
-Specifically explain the different behaviour of factor and numeric variables for e.g. color. 
+Specifically regarding how ggplot2 treats numeric variables versus categorical/factor variables when it comes to legends, color scales, and shapes.
 
 ---
 class: left, top
@@ -276,9 +263,9 @@ class: left, top
 
 .blockquote.exercise[
 
-#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example
+#### <svg aria-hidden="true" role="img" viewBox="0 0 576 512" style="height:1em;width:1.12em;vertical-align:-0.125em;margin-left:auto;margin-right:auto;font-size:inherit;fill:#004c93;overflow:visible;position:relative;"><path d="M64 0C28.7 0 0 28.7 0 64V352c0 35.3 28.7 64 64 64H240l-10.7 32H160c-17.7 0-32 14.3-32 32s14.3 32 32 32H416c17.7 0 32-14.3 32-32s-14.3-32-32-32H346.7L336 416H512c35.3 0 64-28.7 64-64V64c0-35.3-28.7-64-64-64H64zM512 64V288H64V64H512z"/></svg> Example
 
-```r
+``` r
 ggplot(diamonds, aes(x = carat, y = price, 
                      color = color, shape =  cut)) + 
   geom_point() + 
@@ -289,7 +276,7 @@ ggplot(diamonds, aes(x = carat, y = price,
 ---
 class: left, top
 ## Statistical Transformations and Aesthetics
-&lt;img src="ggplot2_files/figure-html/unnamed-chunk-9-1.png" width="72%" style="display: block; margin: auto;" /&gt;
+&lt;img src="ggplot2_files/figure-html/unnamed-chunk-9-1.png" alt="" width="72%" style="display: block; margin: auto;" /&gt;
 
 ---
 class: left, top
@@ -298,9 +285,9 @@ class: left, top
 
 .blockquote.exercise[
 
-#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example
+#### <svg aria-hidden="true" role="img" viewBox="0 0 576 512" style="height:1em;width:1.12em;vertical-align:-0.125em;margin-left:auto;margin-right:auto;font-size:inherit;fill:#004c93;overflow:visible;position:relative;"><path d="M64 0C28.7 0 0 28.7 0 64V352c0 35.3 28.7 64 64 64H240l-10.7 32H160c-17.7 0-32 14.3-32 32s14.3 32 32 32H416c17.7 0 32-14.3 32-32s-14.3-32-32-32H346.7L336 416H512c35.3 0 64-28.7 64-64V64c0-35.3-28.7-64-64-64H64zM512 64V288H64V64H512z"/></svg> Example
 
-```r
+``` r
 ggplot(diamonds, aes(x = carat, y = price)) + 
   geom_point(aes(color = color, shape = cut)) +
   geom_smooth()
@@ -311,9 +298,9 @@ ggplot(diamonds, aes(x = carat, y = price)) +
 
 .blockquote.exercise[
 
-#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example
+#### <svg aria-hidden="true" role="img" viewBox="0 0 576 512" style="height:1em;width:1.12em;vertical-align:-0.125em;margin-left:auto;margin-right:auto;font-size:inherit;fill:#004c93;overflow:visible;position:relative;"><path d="M64 0C28.7 0 0 28.7 0 64V352c0 35.3 28.7 64 64 64H240l-10.7 32H160c-17.7 0-32 14.3-32 32s14.3 32 32 32H416c17.7 0 32-14.3 32-32s-14.3-32-32-32H346.7L336 416H512c35.3 0 64-28.7 64-64V64c0-35.3-28.7-64-64-64H64zM512 64V288H64V64H512z"/></svg> Example
 
-```r
+``` r
 ggplot(diamonds, aes(x = carat, y = price, 
                      color = color, shape = cut)) + 
   geom_point() +  
@@ -324,7 +311,7 @@ ggplot(diamonds, aes(x = carat, y = price,
 ---
 class: left, top
 ## Statistical Transformations and Aesthetics
-&lt;img src="ggplot2_files/figure-html/unnamed-chunk-12-1.png" width="72%" style="display: block; margin: auto;" /&gt;
+&lt;img src="ggplot2_files/figure-html/unnamed-chunk-12-1.png" alt="" width="72%" style="display: block; margin: auto;" /&gt;
 
 ---
 class: left, top
@@ -346,11 +333,11 @@ class: left, top
 class: exercise_slide
 ## Exercises
 
-&lt;ol start="2"&gt; 
+&lt;ol start="5"&gt; 
 &lt;li&gt; Use the `mtcars` data set and plot `mpg` vs. `hp`. Add a smoothing line to the plot. &lt;/li&gt;
 &lt;li&gt; Add a smoothing function to the plot for each number of cylinders. &lt;/li&gt;
-&lt;li&gt; Find out how to remove the confidence interval. &lt;/li&gt;
-&lt;li&gt; Use a simple linear regression model and a quadratic regression model for smoothing. &lt;/li&gt;
+&lt;li&gt; Find out how to remove the confidence interval. (`?geom_smooth`) &lt;/li&gt;
+&lt;li&gt; Use a simple linear regression model and a quadratic regression model for smoothing.&lt;/li&gt;
 &lt;/ol&gt;
 
 ---
@@ -366,18 +353,22 @@ class: left, top
 &lt;br&gt;
 .blockquote.exercise[
 
-#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example
+#### <svg aria-hidden="true" role="img" viewBox="0 0 576 512" style="height:1em;width:1.12em;vertical-align:-0.125em;margin-left:auto;margin-right:auto;font-size:inherit;fill:#004c93;overflow:visible;position:relative;"><path d="M64 0C28.7 0 0 28.7 0 64V352c0 35.3 28.7 64 64 64H240l-10.7 32H160c-17.7 0-32 14.3-32 32s14.3 32 32 32H416c17.7 0 32-14.3 32-32s-14.3-32-32-32H346.7L336 416H512c35.3 0 64-28.7 64-64V64c0-35.3-28.7-64-64-64H64zM512 64V288H64V64H512z"/></svg> Example
 
-```r
+``` r
 ggplot(data = diamonds) + 
   geom_bar(mapping = aes(x = cut)) 
 # x should be discrete
 ```
 ]]]
 
+???
+ggplot(mtcars) + geom_bar(aes(x = disp))
+
+
 --
 .pull-right[
-&lt;img src="ggplot2_files/figure-html/unnamed-chunk-14-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+&lt;img src="ggplot2_files/figure-html/unnamed-chunk-14-1.png" alt="" width="100%" style="display: block; margin: auto;" /&gt;
 ]
 ---
 class: left, top
@@ -388,17 +379,19 @@ class: left, top
 &lt;br&gt;
 .blockquote.exercise[
 
-#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example
+#### <svg aria-hidden="true" role="img" viewBox="0 0 576 512" style="height:1em;width:1.12em;vertical-align:-0.125em;margin-left:auto;margin-right:auto;font-size:inherit;fill:#004c93;overflow:visible;position:relative;"><path d="M64 0C28.7 0 0 28.7 0 64V352c0 35.3 28.7 64 64 64H240l-10.7 32H160c-17.7 0-32 14.3-32 32s14.3 32 32 32H416c17.7 0 32-14.3 32-32s-14.3-32-32-32H346.7L336 416H512c35.3 0 64-28.7 64-64V64c0-35.3-28.7-64-64-64H64zM512 64V288H64V64H512z"/></svg> Example
 
-```r
+``` r
 ggplot(diamonds, aes(x = depth, fill = cut)) + 
   geom_histogram(binwidth = 0.1) 
 ```
 ]]]
 
+
+
 --
 .pull-right[
-&lt;img src="ggplot2_files/figure-html/unnamed-chunk-16-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+&lt;img src="ggplot2_files/figure-html/unnamed-chunk-16-1.png" alt="" width="100%" style="display: block; margin: auto;" /&gt;
 ]
 
 ---
@@ -411,9 +404,9 @@ class: left, top
 &lt;br&gt;
 .blockquote.exercise[
 
-#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example
+#### <svg aria-hidden="true" role="img" viewBox="0 0 576 512" style="height:1em;width:1.12em;vertical-align:-0.125em;margin-left:auto;margin-right:auto;font-size:inherit;fill:#004c93;overflow:visible;position:relative;"><path d="M64 0C28.7 0 0 28.7 0 64V352c0 35.3 28.7 64 64 64H240l-10.7 32H160c-17.7 0-32 14.3-32 32s14.3 32 32 32H416c17.7 0 32-14.3 32-32s-14.3-32-32-32H346.7L336 416H512c35.3 0 64-28.7 64-64V64c0-35.3-28.7-64-64-64H64zM512 64V288H64V64H512z"/></svg> Example
 
-```r
+``` r
 ggplot(diamonds, aes(x = depth, fill = cut)) + 
   # try color instead of fill 
   geom_density() 
@@ -423,7 +416,7 @@ ggplot(diamonds, aes(x = depth, fill = cut)) +
 --
 
 .pull-right[
-&lt;img src="ggplot2_files/figure-html/unnamed-chunk-18-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+&lt;img src="ggplot2_files/figure-html/unnamed-chunk-18-1.png" alt="" width="100%" style="display: block; margin: auto;" /&gt;
 ]
 ---
 class: left, top
@@ -435,9 +428,9 @@ class: left, top
 &lt;br&gt;
 .blockquote.exercise[
 
-#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example
+#### <svg aria-hidden="true" role="img" viewBox="0 0 576 512" style="height:1em;width:1.12em;vertical-align:-0.125em;margin-left:auto;margin-right:auto;font-size:inherit;fill:#004c93;overflow:visible;position:relative;"><path d="M64 0C28.7 0 0 28.7 0 64V352c0 35.3 28.7 64 64 64H240l-10.7 32H160c-17.7 0-32 14.3-32 32s14.3 32 32 32H416c17.7 0 32-14.3 32-32s-14.3-32-32-32H346.7L336 416H512c35.3 0 64-28.7 64-64V64c0-35.3-28.7-64-64-64H64zM512 64V288H64V64H512z"/></svg> Example
 
-```r
+``` r
 ggplot(diamonds, aes(carat, price)) + 
   geom_point() + 
   geom_density2d()
@@ -447,7 +440,7 @@ ggplot(diamonds, aes(carat, price)) +
 --
 
 .pull-right[
-&lt;img src="ggplot2_files/figure-html/unnamed-chunk-20-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+&lt;img src="ggplot2_files/figure-html/unnamed-chunk-20-1.png" alt="" width="100%" style="display: block; margin: auto;" /&gt;
 ]
 
 ---
@@ -460,7 +453,7 @@ class: left, top
 &lt;br&gt;
 .blockquote.exercise[
 
-#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example
+#### <svg aria-hidden="true" role="img" viewBox="0 0 576 512" style="height:1em;width:1.12em;vertical-align:-0.125em;margin-left:auto;margin-right:auto;font-size:inherit;fill:#004c93;overflow:visible;position:relative;"><path d="M64 0C28.7 0 0 28.7 0 64V352c0 35.3 28.7 64 64 64H240l-10.7 32H160c-17.7 0-32 14.3-32 32s14.3 32 32 32H416c17.7 0 32-14.3 32-32s-14.3-32-32-32H346.7L336 416H512c35.3 0 64-28.7 64-64V64c0-35.3-28.7-64-64-64H64zM512 64V288H64V64H512z"/></svg> Example
 
 ``` r
 ggplot(diamonds, aes(carat, price)) + 
@@ -470,10 +463,13 @@ ggplot(diamonds, aes(carat, price)) +
 ```
 ]]]
 
+???
+Most aesthetics are mapped from variables found in the data. Sometimes, however, you want to delay the mapping until later in the rendering process. ggplot2 has three stages of the data that you can map aesthetics from, and three functions to control at which stage aesthetics should be evaluated.
+
 --
 
 .pull-right[
-&lt;img src="ggplot2_files/figure-html/unnamed-chunk-22-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+&lt;img src="ggplot2_files/figure-html/unnamed-chunk-22-1.png" alt="" width="100%" style="display: block; margin: auto;" /&gt;
 ]
 
 ---
@@ -487,9 +483,9 @@ class: left, top
 &lt;br&gt;
 .blockquote.exercise[
 
-#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example
+#### <svg aria-hidden="true" role="img" viewBox="0 0 576 512" style="height:1em;width:1.12em;vertical-align:-0.125em;margin-left:auto;margin-right:auto;font-size:inherit;fill:#004c93;overflow:visible;position:relative;"><path d="M64 0C28.7 0 0 28.7 0 64V352c0 35.3 28.7 64 64 64H240l-10.7 32H160c-17.7 0-32 14.3-32 32s14.3 32 32 32H416c17.7 0 32-14.3 32-32s-14.3-32-32-32H346.7L336 416H512c35.3 0 64-28.7 64-64V64c0-35.3-28.7-64-64-64H64zM512 64V288H64V64H512z"/></svg> Example
 
-```r
+``` r
 ggplot(diamonds, aes(carat, price))  + 
   geom_point() + 
   facet_grid( ~ cut)
@@ -499,7 +495,7 @@ ggplot(diamonds, aes(carat, price))  +
 --
 .pull-right[
 
-&lt;img src="ggplot2_files/figure-html/unnamed-chunk-24-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+&lt;img src="ggplot2_files/figure-html/unnamed-chunk-24-1.png" alt="" width="100%" style="display: block; margin: auto;" /&gt;
 
 ]
 
@@ -509,25 +505,27 @@ class: left, top
 
 .font90[.blockquote.exercise[
 
-#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example
+#### <svg aria-hidden="true" role="img" viewBox="0 0 576 512" style="height:1em;width:1.12em;vertical-align:-0.125em;margin-left:auto;margin-right:auto;font-size:inherit;fill:#004c93;overflow:visible;position:relative;"><path d="M64 0C28.7 0 0 28.7 0 64V352c0 35.3 28.7 64 64 64H240l-10.7 32H160c-17.7 0-32 14.3-32 32s14.3 32 32 32H416c17.7 0 32-14.3 32-32s-14.3-32-32-32H346.7L336 416H512c35.3 0 64-28.7 64-64V64c0-35.3-28.7-64-64-64H64zM512 64V288H64V64H512z"/></svg> Example
 
-```r
+``` r
 ggplot(data = diamonds, mapping = aes(carat, price))  + 
   geom_point() + 
   facet_grid(color ~ cut)
 ```
 ]]
 
-&lt;img src="ggplot2_files/figure-html/unnamed-chunk-26-1.png" width="45%" style="display: block; margin: auto;" /&gt;
+&lt;img src="ggplot2_files/figure-html/unnamed-chunk-26-1.png" alt="" width="45%" style="display: block; margin: auto;" /&gt;
 
 
 ---
 class: left, top
 ## Position Adjustments
+
 - Each geometric object has a parameter for position adjustment.
+
 .blockquote.exercise[
 
-```r
+``` r
 ggplot(data = diamonds) + 
   geom_bar(mapping = aes(x = cut, fill = clarity), position = "stack") # the default
 ```
@@ -535,20 +533,22 @@ ggplot(data = diamonds) +
 
 --
 
-- Instead of stacking the bars we can position them side-by-side using `dodge`. 
+- Instead of stacking the bars we can position them side-by-side using `dodge`.
+
 .blockquote.exercise[
 
-```r
-  geom_bar(., position = "dodge") 
+``` r
+geom_bar(., position = "dodge") 
 ```
 ]
 
 --
 
-- With `fill` relative proportions can be compared.
+- Relative proportions can be compared using `fill`.
+
 .blockquote.exercise[
 
-```r
+``` r
 geom_bar(., position = "fill") 
 ```
 ]
@@ -559,20 +559,20 @@ class: left, top
 
 .font70[.blockquote.exercise[
 
-#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example
+#### <svg aria-hidden="true" role="img" viewBox="0 0 576 512" style="height:1em;width:1.12em;vertical-align:-0.125em;margin-left:auto;margin-right:auto;font-size:inherit;fill:#004c93;overflow:visible;position:relative;"><path d="M64 0C28.7 0 0 28.7 0 64V352c0 35.3 28.7 64 64 64H240l-10.7 32H160c-17.7 0-32 14.3-32 32s14.3 32 32 32H416c17.7 0 32-14.3 32-32s-14.3-32-32-32H346.7L336 416H512c35.3 0 64-28.7 64-64V64c0-35.3-28.7-64-64-64H64zM512 64V288H64V64H512z"/></svg> Example
 
-```r
+``` r
 ggplot(data = diamonds) + 
   geom_bar(mapping = aes(x = cut, fill = clarity), position = "stack") # the default
 ```
 ]
 
-&lt;br&gt;
+
 ]
 
 --
 
-&lt;img src="ggplot2_files/figure-html/unnamed-chunk-31-1.png" width="55%" style="display: block; margin: auto;" /&gt;
+&lt;img src="ggplot2_files/figure-html/unnamed-chunk-31-1.png" alt="" width="50%" style="display: block; margin: auto;" /&gt;
 
 
 
@@ -582,9 +582,9 @@ class: left, top
 
 .font70[.blockquote.exercise[
 
-#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example
+#### <svg aria-hidden="true" role="img" viewBox="0 0 576 512" style="height:1em;width:1.12em;vertical-align:-0.125em;margin-left:auto;margin-right:auto;font-size:inherit;fill:#004c93;overflow:visible;position:relative;"><path d="M64 0C28.7 0 0 28.7 0 64V352c0 35.3 28.7 64 64 64H240l-10.7 32H160c-17.7 0-32 14.3-32 32s14.3 32 32 32H416c17.7 0 32-14.3 32-32s-14.3-32-32-32H346.7L336 416H512c35.3 0 64-28.7 64-64V64c0-35.3-28.7-64-64-64H64zM512 64V288H64V64H512z"/></svg> Example
 
-```r
+``` r
 ggplot(data = diamonds) + 
   geom_bar(mapping = aes(x = cut, fill = clarity), position = "dodge") 
 ```
@@ -594,7 +594,7 @@ ggplot(data = diamonds) +
 
 --
 
-&lt;img src="ggplot2_files/figure-html/unnamed-chunk-33-1.png" width="55%" style="display: block; margin: auto;" /&gt;
+&lt;img src="ggplot2_files/figure-html/unnamed-chunk-33-1.png" alt="" width="55%" style="display: block; margin: auto;" /&gt;
 
 
 ---
@@ -603,9 +603,9 @@ class: left, top
 
 .font70[.blockquote.exercise[
 
-#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example
+#### <svg aria-hidden="true" role="img" viewBox="0 0 576 512" style="height:1em;width:1.12em;vertical-align:-0.125em;margin-left:auto;margin-right:auto;font-size:inherit;fill:#004c93;overflow:visible;position:relative;"><path d="M64 0C28.7 0 0 28.7 0 64V352c0 35.3 28.7 64 64 64H240l-10.7 32H160c-17.7 0-32 14.3-32 32s14.3 32 32 32H416c17.7 0 32-14.3 32-32s-14.3-32-32-32H346.7L336 416H512c35.3 0 64-28.7 64-64V64c0-35.3-28.7-64-64-64H64zM512 64V288H64V64H512z"/></svg> Example
 
-```r
+``` r
 ggplot(data = diamonds) + 
   geom_bar(mapping = aes(x = cut, fill = clarity), position = "fill") 
 ```
@@ -615,24 +615,24 @@ ggplot(data = diamonds) +
 
 --
 
-&lt;img src="ggplot2_files/figure-html/unnamed-chunk-35-1.png" width="55%" style="display: block; margin: auto;" /&gt;
+&lt;img src="ggplot2_files/figure-html/unnamed-chunk-35-1.png" alt="" width="55%" style="display: block; margin: auto;" /&gt;
 
 ---
 class: left, top
 ## Scales
 
 .font80[
-- Scales determine how the data are mapped to the aesthetics (e.g. which value takes which color).
-- Scales are defined by functions of the form `scale_aestheticname_scalename()`.
+- Scales determine how the data is mapped to the aesthetics (e.g. which value takes which color).
+- Scales are defined by functions of the form `scale_&lt;aestheticname&gt;_&lt;scalename&gt;()`.
 ]
 
 --
 
 .font80[.blockquote.exercise[
 
-#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example
+#### <svg aria-hidden="true" role="img" viewBox="0 0 576 512" style="height:1em;width:1.12em;vertical-align:-0.125em;margin-left:auto;margin-right:auto;font-size:inherit;fill:#004c93;overflow:visible;position:relative;"><path d="M64 0C28.7 0 0 28.7 0 64V352c0 35.3 28.7 64 64 64H240l-10.7 32H160c-17.7 0-32 14.3-32 32s14.3 32 32 32H416c17.7 0 32-14.3 32-32s-14.3-32-32-32H346.7L336 416H512c35.3 0 64-28.7 64-64V64c0-35.3-28.7-64-64-64H64zM512 64V288H64V64H512z"/></svg> Example
 
-```r
+``` r
 ggplot(diamonds, aes(carat, price, color = cut)) + geom_point() + scale_color_grey()
 ```
 ]
@@ -640,7 +640,7 @@ ggplot(diamonds, aes(carat, price, color = cut)) + geom_point() + scale_color_gr
 
 --
 
-&lt;img src="ggplot2_files/figure-html/unnamed-chunk-37-1.png" width="45%" style="display: block; margin: auto;" /&gt;
+&lt;img src="ggplot2_files/figure-html/unnamed-chunk-37-1.png" alt="" width="45%" style="display: block; margin: auto;" /&gt;
 
 ---
 class: left, top
@@ -654,10 +654,10 @@ class: left, top
 
 .font80[.blockquote.exercise[
 
-#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example
+#### <svg aria-hidden="true" role="img" viewBox="0 0 576 512" style="height:1em;width:1.12em;vertical-align:-0.125em;margin-left:auto;margin-right:auto;font-size:inherit;fill:#004c93;overflow:visible;position:relative;"><path d="M64 0C28.7 0 0 28.7 0 64V352c0 35.3 28.7 64 64 64H240l-10.7 32H160c-17.7 0-32 14.3-32 32s14.3 32 32 32H416c17.7 0 32-14.3 32-32s-14.3-32-32-32H346.7L336 416H512c35.3 0 64-28.7 64-64V64c0-35.3-28.7-64-64-64H64zM512 64V288H64V64H512z"/></svg> Example
 
 
-```r
+``` r
 ggplot(diamonds, aes(carat, price, color = cut)) + 
   geom_point() + 
   scale_color_manual(values = c("#c9792e", "blue", "green", "gray", "thistle2"))
@@ -668,7 +668,7 @@ ggplot(diamonds, aes(carat, price, color = cut)) +
 
 --
 
-&lt;img src="ggplot2_files/figure-html/unnamed-chunk-39-1.png" width="45%" style="display: block; margin: auto;" /&gt;
+&lt;img src="ggplot2_files/figure-html/unnamed-chunk-39-1.png" alt="" width="45%" style="display: block; margin: auto;" /&gt;
 
 
 ---
@@ -686,9 +686,9 @@ class: left, top
 
 .blockquote.exercise[
 
-#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example
+#### <svg aria-hidden="true" role="img" viewBox="0 0 576 512" style="height:1em;width:1.12em;vertical-align:-0.125em;margin-left:auto;margin-right:auto;font-size:inherit;fill:#004c93;overflow:visible;position:relative;"><path d="M64 0C28.7 0 0 28.7 0 64V352c0 35.3 28.7 64 64 64H240l-10.7 32H160c-17.7 0-32 14.3-32 32s14.3 32 32 32H416c17.7 0 32-14.3 32-32s-14.3-32-32-32H346.7L336 416H512c35.3 0 64-28.7 64-64V64c0-35.3-28.7-64-64-64H64zM512 64V288H64V64H512z"/></svg> Example
 
-```r
+``` r
 ggplot(diamonds, aes(x = carat, y = price, fill = cut)) + 
   geom_point() +
   labs(title = "Diamanten", x = "Karat", y = "Preis", fill = "Schnitt") 
@@ -700,10 +700,10 @@ class: left, top
 
 .font80[.blockquote.exercise[
 
-#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example
+#### <svg aria-hidden="true" role="img" viewBox="0 0 576 512" style="height:1em;width:1.12em;vertical-align:-0.125em;margin-left:auto;margin-right:auto;font-size:inherit;fill:#004c93;overflow:visible;position:relative;"><path d="M64 0C28.7 0 0 28.7 0 64V352c0 35.3 28.7 64 64 64H240l-10.7 32H160c-17.7 0-32 14.3-32 32s14.3 32 32 32H416c17.7 0 32-14.3 32-32s-14.3-32-32-32H346.7L336 416H512c35.3 0 64-28.7 64-64V64c0-35.3-28.7-64-64-64H64zM512 64V288H64V64H512z"/></svg> Example
 
 
-```r
+``` r
 ggplot(diamonds, aes(x = carat, y = price, fill = cut)) + 
   geom_point() +
   labs(title = "Diamanten", x = "Karat", y = "Preis", fill = "Schnitt") 
@@ -713,7 +713,7 @@ ggplot(diamonds, aes(x = carat, y = price, fill = cut)) +
 --
 
 
-&lt;img src="ggplot2_files/figure-html/unnamed-chunk-42-1.png" width="50%" style="display: block; margin: auto;" /&gt;
+&lt;img src="ggplot2_files/figure-html/unnamed-chunk-42-1.png" alt="" width="50%" style="display: block; margin: auto;" /&gt;
 
 ---
 class: left, top
@@ -735,9 +735,9 @@ There are many predefined themes. However, if you like you may also define every
 
 .font80[.blockquote.exercise[
 
-#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example
+#### <svg aria-hidden="true" role="img" viewBox="0 0 576 512" style="height:1em;width:1.12em;vertical-align:-0.125em;margin-left:auto;margin-right:auto;font-size:inherit;fill:#004c93;overflow:visible;position:relative;"><path d="M64 0C28.7 0 0 28.7 0 64V352c0 35.3 28.7 64 64 64H240l-10.7 32H160c-17.7 0-32 14.3-32 32s14.3 32 32 32H416c17.7 0 32-14.3 32-32s-14.3-32-32-32H346.7L336 416H512c35.3 0 64-28.7 64-64V64c0-35.3-28.7-64-64-64H64zM512 64V288H64V64H512z"/></svg> Example
 
-```r
+``` r
 ggplot(diamonds, aes(carat, price, color = cut)) + 
   geom_point() + theme_bw()
 ```
@@ -749,9 +749,9 @@ class: left, top
 
 .font80[.blockquote.exercise[
 
-#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example
+#### <svg aria-hidden="true" role="img" viewBox="0 0 576 512" style="height:1em;width:1.12em;vertical-align:-0.125em;margin-left:auto;margin-right:auto;font-size:inherit;fill:#004c93;overflow:visible;position:relative;"><path d="M64 0C28.7 0 0 28.7 0 64V352c0 35.3 28.7 64 64 64H240l-10.7 32H160c-17.7 0-32 14.3-32 32s14.3 32 32 32H416c17.7 0 32-14.3 32-32s-14.3-32-32-32H346.7L336 416H512c35.3 0 64-28.7 64-64V64c0-35.3-28.7-64-64-64H64zM512 64V288H64V64H512z"/></svg> Example
 
-```r
+``` r
 ggplot(diamonds, aes(carat, price, color = cut)) + 
   geom_point() + theme_bw()
 ```
@@ -759,7 +759,7 @@ ggplot(diamonds, aes(carat, price, color = cut)) +
 
 --
 
-&lt;img src="ggplot2_files/figure-html/unnamed-chunk-45-1.png" width="55%" style="display: block; margin: auto;" /&gt;
+&lt;img src="ggplot2_files/figure-html/unnamed-chunk-45-1.png" alt="" width="55%" style="display: block; margin: auto;" /&gt;
 
 ---
 class: left, top
@@ -775,9 +775,9 @@ class: left, top
 
 .font80[.blockquote.exercise[
 
-#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example
+#### <svg aria-hidden="true" role="img" viewBox="0 0 576 512" style="height:1em;width:1.12em;vertical-align:-0.125em;margin-left:auto;margin-right:auto;font-size:inherit;fill:#004c93;overflow:visible;position:relative;"><path d="M64 0C28.7 0 0 28.7 0 64V352c0 35.3 28.7 64 64 64H240l-10.7 32H160c-17.7 0-32 14.3-32 32s14.3 32 32 32H416c17.7 0 32-14.3 32-32s-14.3-32-32-32H346.7L336 416H512c35.3 0 64-28.7 64-64V64c0-35.3-28.7-64-64-64H64zM512 64V288H64V64H512z"/></svg> Example
 
-```r
+``` r
 library(cowplot)
 
 over1 &lt;- ggplot(diamonds, aes(carat, price)) + 
@@ -794,7 +794,7 @@ plot_grid(over1, trans)
 class: left, top
 ## Transparency
 
-&lt;img src="ggplot2_files/figure-html/unnamed-chunk-47-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+&lt;img src="ggplot2_files/figure-html/unnamed-chunk-47-1.png" alt="" width="100%" style="display: block; margin: auto;" /&gt;
 
 ---
 class: left, top
@@ -808,9 +808,9 @@ class: left, top
 
 .font80[.blockquote.exercise[
 
-#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example
+#### <svg aria-hidden="true" role="img" viewBox="0 0 576 512" style="height:1em;width:1.12em;vertical-align:-0.125em;margin-left:auto;margin-right:auto;font-size:inherit;fill:#004c93;overflow:visible;position:relative;"><path d="M64 0C28.7 0 0 28.7 0 64V352c0 35.3 28.7 64 64 64H240l-10.7 32H160c-17.7 0-32 14.3-32 32s14.3 32 32 32H416c17.7 0 32-14.3 32-32s-14.3-32-32-32H346.7L336 416H512c35.3 0 64-28.7 64-64V64c0-35.3-28.7-64-64-64H64zM512 64V288H64V64H512z"/></svg> Example
 
-```r
+``` r
 over2 &lt;- ggplot(mtcars, aes(am, cyl)) + 
   geom_point() 
 
@@ -825,7 +825,7 @@ plot_grid(over2, jitter) # from cowplot
 class: left, top
 ## Jittering
 
-&lt;img src="ggplot2_files/figure-html/unnamed-chunk-49-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+&lt;img src="ggplot2_files/figure-html/unnamed-chunk-49-1.png" alt="" width="100%" style="display: block; margin: auto;" /&gt;
 
 ---
 class: left, top
@@ -839,9 +839,9 @@ class: left, top
 
 .font80[.blockquote.exercise[
 
-#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example
+#### <svg aria-hidden="true" role="img" viewBox="0 0 576 512" style="height:1em;width:1.12em;vertical-align:-0.125em;margin-left:auto;margin-right:auto;font-size:inherit;fill:#004c93;overflow:visible;position:relative;"><path d="M64 0C28.7 0 0 28.7 0 64V352c0 35.3 28.7 64 64 64H240l-10.7 32H160c-17.7 0-32 14.3-32 32s14.3 32 32 32H416c17.7 0 32-14.3 32-32s-14.3-32-32-32H346.7L336 416H512c35.3 0 64-28.7 64-64V64c0-35.3-28.7-64-64-64H64zM512 64V288H64V64H512z"/></svg> Example
 
-```r
+``` r
 library(ggExtra)
 scatter_plot &lt;- ggplot(diamonds, aes(carat, price)) + 
   geom_point()
@@ -860,7 +860,7 @@ ggMarginal(scatter_plot,          # ggExtra
 class: left, top
 ## Composite Plots
 
-&lt;img src="ggplot2_files/figure-html/unnamed-chunk-51-1.png" width="72%" style="display: block; margin: auto;" /&gt;
+&lt;img src="ggplot2_files/figure-html/unnamed-chunk-51-1.png" alt="" width="72%" style="display: block; margin: auto;" /&gt;
 
 ---
 class: exercise_slide
@@ -899,7 +899,7 @@ class: exercise_slide
 &lt;li&gt;Reproduce the plot created by the following code with &lt;TT&gt;ggplot&lt;/TT&gt;.&lt;/li&gt;
 
 
-```r
+``` r
 plot(mtcars$mpg ~ mtcars$wt, xlab = "wt", ylab = "mpg", pch = 19, ylim = c(5, 35))
 
 mod &lt;- lm(mpg ~ wt, data = mtcars)
@@ -931,6 +931,94 @@ lines(wt_new, conf_interval[, 3], col = "steelblue", lty = 2)
 
 
 
+
+
+
+---
+class: left, top
+## Plotly
+
+`plotly` is an interactive, open-source graphing library for R. Unlike ggplot2, which produces static images by default, plotly creates web-based visualizations that allow for immediate exploration.
+
+- Interactivity: Hover over points to see values, click-and-drag to zoom, and toggle categories in the legend.
+
+- Standardized: Built on top of plotly.js, meaning your plots can be easily shared or embedded in web dashboards (like Shiny).
+
+Two options:
+
+- `ggplotly()`: Convert existing ggplot2 objects into interactive versions.
+
+- `plot_ly()`: Build plots from scratch using native Plotly syntax for more granular control.
+
+(https://plotly.com/r/)[https://plotly.com/r/]
+
+---
+class: left, top
+##  The Native Syntax: plot_ly()
+
+The native interface uses a different logic than the "layers" of ggplot2. It uses traces and the tilde (~) symbol to map data columns.
+
+.font90[.blockquote.exercise[
+#### <svg aria-hidden="true" role="img" viewBox="0 0 576 512" style="height:1em;width:1.12em;vertical-align:-0.125em;margin-left:auto;margin-right:auto;font-size:inherit;fill:#004c93;overflow:visible;position:relative;"><path d="M64 0C28.7 0 0 28.7 0 64V352c0 35.3 28.7 64 64 64H240l-10.7 32H160c-17.7 0-32 14.3-32 32s14.3 32 32 32H416c17.7 0 32-14.3 32-32s-14.3-32-32-32H346.7L336 416H512c35.3 0 64-28.7 64-64V64c0-35.3-28.7-64-64-64H64zM512 64V288H64V64H512z"/></svg> Example
+
+``` r
+library(plotly)
+plot_ly(data = mtcars, 
+        x = ~hp, 
+        y = ~mpg, 
+        color = ~factor(cyl), 
+        type = "scatter", 
+        mode = "markers")
+```
+]
+--
+
+Key Components:
+- `~` (The Tilde): Required before variable names to tell Plotly to "look inside" the data frame.
+
+- `type`: Defines the plot type (e.g., "scatter", "bar", "box", "heatmap").
+
+]
+
+---
+class: left, top
+##  The Native Syntax: plot_ly()
+
+
+<div class="plotly html-widget html-fill-item" id="htmlwidget-7d6a894889b51c481dfd" style="width:60%;height:80%;"></div>
+<script type="application/json" data-for="htmlwidget-7d6a894889b51c481dfd">{"x":{"visdat":{"3190113e33c7":["function () ","plotlyVisDat"]},"cur_data":"3190113e33c7","attrs":{"3190113e33c7":{"x":{},"y":{},"mode":"markers","color":{},"alpha_stroke":1,"sizes":[10,100],"spans":[1,20],"type":"scatter"}},"layout":{"margin":{"b":40,"l":60,"t":25,"r":10},"xaxis":{"domain":[0,1],"automargin":true,"title":"hp"},"yaxis":{"domain":[0,1],"automargin":true,"title":"mpg"},"hovermode":"closest","showlegend":true},"source":"A","config":{"modeBarButtonsToAdd":["hoverclosest","hovercompare"],"showSendToCloud":false},"data":[{"x":[93,62,95,66,52,65,97,66,91,113,109],"y":[22.800000000000001,24.399999999999999,22.800000000000001,32.399999999999999,30.399999999999999,33.899999999999999,21.5,27.300000000000001,26,30.399999999999999,21.399999999999999],"mode":"markers","type":"scatter","name":"4","marker":{"color":"rgba(102,194,165,1)","line":{"color":"rgba(102,194,165,1)"}},"textfont":{"color":"rgba(102,194,165,1)"},"error_y":{"color":"rgba(102,194,165,1)"},"error_x":{"color":"rgba(102,194,165,1)"},"line":{"color":"rgba(102,194,165,1)"},"xaxis":"x","yaxis":"y","frame":null},{"x":[110,110,110,105,123,123,175],"y":[21,21,21.399999999999999,18.100000000000001,19.199999999999999,17.800000000000001,19.699999999999999],"mode":"markers","type":"scatter","name":"6","marker":{"color":"rgba(252,141,98,1)","line":{"color":"rgba(252,141,98,1)"}},"textfont":{"color":"rgba(252,141,98,1)"},"error_y":{"color":"rgba(252,141,98,1)"},"error_x":{"color":"rgba(252,141,98,1)"},"line":{"color":"rgba(252,141,98,1)"},"xaxis":"x","yaxis":"y","frame":null},{"x":[175,245,180,180,180,205,215,230,150,150,245,175,264,335],"y":[18.699999999999999,14.300000000000001,16.399999999999999,17.300000000000001,15.199999999999999,10.4,10.4,14.699999999999999,15.5,15.199999999999999,13.300000000000001,19.199999999999999,15.800000000000001,15],"mode":"markers","type":"scatter","name":"8","marker":{"color":"rgba(141,160,203,1)","line":{"color":"rgba(141,160,203,1)"}},"textfont":{"color":"rgba(141,160,203,1)"},"error_y":{"color":"rgba(141,160,203,1)"},"error_x":{"color":"rgba(141,160,203,1)"},"line":{"color":"rgba(141,160,203,1)"},"xaxis":"x","yaxis":"y","frame":null}],"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.20000000000000001,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
+
+
+
+
+---
+class: left, top
+## Quick Conversion: ggplotly()
+
+If you already have a workflow using ggplot2, you can gain interactivity with a single function call. This is the fastest way to add value to your existing data visualizations.
+
+.font90[.blockquote.exercise[
+#### <svg aria-hidden="true" role="img" viewBox="0 0 576 512" style="height:1em;width:1.12em;vertical-align:-0.125em;margin-left:auto;margin-right:auto;font-size:inherit;fill:#004c93;overflow:visible;position:relative;"><path d="M64 0C28.7 0 0 28.7 0 64V352c0 35.3 28.7 64 64 64H240l-10.7 32H160c-17.7 0-32 14.3-32 32s14.3 32 32 32H416c17.7 0 32-14.3 32-32s-14.3-32-32-32H346.7L336 416H512c35.3 0 64-28.7 64-64V64c0-35.3-28.7-64-64-64H64zM512 64V288H64V64H512z"/></svg> Example
+
+``` r
+library(ggplot2)
+library(plotly)
+
+p &lt;- ggplot(mtcars, aes(x = wt, y = mpg, color = factor(gear))) +
+  geom_point() +
+  theme_minimal()
+
+ggplotly(p)
+```
+]]
+
+--
+
+Why use ggplotly()?
+
+- Speed: No need to learn a new syntax for basic plots.
+
+- Complexity: `ggplot2` is often better at handling complex faceting and statistical layers (like geom_smooth) which ggplotly can then render interactively.
 
     </textarea>
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>

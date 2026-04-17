@@ -22,6 +22,18 @@ output:
         scroll: false # disable slide transitions by scrolling
 ---
 class: title-slide title-ggplot2 center middle
+```{r setup, echo = F, eval = T, warning = F}
+knitr::opts_chunk$set(echo = FALSE, warning=FALSE, message=FALSE, 
+                      fig.align = 'center', cache = T,  
+                      dpi = 250, fig.width=10, out.width='72%')
+
+source(here::here("SoSe_2026/utils.R"))
+fontawesome::fa_html_dependency()
+options(htmltools.dir.version = FALSE)
+
+library(magrittr)
+
+```
 
 ```{r moon_reader, include=FALSE, eval = FALSE}
 # setup for moon reader
@@ -30,37 +42,7 @@ options(servr.interval = 0.5)
 xaringan::inf_mr()
 ```
 
-```{r xaringanExtra_progress-bar, echo = FALSE}
-xaringanExtra::use_progress_bar(color = "#004c93", location = "bottom")
-```
 
-```{r xaringanExtra-clipboard_2, echo=FALSE}
-# copy button styles mainly in ude.css
-htmltools::tagList(
-  xaringanExtra::use_clipboard(
-    button_text = "<i class=\"fa fa-clipboard\"></i>",
-    success_text = "<i class=\"fa fa-check\" style=\"color: #00ff00\"></i>",
-    error_text = "<i class=\"fa fa-times-circle\" style=\"color: #F94144\"></i>"
-  ),
-  rmarkdown::html_dependency_font_awesome()
-)
-```
-
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = FALSE, warning=FALSE, message=FALSE, 
-                      fig.align = 'center', cache = TRUE,  
-                      dpi = 250, fig.width=10, out.width='72%')
-options(htmltools.dir.version = FALSE)
-
-library(icons)
-library(magrittr)
-
-# pre-define icons
-desktop <- icon_style(icons::fontawesome$solid$desktop, fill = "#004c93")
-checker_green <- icons::icon_style(fontawesome$solid$check, fill = "green")
-times_red <- icons::icon_style(fontawesome$solid$times, fill = "red")
-
-```
 
 # `r rmarkdown::metadata$title`
 ## `r rmarkdown::metadata$subtitle`
@@ -77,7 +59,7 @@ R is a free software environment for statistical computing and  <b>graphics</b>.
 
 --
 
-There are three major graphical systems: 
+There are four major graphical systems: 
 
 - R base graphics
 - `lattice`
@@ -134,7 +116,7 @@ class: left, top
 
 .font90[.blockquote.exercise[
 
-#### `r desktop` Example
+#### `r ICONS$desktop` Example
 ```{r, echo = TRUE, eval = FALSE}
 library(ggplot2)
 data("diamonds")
@@ -190,7 +172,7 @@ To make the (possibly nonlinear) relationship in the data easier visible we add 
 
 .font90[.blockquote.exercise[
 
-#### `r desktop` Example
+#### `r ICONS$desktop` Example
 ```{r, echo = TRUE, eval = FALSE}
 ggplot(data = diamonds) + 
   geom_point(mapping = aes(x = carat, y = price)) +
@@ -215,7 +197,7 @@ The same mapping is then used for all layers (but can be overwritten if necessar
 
 .font90[.blockquote.exercise[
 
-#### `r desktop` Example
+#### `r ICONS$desktop` Example
 ```{r, echo = TRUE, eval = FALSE}
 ggplot(diamonds, aes(carat, price)) + 
   geom_point() +
@@ -246,11 +228,9 @@ class: left, top
 
 .blockquote.exercise[
 
-#### `r desktop` Example
+#### `r ICONS$desktop` Example
 ```{r, echo = TRUE, eval = FALSE}
-ggplot(diamonds, aes(x = carat, y = price,
-                     color = color, 
-                     shape =  cut)) + 
+ggplot(diamonds, aes(x = carat, y = price, color = color, shape = cut)) + 
   geom_point()
 ```
 ]
@@ -261,8 +241,7 @@ class: left, top
 
 
 ```{r, echo = FALSE, eval = TRUE}
-ggplot(diamonds, aes(x = carat, y = price, 
-                     color = color, shape =  cut)) + 
+ggplot(diamonds, aes(x = carat, y = price, color = color, shape =  cut)) + 
   geom_point()
 ```
 
@@ -271,10 +250,17 @@ class: exercise_slide
 ## Exercise
 
 
-1. Experiment with `geom_point()` using the `mtcars` data set. Try out different aesthetics with different variables. What do you note? 
+1. Create a scatter plot of `mpg` vs. `wt` from the mtcars dataset. Map the `hp` variable to the color aesthetic.
+
+2. Modify your previous plot. This time, map the `cyl` variable to the color aesthetic. Then, try mapping `cyl` to the shape aesthetic. If you encounter an error with shape, try wrapping the variable in `as.factor(cyl)`.
+
+3. Create one more plot mapping a continuous variable to size and a categorical variable to color.
+
+4. What key observations do you note (in regards to how ggplot2 treats variables)?
+
 
 ???
-Specifically explain the different behaviour of factor and numeric variables for e.g. color. 
+Specifically regarding how ggplot2 treats numeric variables versus categorical/factor variables when it comes to legends, color scales, and shapes.
 
 ---
 class: left, top
@@ -285,7 +271,7 @@ class: left, top
 
 .blockquote.exercise[
 
-#### `r desktop` Example
+#### `r ICONS$desktop` Example
 ```{r, echo = TRUE, eval = FALSE, warning=FALSE}
 ggplot(diamonds, aes(x = carat, y = price, 
                      color = color, shape =  cut)) + 
@@ -310,7 +296,7 @@ class: left, top
 
 .blockquote.exercise[
 
-#### `r desktop` Example
+#### `r ICONS$desktop` Example
 ```{r, echo = TRUE, eval = FALSE}
 ggplot(diamonds, aes(x = carat, y = price)) + 
   geom_point(aes(color = color, shape = cut)) +
@@ -322,7 +308,7 @@ ggplot(diamonds, aes(x = carat, y = price)) +
 
 .blockquote.exercise[
 
-#### `r desktop` Example
+#### `r ICONS$desktop` Example
 ```{r, echo = TRUE, eval = FALSE}
 ggplot(diamonds, aes(x = carat, y = price, 
                      color = color, shape = cut)) + 
@@ -360,11 +346,11 @@ class: left, top
 class: exercise_slide
 ## Exercises
 
-<ol start="2"> 
+<ol start="5"> 
 <li> Use the `mtcars` data set and plot `mpg` vs. `hp`. Add a smoothing line to the plot. </li>
 <li> Add a smoothing function to the plot for each number of cylinders. </li>
-<li> Find out how to remove the confidence interval. </li>
-<li> Use a simple linear regression model and a quadratic regression model for smoothing. </li>
+<li> Find out how to remove the confidence interval. (`?geom_smooth`) </li>
+<li> Use a simple linear regression model and a quadratic regression model for smoothing.</li>
 </ol>
 
 ---
@@ -380,13 +366,17 @@ class: left, top
 <br>
 .blockquote.exercise[
 
-#### `r desktop` Example
+#### `r ICONS$desktop` Example
 ```{r, echo = TRUE, eval = FALSE, out.width='100%'}
 ggplot(data = diamonds) + 
   geom_bar(mapping = aes(x = cut)) 
 # x should be discrete
 ```
 ]]]
+
+???
+ggplot(mtcars) + geom_bar(aes(x = disp))
+
 
 --
 .pull-right[
@@ -404,12 +394,14 @@ class: left, top
 <br>
 .blockquote.exercise[
 
-#### `r desktop` Example
+#### `r ICONS$desktop` Example
 ```{r, echo = TRUE, eval = FALSE, out.width='50%'}
 ggplot(diamonds, aes(x = depth, fill = cut)) + 
   geom_histogram(binwidth = 0.1) 
 ```
 ]]]
+
+
 
 --
 .pull-right[
@@ -429,7 +421,7 @@ class: left, top
 <br>
 .blockquote.exercise[
 
-#### `r desktop` Example
+#### `r ICONS$desktop` Example
 ```{r, echo = TRUE, eval = FALSE, out.width='50%'}
 ggplot(diamonds, aes(x = depth, fill = cut)) + 
   # try color instead of fill 
@@ -455,7 +447,7 @@ class: left, top
 <br>
 .blockquote.exercise[
 
-#### `r desktop` Example
+#### `r ICONS$desktop` Example
 ```{r, echo = TRUE, eval = FALSE}
 ggplot(diamonds, aes(carat, price)) + 
   geom_point() + 
@@ -483,7 +475,7 @@ class: left, top
 <br>
 .blockquote.exercise[
 
-#### `r desktop` Example
+#### `r ICONS$desktop` Example
 ```{r echo = TRUE, eval = FALSE}
 ggplot(diamonds, aes(carat, price)) + 
   geom_point() + 
@@ -491,6 +483,9 @@ ggplot(diamonds, aes(carat, price)) +
                  geom = "polygon")
 ```
 ]]]
+
+???
+Most aesthetics are mapped from variables found in the data. Sometimes, however, you want to delay the mapping until later in the rendering process. ggplot2 has three stages of the data that you can map aesthetics from, and three functions to control at which stage aesthetics should be evaluated.
 
 --
 
@@ -515,7 +510,7 @@ class: left, top
 <br>
 .blockquote.exercise[
 
-#### `r desktop` Example
+#### `r ICONS$desktop` Example
 ```{r, echo = TRUE, eval = FALSE, out.width='50%'}
 ggplot(diamonds, aes(carat, price))  + 
   geom_point() + 
@@ -540,7 +535,7 @@ class: left, top
 
 .font90[.blockquote.exercise[
 
-#### `r desktop` Example
+#### `r ICONS$desktop` Example
 ```{r, echo = TRUE, eval = FALSE, out.width='45%'}
 ggplot(data = diamonds, mapping = aes(carat, price))  + 
   geom_point() + 
@@ -558,7 +553,9 @@ ggplot(data = diamonds, mapping = aes(carat, price))  +
 ---
 class: left, top
 ## Position Adjustments
+
 - Each geometric object has a parameter for position adjustment.
+
 .blockquote.exercise[
 ```{r, echo = TRUE, eval = FALSE}
 ggplot(data = diamonds) + 
@@ -568,16 +565,18 @@ ggplot(data = diamonds) +
 
 --
 
-- Instead of stacking the bars we can position them side-by-side using `dodge`. 
+- Instead of stacking the bars we can position them side-by-side using `dodge`.
+
 .blockquote.exercise[
 ```{r, echo = TRUE, eval = FALSE}
-  geom_bar(., position = "dodge") 
+geom_bar(., position = "dodge") 
 ```
 ]
 
 --
 
-- With `fill` relative proportions can be compared.
+- Relative proportions can be compared using `fill`.
+
 .blockquote.exercise[
 ```{r, echo = TRUE, eval = FALSE}
 geom_bar(., position = "fill") 
@@ -590,19 +589,19 @@ class: left, top
 
 .font70[.blockquote.exercise[
 
-#### `r desktop` Example
+#### `r ICONS$desktop` Example
 ```{r, echo = TRUE, eval = FALSE}
 ggplot(data = diamonds) + 
   geom_bar(mapping = aes(x = cut, fill = clarity), position = "stack") # the default
 ```
 ]
 
-<br>
+
 ]
 
 --
 
-```{r, echo = FALSE, eval = TRUE, out.width='55%'}
+```{r, echo = FALSE, eval = TRUE, out.width='50%'}
 ggplot(data = diamonds) + 
   geom_bar(mapping = aes(x = cut, fill = clarity), position = "stack") # the default
 ```
@@ -615,7 +614,7 @@ class: left, top
 
 .font70[.blockquote.exercise[
 
-#### `r desktop` Example
+#### `r ICONS$desktop` Example
 ```{r, echo = TRUE, eval = FALSE, out.width='55%'}
 ggplot(data = diamonds) + 
   geom_bar(mapping = aes(x = cut, fill = clarity), position = "dodge") 
@@ -638,7 +637,7 @@ class: left, top
 
 .font70[.blockquote.exercise[
 
-#### `r desktop` Example
+#### `r ICONS$desktop` Example
 ```{r, echo = TRUE, eval = FALSE, out.width='55%'}
 ggplot(data = diamonds) + 
   geom_bar(mapping = aes(x = cut, fill = clarity), position = "fill") 
@@ -659,15 +658,15 @@ class: left, top
 ## Scales
 
 .font80[
-- Scales determine how the data are mapped to the aesthetics (e.g. which value takes which color).
-- Scales are defined by functions of the form `scale_aestheticname_scalename()`.
+- Scales determine how the data is mapped to the aesthetics (e.g. which value takes which color).
+- Scales are defined by functions of the form `scale_<aestheticname>_<scalename>()`.
 ]
 
 --
 
 .font80[.blockquote.exercise[
 
-#### `r desktop` Example
+#### `r ICONS$desktop` Example
 ```{r, echo = TRUE, eval = FALSE, out.width='50%'}
 ggplot(diamonds, aes(carat, price, color = cut)) + geom_point() + scale_color_grey()
 ```
@@ -692,7 +691,7 @@ class: left, top
 
 .font80[.blockquote.exercise[
 
-#### `r desktop` Example
+#### `r ICONS$desktop` Example
 
 ```{r, echo = TRUE, eval = FALSE, out.width='50%'}
 ggplot(diamonds, aes(carat, price, color = cut)) + 
@@ -727,7 +726,7 @@ class: left, top
 
 .blockquote.exercise[
 
-#### `r desktop` Example
+#### `r ICONS$desktop` Example
 ```{r, echo = TRUE, eval = FALSE}
 ggplot(diamonds, aes(x = carat, y = price, fill = cut)) + 
   geom_point() +
@@ -740,7 +739,7 @@ class: left, top
 
 .font80[.blockquote.exercise[
 
-#### `r desktop` Example
+#### `r ICONS$desktop` Example
 
 ```{r, echo = TRUE, eval = FALSE}
 ggplot(diamonds, aes(x = carat, y = price, fill = cut)) + 
@@ -778,7 +777,7 @@ There are many predefined themes. However, if you like you may also define every
 
 .font80[.blockquote.exercise[
 
-#### `r desktop` Example
+#### `r ICONS$desktop` Example
 ```{r, echo = TRUE, eval = FALSE}
 ggplot(diamonds, aes(carat, price, color = cut)) + 
   geom_point() + theme_bw()
@@ -791,7 +790,7 @@ class: left, top
 
 .font80[.blockquote.exercise[
 
-#### `r desktop` Example
+#### `r ICONS$desktop` Example
 ```{r, echo = TRUE, eval = FALSE}
 ggplot(diamonds, aes(carat, price, color = cut)) + 
   geom_point() + theme_bw()
@@ -819,7 +818,7 @@ class: left, top
 
 .font80[.blockquote.exercise[
 
-#### `r desktop` Example
+#### `r ICONS$desktop` Example
 ```{r, eval = FALSE, echo = TRUE}
 library(cowplot)
 
@@ -861,7 +860,7 @@ class: left, top
 
 .font80[.blockquote.exercise[
 
-#### `r desktop` Example
+#### `r ICONS$desktop` Example
 ```{r, eval = FALSE, echo = TRUE, fig.width=10, out.width='100%'}
 over2 <- ggplot(mtcars, aes(am, cyl)) + 
   geom_point() 
@@ -899,7 +898,7 @@ class: left, top
 
 .font80[.blockquote.exercise[
 
-#### `r desktop` Example
+#### `r ICONS$desktop` Example
 ```{r, eval = FALSE, echo = TRUE}
 library(ggExtra)
 scatter_plot <- ggplot(diamonds, aes(carat, price)) + 
@@ -1020,4 +1019,97 @@ ggplot(mpg, aes(y = hwy, x  = displ, col = factor(year))) + geom_point() + geom_
 economics_long
 ggplot(economics_long, aes(x = date, y = value, col = variable)) + geom_line()
 ```
+
+
+
+---
+class: left, top
+## Plotly
+
+`plotly` is an interactive, open-source graphing library for R. Unlike ggplot2, which produces static images by default, plotly creates web-based visualizations that allow for immediate exploration.
+
+- Interactivity: Hover over points to see values, click-and-drag to zoom, and toggle categories in the legend.
+
+- Standardized: Built on top of plotly.js, meaning your plots can be easily shared or embedded in web dashboards (like Shiny).
+
+Two options:
+
+- `ggplotly()`: Convert existing ggplot2 objects into interactive versions.
+
+- `plot_ly()`: Build plots from scratch using native Plotly syntax for more granular control.
+
+(https://plotly.com/r/)[https://plotly.com/r/]
+
+---
+class: left, top
+##  The Native Syntax: plot_ly()
+
+The native interface uses a different logic than the "layers" of ggplot2. It uses traces and the tilde (~) symbol to map data columns.
+
+.font90[.blockquote.exercise[
+#### `r ICONS$desktop` Example
+```{r, eval = FALSE, echo = TRUE}
+library(plotly)
+plot_ly(data = mtcars, 
+        x = ~hp, 
+        y = ~mpg, 
+        color = ~factor(cyl), 
+        type = "scatter", 
+        mode = "markers")
+```
+]
+--
+
+Key Components:
+- `~` (The Tilde): Required before variable names to tell Plotly to "look inside" the data frame.
+
+- `type`: Defines the plot type (e.g., "scatter", "bar", "box", "heatmap").
+
+]
+
+---
+class: left, top
+##  The Native Syntax: plot_ly()
+
+
+```{r, eval = T, echo = F, out.width='60%', out.height='80%'}
+library(plotly)
+plot_ly(data = mtcars, 
+        x = ~hp, 
+        y = ~mpg, 
+        color = ~factor(cyl), 
+        type = "scatter", 
+        mode = "markers")
+```
+
+
+
+
+---
+class: left, top
+## Quick Conversion: ggplotly()
+
+If you already have a workflow using ggplot2, you can gain interactivity with a single function call. This is the fastest way to add value to your existing data visualizations.
+
+.font90[.blockquote.exercise[
+#### `r ICONS$desktop` Example
+```{r, eval = FALSE, echo = TRUE}
+library(ggplot2)
+library(plotly)
+
+p <- ggplot(mtcars, aes(x = wt, y = mpg, color = factor(gear))) +
+  geom_point() +
+  theme_minimal()
+
+ggplotly(p)
+``` 
+]]
+
+--
+
+Why use ggplotly()?
+
+- Speed: No need to learn a new syntax for basic plots.
+
+- Complexity: `ggplot2` is often better at handling complex faceting and statistical layers (like geom_smooth) which ggplotly can then render interactively.
 
