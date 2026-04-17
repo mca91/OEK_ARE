@@ -1,12 +1,12 @@
 ---
 title: "Exercise Solutions ggplot2"
-author: 'Jens Klenke' 
+author: 'Jens Klenke & Martin Schmelzer' 
 output: 
   html_document:
    css: ["../assets/ude_fonts.css", "../assets/ude.css", "../assets/title_slides.css", "../assets/custom.css"]
 ---
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
+knitr::opts_chunk$set(eval = F, echo = TRUE, warning = FALSE, message = FALSE, fig.width = 6, fig.height = 3, cache = T)
 ```
 
 ```{r xaringanExtra-clipboard_2, echo=FALSE}
@@ -28,7 +28,7 @@ library(here)
 ```
 
 
-1. Create a scatter plot of `mpg` vs. `wt` from the mtcars dataset. Map the `hp` variable to the color aesthetic.
+1. **Create a scatter plot of `mpg` vs. `wt` from the mtcars dataset. Map the `hp` variable to the color aesthetic.**
 
 ```{r}
 # Mapping a continuous variable (hp) to color
@@ -37,7 +37,7 @@ ggplot(mtcars, aes(x = wt, y = mpg, color = hp)) +
 ```
 
 
-2. Modify your previous plot. This time, map the `cyl` variable to the color aesthetic. Then, try mapping `cyl` to the shape aesthetic. If you encounter an error with shape, try wrapping the variable in `as.factor(cyl)`.
+2. **Modify your previous plot. This time, map the `cyl` variable to the color aesthetic. Then, try mapping `cyl` to the shape aesthetic. If you encounter an error with shape, try wrapping the variable in `as.factor(cyl)`.**
 
 ```{r}
 # Mapping cyl to color (treated as continuous by default)
@@ -50,7 +50,7 @@ ggplot(mtcars, aes(x = wt, y = mpg, color = factor(cyl), shape = factor(cyl))) +
 ```
 
 
-3. Create one more plot mapping a continuous variable to size and a categorical variable to color.
+3. **Create one more plot mapping a continuous variable to size and a categorical variable to color.**
 
 ```{r}
 # Mixing continuous (disp for size) and categorical (am for color)
@@ -58,7 +58,7 @@ ggplot(mtcars, aes(x = wt, y = mpg, size = disp, color = factor(am))) +
   geom_point()
 ```
 
-4. What key observations do you note (in regards to how ggplot2 treats variables)?
+4. **What key observations do you note (in regards to how ggplot2 treats variables)?**
 
  - **Color Scales:** When a variable is numeric (like hp or cyl in its raw form), ggplot2 creates a continuous gradient (e.g., light blue to dark blue). When wrapped in factor(), it assigns distinct hues (discrete colors).
 
@@ -72,7 +72,7 @@ Size: Mapping a variable to size works best for continuous data, as it creates a
 
 
 
-5. Use the mtcars data set and plot mpg vs. hp. Add a smoothing line to the plot.
+5. **Use the mtcars data set and plot mpg vs. hp. Add a smoothing line to the plot.**
     
 ```{r}
   ggplot(mtcars, aes(hp, mpg)) +
@@ -80,7 +80,7 @@ Size: Mapping a variable to size works best for continuous data, as it creates a
     geom_smooth()
 ```
     
-6. Add a smoothing function to the plot for each number of cylinders.
+6. **Add a smoothing function to the plot for each number of cylinders.**
 
 ```{r}
   ggplot(mtcars, aes(hp, mpg, color = factor(cyl))) +
@@ -88,7 +88,7 @@ Size: Mapping a variable to size works best for continuous data, as it creates a
     geom_smooth()
 ```
     
-7. Find out how to remove the confidence interval. 
+7. **Find out how to remove the confidence interval.**
 
 ```{r}
   ggplot(mtcars, aes(hp, mpg, color = as.factor(cyl))) +
@@ -96,7 +96,7 @@ Size: Mapping a variable to size works best for continuous data, as it creates a
     geom_smooth(se = FALSE)
 ```
     
-8. Use a simple linear regression model and a quadratic regression model for smoothing.
+8. **Use a simple linear regression model and a quadratic regression model for smoothing.**
 
 - Simple linear regression model
 
@@ -114,7 +114,7 @@ Size: Mapping a variable to size works best for continuous data, as it creates a
     geom_smooth(method = lm, formula = y ~ I(x + x^2))
 ```
 
-9. Can you visualize the "Women and Children First" rule? (Titanic Data on Moodle)
+9. **Can you visualize the "Women and Children First" rule? (Titanic Data on Moodle)**
 
 ```{r}
 titanic <- readr::read_csv(here::here("SoSe_2026/ggplot2/titanic.csv"))
@@ -149,7 +149,7 @@ ggplot(titanic, aes(x = age, fill = factor(survived))) +
   geom_density(alpha = 0.5)
 ```
 
-10. Try to answer the following questions about the `mpg` dataset (comes with ggplot2) using ggplot.
+10. **Try to answer the following questions about the `mpg` dataset (comes with ggplot2) using ggplot.**
 
 - How are engine size and fuel economy related?
 
@@ -179,7 +179,7 @@ ggplot(mpg, aes(x = hwy, fill = factor(year))) +
   geom_density(alpha = 0.5)
 ```
     
-11. Take the two data sets economics and economics_long (both come with ggplot). Using each on of them: try plotting all the econonmic variables (unemploy, pop, psavert, etc.) over time on a single line plot with different colors.
+11. **Take the two data sets economics and economics_long (both come with ggplot). Using each on of them: try plotting all the econonmic variables (unemploy, pop, psavert, etc.) over time on a single line plot with different colors.**
     
 ```{r}
   ggplot(economics, aes(x = date)) + 
@@ -199,7 +199,7 @@ ggplot(mpg, aes(x = hwy, fill = factor(year))) +
 
 `ggplot2` likes long data. If you want to plot multiple variables with color coding and legend, then you should transform your data set into a format similar to `economics_long`. See `tidyr` for switching between long and wide data formats.
 
-12. Reproduce the plot created by the following code with ggplot.
+12. **Reproduce the plot created by the following code with ggplot.**
 
 ```{r}
     plot(mtcars$mpg ~ mtcars$wt, xlab = "wt", ylab = "mpg", pch = 19, ylim = c(5, 35))
