@@ -988,7 +988,7 @@ class: top, left
 
 A left join keeps all observations from the left table, and matches records from the right table based on one (or multiple) columns (`by`).
 .blockquote.exercise[ 
-```{r, echo = TRUE, results='markup'}
+```{r, echo = TRUE, results='markup', eval = T}
 band_members %>% left_join(band_instruments, by = "name")
 ```
 ]
@@ -1003,7 +1003,7 @@ class: top, left
 
 An inner join matches rows from the left and the right table but only keeps the rows where both tables have matching rows in the `by` column.
 .blockquote.exercise[ 
-```{r, echo = TRUE, results='markup'}
+```{r, echo = TRUE, results='markup', eval = T}
 band_members %>% inner_join(band_instruments, by = "name")
 ```
  ]
@@ -1014,7 +1014,7 @@ class: top, left
 A full (outer) join matches rows from the left and the right table and keeps all observation
 
 .blockquote.exercise[ 
-```{r, echo = TRUE, results='markup'}
+```{r, echo = TRUE, results='markup', eval = T}
 band_members %>% full_join(band_instruments, by = "name")
 ```
 ]
@@ -1026,7 +1026,7 @@ A semi join keeps all observations of the left table where there are matching va
 It keeps only columns from the left. 
 
 .blockquote.exercise[ 
-```{r, echo = TRUE, results='markup'}
+```{r, echo = TRUE, results='markup', eval = T}
 band_members %>% semi_join(band_instruments, by = "name")
 ```
 ]
@@ -1037,7 +1037,7 @@ class: top, left
 An anti join returns all rows from the first table where no matches are found in the second table.
 
 .blockquote.exercise[  
-```{r, echo = TRUE, results='markup'}
+```{r, echo = TRUE, results='markup', eval = T}
 band_members %>% anti_join(band_instruments, by = 'name')
 ```
 ]
@@ -1064,7 +1064,7 @@ class: top, left
 ## Tidy Data
 
 .blockquote.exercise[
-```{r, echo = TRUE}
+```{r, echo = TRUE, eval = T}
 tidyr::table1
 ```
 ]
@@ -1078,7 +1078,7 @@ class: top, left
 ## Untidy data
 
 .blockquote.exercise[
-```{r, echo = TRUE}
+```{r, echo = TRUE, eval = T}
 tidyr::table2
 ```
 ]
@@ -1100,7 +1100,7 @@ The function `tidyr::pivot_wider()` main arguments are
 - `values_from`, containing the values for the variables in the `names_from` column. 
 
 .blockquote.exercise[
-```{r, echo = TRUE}
+```{r, echo = TRUE, eval = T}
 table2 %>%
     pivot_wider(names_from = type, values_from = count)
 ```
@@ -1117,7 +1117,7 @@ Many more arguments that allow to customize column naming or how NULL values sho
 ## Untidy Data
 
 .blockquote.exercise[
-```{r, echo = TRUE}
+```{r, echo = TRUE, eval = T}
 tidyr::table4b
 ```
 ]
@@ -1140,7 +1140,7 @@ The function `pivot_longer()` main arguments are
 --
 
 .font90.blockquote.exercise[
-```{r, echo = TRUE}
+```{r, echo = TRUE, eval = T}
 table4b %>% 
   pivot_longer(cols = c("1999", "2000"), names_to = "year", values_to = "population")
 ```
@@ -1159,7 +1159,7 @@ notice that year is a character variable
 ## Untidy Data
 
 .blockquote.exercise[
-```{r, echo = TRUE}
+```{r, echo = TRUE, eval = T}
 tidyr::table3 
 ```
 ]
@@ -1186,7 +1186,7 @@ As input it takes:
 --
 
 .code70[.blockquote.exercise[
-```{r, echo = TRUE}
+```{r, echo = TRUE, eval = T}
 table3 %>% 
   separate(rate, into = c("cases", "population"), convert = TRUE)
 ```
@@ -1200,7 +1200,7 @@ why is sep not specified?
 ## Untidy Data
 
 .blockquote.exercise[
-```{r, echo = TRUE}
+```{r, echo = TRUE, eval = T}
 tidyr::table5 
 ```
 ]
@@ -1217,7 +1217,7 @@ As input it takes:
 - `sep`, the separator between values.
 
 .blockquote.exercise[
-```{r, echo = TRUE}
+```{r, echo = TRUE, eval = T}
 table5 %>% 
   unite(year, century, year, sep = "")
 ```
