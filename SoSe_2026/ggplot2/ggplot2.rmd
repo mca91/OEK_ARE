@@ -60,7 +60,7 @@ R is a free software environment for statistical computing and  <b>graphics</b>.
 
 --
 
-There are four major graphical systems: 
+There are three major graphical systems: 
 
 - R base graphics
 - `lattice`
