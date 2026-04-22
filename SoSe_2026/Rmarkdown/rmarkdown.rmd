@@ -23,7 +23,18 @@ output:
 editor_options: 
   chunk_output_type: console
 ---
-class: title-slide title-rmarkdown center middle
+class: title-slide title-ggplot2 center middle
+```{r setup, echo = F, eval = T, warning = F, message=F}
+knitr::opts_chunk$set(echo = FALSE, warning=FALSE, message=FALSE, 
+                      fig.align = 'center', cache = F,  
+                      dpi = 250, fig.width=10, out.width='72%')
+
+source(here::here("SoSe_2026/utils.R"))
+fontawesome::fa_html_dependency()
+options(htmltools.dir.version = FALSE)
+library(tidyverse)
+```
+
 ```{r moon_reader, include=FALSE, eval = FALSE}
 # setup for moon reader
 # copy it to console
@@ -31,34 +42,6 @@ options(servr.interval = 0.5)
 xaringan::inf_mr()
 ```
 
-```{r xaringanExtra_progress-bar, echo = FALSE}
-xaringanExtra::use_progress_bar(color = "#004c93", location = "bottom")
-```
-
-```{r xaringanExtra-clipboard_2, echo=FALSE}
-# copy button styles mainly in ude.css
-htmltools::tagList(
-  xaringanExtra::use_clipboard(
-    button_text = "<i class=\"fa fa-clipboard\"></i>",
-    success_text = "<i class=\"fa fa-check\" style=\"color: #00ff00\"></i>",
-    error_text = "<i class=\"fa fa-times-circle\" style=\"color: #F94144\"></i>"
-  ),
-  rmarkdown::html_dependency_font_awesome()
-)
-```
-
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo=FALSE, warning=FALSE, message=FALSE)
-options(htmltools.raw.version = FALSE)
-def.chunk.hook  <- knitr::knit_hooks$get("chunk")
-
-library(dplyr)
-
-# pre-define icons
-desktop <- icons::icon_style(icons::fontawesome$solid$desktop, fill = "#004c93")
-checker_green <- icons::icon_style(icons::fontawesome$solid$check, fill = "green")
-times_red <- icons::icon_style(icons::fontawesome$solid$times, fill = "red")
-```
 
 # `r rmarkdown::metadata$title`
 ## `r rmarkdown::metadata$subtitle`
@@ -82,6 +65,7 @@ You can use R Markdown
 - [R Markdown: The Definitive Guide](https://bookdown.org/yihui/rmarkdown/) 
 - [Introduction to R Markdown](https://rmarkdown.rstudio.com/lesson-1.html)
 - [Cheatsheet](https://raw.githubusercontent.com/rstudio/cheatsheets/master/rmarkdown-2.0.pdf)
+- [Gallery](https://rmarkdown.rstudio.com/gallery.html)
 
 --
 
@@ -98,7 +82,7 @@ class: left, top
 
 .font80.blockquote.exercise.pull-left-2[
 
-#### `r desktop` Example
+#### `r ICONS$desktop` Example
 ```{r echo=FALSE, comment = "", size="tiny"}
 cat(htmltools::includeText("old/diamond-sizes.Rmd"))
 ```
@@ -109,7 +93,7 @@ cat(htmltools::includeText("old/diamond-sizes.Rmd"))
 
 .pull-right-1.font80[
 - If this is stored as `example.rmd` in your working directory run `knitr::render(example.rmd)` to create an output document. 
-- Alternatively, hit the `r knitr::include_graphics("../img/knit.PNG")` button in Rstudio.
+- Alternatively, hit the "Knit" button in Rstudio.
 - Or you can use the short key combination `Ctrl + Shift + K`
 ]
 
@@ -138,8 +122,8 @@ class: left, top
 <br>
 
 When we click **knit** in RStudio then 
-1. the `knitr` package executes the code chunks and creates a markdown document (`.md`) which contains the text we have written and optionally the code and its output 
-2. the `.md` file gets processed by `pandoc` which creates the final file in the desired output format (e.g. `html`, `pdf`, `word`, ...)
+1. the `knitr` package executes the code chunks and creates a markdown document (`.md`) which contains the text we have written and optionally the code and its output.
+2. the `.md` file gets processed by `pandoc` which creates the final file in the desired output format (e.g. `html`, `pdf`, `word`, ...).
 
 <br>
 
@@ -162,7 +146,7 @@ Here you can:
 --
 
 .blockquote.exercise[
-#### `r desktop` Example: Basic YAML header using mostly defaults
+#### `r ICONS$desktop` Example: Basic YAML header using mostly defaults
 
 ```yaml
 ---
@@ -182,7 +166,7 @@ class: left, top
 ## The YAML header
 
 .blockquote.exercise[
-#### `r desktop` Example:  A more complicated YAML header
+#### `r ICONS$desktop` Example:  A more complicated YAML header
 
 ```nohighlights
 ---
@@ -233,7 +217,7 @@ class: left, top
 .pull-left[
 .blockquote.exercise[
 
-#### `r desktop` Example: Headers
+#### `r ICONS$desktop` Example: Headers
 ```markdown
      #   Header 1     
      ##  Header 2   
@@ -255,7 +239,7 @@ class: left, top
 .pull-right[ 
 .blockquote.exercise[
 
-#### `r desktop` Inline formatting
+#### `r ICONS$desktop` Inline formatting
 
 ```markdown
      *italics* 
@@ -279,7 +263,7 @@ class: left, top
 
 .pull-left[.blockquote.exercise[
 
-#### `r desktop`  Unordered Lists
+#### `r ICONS$desktop`  Unordered Lists
 
 ```markdown
   * Item
@@ -302,7 +286,7 @@ class: left, top
 
 .pull-right[.blockquote.exercise[
 
-#### `r desktop` Ordered Lists
+#### `r ICONS$desktop` Ordered Lists
 
 ```markdown
   1. First item
@@ -334,7 +318,7 @@ class: left, top
 
 .pull-left[.blockquote.exercise[
 
-#### `r desktop` Linebreaks  
+#### `r ICONS$desktop` Linebreaks  
 ```markdown
 First line  
 Second line
@@ -354,7 +338,7 @@ A new line is started by two whitespaces at the end of the previous line (which 
 
 .pull-right[.blockquote.exercise[
 
-#### `r desktop` Paragraphs
+#### `r ICONS$desktop` Paragraphs
 
 ```markdown
   First paragraph
@@ -413,7 +397,7 @@ class: left, top
 
 .blockquote.exercise[
 
-#### `r desktop` Example
+#### `r ICONS$desktop` Example
 
 ```{r echo=FALSE, comment = ""}
 cat("\\begin{align}
@@ -476,10 +460,10 @@ class: left, top
 
 .blockquote.exercise[
 
-#### `r desktop` Example
+#### `r ICONS$desktop` Example
 
 ````markdown
-`r ''````{r lin_reg, echo=TRUE, cache = TRUE}
+`r ''````{r lin_reg, echo=TRUE, cache=TRUE}
 x <- runif(100)
 y <- 0.4 * x + rnorm(100)
 lm(y ~ x)
@@ -495,7 +479,7 @@ If you mainly use chunk options which are not the default, then it saves time to
 
 .blockquote.exercise[
 
-#### `r desktop` Example: chunk setup 
+#### `r ICONS$desktop` Example: chunk setup 
 
 ````markdown
 `r ''````{r setup, include=FALSE}
@@ -511,7 +495,7 @@ You can also use R in your running text. When something changes (e.g. the input 
 
 .blockquote.exercise[
 
-#### `r desktop` Example
+#### `r ICONS$desktop` Example
 
 ````markdown
 `r ''````{r, echo=FALSE}
@@ -542,7 +526,7 @@ Tables can be created as follows:
 <br>
 .blockquote.exercise[
 
-#### `r desktop` Example
+#### `r ICONS$desktop` Example
 
 
 ```markdown
@@ -584,7 +568,7 @@ class: left, top
 
 .pull-left[
 .blockquote.exercise[
-#### `r desktop` Example
+#### `r ICONS$desktop` Example
 ````markdown
 `r ''````{r}
 gtobj <- citizens %>%
@@ -653,7 +637,7 @@ class: left, top
 
 
 .font90.blockquote.exercise[
-#### `r desktop` Example
+#### `r ICONS$desktop` Example
 
 ```{r, echo = TRUE, eval = T}
 load("../../OEK_ARE.RData")
@@ -687,7 +671,7 @@ class: left, top
 
 
 .font90.blockquote.exercise[
-#### `r desktop` Example
+#### `r ICONS$desktop` Example
 
 ```{r, echo = TRUE, eval = T}
 gtobj <- gtobj %>%
@@ -719,7 +703,7 @@ class: left, top
 
 
 .font90.blockquote.exercise[
-#### `r desktop` Example
+#### `r ICONS$desktop` Example
 
 ```{r, echo = TRUE, eval = T}
 gtobj <- gtobj %>%
@@ -767,7 +751,7 @@ class: left, top
 
 .pull-left[
 .blockquote.exercise[
-#### `r desktop` Example
+#### `r ICONS$desktop` Example
 ````markdown
 `r ''````{r}
 citizens %>%
@@ -819,7 +803,7 @@ class: left, top
 
 
 .font90.blockquote.exercise[
-#### `r desktop` Example
+#### `r ICONS$desktop` Example
 
 ```{r, echo = TRUE, eval = T}
 linear_model <- lm(mpg ~ cyl + wt, data = mtcars)
@@ -844,7 +828,7 @@ class: left, top
 <br>
 
 .pull-left[.blockquote.exercise[
-#### `r desktop` Example
+#### `r ICONS$desktop` Example
 
 ````markdown
 `r ''````{r, results='asis', echo=TRUE}
@@ -879,7 +863,7 @@ class: left, top
 <br>
 
 .pull-left[.blockquote.exercise[
-#### `r desktop` Example
+#### `r ICONS$desktop` Example
 ````markdown
 `r ''````{r, fig.height = 5}
 hist(rnorm(1000))
@@ -956,7 +940,7 @@ class: left, top
 --
 
 .blockquote.exercise[
-#### `r desktop` Example: plot
+#### `r ICONS$desktop` Example: plot
 
 ````markdown
 `r ''````{r}
@@ -1001,7 +985,7 @@ class: left, top
 ## Interactive documents
 
 .pull-left[.blockquote.exercise[.font70[
-#### `r desktop` Example: map 
+#### `r ICONS$desktop` Example: map 
 
 ````markdown
 `r ''````{r, out.width='100%'}
@@ -1043,7 +1027,7 @@ class: left, top
 - The `DT` package also allows us to include interactive tables. 
 
 .blockquote.exercise[
-#### `r desktop` Example: map
+#### `r ICONS$desktop` Example: map
 
 ````markdown
 `r ''````{r}
@@ -1121,7 +1105,7 @@ at the top of your document.
 
 
 .blockquote.exercise[
-#### `r desktop` Function
+#### `r ICONS$desktop` Function
 ````markdown
 `r ''````{r, eval = FALSE, echo=TRUE}
 knitr::knit_hooks$set(small.mar = function(before) {
@@ -1137,7 +1121,7 @@ knitr::knit_hooks$set(small.mar = function(before) {
 - `small.mar` now can be used as other chunk options. 
 
 .blockquote.exercise[
-#### `r desktop` Example
+#### `r ICONS$desktop` Example
 ````markdown
 `r ''````{r, small.mar = TRUE}
 hist(rnorm)
@@ -1166,7 +1150,7 @@ class: left, top
 --
 
 .font70[.blockquote.exercise[
-#### `r desktop` Example
+#### `r ICONS$desktop` Example
 ```{r, eval = FALSE, echo = TRUE}
 knitr::knit_hooks$set(small.mar = function(before) {
     if (before) par(mar = c(1, 1, 1, 1))  
@@ -1186,7 +1170,7 @@ class: left, top
 - You can e.g. use a hook to consistently style all your gt tables 
 
 .font70[.blockquote.exercise[
-#### `r desktop` Example
+#### `r ICONS$desktop` Example
 ```{r, eval = FALSE, echo=TRUE}
 default_output_hook <- knitr::knit_hooks$get("output")
 knitr::knit_hooks$set(
@@ -1244,7 +1228,7 @@ class: left, top
 - use `here::here()` when setting a path.
 
 .blockquote.exercise[
-#### `r desktop` Example
+#### `r ICONS$desktop` Example
 ```{r, eval = FALSE, echo=TRUE}
 load(here::here("Data", "my_dataset.rda"))
 ```
@@ -1306,7 +1290,7 @@ class: left, top
 2. Wrap with a function
 
 .blockquote.exercise[
-#### `r desktop` Example
+#### `r ICONS$desktop` Example
 ```{r, eval = FALSE, echo=TRUE}
 my_pdf_format <- function(...) {
     rmarkdown::pdf_document(
@@ -1336,26 +1320,47 @@ class: exercise_slide
 ## Exercises
 
 1. Create an R Markdown document that is compiled to an HTML document. 
-   The document should consist of two sections:
+   The document should consist of two main (first level) sections:
     - Crime Incidents Report Data
     - Explorative Data Analysis.
-2. Use the first section to read in the "Crime Incident Reports" available under 
-   [Boston crime](https://data.boston.gov/dataset/crime-incident-reports-august-2015-to-date-source-new-system). Add some information about the source of the data and list all available columns with a short description  
-   Hint: Take a look at the table `RMS_Crime_Incident_Field_Explanation`. 
+2. Use the first section to read in the "Crime Incident Reports" (`readRDS()`) and the "Field Explanation" (`readxl::read_xlsx`) files available on Moodle. Then
+  - Display a sample of the data as a formatted table
+  - Write 1-2 sentences that include derived information (number of observation, number of variables, ...) from the actual data set (use inline R code).
+  - Look at the "Field Explanation" data and tidy it (`dplyr` + `tidyr`) 
+  - Display the tidied explanation data as a formatted table
 
 3. Optimize your code chunks so that the document doesn't load the data every time you compile. 
 
-4. Use the second section for an EDA. You are free to do whatever you like but produce at least one table and one graphic. 
 
-5. Hide all your code chunks by setting a global option. 
+---
+class: exercise_slide
+## Exercises
+<ol start="4">
+<li>Use the second section for an EDA. The first subsection should analyze the incidents by day of the week.
+  <ul>
+    <li>Use <code>dplyr</code> to get the number of incidents per month.</li>
+    <li>Create a bar chart using <code>ggplot2::geom_col</code> (check the docs for infos on the aesthetics) to show the results.</li>
+    <li>Create a table using <code>gt()</code> showing the numbers. Give it a caption.</li>
+  </ul>
+</li>
+<li>
+  The second subsection analyzes incidents over time.
+  <ul>
+    <li>Compute the number of incidents by <code>YEAR</code> and <code>MONTH</code>. Use <code>lubridate::make_date()</code> to create a new variable called <code>Date</code> (the values should have the form <code>yyyy-mm-01</code>)</li>
+  <li>Create a ggplot using geometries of your choise shoing the development of the numbers over time.</li>
+  <li>Make the plot interactive.</li>
+</ul>
+</li>
+<li>Hide all your code chunks by setting a global option. </li>
 
-6. Create a PDF document containing what you did. For this $\LaTeX{}$ needs to be 
-   installed. 
+</ol>
 
 ---
 class: exercise_slide
 ## Exercises
 <ol start="7"> 
+
+<li>Create a PDF document containing what you did (make sure the package <code>tinytex</code> is installed).</li>
 <li>  Remember that nested ordered lists are not supported by Rmarkdown. Nonetheless, produce one in your HTML and your PDF document. </li>
 <li> Also, build some slides using the code you have written. You are free to choose one presentation format among all available formats. </li>
 <li> Find out how to always use the current date in the YAML header.</li>

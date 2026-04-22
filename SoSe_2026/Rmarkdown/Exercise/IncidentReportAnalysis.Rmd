@@ -1,0 +1,107 @@
+---
+title: "Crime Analysis"
+author: "Martin Schmelzer"
+date: "2026-04-22"
+output: 
+  pdf_document:
+    toc: true
+    number_sections: true
+---
+
+```{r SETUP, include=F}
+library(tidyverse)
+library(gt)
+```
+
+# Crime Incidents Reports Data
+
+```{r DATA_IMPORT, echo=T, eval=T, message=F}
+path <- here::here("SoSe_2026/Rmarkdown/Exercise/")
+crime_data <- readRDS(file.path(path, "crime_data.RDS"))
+crime_desc <- readxl::read_xlsx(file.path(path, "FieldExplanation.xlsx"))
+```
+
+```{r}
+head(crime_data) %>% gt()
+```
+
+The dataset contains `r nrow(crime_data)` incident reports described using `r ncol(crime_data)` variables.
+
+```{r}
+crime_desc %>%
+  separate(col = `Field Name, Data Type, Required`, 
+           into = str_split(names(crime_desc)[1], 
+                            pattern = ",")[[1]], sep = ",") %>%
+  mutate("Field Name" = str_replace_all(`Field Name`, 
+                                        pattern = "[\\[\\]]", 
+                                        replacement = "")) %>%
+  gt() %>%
+  tab_caption("Test")
+```
+
+
+
+
+# Explorative Analysis
+
+## Incidents by Day of the Week
+
+```{r}
+weekdays_obj <- c("Sunday", "Monday", "Tuesday", 
+                  "Wednesday", "Thursday", "Friday", "Saturday")
+weekly_stats <- crime_data %>%
+  mutate(DAY_OF_WEEK = factor(DAY_OF_WEEK, 
+                              levels = weekdays_obj)) %>%
+  group_by(DAY_OF_WEEK) %>%
+  summarise(incident_count = n()) %>%
+  mutate(is_max = incident_count == max(incident_count))
+```
+
+```{r}
+ggplot(weekly_stats, aes(x = DAY_OF_WEEK, y = incident_count, fill = is_max)) +
+  geom_col() +
+  scale_fill_manual(values = c("gray70", "firebrick"), guide = "none") +
+  labs(title = "Total Crime Incidents by Day of the Week",
+       subtitle = "Highlighting the day with the highest frequency",
+       x = "Day of the Week",
+       y = "Number of Incidents") +
+  theme_minimal()
+```
+
+
+
+```{r}
+weekly_stats %>%
+  select(DAY_OF_WEEK, incident_count) %>%
+  gt() %>%
+  tab_header(title = "Weekly Crime Distribution") %>%
+  tab_caption(caption = "The data shows that Friday typically records 
+              the highest volume of incidents.") %>%
+  cols_label(DAY_OF_WEEK = "Day", incident_count = "Total Reports")
+```
+
+
+## Year-over-Year Analysis
+
+```{r}
+incidents_by_month <- crime_data %>%
+  summarise(Incidents = n(), .by = c(YEAR, MONTH)) %>%
+  mutate(Month = make_date(YEAR, MONTH, 1))
+
+gg <- incidents_by_month %>%
+  ggplot(aes(x = Month, y = Incidents)) +
+    geom_line(col = "darkblue") +
+  geom_point(col = "darkblue") +
+  labs(title = "Incidents by Month") +
+  theme_minimal() 
+
+if (knitr::is_html_output()) {
+  plotly::ggplotly(gg)
+} else if (knitr::is_latex_output()) {
+  print(gg)
+}
+
+
+```
+
+

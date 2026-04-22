@@ -5,37 +5,32 @@
     <meta charset="utf-8" />
     <meta name="author" content="Martin C. Arnold" />
     <meta name="author" content="Martin Schmelzer" />
-    <meta name="date" content="2025-05-24" />
-    <script src="rmarkdown_files/header-attrs-2.29/header-attrs.js"></script>
-    <link href="rmarkdown_files/remark-css-0.0.1/default.css" rel="stylesheet" />
-    <script src="rmarkdown_files/xaringanExtra-progressBar-0.0.1/progress-bar.js"></script>
-    <script src="rmarkdown_files/clipboard-2.0.6/clipboard.min.js"></script>
-    <link href="rmarkdown_files/xaringanExtra-clipboard-0.2.6/xaringanExtra-clipboard.css" rel="stylesheet" />
-    <script src="rmarkdown_files/xaringanExtra-clipboard-0.2.6/xaringanExtra-clipboard.js"></script>
-    <script>window.xaringanExtraClipboard(null, {"button":"<i class=\"fa fa-clipboard\"><\/i>","success":"<i class=\"fa fa-check\" style=\"color: #00ff00\"><\/i>","error":"<i class=\"fa fa-times-circle\" style=\"color: #F94144\"><\/i>"})</script>
-    <link href="rmarkdown_files/font-awesome-6.5.2/css/all.min.css" rel="stylesheet" />
-    <link href="rmarkdown_files/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet" />
-    <link href="rmarkdown_files/htmltools-fill-0.5.8.1/fill.css" rel="stylesheet" />
-    <script src="rmarkdown_files/htmlwidgets-1.6.4/htmlwidgets.js"></script>
-    <script src="rmarkdown_files/plotly-binding-4.10.4/plotly.js"></script>
-    <script src="rmarkdown_files/typedarray-0.1/typedarray.min.js"></script>
-    <script src="rmarkdown_files/jquery-3.6.0/jquery-3.6.0.min.js"></script>
-    <link href="rmarkdown_files/crosstalk-1.2.1/css/crosstalk.min.css" rel="stylesheet" />
-    <script src="rmarkdown_files/crosstalk-1.2.1/js/crosstalk.min.js"></script>
-    <link href="rmarkdown_files/plotly-htmlwidgets-css-2.11.1/plotly-htmlwidgets.css" rel="stylesheet" />
-    <script src="rmarkdown_files/plotly-main-2.11.1/plotly-latest.min.js"></script>
-    <link href="rmarkdown_files/leaflet-1.3.1/leaflet.css" rel="stylesheet" />
-    <script src="rmarkdown_files/leaflet-1.3.1/leaflet.js"></script>
-    <link href="rmarkdown_files/leafletfix-1.0.0/leafletfix.css" rel="stylesheet" />
-    <script src="rmarkdown_files/proj4-2.6.2/proj4.min.js"></script>
-    <script src="rmarkdown_files/Proj4Leaflet-1.0.1/proj4leaflet.js"></script>
-    <link href="rmarkdown_files/rstudio_leaflet-1.3.1/rstudio_leaflet.css" rel="stylesheet" />
-    <script src="rmarkdown_files/leaflet-binding-2.2.2/leaflet.js"></script>
-    <link href="rmarkdown_files/datatables-css-0.0.0/datatables-crosstalk.css" rel="stylesheet" />
-    <script src="rmarkdown_files/datatables-binding-0.33/datatables.js"></script>
-    <link href="rmarkdown_files/dt-core-1.13.6/css/jquery.dataTables.min.css" rel="stylesheet" />
-    <link href="rmarkdown_files/dt-core-1.13.6/css/jquery.dataTables.extra.css" rel="stylesheet" />
-    <script src="rmarkdown_files/dt-core-1.13.6/js/jquery.dataTables.min.js"></script>
+    <meta name="date" content="2026-04-22" />
+    <script src="rmarkdown_files/header-attrs/header-attrs.js"></script>
+    <link href="rmarkdown_files/remark-css/default.css" rel="stylesheet" />
+    <link href="rmarkdown_files/font-awesome/css/all.min.css" rel="stylesheet" />
+    <link href="rmarkdown_files/font-awesome/css/v4-shims.min.css" rel="stylesheet" />
+    <link href="rmarkdown_files/htmltools-fill/fill.css" rel="stylesheet" />
+    <script src="rmarkdown_files/htmlwidgets/htmlwidgets.js"></script>
+    <script src="rmarkdown_files/plotly-binding/plotly.js"></script>
+    <script src="rmarkdown_files/typedarray/typedarray.min.js"></script>
+    <script src="rmarkdown_files/jquery/jquery-3.6.0.min.js"></script>
+    <link href="rmarkdown_files/crosstalk/css/crosstalk.min.css" rel="stylesheet" />
+    <script src="rmarkdown_files/crosstalk/js/crosstalk.min.js"></script>
+    <link href="rmarkdown_files/plotly-htmlwidgets-css/plotly-htmlwidgets.css" rel="stylesheet" />
+    <script src="rmarkdown_files/plotly-main/plotly-latest.min.js"></script>
+    <link href="rmarkdown_files/leaflet/leaflet.css" rel="stylesheet" />
+    <script src="rmarkdown_files/leaflet/leaflet.js"></script>
+    <link href="rmarkdown_files/leafletfix/leafletfix.css" rel="stylesheet" />
+    <script src="rmarkdown_files/proj4/proj4.min.js"></script>
+    <script src="rmarkdown_files/Proj4Leaflet/proj4leaflet.js"></script>
+    <link href="rmarkdown_files/rstudio_leaflet/rstudio_leaflet.css" rel="stylesheet" />
+    <script src="rmarkdown_files/leaflet-binding/leaflet.js"></script>
+    <link href="rmarkdown_files/datatables-css/datatables-crosstalk.css" rel="stylesheet" />
+    <script src="rmarkdown_files/datatables-binding/datatables.js"></script>
+    <link href="rmarkdown_files/dt-core/css/jquery.dataTables.min.css" rel="stylesheet" />
+    <link href="rmarkdown_files/dt-core/css/jquery.dataTables.extra.css" rel="stylesheet" />
+    <script src="rmarkdown_files/dt-core/js/jquery.dataTables.min.js"></script>
     <script type="text/x-mathjax-config">
       MathJax.Hub.Config({
         TeX: { equationNumbers: { autoNumber: "AMS" } },
@@ -57,29 +52,7 @@
   <body>
     <textarea id="source">
 
-class: title-slide title-rmarkdown center middle
-
-
-<style>.xe__progress-bar__container {
-  bottom:0;
-  opacity: 1;
-  position:absolute;
-  right:0;
-  left: 0;
-}
-.xe__progress-bar {
-  height: 0.25em;
-  background-color: #004c93;
-  width: calc(var(--slide-current) / var(--slide-total) * 100%);
-}
-.remark-visible .xe__progress-bar {
-  animation: xe__progress-bar__wipe 200ms forwards;
-  animation-timing-function: cubic-bezier(.86,0,.07,1);
-}
-@keyframes xe__progress-bar__wipe {
-  0% { width: calc(var(--slide-previous) / var(--slide-total) * 100%); }
-  100% { width: calc(var(--slide-current) / var(--slide-total) * 100%); }
-}</style>
+class: title-slide title-ggplot2 center middle
 
 
 
@@ -107,6 +80,7 @@ You can use R Markdown
 - [R Markdown: The Definitive Guide](https://bookdown.org/yihui/rmarkdown/) 
 - [Introduction to R Markdown](https://rmarkdown.rstudio.com/lesson-1.html)
 - [Cheatsheet](https://raw.githubusercontent.com/rstudio/cheatsheets/master/rmarkdown-2.0.pdf)
+- [Gallery](https://rmarkdown.rstudio.com/gallery.html)
 
 --
 
@@ -123,7 +97,7 @@ class: left, top
 
 .font80.blockquote.exercise.pull-left-2[
 
-#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example
+#### <svg aria-hidden="true" role="img" viewBox="0 0 576 512" style="height:1em;width:1.12em;vertical-align:-0.125em;margin-left:auto;margin-right:auto;font-size:inherit;fill:#004c93;overflow:visible;position:relative;"><path d="M64 0C28.7 0 0 28.7 0 64V352c0 35.3 28.7 64 64 64H240l-10.7 32H160c-17.7 0-32 14.3-32 32s14.3 32 32 32H416c17.7 0 32-14.3 32-32s-14.3-32-32-32H346.7L336 416H512c35.3 0 64-28.7 64-64V64c0-35.3-28.7-64-64-64H64zM512 64V288H64V64H512z"/></svg> Example
 
 ````
 ---
@@ -159,7 +133,7 @@ If $\frac{\alpha}{\beta} = \gamma$ then $\alpha = \gamma\beta$.
 
 .pull-right-1.font80[
 - If this is stored as `example.rmd` in your working directory run `knitr::render(example.rmd)` to create an output document. 
-- Alternatively, hit the &lt;img src="../img/knit.PNG" width="79" /&gt; button in Rstudio.
+- Alternatively, hit the "Knit" button in Rstudio.
 - Or you can use the short key combination `Ctrl + Shift + K`
 ]
 
@@ -188,8 +162,8 @@ class: left, top
 &lt;br&gt;
 
 When we click **knit** in RStudio then 
-1. the `knitr` package executes the code chunks and creates a markdown document (`.md`) which contains the text we have written and optionally the code and its output 
-2. the `.md` file gets processed by `pandoc` which creates the final file in the desired output format (e.g. `html`, `pdf`, `word`, ...)
+1. the `knitr` package executes the code chunks and creates a markdown document (`.md`) which contains the text we have written and optionally the code and its output.
+2. the `.md` file gets processed by `pandoc` which creates the final file in the desired output format (e.g. `html`, `pdf`, `word`, ...).
 
 &lt;br&gt;
 
@@ -212,7 +186,7 @@ Here you can:
 --
 
 .blockquote.exercise[
-#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example: Basic YAML header using mostly defaults
+#### <svg aria-hidden="true" role="img" viewBox="0 0 576 512" style="height:1em;width:1.12em;vertical-align:-0.125em;margin-left:auto;margin-right:auto;font-size:inherit;fill:#004c93;overflow:visible;position:relative;"><path d="M64 0C28.7 0 0 28.7 0 64V352c0 35.3 28.7 64 64 64H240l-10.7 32H160c-17.7 0-32 14.3-32 32s14.3 32 32 32H416c17.7 0 32-14.3 32-32s-14.3-32-32-32H346.7L336 416H512c35.3 0 64-28.7 64-64V64c0-35.3-28.7-64-64-64H64zM512 64V288H64V64H512z"/></svg> Example: Basic YAML header using mostly defaults
 
 ```yaml
 ---
@@ -232,7 +206,7 @@ class: left, top
 ## The YAML header
 
 .blockquote.exercise[
-#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example:  A more complicated YAML header
+#### <svg aria-hidden="true" role="img" viewBox="0 0 576 512" style="height:1em;width:1.12em;vertical-align:-0.125em;margin-left:auto;margin-right:auto;font-size:inherit;fill:#004c93;overflow:visible;position:relative;"><path d="M64 0C28.7 0 0 28.7 0 64V352c0 35.3 28.7 64 64 64H240l-10.7 32H160c-17.7 0-32 14.3-32 32s14.3 32 32 32H416c17.7 0 32-14.3 32-32s-14.3-32-32-32H346.7L336 416H512c35.3 0 64-28.7 64-64V64c0-35.3-28.7-64-64-64H64zM512 64V288H64V64H512z"/></svg> Example:  A more complicated YAML header
 
 ```nohighlights
 ---
@@ -283,7 +257,7 @@ class: left, top
 .pull-left[
 .blockquote.exercise[
 
-#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example: Headers
+#### <svg aria-hidden="true" role="img" viewBox="0 0 576 512" style="height:1em;width:1.12em;vertical-align:-0.125em;margin-left:auto;margin-right:auto;font-size:inherit;fill:#004c93;overflow:visible;position:relative;"><path d="M64 0C28.7 0 0 28.7 0 64V352c0 35.3 28.7 64 64 64H240l-10.7 32H160c-17.7 0-32 14.3-32 32s14.3 32 32 32H416c17.7 0 32-14.3 32-32s-14.3-32-32-32H346.7L336 416H512c35.3 0 64-28.7 64-64V64c0-35.3-28.7-64-64-64H64zM512 64V288H64V64H512z"/></svg> Example: Headers
 ```markdown
      #   Header 1     
      ##  Header 2   
@@ -305,7 +279,7 @@ class: left, top
 .pull-right[ 
 .blockquote.exercise[
 
-#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Inline formatting
+#### <svg aria-hidden="true" role="img" viewBox="0 0 576 512" style="height:1em;width:1.12em;vertical-align:-0.125em;margin-left:auto;margin-right:auto;font-size:inherit;fill:#004c93;overflow:visible;position:relative;"><path d="M64 0C28.7 0 0 28.7 0 64V352c0 35.3 28.7 64 64 64H240l-10.7 32H160c-17.7 0-32 14.3-32 32s14.3 32 32 32H416c17.7 0 32-14.3 32-32s-14.3-32-32-32H346.7L336 416H512c35.3 0 64-28.7 64-64V64c0-35.3-28.7-64-64-64H64zM512 64V288H64V64H512z"/></svg> Inline formatting
 
 ```markdown
      *italics* 
@@ -329,7 +303,7 @@ class: left, top
 
 .pull-left[.blockquote.exercise[
 
-#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt;  Unordered Lists
+#### <svg aria-hidden="true" role="img" viewBox="0 0 576 512" style="height:1em;width:1.12em;vertical-align:-0.125em;margin-left:auto;margin-right:auto;font-size:inherit;fill:#004c93;overflow:visible;position:relative;"><path d="M64 0C28.7 0 0 28.7 0 64V352c0 35.3 28.7 64 64 64H240l-10.7 32H160c-17.7 0-32 14.3-32 32s14.3 32 32 32H416c17.7 0 32-14.3 32-32s-14.3-32-32-32H346.7L336 416H512c35.3 0 64-28.7 64-64V64c0-35.3-28.7-64-64-64H64zM512 64V288H64V64H512z"/></svg>  Unordered Lists
 
 ```markdown
   * Item
@@ -352,7 +326,7 @@ class: left, top
 
 .pull-right[.blockquote.exercise[
 
-#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Ordered Lists
+#### <svg aria-hidden="true" role="img" viewBox="0 0 576 512" style="height:1em;width:1.12em;vertical-align:-0.125em;margin-left:auto;margin-right:auto;font-size:inherit;fill:#004c93;overflow:visible;position:relative;"><path d="M64 0C28.7 0 0 28.7 0 64V352c0 35.3 28.7 64 64 64H240l-10.7 32H160c-17.7 0-32 14.3-32 32s14.3 32 32 32H416c17.7 0 32-14.3 32-32s-14.3-32-32-32H346.7L336 416H512c35.3 0 64-28.7 64-64V64c0-35.3-28.7-64-64-64H64zM512 64V288H64V64H512z"/></svg> Ordered Lists
 
 ```markdown
   1. First item
@@ -384,7 +358,7 @@ class: left, top
 
 .pull-left[.blockquote.exercise[
 
-#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Linebreaks  
+#### <svg aria-hidden="true" role="img" viewBox="0 0 576 512" style="height:1em;width:1.12em;vertical-align:-0.125em;margin-left:auto;margin-right:auto;font-size:inherit;fill:#004c93;overflow:visible;position:relative;"><path d="M64 0C28.7 0 0 28.7 0 64V352c0 35.3 28.7 64 64 64H240l-10.7 32H160c-17.7 0-32 14.3-32 32s14.3 32 32 32H416c17.7 0 32-14.3 32-32s-14.3-32-32-32H346.7L336 416H512c35.3 0 64-28.7 64-64V64c0-35.3-28.7-64-64-64H64zM512 64V288H64V64H512z"/></svg> Linebreaks  
 ```markdown
 First line  
 Second line
@@ -404,7 +378,7 @@ A new line is started by two whitespaces at the end of the previous line (which 
 
 .pull-right[.blockquote.exercise[
 
-#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Paragraphs
+#### <svg aria-hidden="true" role="img" viewBox="0 0 576 512" style="height:1em;width:1.12em;vertical-align:-0.125em;margin-left:auto;margin-right:auto;font-size:inherit;fill:#004c93;overflow:visible;position:relative;"><path d="M64 0C28.7 0 0 28.7 0 64V352c0 35.3 28.7 64 64 64H240l-10.7 32H160c-17.7 0-32 14.3-32 32s14.3 32 32 32H416c17.7 0 32-14.3 32-32s-14.3-32-32-32H346.7L336 416H512c35.3 0 64-28.7 64-64V64c0-35.3-28.7-64-64-64H64zM512 64V288H64V64H512z"/></svg> Paragraphs
 
 ```markdown
   First paragraph
@@ -465,7 +439,7 @@ class: left, top
 
 .blockquote.exercise[
 
-#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example
+#### <svg aria-hidden="true" role="img" viewBox="0 0 576 512" style="height:1em;width:1.12em;vertical-align:-0.125em;margin-left:auto;margin-right:auto;font-size:inherit;fill:#004c93;overflow:visible;position:relative;"><path d="M64 0C28.7 0 0 28.7 0 64V352c0 35.3 28.7 64 64 64H240l-10.7 32H160c-17.7 0-32 14.3-32 32s14.3 32 32 32H416c17.7 0 32-14.3 32-32s-14.3-32-32-32H346.7L336 416H512c35.3 0 64-28.7 64-64V64c0-35.3-28.7-64-64-64H64zM512 64V288H64V64H512z"/></svg> Example
 
 
 ```
@@ -528,10 +502,10 @@ class: left, top
 
 .blockquote.exercise[
 
-#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example
+#### <svg aria-hidden="true" role="img" viewBox="0 0 576 512" style="height:1em;width:1.12em;vertical-align:-0.125em;margin-left:auto;margin-right:auto;font-size:inherit;fill:#004c93;overflow:visible;position:relative;"><path d="M64 0C28.7 0 0 28.7 0 64V352c0 35.3 28.7 64 64 64H240l-10.7 32H160c-17.7 0-32 14.3-32 32s14.3 32 32 32H416c17.7 0 32-14.3 32-32s-14.3-32-32-32H346.7L336 416H512c35.3 0 64-28.7 64-64V64c0-35.3-28.7-64-64-64H64zM512 64V288H64V64H512z"/></svg> Example
 
 ````markdown
-```{r lin_reg, echo=TRUE, cache = TRUE}
+```{r lin_reg, echo=TRUE, cache=TRUE}
 x &lt;- runif(100)
 y &lt;- 0.4 * x + rnorm(100)
 lm(y ~ x)
@@ -547,7 +521,7 @@ If you mainly use chunk options which are not the default, then it saves time to
 
 .blockquote.exercise[
 
-#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example: chunk setup 
+#### <svg aria-hidden="true" role="img" viewBox="0 0 576 512" style="height:1em;width:1.12em;vertical-align:-0.125em;margin-left:auto;margin-right:auto;font-size:inherit;fill:#004c93;overflow:visible;position:relative;"><path d="M64 0C28.7 0 0 28.7 0 64V352c0 35.3 28.7 64 64 64H240l-10.7 32H160c-17.7 0-32 14.3-32 32s14.3 32 32 32H416c17.7 0 32-14.3 32-32s-14.3-32-32-32H346.7L336 416H512c35.3 0 64-28.7 64-64V64c0-35.3-28.7-64-64-64H64zM512 64V288H64V64H512z"/></svg> Example: chunk setup 
 
 ````markdown
 ```{r setup, include=FALSE}
@@ -563,7 +537,7 @@ You can also use R in your running text. When something changes (e.g. the input 
 
 .blockquote.exercise[
 
-#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example
+#### <svg aria-hidden="true" role="img" viewBox="0 0 576 512" style="height:1em;width:1.12em;vertical-align:-0.125em;margin-left:auto;margin-right:auto;font-size:inherit;fill:#004c93;overflow:visible;position:relative;"><path d="M64 0C28.7 0 0 28.7 0 64V352c0 35.3 28.7 64 64 64H240l-10.7 32H160c-17.7 0-32 14.3-32 32s14.3 32 32 32H416c17.7 0 32-14.3 32-32s-14.3-32-32-32H346.7L336 416H512c35.3 0 64-28.7 64-64V64c0-35.3-28.7-64-64-64H64zM512 64V288H64V64H512z"/></svg> Example
 
 ````markdown
 ```{r, echo=FALSE}
@@ -590,7 +564,7 @@ Tables can be created as follows:
 &lt;br&gt;
 .blockquote.exercise[
 
-#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example
+#### <svg aria-hidden="true" role="img" viewBox="0 0 576 512" style="height:1em;width:1.12em;vertical-align:-0.125em;margin-left:auto;margin-right:auto;font-size:inherit;fill:#004c93;overflow:visible;position:relative;"><path d="M64 0C28.7 0 0 28.7 0 64V352c0 35.3 28.7 64 64 64H240l-10.7 32H160c-17.7 0-32 14.3-32 32s14.3 32 32 32H416c17.7 0 32-14.3 32-32s-14.3-32-32-32H346.7L336 416H512c35.3 0 64-28.7 64-64V64c0-35.3-28.7-64-64-64H64zM512 64V288H64V64H512z"/></svg> Example
 
 
 ```markdown
@@ -632,7 +606,7 @@ class: left, top
 
 .pull-left[
 .blockquote.exercise[
-#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example
+#### <svg aria-hidden="true" role="img" viewBox="0 0 576 512" style="height:1em;width:1.12em;vertical-align:-0.125em;margin-left:auto;margin-right:auto;font-size:inherit;fill:#004c93;overflow:visible;position:relative;"><path d="M64 0C28.7 0 0 28.7 0 64V352c0 35.3 28.7 64 64 64H240l-10.7 32H160c-17.7 0-32 14.3-32 32s14.3 32 32 32H416c17.7 0 32-14.3 32-32s-14.3-32-32-32H346.7L336 416H512c35.3 0 64-28.7 64-64V64c0-35.3-28.7-64-64-64H64zM512 64V288H64V64H512z"/></svg> Example
 ````markdown
 ```{r}
 gtobj &lt;- citizens %&gt;%
@@ -655,23 +629,23 @@ gtobj &lt;- citizens %&gt;%
 
 
 .pull-right[
-<div id="cofqhuhmkb" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
-<style>#cofqhuhmkb table {
+<div id="caauffeiwt" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#caauffeiwt table {
   font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-#cofqhuhmkb thead, #cofqhuhmkb tbody, #cofqhuhmkb tfoot, #cofqhuhmkb tr, #cofqhuhmkb td, #cofqhuhmkb th {
+#caauffeiwt thead, #caauffeiwt tbody, #caauffeiwt tfoot, #caauffeiwt tr, #caauffeiwt td, #caauffeiwt th {
   border-style: none;
 }
 
-#cofqhuhmkb p {
+#caauffeiwt p {
   margin: 0;
   padding: 0;
 }
 
-#cofqhuhmkb .gt_table {
+#caauffeiwt .gt_table {
   display: table;
   border-collapse: collapse;
   line-height: normal;
@@ -697,12 +671,12 @@ gtobj &lt;- citizens %&gt;%
   border-left-color: #D3D3D3;
 }
 
-#cofqhuhmkb .gt_caption {
+#caauffeiwt .gt_caption {
   padding-top: 4px;
   padding-bottom: 4px;
 }
 
-#cofqhuhmkb .gt_title {
+#caauffeiwt .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -714,7 +688,7 @@ gtobj &lt;- citizens %&gt;%
   border-bottom-width: 0;
 }
 
-#cofqhuhmkb .gt_subtitle {
+#caauffeiwt .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -726,7 +700,7 @@ gtobj &lt;- citizens %&gt;%
   border-top-width: 0;
 }
 
-#cofqhuhmkb .gt_heading {
+#caauffeiwt .gt_heading {
   background-color: #FFFFFF;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -738,13 +712,13 @@ gtobj &lt;- citizens %&gt;%
   border-right-color: #D3D3D3;
 }
 
-#cofqhuhmkb .gt_bottom_border {
+#caauffeiwt .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#cofqhuhmkb .gt_col_headings {
+#caauffeiwt .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -759,7 +733,7 @@ gtobj &lt;- citizens %&gt;%
   border-right-color: #D3D3D3;
 }
 
-#cofqhuhmkb .gt_col_heading {
+#caauffeiwt .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -779,7 +753,7 @@ gtobj &lt;- citizens %&gt;%
   overflow-x: hidden;
 }
 
-#cofqhuhmkb .gt_column_spanner_outer {
+#caauffeiwt .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -791,15 +765,15 @@ gtobj &lt;- citizens %&gt;%
   padding-right: 4px;
 }
 
-#cofqhuhmkb .gt_column_spanner_outer:first-child {
+#caauffeiwt .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#cofqhuhmkb .gt_column_spanner_outer:last-child {
+#caauffeiwt .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#cofqhuhmkb .gt_column_spanner {
+#caauffeiwt .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -811,11 +785,11 @@ gtobj &lt;- citizens %&gt;%
   width: 100%;
 }
 
-#cofqhuhmkb .gt_spanner_row {
+#caauffeiwt .gt_spanner_row {
   border-bottom-style: hidden;
 }
 
-#cofqhuhmkb .gt_group_heading {
+#caauffeiwt .gt_group_heading {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -841,7 +815,7 @@ gtobj &lt;- citizens %&gt;%
   text-align: left;
 }
 
-#cofqhuhmkb .gt_empty_group_heading {
+#caauffeiwt .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -856,15 +830,15 @@ gtobj &lt;- citizens %&gt;%
   vertical-align: middle;
 }
 
-#cofqhuhmkb .gt_from_md > :first-child {
+#caauffeiwt .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#cofqhuhmkb .gt_from_md > :last-child {
+#caauffeiwt .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#cofqhuhmkb .gt_row {
+#caauffeiwt .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -883,7 +857,7 @@ gtobj &lt;- citizens %&gt;%
   overflow-x: hidden;
 }
 
-#cofqhuhmkb .gt_stub {
+#caauffeiwt .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -896,7 +870,7 @@ gtobj &lt;- citizens %&gt;%
   padding-right: 5px;
 }
 
-#cofqhuhmkb .gt_stub_row_group {
+#caauffeiwt .gt_stub_row_group {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -910,15 +884,15 @@ gtobj &lt;- citizens %&gt;%
   vertical-align: top;
 }
 
-#cofqhuhmkb .gt_row_group_first td {
+#caauffeiwt .gt_row_group_first td {
   border-top-width: 2px;
 }
 
-#cofqhuhmkb .gt_row_group_first th {
+#caauffeiwt .gt_row_group_first th {
   border-top-width: 2px;
 }
 
-#cofqhuhmkb .gt_summary_row {
+#caauffeiwt .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -928,16 +902,16 @@ gtobj &lt;- citizens %&gt;%
   padding-right: 5px;
 }
 
-#cofqhuhmkb .gt_first_summary_row {
+#caauffeiwt .gt_first_summary_row {
   border-top-style: solid;
   border-top-color: #D3D3D3;
 }
 
-#cofqhuhmkb .gt_first_summary_row.thick {
+#caauffeiwt .gt_first_summary_row.thick {
   border-top-width: 2px;
 }
 
-#cofqhuhmkb .gt_last_summary_row {
+#caauffeiwt .gt_last_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -947,7 +921,7 @@ gtobj &lt;- citizens %&gt;%
   border-bottom-color: #D3D3D3;
 }
 
-#cofqhuhmkb .gt_grand_summary_row {
+#caauffeiwt .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -957,7 +931,7 @@ gtobj &lt;- citizens %&gt;%
   padding-right: 5px;
 }
 
-#cofqhuhmkb .gt_first_grand_summary_row {
+#caauffeiwt .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -967,7 +941,7 @@ gtobj &lt;- citizens %&gt;%
   border-top-color: #D3D3D3;
 }
 
-#cofqhuhmkb .gt_last_grand_summary_row_top {
+#caauffeiwt .gt_last_grand_summary_row_top {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -977,11 +951,11 @@ gtobj &lt;- citizens %&gt;%
   border-bottom-color: #D3D3D3;
 }
 
-#cofqhuhmkb .gt_striped {
+#caauffeiwt .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
 
-#cofqhuhmkb .gt_table_body {
+#caauffeiwt .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -990,7 +964,7 @@ gtobj &lt;- citizens %&gt;%
   border-bottom-color: #D3D3D3;
 }
 
-#cofqhuhmkb .gt_footnotes {
+#caauffeiwt .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -1004,7 +978,7 @@ gtobj &lt;- citizens %&gt;%
   border-right-color: #D3D3D3;
 }
 
-#cofqhuhmkb .gt_footnote {
+#caauffeiwt .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding-top: 4px;
@@ -1013,7 +987,7 @@ gtobj &lt;- citizens %&gt;%
   padding-right: 5px;
 }
 
-#cofqhuhmkb .gt_sourcenotes {
+#caauffeiwt .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -1027,7 +1001,7 @@ gtobj &lt;- citizens %&gt;%
   border-right-color: #D3D3D3;
 }
 
-#cofqhuhmkb .gt_sourcenote {
+#caauffeiwt .gt_sourcenote {
   font-size: 90%;
   padding-top: 4px;
   padding-bottom: 4px;
@@ -1035,72 +1009,72 @@ gtobj &lt;- citizens %&gt;%
   padding-right: 5px;
 }
 
-#cofqhuhmkb .gt_left {
+#caauffeiwt .gt_left {
   text-align: left;
 }
 
-#cofqhuhmkb .gt_center {
+#caauffeiwt .gt_center {
   text-align: center;
 }
 
-#cofqhuhmkb .gt_right {
+#caauffeiwt .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#cofqhuhmkb .gt_font_normal {
+#caauffeiwt .gt_font_normal {
   font-weight: normal;
 }
 
-#cofqhuhmkb .gt_font_bold {
+#caauffeiwt .gt_font_bold {
   font-weight: bold;
 }
 
-#cofqhuhmkb .gt_font_italic {
+#caauffeiwt .gt_font_italic {
   font-style: italic;
 }
 
-#cofqhuhmkb .gt_super {
+#caauffeiwt .gt_super {
   font-size: 65%;
 }
 
-#cofqhuhmkb .gt_footnote_marks {
+#caauffeiwt .gt_footnote_marks {
   font-size: 75%;
   vertical-align: 0.4em;
   position: initial;
 }
 
-#cofqhuhmkb .gt_asterisk {
+#caauffeiwt .gt_asterisk {
   font-size: 100%;
   vertical-align: 0;
 }
 
-#cofqhuhmkb .gt_indent_1 {
+#caauffeiwt .gt_indent_1 {
   text-indent: 5px;
 }
 
-#cofqhuhmkb .gt_indent_2 {
+#caauffeiwt .gt_indent_2 {
   text-indent: 10px;
 }
 
-#cofqhuhmkb .gt_indent_3 {
+#caauffeiwt .gt_indent_3 {
   text-indent: 15px;
 }
 
-#cofqhuhmkb .gt_indent_4 {
+#caauffeiwt .gt_indent_4 {
   text-indent: 20px;
 }
 
-#cofqhuhmkb .gt_indent_5 {
+#caauffeiwt .gt_indent_5 {
   text-indent: 25px;
 }
 
-#cofqhuhmkb .katex-display {
+#caauffeiwt .katex-display {
   display: inline-flex !important;
   margin-bottom: 0.75em !important;
 }
 
-#cofqhuhmkb div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
+#caauffeiwt div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
   height: 0px !important;
 }
 </style>
@@ -1129,7 +1103,6 @@ gtobj &lt;- citizens %&gt;%
 <td headers="isNotGerman" class="gt_row gt_right">10872</td>
 <td headers="isGerman" class="gt_row gt_right">29794</td></tr>
   </tbody>
-  
   
 </table>
 </div>
@@ -1165,7 +1138,7 @@ class: left, top
 
 
 .font90.blockquote.exercise[
-#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example
+#### <svg aria-hidden="true" role="img" viewBox="0 0 576 512" style="height:1em;width:1.12em;vertical-align:-0.125em;margin-left:auto;margin-right:auto;font-size:inherit;fill:#004c93;overflow:visible;position:relative;"><path d="M64 0C28.7 0 0 28.7 0 64V352c0 35.3 28.7 64 64 64H240l-10.7 32H160c-17.7 0-32 14.3-32 32s14.3 32 32 32H416c17.7 0 32-14.3 32-32s-14.3-32-32-32H346.7L336 416H512c35.3 0 64-28.7 64-64V64c0-35.3-28.7-64-64-64H64zM512 64V288H64V64H512z"/></svg> Example
 
 
 ``` r
@@ -1200,7 +1173,7 @@ class: left, top
 
 
 .font90.blockquote.exercise[
-#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example
+#### <svg aria-hidden="true" role="img" viewBox="0 0 576 512" style="height:1em;width:1.12em;vertical-align:-0.125em;margin-left:auto;margin-right:auto;font-size:inherit;fill:#004c93;overflow:visible;position:relative;"><path d="M64 0C28.7 0 0 28.7 0 64V352c0 35.3 28.7 64 64 64H240l-10.7 32H160c-17.7 0-32 14.3-32 32s14.3 32 32 32H416c17.7 0 32-14.3 32-32s-14.3-32-32-32H346.7L336 416H512c35.3 0 64-28.7 64-64V64c0-35.3-28.7-64-64-64H64zM512 64V288H64V64H512z"/></svg> Example
 
 
 ``` r
@@ -1233,7 +1206,7 @@ class: left, top
 
 
 .font90.blockquote.exercise[
-#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example
+#### <svg aria-hidden="true" role="img" viewBox="0 0 576 512" style="height:1em;width:1.12em;vertical-align:-0.125em;margin-left:auto;margin-right:auto;font-size:inherit;fill:#004c93;overflow:visible;position:relative;"><path d="M64 0C28.7 0 0 28.7 0 64V352c0 35.3 28.7 64 64 64H240l-10.7 32H160c-17.7 0-32 14.3-32 32s14.3 32 32 32H416c17.7 0 32-14.3 32-32s-14.3-32-32-32H346.7L336 416H512c35.3 0 64-28.7 64-64V64c0-35.3-28.7-64-64-64H64zM512 64V288H64V64H512z"/></svg> Example
 
 
 ``` r
@@ -1759,9 +1732,8 @@ class: left, top
 <td headers="grand_summary_stub_1 isNotGerman" class="gt_row gt_right gt_grand_summary_row gt_first_grand_summary_row gt_last_summary_row">72.857</td>
 <td headers="grand_summary_stub_1 isGerman" class="gt_row gt_right gt_grand_summary_row gt_first_grand_summary_row gt_last_summary_row">200.242</td></tr>
   </tbody>
-  
-  <tfoot class="gt_footnotes">
-    <tr>
+  <tfoot>
+    <tr class="gt_footnotes">
       <td class="gt_footnote" style="font-family: Newsreader;" colspan="4"> Source: City of Gelsenkirchen, Statistics &amp; Monitoring</td>
     </tr>
   </tfoot>
@@ -1779,7 +1751,7 @@ class: left, top
 
 .pull-left[
 .blockquote.exercise[
-#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example
+#### <svg aria-hidden="true" role="img" viewBox="0 0 576 512" style="height:1em;width:1.12em;vertical-align:-0.125em;margin-left:auto;margin-right:auto;font-size:inherit;fill:#004c93;overflow:visible;position:relative;"><path d="M64 0C28.7 0 0 28.7 0 64V352c0 35.3 28.7 64 64 64H240l-10.7 32H160c-17.7 0-32 14.3-32 32s14.3 32 32 32H416c17.7 0 32-14.3 32-32s-14.3-32-32-32H346.7L336 416H512c35.3 0 64-28.7 64-64V64c0-35.3-28.7-64-64-64H64zM512 64V288H64V64H512z"/></svg> Example
 ````markdown
 ```{r}
 citizens %&gt;%
@@ -1803,23 +1775,23 @@ citizens %&gt;%
 
 
 .pull-right[
-<div id="qaawujzegm" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
-<style>#qaawujzegm table {
+<div id="qydxojupqg" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#qydxojupqg table {
   font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-#qaawujzegm thead, #qaawujzegm tbody, #qaawujzegm tfoot, #qaawujzegm tr, #qaawujzegm td, #qaawujzegm th {
+#qydxojupqg thead, #qydxojupqg tbody, #qydxojupqg tfoot, #qydxojupqg tr, #qydxojupqg td, #qydxojupqg th {
   border-style: none;
 }
 
-#qaawujzegm p {
+#qydxojupqg p {
   margin: 0;
   padding: 0;
 }
 
-#qaawujzegm .gt_table {
+#qydxojupqg .gt_table {
   display: table;
   border-collapse: collapse;
   line-height: normal;
@@ -1845,12 +1817,12 @@ citizens %&gt;%
   border-left-color: #D3D3D3;
 }
 
-#qaawujzegm .gt_caption {
+#qydxojupqg .gt_caption {
   padding-top: 4px;
   padding-bottom: 4px;
 }
 
-#qaawujzegm .gt_title {
+#qydxojupqg .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -1862,7 +1834,7 @@ citizens %&gt;%
   border-bottom-width: 0;
 }
 
-#qaawujzegm .gt_subtitle {
+#qydxojupqg .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -1874,7 +1846,7 @@ citizens %&gt;%
   border-top-width: 0;
 }
 
-#qaawujzegm .gt_heading {
+#qydxojupqg .gt_heading {
   background-color: #FFFFFF;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -1886,13 +1858,13 @@ citizens %&gt;%
   border-right-color: #D3D3D3;
 }
 
-#qaawujzegm .gt_bottom_border {
+#qydxojupqg .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#qaawujzegm .gt_col_headings {
+#qydxojupqg .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -1907,7 +1879,7 @@ citizens %&gt;%
   border-right-color: #D3D3D3;
 }
 
-#qaawujzegm .gt_col_heading {
+#qydxojupqg .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1927,7 +1899,7 @@ citizens %&gt;%
   overflow-x: hidden;
 }
 
-#qaawujzegm .gt_column_spanner_outer {
+#qydxojupqg .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1939,15 +1911,15 @@ citizens %&gt;%
   padding-right: 4px;
 }
 
-#qaawujzegm .gt_column_spanner_outer:first-child {
+#qydxojupqg .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#qaawujzegm .gt_column_spanner_outer:last-child {
+#qydxojupqg .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#qaawujzegm .gt_column_spanner {
+#qydxojupqg .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -1959,11 +1931,11 @@ citizens %&gt;%
   width: 100%;
 }
 
-#qaawujzegm .gt_spanner_row {
+#qydxojupqg .gt_spanner_row {
   border-bottom-style: hidden;
 }
 
-#qaawujzegm .gt_group_heading {
+#qydxojupqg .gt_group_heading {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1989,7 +1961,7 @@ citizens %&gt;%
   text-align: left;
 }
 
-#qaawujzegm .gt_empty_group_heading {
+#qydxojupqg .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -2004,15 +1976,15 @@ citizens %&gt;%
   vertical-align: middle;
 }
 
-#qaawujzegm .gt_from_md > :first-child {
+#qydxojupqg .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#qaawujzegm .gt_from_md > :last-child {
+#qydxojupqg .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#qaawujzegm .gt_row {
+#qydxojupqg .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -2031,7 +2003,7 @@ citizens %&gt;%
   overflow-x: hidden;
 }
 
-#qaawujzegm .gt_stub {
+#qydxojupqg .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -2044,7 +2016,7 @@ citizens %&gt;%
   padding-right: 5px;
 }
 
-#qaawujzegm .gt_stub_row_group {
+#qydxojupqg .gt_stub_row_group {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -2058,15 +2030,15 @@ citizens %&gt;%
   vertical-align: top;
 }
 
-#qaawujzegm .gt_row_group_first td {
+#qydxojupqg .gt_row_group_first td {
   border-top-width: 2px;
 }
 
-#qaawujzegm .gt_row_group_first th {
+#qydxojupqg .gt_row_group_first th {
   border-top-width: 2px;
 }
 
-#qaawujzegm .gt_summary_row {
+#qydxojupqg .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -2076,16 +2048,16 @@ citizens %&gt;%
   padding-right: 5px;
 }
 
-#qaawujzegm .gt_first_summary_row {
+#qydxojupqg .gt_first_summary_row {
   border-top-style: solid;
   border-top-color: #D3D3D3;
 }
 
-#qaawujzegm .gt_first_summary_row.thick {
+#qydxojupqg .gt_first_summary_row.thick {
   border-top-width: 2px;
 }
 
-#qaawujzegm .gt_last_summary_row {
+#qydxojupqg .gt_last_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -2095,7 +2067,7 @@ citizens %&gt;%
   border-bottom-color: #D3D3D3;
 }
 
-#qaawujzegm .gt_grand_summary_row {
+#qydxojupqg .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -2105,7 +2077,7 @@ citizens %&gt;%
   padding-right: 5px;
 }
 
-#qaawujzegm .gt_first_grand_summary_row {
+#qydxojupqg .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -2115,7 +2087,7 @@ citizens %&gt;%
   border-top-color: #D3D3D3;
 }
 
-#qaawujzegm .gt_last_grand_summary_row_top {
+#qydxojupqg .gt_last_grand_summary_row_top {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -2125,11 +2097,11 @@ citizens %&gt;%
   border-bottom-color: #D3D3D3;
 }
 
-#qaawujzegm .gt_striped {
+#qydxojupqg .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
 
-#qaawujzegm .gt_table_body {
+#qydxojupqg .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -2138,7 +2110,7 @@ citizens %&gt;%
   border-bottom-color: #D3D3D3;
 }
 
-#qaawujzegm .gt_footnotes {
+#qydxojupqg .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -2152,7 +2124,7 @@ citizens %&gt;%
   border-right-color: #D3D3D3;
 }
 
-#qaawujzegm .gt_footnote {
+#qydxojupqg .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding-top: 4px;
@@ -2161,7 +2133,7 @@ citizens %&gt;%
   padding-right: 5px;
 }
 
-#qaawujzegm .gt_sourcenotes {
+#qydxojupqg .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -2175,7 +2147,7 @@ citizens %&gt;%
   border-right-color: #D3D3D3;
 }
 
-#qaawujzegm .gt_sourcenote {
+#qydxojupqg .gt_sourcenote {
   font-size: 90%;
   padding-top: 4px;
   padding-bottom: 4px;
@@ -2183,72 +2155,72 @@ citizens %&gt;%
   padding-right: 5px;
 }
 
-#qaawujzegm .gt_left {
+#qydxojupqg .gt_left {
   text-align: left;
 }
 
-#qaawujzegm .gt_center {
+#qydxojupqg .gt_center {
   text-align: center;
 }
 
-#qaawujzegm .gt_right {
+#qydxojupqg .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#qaawujzegm .gt_font_normal {
+#qydxojupqg .gt_font_normal {
   font-weight: normal;
 }
 
-#qaawujzegm .gt_font_bold {
+#qydxojupqg .gt_font_bold {
   font-weight: bold;
 }
 
-#qaawujzegm .gt_font_italic {
+#qydxojupqg .gt_font_italic {
   font-style: italic;
 }
 
-#qaawujzegm .gt_super {
+#qydxojupqg .gt_super {
   font-size: 65%;
 }
 
-#qaawujzegm .gt_footnote_marks {
+#qydxojupqg .gt_footnote_marks {
   font-size: 75%;
   vertical-align: 0.4em;
   position: initial;
 }
 
-#qaawujzegm .gt_asterisk {
+#qydxojupqg .gt_asterisk {
   font-size: 100%;
   vertical-align: 0;
 }
 
-#qaawujzegm .gt_indent_1 {
+#qydxojupqg .gt_indent_1 {
   text-indent: 5px;
 }
 
-#qaawujzegm .gt_indent_2 {
+#qydxojupqg .gt_indent_2 {
   text-indent: 10px;
 }
 
-#qaawujzegm .gt_indent_3 {
+#qydxojupqg .gt_indent_3 {
   text-indent: 15px;
 }
 
-#qaawujzegm .gt_indent_4 {
+#qydxojupqg .gt_indent_4 {
   text-indent: 20px;
 }
 
-#qaawujzegm .gt_indent_5 {
+#qydxojupqg .gt_indent_5 {
   text-indent: 25px;
 }
 
-#qaawujzegm .katex-display {
+#qydxojupqg .katex-display {
   display: inline-flex !important;
   margin-bottom: 0.75em !important;
 }
 
-#qaawujzegm div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
+#qydxojupqg div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
   height: 0px !important;
 }
 </style>
@@ -2282,9 +2254,8 @@ N = 72,857</span><span class="gt_footnote_marks" style="white-space:nowrap;font-
 <td headers="stat_1" class="gt_row gt_center">29,794 (15%)</td>
 <td headers="stat_2" class="gt_row gt_center">10,872 (15%)</td></tr>
   </tbody>
-  
-  <tfoot class="gt_footnotes">
-    <tr>
+  <tfoot>
+    <tr class="gt_footnotes">
       <td class="gt_footnote" colspan="3"><span class="gt_footnote_marks" style="white-space:nowrap;font-style:italic;font-weight:normal;line-height:0;"><sup>1</sup></span> <span class='gt_from_md'>n (%)</span></td>
     </tr>
   </tfoot>
@@ -2303,7 +2274,7 @@ class: left, top
 
 
 .font90.blockquote.exercise[
-#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example
+#### <svg aria-hidden="true" role="img" viewBox="0 0 576 512" style="height:1em;width:1.12em;vertical-align:-0.125em;margin-left:auto;margin-right:auto;font-size:inherit;fill:#004c93;overflow:visible;position:relative;"><path d="M64 0C28.7 0 0 28.7 0 64V352c0 35.3 28.7 64 64 64H240l-10.7 32H160c-17.7 0-32 14.3-32 32s14.3 32 32 32H416c17.7 0 32-14.3 32-32s-14.3-32-32-32H346.7L336 416H512c35.3 0 64-28.7 64-64V64c0-35.3-28.7-64-64-64H64zM512 64V288H64V64H512z"/></svg> Example
 
 
 ``` r
@@ -2311,23 +2282,23 @@ linear_model &lt;- lm(mpg ~ cyl + wt, data = mtcars)
 tbl_regression(linear_model)
 ```
 
-<div id="vjmcejpzjn" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
-<style>#vjmcejpzjn table {
+<div id="zfwrdvlkhj" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#zfwrdvlkhj table {
   font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-#vjmcejpzjn thead, #vjmcejpzjn tbody, #vjmcejpzjn tfoot, #vjmcejpzjn tr, #vjmcejpzjn td, #vjmcejpzjn th {
+#zfwrdvlkhj thead, #zfwrdvlkhj tbody, #zfwrdvlkhj tfoot, #zfwrdvlkhj tr, #zfwrdvlkhj td, #zfwrdvlkhj th {
   border-style: none;
 }
 
-#vjmcejpzjn p {
+#zfwrdvlkhj p {
   margin: 0;
   padding: 0;
 }
 
-#vjmcejpzjn .gt_table {
+#zfwrdvlkhj .gt_table {
   display: table;
   border-collapse: collapse;
   line-height: normal;
@@ -2353,12 +2324,12 @@ tbl_regression(linear_model)
   border-left-color: #D3D3D3;
 }
 
-#vjmcejpzjn .gt_caption {
+#zfwrdvlkhj .gt_caption {
   padding-top: 4px;
   padding-bottom: 4px;
 }
 
-#vjmcejpzjn .gt_title {
+#zfwrdvlkhj .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -2370,7 +2341,7 @@ tbl_regression(linear_model)
   border-bottom-width: 0;
 }
 
-#vjmcejpzjn .gt_subtitle {
+#zfwrdvlkhj .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -2382,7 +2353,7 @@ tbl_regression(linear_model)
   border-top-width: 0;
 }
 
-#vjmcejpzjn .gt_heading {
+#zfwrdvlkhj .gt_heading {
   background-color: #FFFFFF;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -2394,13 +2365,13 @@ tbl_regression(linear_model)
   border-right-color: #D3D3D3;
 }
 
-#vjmcejpzjn .gt_bottom_border {
+#zfwrdvlkhj .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#vjmcejpzjn .gt_col_headings {
+#zfwrdvlkhj .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -2415,7 +2386,7 @@ tbl_regression(linear_model)
   border-right-color: #D3D3D3;
 }
 
-#vjmcejpzjn .gt_col_heading {
+#zfwrdvlkhj .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -2435,7 +2406,7 @@ tbl_regression(linear_model)
   overflow-x: hidden;
 }
 
-#vjmcejpzjn .gt_column_spanner_outer {
+#zfwrdvlkhj .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -2447,15 +2418,15 @@ tbl_regression(linear_model)
   padding-right: 4px;
 }
 
-#vjmcejpzjn .gt_column_spanner_outer:first-child {
+#zfwrdvlkhj .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#vjmcejpzjn .gt_column_spanner_outer:last-child {
+#zfwrdvlkhj .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#vjmcejpzjn .gt_column_spanner {
+#zfwrdvlkhj .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -2467,11 +2438,11 @@ tbl_regression(linear_model)
   width: 100%;
 }
 
-#vjmcejpzjn .gt_spanner_row {
+#zfwrdvlkhj .gt_spanner_row {
   border-bottom-style: hidden;
 }
 
-#vjmcejpzjn .gt_group_heading {
+#zfwrdvlkhj .gt_group_heading {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -2497,7 +2468,7 @@ tbl_regression(linear_model)
   text-align: left;
 }
 
-#vjmcejpzjn .gt_empty_group_heading {
+#zfwrdvlkhj .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -2512,15 +2483,15 @@ tbl_regression(linear_model)
   vertical-align: middle;
 }
 
-#vjmcejpzjn .gt_from_md > :first-child {
+#zfwrdvlkhj .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#vjmcejpzjn .gt_from_md > :last-child {
+#zfwrdvlkhj .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#vjmcejpzjn .gt_row {
+#zfwrdvlkhj .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -2539,7 +2510,7 @@ tbl_regression(linear_model)
   overflow-x: hidden;
 }
 
-#vjmcejpzjn .gt_stub {
+#zfwrdvlkhj .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -2552,7 +2523,7 @@ tbl_regression(linear_model)
   padding-right: 5px;
 }
 
-#vjmcejpzjn .gt_stub_row_group {
+#zfwrdvlkhj .gt_stub_row_group {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -2566,15 +2537,15 @@ tbl_regression(linear_model)
   vertical-align: top;
 }
 
-#vjmcejpzjn .gt_row_group_first td {
+#zfwrdvlkhj .gt_row_group_first td {
   border-top-width: 2px;
 }
 
-#vjmcejpzjn .gt_row_group_first th {
+#zfwrdvlkhj .gt_row_group_first th {
   border-top-width: 2px;
 }
 
-#vjmcejpzjn .gt_summary_row {
+#zfwrdvlkhj .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -2584,16 +2555,16 @@ tbl_regression(linear_model)
   padding-right: 5px;
 }
 
-#vjmcejpzjn .gt_first_summary_row {
+#zfwrdvlkhj .gt_first_summary_row {
   border-top-style: solid;
   border-top-color: #D3D3D3;
 }
 
-#vjmcejpzjn .gt_first_summary_row.thick {
+#zfwrdvlkhj .gt_first_summary_row.thick {
   border-top-width: 2px;
 }
 
-#vjmcejpzjn .gt_last_summary_row {
+#zfwrdvlkhj .gt_last_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -2603,7 +2574,7 @@ tbl_regression(linear_model)
   border-bottom-color: #D3D3D3;
 }
 
-#vjmcejpzjn .gt_grand_summary_row {
+#zfwrdvlkhj .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -2613,7 +2584,7 @@ tbl_regression(linear_model)
   padding-right: 5px;
 }
 
-#vjmcejpzjn .gt_first_grand_summary_row {
+#zfwrdvlkhj .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -2623,7 +2594,7 @@ tbl_regression(linear_model)
   border-top-color: #D3D3D3;
 }
 
-#vjmcejpzjn .gt_last_grand_summary_row_top {
+#zfwrdvlkhj .gt_last_grand_summary_row_top {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -2633,11 +2604,11 @@ tbl_regression(linear_model)
   border-bottom-color: #D3D3D3;
 }
 
-#vjmcejpzjn .gt_striped {
+#zfwrdvlkhj .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
 
-#vjmcejpzjn .gt_table_body {
+#zfwrdvlkhj .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -2646,7 +2617,7 @@ tbl_regression(linear_model)
   border-bottom-color: #D3D3D3;
 }
 
-#vjmcejpzjn .gt_footnotes {
+#zfwrdvlkhj .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -2660,7 +2631,7 @@ tbl_regression(linear_model)
   border-right-color: #D3D3D3;
 }
 
-#vjmcejpzjn .gt_footnote {
+#zfwrdvlkhj .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding-top: 4px;
@@ -2669,7 +2640,7 @@ tbl_regression(linear_model)
   padding-right: 5px;
 }
 
-#vjmcejpzjn .gt_sourcenotes {
+#zfwrdvlkhj .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -2683,7 +2654,7 @@ tbl_regression(linear_model)
   border-right-color: #D3D3D3;
 }
 
-#vjmcejpzjn .gt_sourcenote {
+#zfwrdvlkhj .gt_sourcenote {
   font-size: 90%;
   padding-top: 4px;
   padding-bottom: 4px;
@@ -2691,72 +2662,72 @@ tbl_regression(linear_model)
   padding-right: 5px;
 }
 
-#vjmcejpzjn .gt_left {
+#zfwrdvlkhj .gt_left {
   text-align: left;
 }
 
-#vjmcejpzjn .gt_center {
+#zfwrdvlkhj .gt_center {
   text-align: center;
 }
 
-#vjmcejpzjn .gt_right {
+#zfwrdvlkhj .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#vjmcejpzjn .gt_font_normal {
+#zfwrdvlkhj .gt_font_normal {
   font-weight: normal;
 }
 
-#vjmcejpzjn .gt_font_bold {
+#zfwrdvlkhj .gt_font_bold {
   font-weight: bold;
 }
 
-#vjmcejpzjn .gt_font_italic {
+#zfwrdvlkhj .gt_font_italic {
   font-style: italic;
 }
 
-#vjmcejpzjn .gt_super {
+#zfwrdvlkhj .gt_super {
   font-size: 65%;
 }
 
-#vjmcejpzjn .gt_footnote_marks {
+#zfwrdvlkhj .gt_footnote_marks {
   font-size: 75%;
   vertical-align: 0.4em;
   position: initial;
 }
 
-#vjmcejpzjn .gt_asterisk {
+#zfwrdvlkhj .gt_asterisk {
   font-size: 100%;
   vertical-align: 0;
 }
 
-#vjmcejpzjn .gt_indent_1 {
+#zfwrdvlkhj .gt_indent_1 {
   text-indent: 5px;
 }
 
-#vjmcejpzjn .gt_indent_2 {
+#zfwrdvlkhj .gt_indent_2 {
   text-indent: 10px;
 }
 
-#vjmcejpzjn .gt_indent_3 {
+#zfwrdvlkhj .gt_indent_3 {
   text-indent: 15px;
 }
 
-#vjmcejpzjn .gt_indent_4 {
+#zfwrdvlkhj .gt_indent_4 {
   text-indent: 20px;
 }
 
-#vjmcejpzjn .gt_indent_5 {
+#zfwrdvlkhj .gt_indent_5 {
   text-indent: 25px;
 }
 
-#vjmcejpzjn .katex-display {
+#zfwrdvlkhj .katex-display {
   display: inline-flex !important;
   margin-bottom: 0.75em !important;
 }
 
-#vjmcejpzjn div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
+#zfwrdvlkhj div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
   height: 0px !important;
 }
 </style>
@@ -2779,12 +2750,11 @@ tbl_regression(linear_model)
 <td headers="conf.low" class="gt_row gt_center">-4.7, -1.6</td>
 <td headers="p.value" class="gt_row gt_center"><0.001</td></tr>
   </tbody>
-  <tfoot class="gt_sourcenotes">
-    <tr>
+  <tfoot>
+    <tr class="gt_sourcenotes">
       <td class="gt_sourcenote" colspan="4"><span class='gt_from_md'>Abbreviation: CI = Confidence Interval</span></td>
     </tr>
   </tfoot>
-  
 </table>
 </div>
 
@@ -2806,7 +2776,7 @@ class: left, top
 &lt;br&gt;
 
 .pull-left[.blockquote.exercise[
-#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example
+#### <svg aria-hidden="true" role="img" viewBox="0 0 576 512" style="height:1em;width:1.12em;vertical-align:-0.125em;margin-left:auto;margin-right:auto;font-size:inherit;fill:#004c93;overflow:visible;position:relative;"><path d="M64 0C28.7 0 0 28.7 0 64V352c0 35.3 28.7 64 64 64H240l-10.7 32H160c-17.7 0-32 14.3-32 32s14.3 32 32 32H416c17.7 0 32-14.3 32-32s-14.3-32-32-32H346.7L336 416H512c35.3 0 64-28.7 64-64V64c0-35.3-28.7-64-64-64H64zM512 64V288H64V64H512z"/></svg> Example
 
 ````markdown
 ```{r, results='asis', echo=TRUE}
@@ -2851,7 +2821,7 @@ class: left, top
 &lt;br&gt;
 
 .pull-left[.blockquote.exercise[
-#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example
+#### <svg aria-hidden="true" role="img" viewBox="0 0 576 512" style="height:1em;width:1.12em;vertical-align:-0.125em;margin-left:auto;margin-right:auto;font-size:inherit;fill:#004c93;overflow:visible;position:relative;"><path d="M64 0C28.7 0 0 28.7 0 64V352c0 35.3 28.7 64 64 64H240l-10.7 32H160c-17.7 0-32 14.3-32 32s14.3 32 32 32H416c17.7 0 32-14.3 32-32s-14.3-32-32-32H346.7L336 416H512c35.3 0 64-28.7 64-64V64c0-35.3-28.7-64-64-64H64zM512 64V288H64V64H512z"/></svg> Example
 ````markdown
 ```{r, fig.height = 5}
 hist(rnorm(1000))
@@ -2862,7 +2832,7 @@ hist(rnorm(1000))
 --
 
 .pull-right[
-![](rmarkdown_files/figure-html/unnamed-chunk-16-1.png)&lt;!-- --&gt;
+&lt;img src="rmarkdown_files/figure-html/unnamed-chunk-16-1.png" alt="" width="72%" style="display: block; margin: auto;" /&gt;
 ]
 
 ---
@@ -2926,7 +2896,7 @@ class: left, top
 --
 
 .blockquote.exercise[
-#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example: plot
+#### <svg aria-hidden="true" role="img" viewBox="0 0 576 512" style="height:1em;width:1.12em;vertical-align:-0.125em;margin-left:auto;margin-right:auto;font-size:inherit;fill:#004c93;overflow:visible;position:relative;"><path d="M64 0C28.7 0 0 28.7 0 64V352c0 35.3 28.7 64 64 64H240l-10.7 32H160c-17.7 0-32 14.3-32 32s14.3 32 32 32H416c17.7 0 32-14.3 32-32s-14.3-32-32-32H346.7L336 416H512c35.3 0 64-28.7 64-64V64c0-35.3-28.7-64-64-64H64zM512 64V288H64V64H512z"/></svg> Example: plot
 
 ````markdown
 ```{r}
@@ -2949,8 +2919,8 @@ class: left, top
 ## Interactive documents
 
 .center[
-<div class="plotly html-widget html-fill-item" id="htmlwidget-645b678b32837aed8549" style="width:504px;height:504px;"></div>
-<script type="application/json" data-for="htmlwidget-645b678b32837aed8549">{"x":{"visdat":{"5167926593d0b":["function () ","plotlyVisDat"]},"cur_data":"5167926593d0b","attrs":{"5167926593d0b":{"x":{},"y":{},"z":{},"color":{},"colors":["#BF382A","#0C4B8E"],"alpha_stroke":1,"sizes":[10,100],"spans":[1,20],"type":"scatter3d","mode":"markers","inherit":true}},"layout":{"margin":{"b":40,"l":60,"t":25,"r":10},"scene":{"xaxis":{"title":"Weight"},"yaxis":{"title":"Gross horsepower"},"zaxis":{"title":"1/4 mile time"}},"hovermode":"closest","showlegend":true},"source":"A","config":{"modeBarButtonsToAdd":["hoverclosest","hovercompare"],"showSendToCloud":false},"data":[{"x":[3.2149999999999999,3.4399999999999999,3.46,3.5699999999999998,3.1899999999999999,3.1499999999999999,3.4399999999999999,3.4399999999999999,4.0700000000000003,3.73,3.7799999999999998,5.25,5.4240000000000004,5.3449999999999998,2.4649999999999999,3.52,3.4350000000000001,3.8399999999999999,3.8450000000000002],"y":[110,175,105,245,62,95,123,123,180,180,180,205,215,230,97,150,150,245,175],"z":[19.440000000000001,17.02,20.219999999999999,15.84,20,22.899999999999999,18.300000000000001,18.899999999999999,17.399999999999999,17.600000000000001,18,17.98,17.82,17.420000000000002,20.010000000000002,16.870000000000001,17.300000000000001,15.41,17.050000000000001],"type":"scatter3d","mode":"markers","name":"Automatic","marker":{"color":"rgba(191,56,42,1)","line":{"color":"rgba(191,56,42,1)"}},"textfont":{"color":"rgba(191,56,42,1)"},"error_y":{"color":"rgba(191,56,42,1)"},"error_x":{"color":"rgba(191,56,42,1)"},"line":{"color":"rgba(191,56,42,1)"},"frame":null},{"x":[2.6200000000000001,2.875,2.3199999999999998,2.2000000000000002,1.615,1.835,1.9350000000000001,2.1400000000000001,1.5129999999999999,3.1699999999999999,2.77,3.5699999999999998,2.7799999999999998],"y":[110,110,93,66,52,65,66,91,113,264,175,335,109],"z":[16.460000000000001,17.02,18.609999999999999,19.469999999999999,18.52,19.899999999999999,18.899999999999999,16.699999999999999,16.899999999999999,14.5,15.5,14.6,18.600000000000001],"type":"scatter3d","mode":"markers","name":"Manual","marker":{"color":"rgba(12,75,142,1)","line":{"color":"rgba(12,75,142,1)"}},"textfont":{"color":"rgba(12,75,142,1)"},"error_y":{"color":"rgba(12,75,142,1)"},"error_x":{"color":"rgba(12,75,142,1)"},"line":{"color":"rgba(12,75,142,1)"},"frame":null}],"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.20000000000000001,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
+<div class="plotly html-widget html-fill-item" id="htmlwidget-ea2349f6b6ffcea03e2a" style="width:72%;height:1750px;"></div>
+<script type="application/json" data-for="htmlwidget-ea2349f6b6ffcea03e2a">{"x":{"visdat":{"5060717644ea":["function () ","plotlyVisDat"]},"cur_data":"5060717644ea","attrs":{"5060717644ea":{"x":{},"y":{},"z":{},"color":{},"colors":["#BF382A","#0C4B8E"],"alpha_stroke":1,"sizes":[10,100],"spans":[1,20],"type":"scatter3d","mode":"markers","inherit":true}},"layout":{"margin":{"b":40,"l":60,"t":25,"r":10},"scene":{"xaxis":{"title":"Weight"},"yaxis":{"title":"Gross horsepower"},"zaxis":{"title":"1/4 mile time"}},"hovermode":"closest","showlegend":true},"source":"A","config":{"modeBarButtonsToAdd":["hoverclosest","hovercompare"],"showSendToCloud":false},"data":[{"x":[3.2149999999999999,3.4399999999999999,3.46,3.5699999999999998,3.1899999999999999,3.1499999999999999,3.4399999999999999,3.4399999999999999,4.0700000000000003,3.73,3.7799999999999998,5.25,5.4240000000000004,5.3449999999999998,2.4649999999999999,3.52,3.4350000000000001,3.8399999999999999,3.8450000000000002],"y":[110,175,105,245,62,95,123,123,180,180,180,205,215,230,97,150,150,245,175],"z":[19.440000000000001,17.02,20.219999999999999,15.84,20,22.899999999999999,18.300000000000001,18.899999999999999,17.399999999999999,17.600000000000001,18,17.98,17.82,17.420000000000002,20.010000000000002,16.870000000000001,17.300000000000001,15.41,17.050000000000001],"type":"scatter3d","mode":"markers","name":"Automatic","marker":{"color":"rgba(191,56,42,1)","line":{"color":"rgba(191,56,42,1)"}},"textfont":{"color":"rgba(191,56,42,1)"},"error_y":{"color":"rgba(191,56,42,1)"},"error_x":{"color":"rgba(191,56,42,1)"},"line":{"color":"rgba(191,56,42,1)"},"frame":null},{"x":[2.6200000000000001,2.875,2.3199999999999998,2.2000000000000002,1.615,1.835,1.9350000000000001,2.1400000000000001,1.5129999999999999,3.1699999999999999,2.77,3.5699999999999998,2.7799999999999998],"y":[110,110,93,66,52,65,66,91,113,264,175,335,109],"z":[16.460000000000001,17.02,18.609999999999999,19.469999999999999,18.52,19.899999999999999,18.899999999999999,16.699999999999999,16.899999999999999,14.5,15.5,14.6,18.600000000000001],"type":"scatter3d","mode":"markers","name":"Manual","marker":{"color":"rgba(12,75,142,1)","line":{"color":"rgba(12,75,142,1)"}},"textfont":{"color":"rgba(12,75,142,1)"},"error_y":{"color":"rgba(12,75,142,1)"},"error_x":{"color":"rgba(12,75,142,1)"},"line":{"color":"rgba(12,75,142,1)"},"frame":null}],"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.20000000000000001,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
 ]
 
 - For more examples see [plot.ly](https://plot.ly/r/).
@@ -2960,7 +2930,7 @@ class: left, top
 ## Interactive documents
 
 .pull-left[.blockquote.exercise[.font70[
-#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example: map 
+#### <svg aria-hidden="true" role="img" viewBox="0 0 576 512" style="height:1em;width:1.12em;vertical-align:-0.125em;margin-left:auto;margin-right:auto;font-size:inherit;fill:#004c93;overflow:visible;position:relative;"><path d="M64 0C28.7 0 0 28.7 0 64V352c0 35.3 28.7 64 64 64H240l-10.7 32H160c-17.7 0-32 14.3-32 32s14.3 32 32 32H416c17.7 0 32-14.3 32-32s-14.3-32-32-32H346.7L336 416H512c35.3 0 64-28.7 64-64V64c0-35.3-28.7-64-64-64H64zM512 64V288H64V64H512z"/></svg> Example: map 
 
 ````markdown
 ```{r, out.width='100%'}
@@ -2977,8 +2947,8 @@ leaflet() %&gt;% addTiles() %&gt;%
 
 .pull-right[
 
-<div class="leaflet html-widget html-fill-item" id="htmlwidget-5ef4a19452f771c409d0" style="width:504px;height:450px;"></div>
-<script type="application/json" data-for="htmlwidget-5ef4a19452f771c409d0">{"x":{"options":{"crs":{"crsClass":"L.CRS.EPSG3857","code":null,"proj4def":null,"projectedBounds":null,"options":{}}},"calls":[{"method":"addTiles","args":["https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",null,null,{"minZoom":0,"maxZoom":18,"tileSize":256,"subdomains":"abc","errorTileUrl":"","tms":false,"noWrap":false,"zoomOffset":0,"zoomReverse":false,"opacity":1,"zIndex":1,"detectRetina":false,"attribution":"&copy; <a href=\"https://openstreetmap.org/copyright/\">OpenStreetMap<\/a>,  <a href=\"https://opendatacommons.org/licenses/odbl/\">ODbL<\/a>"}]},{"method":"addMarkers","args":[51.463675,7.00507,null,null,null,{"interactive":true,"draggable":false,"keyboard":true,"title":"","alt":"","zIndexOffset":0,"opacity":1,"riseOnHover":false,"riseOffset":250},null,null,null,null,"Uni DUE",{"interactive":false,"permanent":false,"direction":"auto","opacity":1,"offset":[0,0],"textsize":"10px","textOnly":false,"className":"","sticky":true},null]}],"setView":[[51.463675,7.00507],17,[]],"limits":{"lat":[51.463675,51.463675],"lng":[7.00507,7.00507]}},"evals":[],"jsHooks":[]}</script>
+<div class="leaflet html-widget html-fill-item" id="htmlwidget-206a484d61d8b6e7a8fe" style="width:72%;height:450px;"></div>
+<script type="application/json" data-for="htmlwidget-206a484d61d8b6e7a8fe">{"x":{"options":{"crs":{"crsClass":"L.CRS.EPSG3857","code":null,"proj4def":null,"projectedBounds":null,"options":{}}},"calls":[{"method":"addTiles","args":["https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",null,null,{"minZoom":0,"maxZoom":18,"tileSize":256,"subdomains":"abc","errorTileUrl":"","tms":false,"noWrap":false,"zoomOffset":0,"zoomReverse":false,"opacity":1,"zIndex":1,"detectRetina":false,"attribution":"&copy; <a href=\"https://openstreetmap.org/copyright/\">OpenStreetMap<\/a>,  <a href=\"https://opendatacommons.org/licenses/odbl/\">ODbL<\/a>"}]},{"method":"addMarkers","args":[51.463675,7.00507,null,null,null,{"interactive":true,"draggable":false,"keyboard":true,"title":"","alt":"","zIndexOffset":0,"opacity":1,"riseOnHover":false,"riseOffset":250},null,null,null,null,"Uni DUE",{"interactive":false,"permanent":false,"direction":"auto","opacity":1,"offset":[0,0],"textsize":"10px","textOnly":false,"className":"","sticky":true},null]}],"setView":[[51.463675,7.00507],17,[]],"limits":{"lat":[51.463675,51.463675],"lng":[7.00507,7.00507]}},"evals":[],"jsHooks":[]}</script>
 
 ]
 
@@ -2995,7 +2965,7 @@ class: left, top
 - The `DT` package also allows us to include interactive tables. 
 
 .blockquote.exercise[
-#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example: map
+#### <svg aria-hidden="true" role="img" viewBox="0 0 576 512" style="height:1em;width:1.12em;vertical-align:-0.125em;margin-left:auto;margin-right:auto;font-size:inherit;fill:#004c93;overflow:visible;position:relative;"><path d="M64 0C28.7 0 0 28.7 0 64V352c0 35.3 28.7 64 64 64H240l-10.7 32H160c-17.7 0-32 14.3-32 32s14.3 32 32 32H416c17.7 0 32-14.3 32-32s-14.3-32-32-32H346.7L336 416H512c35.3 0 64-28.7 64-64V64c0-35.3-28.7-64-64-64H64zM512 64V288H64V64H512z"/></svg> Example: map
 
 ````markdown
 ```{r}
@@ -3012,8 +2982,8 @@ DT::datatable( head(iris, 10),
 
 .font50[
 
-<div class="datatables html-widget html-fill-item" id="htmlwidget-10ee4804b98378a807da" style="width:100%;height:auto;"></div>
-<script type="application/json" data-for="htmlwidget-10ee4804b98378a807da">{"x":{"filter":"none","vertical":false,"fillContainer":true,"data":[["1","2","3","4","5","6","7","8","9","10"],[5.1,4.9,4.7,4.6,5,5.4,4.6,5,4.4,4.9],[3.5,3,3.2,3.1,3.6,3.9,3.4,3.4,2.9,3.1],[1.4,1.4,1.3,1.5,1.4,1.7,1.4,1.5,1.4,1.5],[0.2,0.2,0.2,0.2,0.2,0.4,0.3,0.2,0.2,0.1],["setosa","setosa","setosa","setosa","setosa","setosa","setosa","setosa","setosa","setosa"]],"container":"<table class=\"display fill-container\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>Sepal.Length<\/th>\n      <th>Sepal.Width<\/th>\n      <th>Petal.Length<\/th>\n      <th>Petal.Width<\/th>\n      <th>Species<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"pageLength":5,"columnDefs":[{"className":"dt-right","targets":[1,2,3,4]},{"orderable":false,"targets":0},{"name":" ","targets":0},{"name":"Sepal.Length","targets":1},{"name":"Sepal.Width","targets":2},{"name":"Petal.Length","targets":3},{"name":"Petal.Width","targets":4},{"name":"Species","targets":5}],"order":[],"autoWidth":false,"orderClasses":false,"lengthMenu":[5,10,25,50,100]}},"evals":[],"jsHooks":[]}</script>
+<div class="datatables html-widget html-fill-item" id="htmlwidget-333300636b7288fadca9" style="width:100%;height:auto;"></div>
+<script type="application/json" data-for="htmlwidget-333300636b7288fadca9">{"x":{"filter":"none","vertical":false,"fillContainer":true,"data":[["1","2","3","4","5","6","7","8","9","10"],[5.1,4.9,4.7,4.6,5,5.4,4.6,5,4.4,4.9],[3.5,3,3.2,3.1,3.6,3.9,3.4,3.4,2.9,3.1],[1.4,1.4,1.3,1.5,1.4,1.7,1.4,1.5,1.4,1.5],[0.2,0.2,0.2,0.2,0.2,0.4,0.3,0.2,0.2,0.1],["setosa","setosa","setosa","setosa","setosa","setosa","setosa","setosa","setosa","setosa"]],"container":"<table class=\"display fill-container\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>Sepal.Length<\/th>\n      <th>Sepal.Width<\/th>\n      <th>Petal.Length<\/th>\n      <th>Petal.Width<\/th>\n      <th>Species<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"pageLength":5,"columnDefs":[{"className":"dt-right","targets":[1,2,3,4]},{"orderable":false,"targets":0},{"name":" ","targets":0},{"name":"Sepal.Length","targets":1},{"name":"Sepal.Width","targets":2},{"name":"Petal.Length","targets":3},{"name":"Petal.Width","targets":4},{"name":"Species","targets":5}],"order":[],"autoWidth":false,"orderClasses":false,"lengthMenu":[5,10,25,50,100]}},"evals":[],"jsHooks":[]}</script>
 ]
 
 
@@ -3069,7 +3039,7 @@ at the top of your document.
 
 
 .blockquote.exercise[
-#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Function
+#### <svg aria-hidden="true" role="img" viewBox="0 0 576 512" style="height:1em;width:1.12em;vertical-align:-0.125em;margin-left:auto;margin-right:auto;font-size:inherit;fill:#004c93;overflow:visible;position:relative;"><path d="M64 0C28.7 0 0 28.7 0 64V352c0 35.3 28.7 64 64 64H240l-10.7 32H160c-17.7 0-32 14.3-32 32s14.3 32 32 32H416c17.7 0 32-14.3 32-32s-14.3-32-32-32H346.7L336 416H512c35.3 0 64-28.7 64-64V64c0-35.3-28.7-64-64-64H64zM512 64V288H64V64H512z"/></svg> Function
 ````markdown
 ```{r, eval = FALSE, echo=TRUE}
 knitr::knit_hooks$set(small.mar = function(before) {
@@ -3085,7 +3055,7 @@ knitr::knit_hooks$set(small.mar = function(before) {
 - `small.mar` now can be used as other chunk options. 
 
 .blockquote.exercise[
-#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example
+#### <svg aria-hidden="true" role="img" viewBox="0 0 576 512" style="height:1em;width:1.12em;vertical-align:-0.125em;margin-left:auto;margin-right:auto;font-size:inherit;fill:#004c93;overflow:visible;position:relative;"><path d="M64 0C28.7 0 0 28.7 0 64V352c0 35.3 28.7 64 64 64H240l-10.7 32H160c-17.7 0-32 14.3-32 32s14.3 32 32 32H416c17.7 0 32-14.3 32-32s-14.3-32-32-32H346.7L336 416H512c35.3 0 64-28.7 64-64V64c0-35.3-28.7-64-64-64H64zM512 64V288H64V64H512z"/></svg> Example
 ````markdown
 ```{r, small.mar = TRUE}
 hist(rnorm)
@@ -3114,7 +3084,7 @@ class: left, top
 --
 
 .font70[.blockquote.exercise[
-#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example
+#### <svg aria-hidden="true" role="img" viewBox="0 0 576 512" style="height:1em;width:1.12em;vertical-align:-0.125em;margin-left:auto;margin-right:auto;font-size:inherit;fill:#004c93;overflow:visible;position:relative;"><path d="M64 0C28.7 0 0 28.7 0 64V352c0 35.3 28.7 64 64 64H240l-10.7 32H160c-17.7 0-32 14.3-32 32s14.3 32 32 32H416c17.7 0 32-14.3 32-32s-14.3-32-32-32H346.7L336 416H512c35.3 0 64-28.7 64-64V64c0-35.3-28.7-64-64-64H64zM512 64V288H64V64H512z"/></svg> Example
 
 ``` r
 knitr::knit_hooks$set(small.mar = function(before) {
@@ -3135,7 +3105,7 @@ class: left, top
 - You can e.g. use a hook to consistently style all your gt tables 
 
 .font70[.blockquote.exercise[
-#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example
+#### <svg aria-hidden="true" role="img" viewBox="0 0 576 512" style="height:1em;width:1.12em;vertical-align:-0.125em;margin-left:auto;margin-right:auto;font-size:inherit;fill:#004c93;overflow:visible;position:relative;"><path d="M64 0C28.7 0 0 28.7 0 64V352c0 35.3 28.7 64 64 64H240l-10.7 32H160c-17.7 0-32 14.3-32 32s14.3 32 32 32H416c17.7 0 32-14.3 32-32s-14.3-32-32-32H346.7L336 416H512c35.3 0 64-28.7 64-64V64c0-35.3-28.7-64-64-64H64zM512 64V288H64V64H512z"/></svg> Example
 
 ``` r
 default_output_hook &lt;- knitr::knit_hooks$get("output")
@@ -3194,7 +3164,7 @@ class: left, top
 - use `here::here()` when setting a path.
 
 .blockquote.exercise[
-#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example
+#### <svg aria-hidden="true" role="img" viewBox="0 0 576 512" style="height:1em;width:1.12em;vertical-align:-0.125em;margin-left:auto;margin-right:auto;font-size:inherit;fill:#004c93;overflow:visible;position:relative;"><path d="M64 0C28.7 0 0 28.7 0 64V352c0 35.3 28.7 64 64 64H240l-10.7 32H160c-17.7 0-32 14.3-32 32s14.3 32 32 32H416c17.7 0 32-14.3 32-32s-14.3-32-32-32H346.7L336 416H512c35.3 0 64-28.7 64-64V64c0-35.3-28.7-64-64-64H64zM512 64V288H64V64H512z"/></svg> Example
 
 ``` r
 load(here::here("Data", "my_dataset.rda"))
@@ -3257,7 +3227,7 @@ class: left, top
 2. Wrap with a function
 
 .blockquote.exercise[
-#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example
+#### <svg aria-hidden="true" role="img" viewBox="0 0 576 512" style="height:1em;width:1.12em;vertical-align:-0.125em;margin-left:auto;margin-right:auto;font-size:inherit;fill:#004c93;overflow:visible;position:relative;"><path d="M64 0C28.7 0 0 28.7 0 64V352c0 35.3 28.7 64 64 64H240l-10.7 32H160c-17.7 0-32 14.3-32 32s14.3 32 32 32H416c17.7 0 32-14.3 32-32s-14.3-32-32-32H346.7L336 416H512c35.3 0 64-28.7 64-64V64c0-35.3-28.7-64-64-64H64zM512 64V288H64V64H512z"/></svg> Example
 
 ``` r
 my_pdf_format &lt;- function(...) {
@@ -3288,26 +3258,47 @@ class: exercise_slide
 ## Exercises
 
 1. Create an R Markdown document that is compiled to an HTML document. 
-   The document should consist of two sections:
+   The document should consist of two main (first level) sections:
     - Crime Incidents Report Data
     - Explorative Data Analysis.
-2. Use the first section to read in the "Crime Incident Reports" available under 
-   [Boston crime](https://data.boston.gov/dataset/crime-incident-reports-august-2015-to-date-source-new-system). Add some information about the source of the data and list all available columns with a short description  
-   Hint: Take a look at the table `RMS_Crime_Incident_Field_Explanation`. 
+2. Use the first section to read in the "Crime Incident Reports" (`readRDS()`) and the "Field Explanation" (`readxl::read_xlsx`) files available on Moodle. Then
+  - Display a sample of the data as a formatted table
+  - Write 1-2 sentences that include derived information (number of observation, number of variables, ...) from the actual data set (use inline R code).
+  - Look at the "Field Explanation" data and tidy it (`dplyr` + `tidyr`) 
+  - Display the tidied explanation data as a formatted table
 
 3. Optimize your code chunks so that the document doesn't load the data every time you compile. 
 
-4. Use the second section for an EDA. You are free to do whatever you like but produce at least one table and one graphic. 
 
-5. Hide all your code chunks by setting a global option. 
+---
+class: exercise_slide
+## Exercises
+&lt;ol start="4"&gt;
+&lt;li&gt;Use the second section for an EDA. The first subsection should analyze the incidents by day of the week.
+  &lt;ul&gt;
+    &lt;li&gt;Use &lt;code&gt;dplyr&lt;/code&gt; to get the number of incidents per month.&lt;/li&gt;
+    &lt;li&gt;Create a bar chart using &lt;code&gt;ggplot2::geom_col&lt;/code&gt; (check the docs for infos on the aesthetics) to show the results.&lt;/li&gt;
+    &lt;li&gt;Create a table using &lt;code&gt;gt()&lt;/code&gt; showing the numbers. Give it a caption.&lt;/li&gt;
+  &lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;
+  The second subsection analyzes incidents over time.
+  &lt;ul&gt;
+    &lt;li&gt;Compute the number of incidents by &lt;code&gt;YEAR&lt;/code&gt; and &lt;code&gt;MONTH&lt;/code&gt;. Use &lt;code&gt;lubridate::make_date()&lt;/code&gt; to create a new variable called &lt;code&gt;Date&lt;/code&gt; (the values should have the form &lt;code&gt;yyyy-mm-01&lt;/code&gt;)&lt;/li&gt;
+  &lt;li&gt;Create a ggplot using geometries of your choise shoing the development of the numbers over time.&lt;/li&gt;
+  &lt;li&gt;Make the plot interactive.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;Hide all your code chunks by setting a global option. &lt;/li&gt;
 
-6. Create a PDF document containing what you did. For this `\(\LaTeX{}\)` needs to be 
-   installed. 
+&lt;/ol&gt;
 
 ---
 class: exercise_slide
 ## Exercises
 &lt;ol start="7"&gt; 
+
+&lt;li&gt;Create a PDF document containing what you did (make sure the package &lt;code&gt;tinytex&lt;/code&gt; is installed).&lt;/li&gt;
 &lt;li&gt;  Remember that nested ordered lists are not supported by Rmarkdown. Nonetheless, produce one in your HTML and your PDF document. &lt;/li&gt;
 &lt;li&gt; Also, build some slides using the code you have written. You are free to choose one presentation format among all available formats. &lt;/li&gt;
 &lt;li&gt; Find out how to always use the current date in the YAML header.&lt;/li&gt;
