@@ -22,7 +22,7 @@ output:
         scroll: false # disable slide transitions by scrolling
 ---
 class: title-slide title-ggplot2 center middle
-```{r setup, echo = F, eval = T, warning = F}
+```{r setup, echo = F, eval = T, warning = F, message = F}
 knitr::opts_chunk$set(echo = FALSE, warning=FALSE, message=FALSE, 
                       fig.align = 'center', cache = T,  
                       dpi = 250, fig.width=10, out.width='72%')
@@ -60,7 +60,7 @@ R is a free software environment for statistical computing and  <b>graphics</b>.
 
 --
 
-There are four major graphical systems: 
+There are three major graphical systems: 
 
 - R base graphics
 - `lattice`

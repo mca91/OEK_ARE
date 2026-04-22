@@ -5,8 +5,8 @@
     <meta charset="utf-8" />
     <meta name="author" content="Martin Arnold" />
     <meta name="author" content="Martin Schmelzer" />
-    <meta name="date" content="2026-04-10" />
-    <script src="Wrangling_files/header-attrs-2.30/header-attrs.js"></script>
+    <meta name="date" content="2026-04-18" />
+    <script src="Wrangling_files/header-attrs-2.31/header-attrs.js"></script>
     <link href="Wrangling_files/remark-css-0.0.1/default.css" rel="stylesheet" />
     <link href="Wrangling_files/font-awesome-6.5.2/css/all.min.css" rel="stylesheet" />
     <link href="Wrangling_files/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet" />
@@ -1067,6 +1067,15 @@ A left join keeps all observations from the left table, and matches records from
 ``` r
 band_members %&gt;% left_join(band_instruments, by = "name")
 ```
+
+```
+## # A tibble: 3 × 3
+##   name  band    plays 
+##   &lt;chr&gt; &lt;chr&gt;   &lt;chr&gt; 
+## 1 Mick  Stones  &lt;NA&gt;  
+## 2 John  Beatles guitar
+## 3 Paul  Beatles bass
+```
 ]
 
 --
@@ -1083,6 +1092,14 @@ An inner join matches rows from the left and the right table but only keeps the 
 ``` r
 band_members %&gt;% inner_join(band_instruments, by = "name")
 ```
+
+```
+## # A tibble: 2 × 3
+##   name  band    plays 
+##   &lt;chr&gt; &lt;chr&gt;   &lt;chr&gt; 
+## 1 John  Beatles guitar
+## 2 Paul  Beatles bass
+```
  ]
 ---
 class: top, left
@@ -1094,6 +1111,16 @@ A full (outer) join matches rows from the left and the right table and keeps all
 
 ``` r
 band_members %&gt;% full_join(band_instruments, by = "name")
+```
+
+```
+## # A tibble: 4 × 3
+##   name  band    plays 
+##   &lt;chr&gt; &lt;chr&gt;   &lt;chr&gt; 
+## 1 Mick  Stones  &lt;NA&gt;  
+## 2 John  Beatles guitar
+## 3 Paul  Beatles bass  
+## 4 Keith &lt;NA&gt;    guitar
 ```
 ]
 ---
@@ -1108,6 +1135,14 @@ It keeps only columns from the left.
 ``` r
 band_members %&gt;% semi_join(band_instruments, by = "name")
 ```
+
+```
+## # A tibble: 2 × 2
+##   name  band   
+##   &lt;chr&gt; &lt;chr&gt;  
+## 1 John  Beatles
+## 2 Paul  Beatles
+```
 ]
 
 ---
@@ -1119,6 +1154,13 @@ An anti join returns all rows from the first table where no matches are found in
 
 ``` r
 band_members %&gt;% anti_join(band_instruments, by = 'name')
+```
+
+```
+## # A tibble: 1 × 2
+##   name  band  
+##   &lt;chr&gt; &lt;chr&gt; 
+## 1 Mick  Stones
 ```
 ]
 
@@ -1148,6 +1190,18 @@ class: top, left
 ``` r
 tidyr::table1
 ```
+
+```
+## # A tibble: 6 × 4
+##   country      year  cases population
+##   &lt;chr&gt;       &lt;dbl&gt;  &lt;dbl&gt;      &lt;dbl&gt;
+## 1 Afghanistan  1999    745   19987071
+## 2 Afghanistan  2000   2666   20595360
+## 3 Brazil       1999  37737  172006362
+## 4 Brazil       2000  80488  174504898
+## 5 China        1999 212258 1272915272
+## 6 China        2000 213766 1280428583
+```
 ]
 
 --
@@ -1162,6 +1216,24 @@ class: top, left
 
 ``` r
 tidyr::table2
+```
+
+```
+## # A tibble: 12 × 4
+##    country      year type            count
+##    &lt;chr&gt;       &lt;dbl&gt; &lt;chr&gt;           &lt;dbl&gt;
+##  1 Afghanistan  1999 cases             745
+##  2 Afghanistan  1999 population   19987071
+##  3 Afghanistan  2000 cases            2666
+##  4 Afghanistan  2000 population   20595360
+##  5 Brazil       1999 cases           37737
+##  6 Brazil       1999 population  172006362
+##  7 Brazil       2000 cases           80488
+##  8 Brazil       2000 population  174504898
+##  9 China        1999 cases          212258
+## 10 China        1999 population 1272915272
+## 11 China        2000 cases          213766
+## 12 China        2000 population 1280428583
 ```
 ]
 
@@ -1187,6 +1259,18 @@ The function `tidyr::pivot_wider()` main arguments are
 table2 %&gt;%
     pivot_wider(names_from = type, values_from = count)
 ```
+
+```
+## # A tibble: 6 × 4
+##   country      year  cases population
+##   &lt;chr&gt;       &lt;dbl&gt;  &lt;dbl&gt;      &lt;dbl&gt;
+## 1 Afghanistan  1999    745   19987071
+## 2 Afghanistan  2000   2666   20595360
+## 3 Brazil       1999  37737  172006362
+## 4 Brazil       2000  80488  174504898
+## 5 China        1999 212258 1272915272
+## 6 China        2000 213766 1280428583
+```
 ]
 
 --
@@ -1203,6 +1287,15 @@ Many more arguments that allow to customize column naming or how NULL values sho
 
 ``` r
 tidyr::table4b
+```
+
+```
+## # A tibble: 3 × 3
+##   country         `1999`     `2000`
+##   &lt;chr&gt;            &lt;dbl&gt;      &lt;dbl&gt;
+## 1 Afghanistan   19987071   20595360
+## 2 Brazil       172006362  174504898
+## 3 China       1272915272 1280428583
 ```
 ]
 
@@ -1229,6 +1322,18 @@ The function `pivot_longer()` main arguments are
 table4b %&gt;% 
   pivot_longer(cols = c("1999", "2000"), names_to = "year", values_to = "population")
 ```
+
+```
+## # A tibble: 6 × 3
+##   country     year  population
+##   &lt;chr&gt;       &lt;chr&gt;      &lt;dbl&gt;
+## 1 Afghanistan 1999    19987071
+## 2 Afghanistan 2000    20595360
+## 3 Brazil      1999   172006362
+## 4 Brazil      2000   174504898
+## 5 China       1999  1272915272
+## 6 China       2000  1280428583
+```
 ]
 
 --
@@ -1247,6 +1352,18 @@ notice that year is a character variable
 
 ``` r
 tidyr::table3 
+```
+
+```
+## # A tibble: 6 × 3
+##   country      year rate             
+##   &lt;chr&gt;       &lt;dbl&gt; &lt;chr&gt;            
+## 1 Afghanistan  1999 745/19987071     
+## 2 Afghanistan  2000 2666/20595360    
+## 3 Brazil       1999 37737/172006362  
+## 4 Brazil       2000 80488/174504898  
+## 5 China        1999 212258/1272915272
+## 6 China        2000 213766/1280428583
 ```
 ]
 
@@ -1277,6 +1394,18 @@ As input it takes:
 table3 %&gt;% 
   separate(rate, into = c("cases", "population"), convert = TRUE)
 ```
+
+```
+## # A tibble: 6 × 4
+##   country      year  cases population
+##   &lt;chr&gt;       &lt;dbl&gt;  &lt;int&gt;      &lt;int&gt;
+## 1 Afghanistan  1999    745   19987071
+## 2 Afghanistan  2000   2666   20595360
+## 3 Brazil       1999  37737  172006362
+## 4 Brazil       2000  80488  174504898
+## 5 China        1999 212258 1272915272
+## 6 China        2000 213766 1280428583
+```
 ]]
 
 ???
@@ -1290,6 +1419,18 @@ why is sep not specified?
 
 ``` r
 tidyr::table5 
+```
+
+```
+## # A tibble: 6 × 4
+##   country     century year  rate             
+##   &lt;chr&gt;       &lt;chr&gt;   &lt;chr&gt; &lt;chr&gt;            
+## 1 Afghanistan 19      99    745/19987071     
+## 2 Afghanistan 20      00    2666/20595360    
+## 3 Brazil      19      99    37737/172006362  
+## 4 Brazil      20      00    80488/174504898  
+## 5 China       19      99    212258/1272915272
+## 6 China       20      00    213766/1280428583
 ```
 ]
 
@@ -1309,6 +1450,18 @@ As input it takes:
 ``` r
 table5 %&gt;% 
   unite(year, century, year, sep = "")
+```
+
+```
+## # A tibble: 6 × 3
+##   country     year  rate             
+##   &lt;chr&gt;       &lt;chr&gt; &lt;chr&gt;            
+## 1 Afghanistan 1999  745/19987071     
+## 2 Afghanistan 2000  2666/20595360    
+## 3 Brazil      1999  37737/172006362  
+## 4 Brazil      2000  80488/174504898  
+## 5 China       1999  212258/1272915272
+## 6 China       2000  213766/1280428583
 ```
 ]
 
