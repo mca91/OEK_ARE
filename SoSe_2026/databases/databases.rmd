@@ -21,33 +21,28 @@ output:
       navigation:
         scroll: false # disable slide transitions by scrolling
 ---
-class: title-slide title-sqlite center middle
-```{r icons, include=FALSE}
-library(icons)
+class: title-slide title-ggplot2 center middle
+```{r setup, echo = F, eval = T, warning = F, message = F}
+knitr::opts_chunk$set(echo = FALSE, warning=FALSE, message=FALSE, 
+                      fig.align = 'center', cache = T,  
+                      dpi = 250, fig.width=10, out.width='72%')
 
-# pre-define icons
-desktop <- icons::icon_style(icons::fontawesome$solid$desktop, fill = "#004c93")
-checker_green <- icons::icon_style(icons::fontawesome$solid$check, fill = "green")
-times_red <- icons::icon_style(icons::fontawesome$solid$times, fill = "red")
+source(here::here("SoSe_2026/utils.R"))
+fontawesome::fa_html_dependency()
+options(htmltools.dir.version = FALSE)
 
-library(keyring)
+library(magrittr)
+library(ggplot2)
+library(plotly)
 ```
 
-```{r xaringanExtra_progress-bar, echo = FALSE}
-xaringanExtra::use_progress_bar(color = "#004c93", location = "bottom")
+```{r moon_reader, include=FALSE, eval = FALSE}
+# setup for moon reader
+# copy it to console
+options(servr.interval = 0.5)
+xaringan::inf_mr()
 ```
 
-```{r xaringanExtra-clipboard_2, echo=FALSE}
-# copy button styles mainly in ude.css
-htmltools::tagList(
-  xaringanExtra::use_clipboard(
-    button_text = "<i class=\"fa fa-clipboard\"></i>",
-    success_text = "<i class=\"fa fa-check\" style=\"color: #00ff00\"></i>",
-    error_text = "<i class=\"fa fa-times-circle\" style=\"color: #F94144\"></i>"
-  ),
-  rmarkdown::html_dependency_font_awesome()
-)
-```
 
 ```{r, include = FALSE, cache = FALSE}
 library(knitr)

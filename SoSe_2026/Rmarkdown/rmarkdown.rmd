@@ -50,29 +50,32 @@ xaringan::inf_mr()
 class: left, top
 ## R Markdown
 
-R Markdown provides a framework for combining code, results, and commentary.
-
-You can use R Markdown 
+.font80[
+R Markdown provides a framework for combining code, results, and commentary. You can use R Markdown
 
 - to generate reports, articles, books ...
 - as an environment in which to do data science, as a lab notebook where 
   you can capture not only what you did, but also what you were thinking. 
+]
 
 --
 
+.font80[
 **Some interesting links:**
 
 - [R Markdown: The Definitive Guide](https://bookdown.org/yihui/rmarkdown/) 
 - [Introduction to R Markdown](https://rmarkdown.rstudio.com/lesson-1.html)
 - [Cheatsheet](https://raw.githubusercontent.com/rstudio/cheatsheets/master/rmarkdown-2.0.pdf)
 - [Gallery](https://rmarkdown.rstudio.com/gallery.html)
+]
 
 --
 
+.font80[
 **Example:**
 
 - [Introduction to Econometrics with R](https://www.econometrics-with-r.org)
-
+]
 
 
 ---
@@ -622,10 +625,28 @@ class: left, top
 ![](gt_table_elements.png)
 ]
 
+???
+The stub acts like the "y-axis" of the table
 
 
 
 
+---
+class: left, top
+## `gt`
+
+- `gt()` creates a gt table object and uses plenty of arguments
+- `tab_header()` is used to edit the header
+- `tab_stubhead()` to change the stub head label
+- `cols_label()` to edit column labels
+- `tab_spanner()` to insert column spanners 
+- `tab_footnote()` to add footnotes
+- `tab_source_note()` to a source notes
+- `fmt_*()` offer multiple options to format columns
+- `tab_options()` to modify table options
+
+---
+For details: `?` is your friend
 
 
 
@@ -739,6 +760,31 @@ gtobj %>%
   gt:::dt_options_set_value(data = ., option = "table_id", value ="gtexample") %>%
   tab_options(table.additional_css = "#gtexample .gt_row.gt_right { background-color: #e8f4fc; }")
 ```
+
+---
+class: exercise_slide
+## Exercises
+
+Create a new Rmarkdown document with HTML output. It should contain a section "Data Exploration" and two subsections "Data" and "Visualizations".
+<ol>
+<li>Create a table that displays the mtcars dataset. The table should look like a publishable report rather than a raw console output. Requirements:</li>
+<ul>
+<li>Add a header: Include a title ("Motor Trend Car Road Tests") and a subtitle ("Data from the 1974 Motor Trend US magazine").</li>
+
+<li>Create a stub: Move the car names (currently row names, see <code>tibble::rownames_to_column</code>) into a formal "Stub" column (see arguments to <code>gt()</code>).</li>
+
+<li>Format numbers: Round the <code>disp</code> column to one decimal place and the <code>wt</code> column to three decimal places.</li>
+
+<li>Column Labels: Change the column name <code>mpg</code> to "Miles Per Gallon".</li>
+<li>Install the package <code>ggExtras</code> and apply the <i>FiveThirtyEight</i> theme to your table.</li>
+</ul>
+</ol>
+
+
+
+
+
+
 
 
 ---
@@ -879,6 +925,23 @@ hist(rnorm(1000))
 ```
 ]
 
+
+---
+class: exercise_slide
+## Exercises
+
+
+<ol start="2">
+<li>Create a <code>ggplot</code> based on the <code>mtcars</code> data.
+  <ul>
+    <li>Use any aesthetic mapping and geometry you like as long as you use either the <code>colour</code> or the <code>fill</code> aesthetic.</li>
+    <li>Install <code>ggthemes</code> and apply the <i>FiveThirtyEight</i> scale to your <code>colour</code>/<code>fill</code> aesthetic (look for the corresponding <code>scale_*</code> function). Also, apply the overall <i>FiveThirtyEight</i> theme.</li>
+</ul>
+</li>
+</ol>
+
+
+
 ---
 class: left, top
 ## Links and External Graphics
@@ -962,7 +1025,8 @@ plot_ly(mtcars, x = ~wt, y = ~hp, z = ~qsec, color = ~am, colors = c('#BF382A', 
 class: left, top
 ## Interactive documents
 
-.center[
+<div style="display: flex; justify-content: center;">
+
 ```{r}
 library(plotly)
 # Prepare Data
@@ -970,13 +1034,13 @@ mtcars$am[which(mtcars$am == 0)] <- 'Automatic'
 mtcars$am[which(mtcars$am == 1)] <- 'Manual'
 mtcars$am <- as.factor(mtcars$am)
 # Interactive Plot
-plot_ly(mtcars, x = ~wt, y = ~hp, z = ~qsec, color = ~am, colors = c('#BF382A', '#0C4B8E')) %>%
+plot_ly(mtcars, x = ~wt, y = ~hp, z = ~qsec, color = ~am, colors = c('#BF382A', '#0C4B8E'), width = 600, height = 500) %>%
   add_markers() %>%
   layout(scene = list(xaxis = list(title = 'Weight'),
                      yaxis = list(title = 'Gross horsepower'),
                      zaxis = list(title = '1/4 mile time')))
 ```
-]
+</div>
 
 - For more examples see [plot.ly](https://plot.ly/r/).
 
@@ -1004,7 +1068,8 @@ leaflet() %>% addTiles() %>%
 
 ```{r, out.height='450'}
 library(leaflet)
-leaflet() %>% addTiles() %>%
+leaflet() %>% 
+  addTiles() %>%
   setView(7.005070, 51.463675,zoom = 17) %>%
   addMarkers(
     7.005070, 51.463675, 
@@ -1031,8 +1096,7 @@ class: left, top
 
 ````markdown
 `r ''````{r}
-DT::datatable( head(iris, 10),
-  fillContainer = TRUE,  options = list(pageLength = 5))
+DT::datatable( head(iris, 10), fillContainer = TRUE,  options = list(pageLength = 5))
 ```
 ````
 
@@ -1319,23 +1383,27 @@ my_pdf_format <- function(...) {
 class: exercise_slide
 ## Exercises
 
-1. Create an R Markdown document that is compiled to an HTML document. 
-   The document should consist of two main (first level) sections:
-    - Crime Incidents Report Data
-    - Explorative Data Analysis.
-2. Use the first section to read in the "Crime Incident Reports" (`readRDS()`) and the "Field Explanation" (`readxl::read_xlsx`) files available on Moodle. Then
-  - Display a sample of the data as a formatted table
-  - Write 1-2 sentences that include derived information (number of observation, number of variables, ...) from the actual data set (use inline R code).
-  - Look at the "Field Explanation" data and tidy it (`dplyr` + `tidyr`) 
-  - Display the tidied explanation data as a formatted table
-
-3. Optimize your code chunks so that the document doesn't load the data every time you compile. 
-
+<ol start="2">
+<li>Create an R Markdown document that is compiled to an HTML document. The document should consist of two main (first level) sections:
+    <ul>
+      <li>Crime Incidents Report Data</li>
+      <li>Explorative Data Analysis.</li>
+    </ul>
+    </li>
+<li> Use the first section to read in the "Crime Incident Reports" (<code>readRDS()</code>) and the "Field Explanation" (<code>readxl::read_xlsx</code>) files available on Moodle. Then
+<ul>
+  <li>Display a sample of the data as a formatted table</li>
+  <li>Write 1-2 sentences that include derived information (number of observation, number of variables, ...) from the actual data set (use inline R code).</li>
+  <li>Look at the "Field Explanation" data and tidy it (<code>dplyr</code> + <code>tidyr</code>) </li>
+  <li>Display the tidied explanation data as a formatted table</li>
+</ul>
+<li>Optimize your code chunks so that the document doesn't load the data every time you compile. </li>
+</ol>
 
 ---
 class: exercise_slide
 ## Exercises
-<ol start="4">
+<ol start="5">
 <li>Use the second section for an EDA. The first subsection should analyze the incidents by day of the week.
   <ul>
     <li>Use <code>dplyr</code> to get the number of incidents per month.</li>
@@ -1358,7 +1426,7 @@ class: exercise_slide
 ---
 class: exercise_slide
 ## Exercises
-<ol start="7"> 
+<ol start="8"> 
 
 <li>Create a PDF document containing what you did (make sure the package <code>tinytex</code> is installed).</li>
 <li>  Remember that nested ordered lists are not supported by Rmarkdown. Nonetheless, produce one in your HTML and your PDF document. </li>

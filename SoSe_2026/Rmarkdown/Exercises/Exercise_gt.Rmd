@@ -1,0 +1,61 @@
+---
+title: "Exercise_gt"
+author: "Martin Schmelzer"
+date: "2026-04-24"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, message=FALSE, warning=F)
+```
+
+# Data Exploration
+
+## Data
+
+```{r}
+library(gt)
+library(gtExtras)
+library(dplyr)
+library(ggplot2)
+library(ggthemes)
+
+# Prepare the data
+mtcars_subset <- mtcars %>% 
+  tibble::rownames_to_column("car") 
+  # head(10)
+
+# Create the gt table
+mtcars_subset %>%
+  gt(rowname_col = "car") %>%
+  tab_header(
+    title = "Motor Trend Car Road Tests",
+    subtitle = "Data from the 1974 Motor Trend US magazine"
+  ) %>%
+  cols_label(
+    mpg = "Miles Per Gallon"
+  ) %>%
+  fmt_number(
+    columns = disp,
+    decimals = 1
+  ) %>%
+  fmt_number(
+    columns = wt,
+    decimals = 3
+  ) %>%
+  gt_theme_538()
+
+```
+
+## Visualizations
+
+```{r}
+p <- ggplot(mtcars, aes(x = wt, y = mpg, colour = factor(cyl))) +
+  geom_point() +
+  geom_smooth(method = "lm", se = T) +
+  scale_color_fivethirtyeight() +
+  labs(title = "The effect of weight on fuel consumption") +
+  theme_fivethirtyeight()
+p
+```
+

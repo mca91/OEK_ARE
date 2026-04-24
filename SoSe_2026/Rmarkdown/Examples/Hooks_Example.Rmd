@@ -1,0 +1,56 @@
+---
+title: "Untitled"
+author: "Martin Schmelzer"
+date: "2025-05-24"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(dplyr)
+library(gt)
+
+# Modify all inline code
+knitr::knit_hooks$set(inline = function(x, options) {
+  sprintf('<span style="color: red; font-weight: bold;">%s</span>', x)
+})
+
+
+# Modify outouts
+default_output_hook <- knitr::knit_hooks$get("output")
+knitr::knit_hooks$set(
+  output = function(x, options) {
+    if (isTRUE(options$gttable)) {
+      result <- eval(parse(text = paste(options$code, collapse = "\n")))
+      
+      html <- result %>%
+        gt::opt_all_caps() %>%
+        gt::tab_options(
+          table.border.bottom.color = "#215E8F",
+          table.border.bottom.style = "solid",
+          table.border.bottom.width = "5px",
+          column_labels.border.bottom.color = "#215E8F", 
+          column_labels.border.bottom.style = "solid",
+          column_labels.border.bottom.width = "5px", 
+          table.background.color = "#e8f4fc"
+        ) %>%
+        gt::as_raw_html()
+
+      knitr::asis_output(html)
+    } else {
+      default_output_hook(x, options)
+    }
+  }
+)
+
+```
+
+## Taadaaa
+
+
+`r 1+4`
+
+```{r, gttable=TRUE}
+gt(mtcars, caption = "A lot of cars")
+```
+
