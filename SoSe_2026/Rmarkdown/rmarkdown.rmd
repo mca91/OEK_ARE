@@ -1211,16 +1211,6 @@ class: left, top
   - `document`: the output of the whole document 
 ]
 
---
-
-.font70[.blockquote.exercise[
-#### `r ICONS$desktop` Example
-```{r, eval = FALSE, echo = TRUE}
-knitr::knit_hooks$set(small.mar = function(before) {
-    if (before) par(mar = c(1, 1, 1, 1))  
-})
-```
-]]
 
 --
 .font70[
