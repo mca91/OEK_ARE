@@ -23,8 +23,8 @@ output:
 ---
 class: title-slide title-ggplot2 center middle
 ```{r setup, echo = F, eval = T, warning = F, message = F}
-knitr::opts_chunk$set(echo = FALSE, warning=FALSE, message=FALSE, 
-                      fig.align = 'center', cache = T,  
+knitr::opts_chunk$set(echo = T, warning=FALSE, message=FALSE, 
+                      fig.align = 'center', cache = F,  
                       dpi = 250, fig.width=10, out.width='72%')
 
 source(here::here("SoSe_2026/utils.R"))
@@ -88,7 +88,7 @@ knit_hooks$set(
 
 .font90[.blockquote.exercise[
 
-#### `r desktop` Example: Redundent Data
+#### `r ICONS$desktop` Example: Redundent Data
 
 ```{r, echo = FALSE, eval = TRUE, results = 'asis', message = FALSE}
 library(dplyr)
@@ -163,7 +163,7 @@ knitr::kable(customer, format = "html", caption = "Customer")
 --
 
 .blockquote.exercise[
-```{r, eval = FALSE}
+```{r, echo = T, eval = FALSE}
 install.packages("dbplyr")
 ```
 ]
@@ -188,14 +188,13 @@ install.packages("dbplyr")
 - To connect to a database authentication information such as 
   username and password are required (the database admin should provide those). 
 - You also need to specify a driver that makes communication with the database possible.
-- ~~There is a remote MySQL database hosted on the web which we have access to:~~
 ]
 
 --
 
 .font80[.blockquote.exercise[
 
-#### `r desktop` Setup the connection 
+#### `r ICONS$desktop` Setup the connection 
 
 ```{r, eval = FALSE}
 library(dbplyr)
@@ -236,9 +235,9 @@ con <- DBI::dbConnect(
 ---
 
 .font90[
-## Set up an SQLite Database
+## Set up a SQLite Database
 
-- SQLite is a very light weighted Database Management System 
+- SQLite is a light weight Database Management System 
 - An SQLite database is contained in a single file. There is no need for a server. 
 - Everything you need is to install the `RSQLite` packages. 
 ]
@@ -246,7 +245,7 @@ con <- DBI::dbConnect(
 --
 
 .font90[
-#### Create a SQLite Database
+#### Set up a SQLite Database
 - A new SQLite database is automatically created if you call `DBI::dbConnect()`
 with argument `dbname = "path_to_database"` where `"path_to_database"` is a path to 
 a non-existing file. 
@@ -257,7 +256,7 @@ connects to that database.
 --
 
 .font90.blockquote.exercise[
-#### `r desktop` Example 
+#### `r ICONS$desktop` Example 
 
 ```{r, echo = TRUE, eval = FALSE}
 library(dplyr)
@@ -283,7 +282,7 @@ SQLite -> SQLite is a C-language library that implements a small, fast, self-con
 --
 
 .font90.blockquote.exercise[
-#### `r desktop` Example 
+#### `r ICONS$desktop` Example 
 ```{r, eval = FALSE}
 DBI::dbWriteTable(con,
                   name = "tbl_mtcars", 
@@ -299,7 +298,7 @@ DBI::dbWriteTable(con,
 --
 
 .font90.blockquote.exercise[
-#### `r desktop` Example 
+#### `r ICONS$desktop` Example 
 
 ```{r, eval = FALSE}
 new_car <- data.frame(mpg = 1, cyl = 16, disp = 800, hp = 210, 
@@ -318,20 +317,6 @@ DBI::dbDisconnect(con)
 ???
 with name `mtcars_db` 
 
-
-
----
-## Write Data to the Database
-
-
-.font90.blockquote.exercise[
-#### `r desktop` Example 
-
-```{r, echo = TRUE, eval = FALSE}
-dbWriteTable(con, "tbl_gapminder", gapminder::gapminder)
-dbWriteTable(con, "tbl_country_codes", gapminder::country_codes)
-```
-]
 
 
 ---
@@ -354,7 +339,7 @@ DBI::dbListTables(con)
 
 .blockquote.exercise[
 
-#### `r desktop` Example 
+#### `r ICONS$desktop` Example 
 ```{r, eval = FALSE}
 gap_tbl <- tbl(con, "tbl_gapminder")
 class(gap_tbl)
@@ -365,7 +350,7 @@ class(gap_tbl)
 
 .font90.blockquote.exercise[
 
-#### `r desktop` Example 
+#### `r ICONS$desktop` Example 
 ```{r, message=FALSE, warning=FALSE, eval = FALSE}
 gap_avg_tbl <- gap_tbl %>%
   group_by(continent) %>% 
@@ -387,7 +372,7 @@ gap_avg_tbl <- gap_tbl %>%
 
 .font90.blockquote.exercise[
 
-#### `r desktop` Example 
+#### `r ICONS$desktop` Example 
 ```{r, warning=FALSE, eval = FALSE}
 show_query(gap_avg_tbl)
 ```
@@ -416,7 +401,7 @@ When working with databases, `dplyr` tries to be as lazy as possible:
 
 
 .font90.blockquote.exercise[
-#### `r desktop` Example 
+#### `r ICONS$desktop` Example 
 
 ```{r, eval = FALSE}
 gap_avg <- gap_avg_tbl %>% collect(n = Inf)
@@ -444,10 +429,13 @@ rm(con)
 class: exercise_slide
 ## Exercises
 
-1. Set up a new SQLite database containing the Boston Crime data. 
-2. Without retrieving the data to R let the database compute the percentage of incidents involving a shooting. 
 
+1. Set up a new SQLite database containing the Boston Crime data (in the same folder where your RMarkdown report is located).
 
+2. Rewrite your RMarkdown report on crime so that
+  - It establishes a connection to the crime database.
+  - All the other lines of code work with the new data source.
+  - Make sure the database connection is closed at the end of your document.
 
 
 

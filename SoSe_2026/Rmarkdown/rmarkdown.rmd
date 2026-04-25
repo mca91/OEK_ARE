@@ -776,7 +776,7 @@ Create a new Rmarkdown document with HTML output. It should contain a section "D
 <li>Format numbers: Round the <code>disp</code> column to one decimal place and the <code>wt</code> column to three decimal places.</li>
 
 <li>Column Labels: Change the column name <code>mpg</code> to "Miles Per Gallon".</li>
-<li>Install the package <code>ggExtras</code> and apply the <i>FiveThirtyEight</i> theme to your table.</li>
+<li>Install the package <code>gtExtras</code> and apply the <i>FiveThirtyEight</i> theme to your table.</li>
 </ul>
 </ol>
 
