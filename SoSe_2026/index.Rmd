@@ -39,7 +39,7 @@ class: title-slide title-index
 .pull-right[
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;**Lecturer: Martin Arnold**
 <ol start = "8">
-  <li><a href="Advanced R concepts/Advanced.html" class="disabled">Advanced Concepts</a></li>
+  <li><a href="Advanced R concepts/Advanced.html">Advanced Concepts</a></li>
   <li><a href="functional/functional.html" class="disabled">Functional Programming Tools</a></li>
   <li><a href="Shiny/Shiny.html" class="disabled">Shiny</a></li>
   <li><a href="AI/ai.html" class="disabled">Building GenAI Applications</a></li>
