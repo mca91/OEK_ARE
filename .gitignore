@@ -3,8 +3,9 @@
 .Rapp.history
 .Ruserdata
 
-# R-profile
+# R-profile / Renviron
 .Rprofile
+.Renviron
 
 # data files
 *.Rds
