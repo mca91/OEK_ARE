@@ -40,9 +40,9 @@ class: title-slide title-index
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;**Lecturer: Martin Arnold**
 <ol start = "8">
   <li><a href="Advanced R concepts/Advanced.html">Advanced Concepts</a></li>
+  <li><a href="AI/ai.html">Building GenAI Applications</a></li>
   <li><a href="functional/functional.html" class="disabled">Functional Programming Tools</a></li>
   <li><a href="Shiny/Shiny.html" class="disabled">Shiny</a></li>
-  <li><a href="AI/ai.html" class="disabled">Building GenAI Applications</a></li>
   <li><a href="Performance/Performance.html" class="disabled">Deep Dive: Performance</a></li>
   <li><a href="Performance/Performance.html" class="disabled">Deep Dive: Debugging</a></li>
 </ol>
