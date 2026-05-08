@@ -8,6 +8,8 @@
     <meta name="date" content="2026-05-08" />
     <script src="AI_files/header-attrs-2.29/header-attrs.js"></script>
     <link href="AI_files/remark-css-0.0.1/default.css" rel="stylesheet" />
+    <link href="AI_files/font-awesome-6.5.2/css/all.min.css" rel="stylesheet" />
+    <link href="AI_files/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet" />
     <script src="AI_files/htmlwidgets-1.6.4/htmlwidgets.js"></script>
     <script src="AI_files/viz-1.8.2/viz.js"></script>
     <link href="AI_files/DiagrammeR-styles-0.2/styles.css" rel="stylesheet" />
@@ -92,8 +94,8 @@ An LLM call essentially is a _remote_ function call:
 #### Schema for a single LLM request
 
 .font90[
-<div id="htmlwidget-459c34d71901ee474901" style="width:90%;height:240px;" class="grViz html-widget"></div>
-<script type="application/json" data-for="htmlwidget-459c34d71901ee474901">{"x":{"diagram":"\ndigraph api_flow {\n  graph [rankdir=LR, bgcolor=white, fontname=\"Arial\", nodesep=1.0, ranksep=0.8]\n  node [shape=box, style=\"filled,rounded\", fontname=\"Arial\", fontsize=16,\n        penwidth=2, width=1.8, height=0.65]\n  edge [fontname=\"Arial\", fontsize=13, penwidth=1.8]\n\n  R   [label=\"R\", fillcolor=\"#004c93\", fontcolor=\"white\", color=\"#004c93\"]\n  API [label=\"Provider API\", fillcolor=\"#dce8f5\", fontcolor=\"#222\", color=\"#004c93\"]\n  LLM [label=\"LLM\", fillcolor=\"#dce8f5\", fontcolor=\"#222\", color=\"#004c93\"]\n\n  R   -> API [label=\" prompt + inputs \", color=\"#004c93\", fontcolor=\"#333\"]\n  API -> LLM [label=\" request \", color=\"#004c93\", fontcolor=\"#333\"]\n  LLM -> API [label=\" response \", color=\"#888888\", fontcolor=\"#333\", style=dashed]\n  API -> R   [label=\" response \", color=\"#888888\", fontcolor=\"#333\", style=dashed]\n}\n","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
+<div id="htmlwidget-dd6838acdab3b5b49acd" style="width:90%;height:240px;" class="grViz html-widget"></div>
+<script type="application/json" data-for="htmlwidget-dd6838acdab3b5b49acd">{"x":{"diagram":"\ndigraph api_flow {\n  graph [rankdir=LR, bgcolor=white, fontname=\"Arial\", nodesep=1.0, ranksep=0.8]\n  node [shape=box, style=\"filled,rounded\", fontname=\"Arial\", fontsize=16,\n        penwidth=2, width=1.8, height=0.65]\n  edge [fontname=\"Arial\", fontsize=13, penwidth=1.8]\n\n  R   [label=\"R\", fillcolor=\"#004c93\", fontcolor=\"white\", color=\"#004c93\"]\n  API [label=\"Provider API\", fillcolor=\"#dce8f5\", fontcolor=\"#222\", color=\"#004c93\"]\n  LLM [label=\"LLM\", fillcolor=\"#dce8f5\", fontcolor=\"#222\", color=\"#004c93\"]\n\n  R   -> API [label=\" prompt + inputs \", color=\"#004c93\", fontcolor=\"#333\"]\n  API -> LLM [label=\" request \", color=\"#004c93\", fontcolor=\"#333\"]\n  LLM -> API [label=\" response \", color=\"#888888\", fontcolor=\"#333\", style=dashed]\n  API -> R   [label=\" response \", color=\"#888888\", fontcolor=\"#333\", style=dashed]\n}\n","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
 ]
 
 The R session sends the request. The provider runs the model. R receives the result as an object we can print, save, parse, or pass to another function.
@@ -689,7 +691,7 @@ If no shared scan is available, write and compare the prompt only.
 ---
 class: segue-red middle center
 
-# 4. Parameters and Providers
+# Parameters and Providers
 
 ---
 ## Temperature
@@ -807,7 +809,7 @@ chat &lt;- chat_ollama(
 ---
 class: segue-red middle center
 
-# 5. Reusable Study Tools
+# Reusable Study Tools
 
 ---
 ## Summarizer Design
@@ -1032,7 +1034,7 @@ ask_llm(
 ---
 class: segue-red middle center
 
-# 6. Structured Extraction
+# Structured Extraction
 
 ---
 ## When Text Is Not Enough
@@ -1186,7 +1188,7 @@ countries
 ---
 class: segue-red middle center
 
-# 7. Assemble an App-Like Workflow
+# Assemble an App-Like Workflow
 
 ---
 ## Study Assistant: Architecture

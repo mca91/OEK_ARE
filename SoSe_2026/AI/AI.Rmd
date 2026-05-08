@@ -25,6 +25,7 @@ class: title-slide title-ai center middle
 ```{r setup, echo = F, eval = T, warning = F}
 knitr::opts_chunk$set(echo = TRUE, eval = FALSE, warning = FALSE)
 source(here::here("SoSe_2026/utils.R"))
+fontawesome::fa_html_dependency()
 ```
 
 ```{r moon_reader, include=FALSE, eval = FALSE}
@@ -702,7 +703,7 @@ If no shared scan is available, write and compare the prompt only.
 ---
 class: segue-red middle center
 
-# 4. Parameters and Providers
+# Parameters and Providers
 
 ---
 ## Temperature
@@ -820,7 +821,7 @@ chat <- chat_ollama(
 ---
 class: segue-red middle center
 
-# 5. Reusable Study Tools
+# Reusable Study Tools
 
 ---
 ## Summarizer Design
@@ -1045,7 +1046,7 @@ ask_llm(
 ---
 class: segue-red middle center
 
-# 6. Structured Extraction
+# Structured Extraction
 
 ---
 ## When Text Is Not Enough
@@ -1199,7 +1200,7 @@ countries
 ---
 class: segue-red middle center
 
-# 7. Assemble an App-Like Workflow
+# Assemble an App-Like Workflow
 
 ---
 ## Study Assistant: Architecture
