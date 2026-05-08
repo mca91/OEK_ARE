@@ -1,5 +1,5 @@
 ---
-title: "Advanced R for Econometricians (Summer 2025)"
+title: "Advanced R for Econometricians (Summer 2026)"
 subtitle: "Advanced R Concepts --- Notes and Examples"
 author: "Martin Arnold, Martin Schmelzer"
 output: pdf_document
@@ -7,194 +7,223 @@ output: pdf_document
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE, eval = FALSE)
-library(purrr)
 ```
 
-
-Make sure the `lobstr` package is attached!
+Make sure the `lobstr` package is installed and attached.
 
 ```{r, eval=F}
-install.packages('lobstr')
+install.packages("lobstr")
 library(lobstr)
 ```
 
+## Assignment Operators
 
-## Slide 5: Assignment Operators
+- R interprets `a <- b = 1` as `'<-<-'(a, b = 1, value = 1)`, which errors.
 
-**Solution to the task**
+- `<<-` walks up enclosing environments until it finds an existing binding; if none exists, it creates one in the global environment.
 
-- `->` is called 'right-assignment operator'
+## Bindings
 
-- The precedence relation is `->` >> `<-` >> `=` so `x <- 1 -> b` is another working alternative to the last line on the Slide 4.
+- Names are bindings (references) to values in memory; they do not "contain" values.
 
-## Slide 12: Copy-on-modify &mdash; Function Calls
+- `x <- c(1, 2, 3); y <- x` creates two bindings to the same value, with the same memory address.
 
-**Solution to the task**
+- This matters for performance: passing large objects does not copy by default.
 
-- **`f(x)`**: `f()` binds `a` to the same memory location `x` points to *during execution*. In contrast to the example on the previous slide, a copy *is* made since `f()` modifies `a`.
+## Copy-on-modify
 
-- **`z <- f(x)`**: as above. `z` is a binding the same location as `a` (no additional copy made).
+- Copy-on-modify protects against accidental side effects, but it can be expensive.
 
-- **Q**: What would happen if we'd super-assign to `x` *inside* of `f()`?\newline 
-  **A**: No additional reference to `x`, so calling `f()` would *not* trigger a copy!
+- Modifying one of multiple bindings triggers a copy; after separation, objects can diverge safely.
 
-## Slide 13: Copy-on-modify &mdash; Lists
+- Performance hinges on how many bindings point to the same value.
 
-**Solution to the task**
+## Copy-on-modify: Tracking with `tracemem()`
 
-```r
-l1 <- list(1, 2, 3)    # left
-l2 <- l1               # right
-l2[[3]] <- 4           # bottom
-```
+- `tracemem()` reports old/new addresses and, in function calls, includes the call stack that triggered the copy.
 
-Note that the copy-on-modification (triggered by `l2[[3]] <- 4`) is a so-called *shallow copy*: the bindings are copied, _not_ the values. This is non-expensive $\Rightarrow$ performance considerations!
+- After a first copying modification, later modifications can be in-place once an object has a single binding.
 
-## Slide 15: Copy-on-modify &mdash; Data frames
+- `untracemem()` should be used to stop tracing once diagnostics are complete.
+
+## Copy-on-modify: Function Calls
 
 **Solution to the task**
 
-Printing `df` to the console gives the impression that we are working with an array-type object but we are not---remember that `typeof(df)` is `list()`!
+- If `f <- function(a) { a[[1]] <- 0; a }`, then calling `f(x)` triggers one copy because `a` is modified.
 
-Modifying a single row implicates modifying *all* columns, i.e. all `list` elements. This cannot be tracked by `tracemem()` but can be seen using `lobstr::ref()`:
+- `z <- f(x)` does not add another copy on top of that modification copy; `z` binds to the modified object returned from `f()`.
 
-```r
-# overwrite first entries
-df[1, ] <- c(42, 42)
-# check memory addresses
-ref(d1)
+- For an identity function `f <- function(a) a`, `f(x)` and `z <- f(x)` make no copy; they only create/add bindings.
 
-# now modify only one variable
-df$x <- c(7, 7, 7)
-ref(d1)
-```
-
-## Slide 16: Exercises
-
-**Solution to the tasks**
-
-1. `1:10` is no binding so there's no point in tracing a value.
-
-2. In this example `x` is an integer vector (note that `x` as defined on Slide 11 has `double` type). Replacing `3L` with `4`, i.e. integer with double, triggers coercion of `x` to `double`. Coercion *always* results in a copy!
-
-3. `:` is special in the sense that it may generate integer sequences that can be stored using only the first and the last elements. The length of the generated sequenced doesn't affect the memory required to store the value.
-
-
-## Slide 18: Case Study: Copy-On-Modify Inferno
-
-- Note that `vapply()`'s `FUN.VALUE` requires a template for the return value (which is numeric $1\times 1$ here) 
-
-- We will come back to consequences of this behavior in the Chapter *Improving Performance* and benchmark against alternatives that require less copies.
-
-## Slide 19: Case Study: Copy-On-Modify Inferno
-
-Note that Using the `$` operator would make no difference here: `$<-` also has a `$<-.data.frame` method. The output of `tracemem()` then looks similar to this:
-
-```
-tracemem[0x7fe515db8d88 -> 0x7fe513bcd788]: 
-tracemem[0x7fe513bcd788 -> 0x7fe513b79a88]: $<-.data.frame $<- 
-tracemem[0x7fe513b79a88 -> 0x7fe513b79c88]: $<-.data.frame $<-
-```
-
-(Note that the addresses will not match the ones you will see on your device. These are location in your random-access memory (RAM) so they are different for different devices and also _randomly assigned_.)
-
-## Slide 20: Case Study: Copy-On-Modify Inferno
-
-- The two copies made by `[[<-.data.frame` are **shallow copies** (only column references are copied)
-
-- **Q**: What kind of function is `[[<-.data.frame`?\newline
-  **A**: A regular function. It is a method of  `[[<-` which is a primitive (a fast C function)
-
-- **Q**: How can you view the source?\newline 
-  **A**: Use backticks around `[[<-.data.frame`
-
-- More on primitives on the next slides. More on methods, dispatch etc. in the 'OOP' Chapter.
-
-- More on how to write efficient code (and especially efficient `for()` loops) in Chapter 'Improving Performance'
-
-## Slide 21: Case Study: Copy-On-Modify Inferno
-
-- A single copy is made from internal C code the first time we use `[[<-`
-
-- This a good example where tweaking the code reduces the amount of copies made
-
-- If such a solution is not readily at hand we may resort to C++ code. More on this in the `Rcpp` chapter.
-
-## Slide 28: First-Class Functions
+## Copy-on-modify: Lists and Data Frames
 
 **Solution to the task**
 
-- `(` is a primitive:
-    ```{r}
-    `(`
-    ```
+- List modification `l2[[3]] <- 4` performs a shallow copy: the list spine is copied, elements can remain shared references.
 
--  The R-help hints that `(` is semantically equivalent to `function(x) x`, so `(` evaluates its argument. 
+- For a data frame `df`, `df[1, ] <- c(42, 42)` is expensive because row replacement touches all columns, so multiple vectors are copied.
 
-    Therefore, `(x<-5)` is valid (and useful) R code: we bind to and then evaluate `x`
-    
-    `(function(x) x^2)(5)` defines an anonymous function and with the argument `x = 5`.
+- `df$x <- c(7, 7, 7)` only replaces one column vector, so less copying is required.
 
-## Slide 31: Lexical Scoping
+- `ref(l1, l2)` after list modification reveals shared element references, confirming shallow-copy behavior.
+
+## Copy-on-modify: Exercises
+
+**Solutions**
+
+1. `tracemem(1:10)` is not useful because `1:10` is not a binding to a named object.
+
+2. `x <- c(1L, 2L, 3L); x[[3]] <- 4` copies because `x` is integer and `4` is double, so coercion to double is required.
+
+3. `obj_size(1:10)` and `obj_size(1:1e6)` are similar because `:` stores compact integer sequences using start/end metadata.
+
+4. Rewriting the loop with `lapply()` constructs new outputs instead of mutating a shared object in-place, so it avoids repeated data-frame replacement copies.
+
+## Modify-in-place
+
+- In-place modification occurs when an object has one binding.
+
+- Environments are always modified in-place.
+
+- In RStudio, the Environment pane can create an extra binding, so in-place demos may appear to copy.
+
+- For clean in-place tests, prefer the plain R console (no extra IDE-held binding).
+
+## Case Study: Copy-on-Modify Inferno (Concept)
+
+- Iterative replacement on a data frame (`x[[i]] <- ...`) can trigger several copies per iteration because `[[<-.data.frame` uses temporary bindings and rebuilds structure.
+
+- Converting to list first (`y <- as.list(x)`) can reduce this to one initial list-spine copy, after which element updates are effectively in-place.
+
+- This motivates data-structure-aware optimization before moving to C++/`Rcpp`.
+
+## Garbage Collection
+
+- R uses tracing garbage collection: unreachable objects are freed automatically.
+
+- Rebinding (`x <- 2:4`) or removing (`rm(x)`) can make old values unreachable.
+
+- `gc()` is mostly diagnostic (prints memory summary): `vcells` for vector memory, `ncells` for non-vector objects.
+
+- `gcinfo(TRUE)` prints a message whenever GC runs, useful when diagnosing memory pressure.
+
+## Regular Functions vs. Primitives
+
+- Regular functions (`typeof == "closure"`) have formals and a body.
+
+- Primitives (`sum`, `+`, `[`) are implemented in C and have no R-level formals/body.
+
+- Closures "carry" their defining environment; primitives bypass most standard R call machinery.
+
+## First-Class Functions
 
 **Solution to the task**
 
-```{r, eval = T, results='hold'}
-rm(x) # remove `x` from GE
-z <- function(x) x^2
+- `(` is a primitive that returns its argument (semantically like `function(x) x`).
 
-# 3. everything in f() happens in an _ephemeral_ environment
-f <- function(g) {       
-    if(!exists("x")) {   
-        x <- 1
-    } else {
-        x <- x + 1
-    }
-    z <- 2               # 1. name masking (`z` is defined in GE)
-    
-    z(x + y)             # 2. functions before variables (`z()` is defined in GE)
-}
+- `(x <- 5)` is valid: it performs the assignment and visibly returns/prints the assigned value.
 
-y <- 20
-f(x)                     # 4. dynamic lookup: R will search for y when f() actually
-                         # needs it for computing z(x + y)---R does not care
-                         # for the value when we create f().
-```
+- Anonymous functions can be stored, passed, and called immediately (including modern `\(x)` lambda syntax).
 
-## Slide 35: Lazy Evaluation
+## R's Environment Hierarchy
+
+- Function execution environments are created per call; their parent is the function's defining environment.
+
+- Package environments form the search path between `.GlobalEnv` and `base`.
+
+- Lookup that reaches `R_EmptyEnv` without finding a name throws "object not found".
+
+- `environment(f)` gives the enclosing environment used as parent of `f()` execution environments.
+
+- `search()` reveals package lookup order; load order can affect masking.
+
+## Lexical Scoping
+
+- Name masking: inner names mask outer names.
+
+- Functions before variables: in a call, R ignores non-function objects with that name.
+
+- Execution environments: each call gets an ephemeral environment.
+
+- Dynamic lookup: free variables are resolved when the function runs.
+
+- In a call like `z(x + y)`, R looks for a function named `z` (ignoring non-function `z` values in that call position).
+
+## Lazy Evaluation
+
+- Arguments are promises and are evaluated only when needed.
+
+- A promise is forced at most once; then its value is cached.
+
+- Default arguments are evaluated in the function environment at call time.
+
+- Unevaluated arguments are never forced; e.g., `ignore(x = stop("never evaluated"))` is safe if `x` is unused.
+
+## Lazy Evaluation: Default Arguments
+
+- Defaults can reference names created inside the function body, because they are resolved at call time in the function environment.
+
+- This behavior is often useful for concise dependent defaults, but can hide errors if names are misspelled.
+
+## Lazy Evaluation: Short-circuit Evaluation
 
 **Solution to the task**
 
-- Due to lazy evaluation, the evaluation environment for *default arguments* is the ephemeral function environment
+1. `x > 0` is problematic for `x <- NULL` because it yields `logical(0)`, which `if` cannot use.
 
-- User supplied arguments are evaluated in the parent environment (GE here)
+2. No error occurs because `&&` short-circuits; once `!is.null(x)` is `FALSE`, the right-hand side is not evaluated.
 
-## Slide 36: Lazy Evaluation
+## Function Forms
 
-**Solution to the task**
+- All calls can be written in prefix form, including operators and special forms.
 
-- `NULL` represents the null object in R: `NULL` is used mainly to represent a list with zero length, and is often returned by expressions and functions whose value is _undefined_.
+- Custom infix operators use `%...%`.
 
-- Without lazy evaluation this statement would throw an error because `x > 0` evaluates to a logical value of length zero (you cannot compare `NULL` to `double`)
+- Replacement functions (e.g. `name<-`) must return the full modified object.
 
-- Control flow stops after evaluating the first part of the condition in `if()`: the second statement would be evaluated only if the first is `TRUE` (here it is `FALSE`).
+- Prefix rewrites like `` `+`(1, 2) `` and `` `[`(1:3, 3) `` are useful for understanding parser behavior.
 
-## Slide 37: Exercises
+## Function Forms: Infix Operators
 
-**Solution to the tasks**
+- User-defined infix operators are ordinary functions wrapped with `%` delimiters (for example, `%+%`, `%between%`).
 
-1. Lazy evaluation of default arguments happens at function definition, _not invocation_: R looks for `z` in the global environment because `x` is not `z^2` by default (like in the fixed version below).
-    ```{r, eval = F}
-    f <- function(x = z^2, z) {
-      z + x^2
-    }
-    f(2, 2)
-    ```
-    
-    A workaround using `with`: 
-    
-    `with(list(z = 2), f(x = z^2, z))`
+- They improve readability in domain-specific expressions.
 
-2. `...` enables us to pass arguments the body of `f()` (to other functions!) which do not have to be specified when defining `f()`.
+## Function Forms: Replacement Functions
 
-    Here, `f()` is a simple _wrapper_ that returns names of list elements as passed to the `...` argument.
+- Replacement functions must accept `(x, value)` and return the full modified `x`.
+
+- Replacement syntax desugars to a function call with rebinding and temporary objects, so copying behavior mirrors copy-on-modify semantics.
+
+## Function Forms: Exercises
+
+**Solutions**
+
+1. `f(x = z^2, z = 2)` fails because `x = z^2` is resolved in the calling environment where `z` is missing.
+
+   Fix with `with()`:
+
+   ```{r}
+   f <- function(x, z) z + x^2
+   with(list(z = 2), f(x = z^2, z = 2))
+   ```
+
+2. `...` captures additional arguments (named or unnamed), preserves names, and can be forwarded to other functions.
+
+3. Replacement function for winsorisation:
+
+   ```{r}
+   `winsorise<-` <- function(x, value) {
+     stopifnot(is.numeric(value), length(value) == 2)
+     lower <- value[[1]]
+     upper <- value[[2]]
+     x[x < lower] <- lower
+     x[x > upper] <- upper
+     x
+   }
+
+   returns <- c(-0.52, 0.03, 0.15, 1.20, -0.08, 0.97)
+   winsorise(returns) <- c(-0.5, 0.5)
+   returns
+   ```

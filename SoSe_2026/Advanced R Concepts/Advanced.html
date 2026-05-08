@@ -5,16 +5,11 @@
     <meta charset="utf-8" />
     <meta name="author" content="Martin Arnold" />
     <meta name="author" content="Martin Schmelzer" />
-    <meta name="date" content="2025-04-12" />
-    <script src="Advanced_files/header-attrs/header-attrs.js"></script>
-    <link href="Advanced_files/remark-css/default.css" rel="stylesheet" />
-    <script src="Advanced_files/clipboard/clipboard.min.js"></script>
-    <link href="Advanced_files/xaringanExtra-clipboard/xaringanExtra-clipboard.css" rel="stylesheet" />
-    <script src="Advanced_files/xaringanExtra-clipboard/xaringanExtra-clipboard.js"></script>
-    <script>window.xaringanExtraClipboard(null, {"button":"<i class=\"fa fa-clipboard\"><\/i>","success":"<i class=\"fa fa-check\" style=\"color: #00ff00\"><\/i>","error":"<i class=\"fa fa-times-circle\" style=\"color: #F94144\"><\/i>"})</script>
-    <link href="Advanced_files/font-awesome/css/all.min.css" rel="stylesheet" />
-    <link href="Advanced_files/font-awesome/css/v4-shims.min.css" rel="stylesheet" />
-    <script src="Advanced_files/xaringanExtra-progressBar/progress-bar.js"></script>
+    <meta name="date" content="2026-05-08" />
+    <script src="Advanced_files/header-attrs-2.29/header-attrs.js"></script>
+    <link href="Advanced_files/remark-css-0.0.1/default.css" rel="stylesheet" />
+    <link href="Advanced_files/font-awesome-6.5.2/css/all.min.css" rel="stylesheet" />
+    <link href="Advanced_files/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet" />
     <script type="text/x-mathjax-config">
       MathJax.Hub.Config({
         TeX: { equationNumbers: { autoNumber: "AMS" } },
@@ -35,14 +30,11 @@
   <body>
     <textarea id="source">
 
-
-
-
-
-
-
-
 class: title-slide title-rintro center middle
+
+
+
+
 
 # Advanced R for Econometricians
 ## Advanced R Concepts
@@ -51,49 +43,28 @@ class: title-slide title-rintro center middle
 ---
 ## Overview
 
-<style>.xe__progress-bar__container {
-  bottom:0;
-  opacity: 1;
-  position:absolute;
-  right:0;
-  left: 0;
-}
-.xe__progress-bar {
-  height: 0.25em;
-  background-color: #004c93;
-  width: calc(var(--slide-current) / var(--slide-total) * 100%);
-}
-.remark-visible .xe__progress-bar {
-  animation: xe__progress-bar__wipe 200ms forwards;
-  animation-timing-function: cubic-bezier(.86,0,.07,1);
-}
-@keyframes xe__progress-bar__wipe {
-  0% { width: calc(var(--slide-previous) / var(--slide-total) * 100%); }
-  100% { width: calc(var(--slide-current) / var(--slide-total) * 100%); }
-}</style>
-
-Make sure the `lobstr` package is attached!
+Make sure the `lobstr` package is installed and attached:
 
 
 ``` r
-install.packages('lobstr')
+install.packages("lobstr")
 library(lobstr)
 ```
 
 **Outline**
 
-- Names and values
+- Names and Values
 
     - Bindings and references
 
     - Copy-on-modify / in-place modification
 
     - Unbinding and Garbage Collection
-    
+
 - Functions
-    
-    - Fundamentals, scoping and Lazy Evaluation
-    
+
+    - Fundamentals, scoping, and Lazy Evaluation
+
     - Function forms
 
 ---
@@ -105,139 +76,60 @@ class: segue-red
 
 .smaller[
 
-- `&lt;-` is often used for assignment but some people use `=` instead. 
-
-- There is, however, a subtle difference in how they are evaluated when mixed in the same expression. 
+`&lt;-` is the standard assignment operator; `=` is an alias but has lower precedence when mixed in the same expression.
 
 .blockquote.exercise[
-#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example: operator *precedence*
+#### <svg aria-hidden="true" role="img" viewBox="0 0 576 512" style="height:1em;width:1.12em;vertical-align:-0.125em;margin-left:auto;margin-right:auto;font-size:inherit;fill:#004c93;overflow:visible;position:relative;"><path d="M64 0C28.7 0 0 28.7 0 64V352c0 35.3 28.7 64 64 64H240l-10.7 32H160c-17.7 0-32 14.3-32 32s14.3 32 32 32H416c17.7 0 32-14.3 32-32s-14.3-32-32-32H346.7L336 416H512c35.3 0 64-28.7 64-64V64c0-35.3-28.7-64-64-64H64zM512 64V288H64V64H512z"/></svg> Example: operator *precedence*
 
 .pull-left[
 
 ``` r
-a &lt;- b &lt;- 1
+a &lt;- b &lt;- 1   # chaining works
+a = b = 1     # so does this
 a == b
-```
-
-```
-## [1] TRUE
-```
-
-``` r
-a = b = 1
-a == b
-```
-
-```
-## [1] TRUE
 ```
 ]
+
 .pull-right[
 
 ``` r
-a = b &lt;- 1
+a = b &lt;- 1    # fine: &lt;- has precedence
 a == b
-```
-
-```
-## [1] TRUE
-```
-
-``` r
-a &lt;- b = 1
-```
-
-```
-## Error in a &lt;- b = 1: could not find function "&lt;-&lt;-"
+a &lt;- b = 1    # error: ambiguous
 ```
 ]
+]
 
-
-]]
-
-???
-
-- This really is just a convention and nothing precludes using `=` instead of `&lt;-` for assignment
-
-- When mixed, `&lt;-` has precedence over `=`
-
-- **Fact**: `&lt;-` comes from a time where there actually was a `&lt;-` key on keyboards. `&lt;-` and `-&gt;` essentially do the same thing.
-
-- R interprets `a &lt;- b = 1` as `'&lt;-&lt;-'(a, b = 1, value = 1)`
-
----
-## Assignment Operators
-
-.smaller[
-
-- For consistency we use `&lt;-` for binding and `=` for assigning objects to function arguments.
-
-- Note, however, that there are reasonable [proposals](http://www.win-vector.com/blog/2016/12/the-case-for-using-in-r/comment-page-1/) for using other conventions.
-
-&lt;br&gt;
-.content-box-white[
-**Task:** 
-
-Find out what `-&gt;` does and think of an application where it might be useful.
-
-*Hint:* Experiment to find out about the precedence relation between `&lt;-`, `-&gt;` and `=`.
-]]
-
-???
-
-- `-&gt;` is the right-assignment operator
-
-- The precedence relation is `-&gt;` &gt;&gt; `&lt;-` &gt;&gt; `=` so `x &lt;- 1 -&gt; b` is another working alternative to the last line on the previous slide.
-
----
-## Assignment Operators
-
-.smaller[
-Assignment operators work in the environment they are invoked in. The super assignment operator `&lt;&lt;-` assigns in the enclosing environment, provided the binding exists there.
+Assignment operators work in the environment where they are invoked. The **super assignment** operator `&lt;&lt;-` assigns in the *enclosing* environment.
 
 .blockquote.exercise[
-#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example: super assignment
+#### <svg aria-hidden="true" role="img" viewBox="0 0 576 512" style="height:1em;width:1.12em;vertical-align:-0.125em;margin-left:auto;margin-right:auto;font-size:inherit;fill:#004c93;overflow:visible;position:relative;"><path d="M64 0C28.7 0 0 28.7 0 64V352c0 35.3 28.7 64 64 64H240l-10.7 32H160c-17.7 0-32 14.3-32 32s14.3 32 32 32H416c17.7 0 32-14.3 32-32s-14.3-32-32-32H346.7L336 416H512c35.3 0 64-28.7 64-64V64c0-35.3-28.7-64-64-64H64zM512 64V288H64V64H512z"/></svg> Example: super assignment with `&lt;&lt;-`
 
 
 ``` r
-var_GE &lt;- 1
-
-a &lt;- function(x) {
-  b &lt;- function(x) var_GE &lt;&lt;- x
-  b(x)
-}
-
-a(3)
-var_GE
+counter &lt;- 0
+increment &lt;- function() counter &lt;&lt;- counter + 1
+increment()
+counter    # 1
 ```
-
-```
-## [1] 3
-```
-
-]]
+]
+]
 
 ???
 
-- Note that functions generate their own environments upon execution. The *execution environment* of `a()` is the parent environment to `b()`.
-
-- If `&lt;&lt;-` does not find a corresponding binding in the enclosing environment, it looks in the parent environment and works it's way up towards to global environment (GE)
-
-- If the binding does not exist in the **GE**, it will be created there
+- R interprets `a &lt;- b = 1` as `'&lt;-&lt;-'(a, b = 1, value = 1)`, which is an error.
+- `&lt;&lt;-` walks up the environment chain until it finds an existing binding; if none exists, it creates one in the global environment.
 
 ---
 ## Bindings
 
 .smaller[
 
-- Knowing what assignment does internally is crucial for understanding performance and memory usage of your code and R's functional programming tools.
-
-- What happens if we define a vector `x`? The idiom *'the object `x` stores the vector'* is not quite right... 
+- The idiom *"the object `x` stores the vector"* is misleading.
+- **Binding** means that the name has a **value**: `x` is a **reference** to a value living in the computer's memory.
 
 .blockquote.exercise[
-#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example: binding a vector
-
-**Binding** means that the name has a **value**: `x` is a **reference** to a value living in the computer's memory.
+#### <svg aria-hidden="true" role="img" viewBox="0 0 576 512" style="height:1em;width:1.12em;vertical-align:-0.125em;margin-left:auto;margin-right:auto;font-size:inherit;fill:#004c93;overflow:visible;position:relative;"><path d="M64 0C28.7 0 0 28.7 0 64V352c0 35.3 28.7 64 64 64H240l-10.7 32H160c-17.7 0-32 14.3-32 32s14.3 32 32 32H416c17.7 0 32-14.3 32-32s-14.3-32-32-32H346.7L336 416H512c35.3 0 64-28.7 64-64V64c0-35.3-28.7-64-64-64H64zM512 64V288H64V64H512z"/></svg> Example: binding a vector
 
 .pull-left[
   ![:image 40%](img/binding-1.png)
@@ -245,63 +137,50 @@ var_GE
   ![:image 40%](img/binding-2.png)
   ![:source 2019](Wickham)
 ]
-.pull-right[.code80[
-  
-  ``` r
-  x &lt;- c(1, 2, 3)
-  ```
-  &lt;br&gt;
-  
-  ``` r
-  y &lt;- x
-  ```
-]]]]
-
----
-## Bindings &amp;mdash; Character Vectors
-
-A `character` vector is a binding to a vector of strings.
-
-.blockquote.exercise[
-#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example: binding a `character` vector
-
-.smaller[
-
-.pull-left[
-  &lt;br&gt;
-  ![:image 55%](img/character.png)
-  ![:image 55%](img/character-2.png)
-  ![:source 2019](Wickham)
-]
 .pull-right[
+.code80[
 
 ``` r
-x &lt;- c("a", "a", "abc", "d")
-ref(x, character = TRUE)
+x &lt;- c(1, 2, 3)
+y &lt;- x   # y is a second reference to the same value
+
+# identical addresses confirm no copy was made
+obj_addr(x)
 ```
 
 ```
-## █ [1:0x1260f2808] &lt;chr&gt; 
-## ├─[2:0x130316500] &lt;string: "a"&gt; 
-## ├─[2:0x130316500] 
-## ├─[3:0x1200f7e70] &lt;string: "abc"&gt; 
-## └─[4:0x13063d6e0] &lt;string: "d"&gt;
+## [1] "0x122c92328"
 ```
-]]]
+
+``` r
+obj_addr(y)
+```
+
+```
+## [1] "0x122c92328"
+```
+]
+]
+]
+]
+
+???
+
+- Both `x` and `y` point to the same memory location — no copy is made on assignment.
+- This distinction matters for performance: passing large objects to functions does not copy them unless they are modified.
 
 ---
 ## Copy-on-modify
 
 .font90[
 
-R's copy-on-modify behavior is both blessing and curse: 
+R's copy-on-modify behaviour is both a blessing and a curse:
 
 - We may use references without the risk of breaking existing code (convenient).
-
-- _modifying_ a reference may trigger a copy of the value (unfavourable).
+- *Modifying* a reference may trigger a copy of the value (potentially expensive).
 
 .blockquote.exercise[
-#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example: copy-on-modify
+#### <svg aria-hidden="true" role="img" viewBox="0 0 576 512" style="height:1em;width:1.12em;vertical-align:-0.125em;margin-left:auto;margin-right:auto;font-size:inherit;fill:#004c93;overflow:visible;position:relative;"><path d="M64 0C28.7 0 0 28.7 0 64V352c0 35.3 28.7 64 64 64H240l-10.7 32H160c-17.7 0-32 14.3-32 32s14.3 32 32 32H416c17.7 0 32-14.3 32-32s-14.3-32-32-32H346.7L336 416H512c35.3 0 64-28.7 64-64V64c0-35.3-28.7-64-64-64H64zM512 64V288H64V64H512z"/></svg> Example: copy-on-modify
 
 .pull-left[
   &lt;br&gt;
@@ -315,50 +194,38 @@ R's copy-on-modify behavior is both blessing and curse:
 x &lt;- c(1, 2, 3)
 y &lt;- x
 
-y[[3]] &lt;- 4
-x
-```
-
-```
-## [1] 1 2 3
+y[[3]] &lt;- 4   # triggers a copy of x's value
+x             # x is unchanged
 ```
 
 
 ``` r
 obj_addr(x)
+obj_addr(y)   # now different addresses
 ```
-
-```
-## [1] "0x13c1bdf68"
-```
-
-``` r
-obj_addr(y)
-```
-
-```
-## [1] "0x13c1ab938"
-```
-]]
-]]]
+]
+]
+]
+]
+]
 
 ???
 
-- This is very different for many other languages, including c++ which we will see later during the course.
-
-- Question: object addresses (like `0x7f9ef3059d38`) will be different (unpredictable) if the code is re-run. Why?
+- In many other languages (e.g., C++), assignment would mutate the original object in-place. R's copy-on-modify makes code safer but can be slower.
+- The distinction between one and two bindings (see "Modify-in-place") is key for performance.
 
 ---
-## Copy-on-modify
+## Copy-on-modify: Tracking with `tracemem()`
 
-.code90[.font90[
+.code90[
+.font90[
 
-We may use `tracemem()` to obtain info when a copy of an object is generated.
+Use `tracemem()` to receive a notification whenever a copy of an object is made.
 
 .blockquote.exercise[
-#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example: keeping track of copies using `tracemem()`
+#### <svg aria-hidden="true" role="img" viewBox="0 0 576 512" style="height:1em;width:1.12em;vertical-align:-0.125em;margin-left:auto;margin-right:auto;font-size:inherit;fill:#004c93;overflow:visible;position:relative;"><path d="M64 0C28.7 0 0 28.7 0 64V352c0 35.3 28.7 64 64 64H240l-10.7 32H160c-17.7 0-32 14.3-32 32s14.3 32 32 32H416c17.7 0 32-14.3 32-32s-14.3-32-32-32H346.7L336 416H512c35.3 0 64-28.7 64-64V64c0-35.3-28.7-64-64-64H64zM512 64V288H64V64H512z"/></svg> Example: keeping track of copies
 
-`tracemem()` returns the copied object, the new address (and the **call stack**, if functions are involved).
+`tracemem()` reports the old and new memory address, plus the **call stack** if functions are involved.
 
 ```r
 x &lt;- c(1, 2, 3)
@@ -368,42 +235,37 @@ tracemem(x)
 `[1] "&lt;0x7fba7740ebb8&gt;"`
 
 ```r
-y &lt;- x
-y[[3]] &lt;- 4
+y &lt;- x          # no copy yet — two names, one value
+y[[3]] &lt;- 4     # copy triggered here
 ```
 
 `tracemem[0x7fba7740ebb8 -&gt; 0x7fba76883958]:`
 
 ```r
-y[[3]] &lt;- 5
+y[[3]] &lt;- 5     # y now has only one binding → modifies in-place
+untracemem(x); untracemem(y)
 ```
 
-`tracemem[0x7fba76883958 -&gt; 0x1391190e8767]:`
-
-```r
-# stop tracking
-untracemem(x)
-untracemem(y)
-```
-
-]]]
+]
+]
+]
 
 ???
 
-Simply put, a call stack describes the order of nested function calls.
+- A call stack describes the order of nested function calls. It appears in `tracemem()` output when a copy occurs inside a function.
+- After `y[[3]] &lt;- 4`, `x` and `y` each have exactly one binding. The next modification of `y` is therefore in-place.
 
 ---
-## Copy-on-modify &amp;mdash; Function Calls
+## Copy-on-modify: Function Calls
 
+.font90[
 
-
-The above rules apply to function calls as well.
+The same rules apply inside function calls.
 
 .blockquote.exercise[
-#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example: keeping track of copies using `tracemem()` &amp;mdash; ctd.
+#### <svg aria-hidden="true" role="img" viewBox="0 0 576 512" style="height:1em;width:1.12em;vertical-align:-0.125em;margin-left:auto;margin-right:auto;font-size:inherit;fill:#004c93;overflow:visible;position:relative;"><path d="M64 0C28.7 0 0 28.7 0 64V352c0 35.3 28.7 64 64 64H240l-10.7 32H160c-17.7 0-32 14.3-32 32s14.3 32 32 32H416c17.7 0 32-14.3 32-32s-14.3-32-32-32H346.7L336 416H512c35.3 0 64-28.7 64-64V64c0-35.3-28.7-64-64-64H64zM512 64V288H64V64H512z"/></svg> Example: "External" variables in function calls
 
 .pull-left[
-  &lt;br&gt;
   &lt;br&gt;
   ![:image 70%](img/binding-f1.png)
   ![:source 2019](Wickham)
@@ -411,7 +273,7 @@ The above rules apply to function calls as well.
 .pull-right[
 
 ``` r
-f &lt;- function(a) a
+f &lt;- function(a) a   # does not modify a
 x &lt;- c(1, 2, 3)
 ```
 ```r
@@ -421,156 +283,65 @@ tracemem(x)
 ## [1] "&lt;0x74b050b21318&gt;"
 ```
 
-
 ``` r
-z &lt;- f(x) # no copy here!
-
-untracemem(x)
-```
-]]
-
-???
-
-No copy because `z` is just a reference to the value of `x`.
-
----
-## Copy-on-modify &amp;mdash; Function Calls
-
-
-
-&lt;br&gt;
-&lt;br&gt;
-
-.content-box-white[
-**Task:** 
-
-Predict what `tracemem()` returns if the highlighted lines get executed, respectively.
-
-```r
-f &lt;- function(a) {
-  a[[1]] &lt;- 0
-  a
-}
-
-x &lt;- c(1, 2, 3)
-tracemem(x)
-
-*f(x)
-
-*z &lt;- f(x)
-
+z &lt;- f(x) # no copy: z references x's value
 untracemem(x)
 ```
 ]
-
-???
-
-- **`f(x)`**: `f()` binds `a` to the same memory location `x` points to *during execution*. In Contrast to the previous slide, a copy *is* made since `f()` modifies `a`.
-
-- **`z&lt;-f(x)`**: as above. `z` is a binding the same location as `a` (no additional copy made).
-
-- **Q**: What would happen if we'd super assign to `x` *inside* of `f()`? 
-    **A**: no additional reference to `x`, so calling `f()` would not trigger a copy.
-
----
-## Copy-on-modify &amp;mdash; Lists
-
-.font90[.code90[
-
-Lists are special: **list elements are *references* to values**.
-
-.content-box-white[
-**Task:** 
-
-Which (sequentially called) statements generate the results shown in each diagram? What is special about the bottom one?
-
-.pull-left[
-  ![:image 35%](img/list.png)
 ]
-.pull-right[
-  ![:image 35%](img/l-modify-1.png)
-]
-![:image 20%](img/l-modify-2.png)
-![:source 2019](Wickham)
-]]]
-
-???
-
-```r
-l1 &lt;- list(1, 2, 3)    # left
-l2 &lt;- l1               # right
-l2[[3]] &lt;- 4           # bottom
-```
-
-Note that copy-on-modify due to `l2[[3]] &lt;- 4 ` results in a **shallow** copy: the bindings are copied, not the values. &amp;rArr; performance considerations!
-
----
-## Copy-on-modify &amp;mdash; Lists
 
 &lt;br&gt;
+
 .content-box-white[
-
-You may check your predictions using `lobstr::ref()`.
-
-
-``` r
-ref(l1, l2)
-```
-
-```
-## █ [1:0x13c6ca448] &lt;list&gt; 
-## ├─[2:0x13f11ba88] &lt;dbl&gt; 
-## ├─[3:0x13f11bcb8] &lt;dbl&gt; 
-## └─[4:0x13f11be78] &lt;dbl&gt; 
-##  
-## █ [5:0x1218a1908] &lt;list&gt; 
-## ├─[2:0x13f11ba88] 
-## ├─[3:0x13f11bcb8] 
-## └─[6:0x13f0f9238] &lt;dbl&gt;
-```
-
+**Task:** Predict what `tracemem()` outputs for `f(x)` and `z &lt;- f(x)` when `f()` *modifies* its argument:&lt;br/&gt; `f &lt;- function(a) { a[[1]] &lt;- 0; a }`.
+]
 ]
 
+???
+
+- No copy for the identity `f()` because `z` is just another reference to the same value.
+- When `f()` modifies `a`, a copy is triggered. `z &lt;- f(x)` creates one copy (not two): `z` then references the same modified object that `a` pointed to.
+
 ---
-## Copy-on-modify &amp;mdash; Data frames
+## Copy-on-modify: Lists and Data Frames
 
+.font90[
 
-
-A _data frame_ is essentially a list whose elements point to vectors. 
+List elements are themselves *references*: only the list spine is copied when an element is modified (a **shallow copy**).
 
 .blockquote.exercise[
-#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example: `data.frame()`
+#### <svg aria-hidden="true" role="img" viewBox="0 0 576 512" style="height:1em;width:1.12em;vertical-align:-0.125em;margin-left:auto;margin-right:auto;font-size:inherit;fill:#004c93;overflow:visible;position:relative;"><path d="M64 0C28.7 0 0 28.7 0 64V352c0 35.3 28.7 64 64 64H240l-10.7 32H160c-17.7 0-32 14.3-32 32s14.3 32 32 32H416c17.7 0 32-14.3 32-32s-14.3-32-32-32H346.7L336 416H512c35.3 0 64-28.7 64-64V64c0-35.3-28.7-64-64-64H64zM512 64V288H64V64H512z"/></svg> Example: shallow copy of a list
 
-.pull-left[
-![:image 40%](img/dataframe.png)
-![:source 2019](Wickham)
-]
-.pull-right[
-```r
-d1 &lt;- data.frame(
-  x = c(1, 5, 6), 
-  y = c(2, 4, 3)
-)
+
+``` r
+l1 &lt;- list(1, 2, 3)
+l2 &lt;- l1
+l2[[3]] &lt;- 4           # shallow copy: only the spine is duplicated
+ref(l1, l2)            # shared element references are visible
 ```
-]]
-&lt;br&gt;
-.content-box-white[
-**Task**: 
 
-Explain why modifying rows is generally more costly than modifying columns for data frames.
+```
+## █ [1:0x111a52798] &lt;list&gt; 
+## ├─[2:0x1125d1758] &lt;dbl&gt; 
+## ├─[3:0x1207837f8] &lt;dbl&gt; 
+## └─[4:0x1204e06a8] &lt;dbl&gt; 
+##  
+## █ [5:0x113008488] &lt;list&gt; 
+## ├─[2:0x1125d1758] 
+## ├─[3:0x1207837f8] 
+## └─[6:0x11730e618] &lt;dbl&gt;
+```
+]
+&lt;br/&gt;
+.content-box-white[
+**Task:** Explain why `df[1, ] &lt;- c(42, 42)` is more expensive than `df$x &lt;- c(7, 7, 7)` for a two-column data frame `df`.
+]
 ]
 
 ???
 
-**A**: modifying a single row implicates modifying *all* columns (this cannot be tracked by `tracemem()` but can be seen using `lobstr::ref()`)
-
-```r
-df[1, ] &lt;- c(42, 42)
-ref(d1)
-# vs.
-df$x &lt;- c(7, 7, 7)
-ref(d1)
-```
+- `ref()` output shows that `l1[[1]]` and `l2[[1]]` share the same memory address after modification — the copy is shallow.
+- Row modification touches all column vectors, so R must copy each one. Column modification touches only a single vector.
 
 ---
 ## Exercises
@@ -579,41 +350,31 @@ ref(d1)
 
 1. Why is `tracemem(1:10)` not useful?
 
-2. Explain why `tracemem()` shows a copy when you run this code. &lt;br&gt; *Hint:* carefully look at the difference between this code and the code on [Slide 10](https://are25.netlify.app/advanced%20r%20concepts/advanced#10).
+2. Explain why `tracemem()` shows a copy below. (*Hint:* consider the *type* of `x` and the replacement value.)
     ```r
     x &lt;- c(1L, 2L, 3L)
     tracemem(x)
-    
     x[[3]] &lt;- 4
     ```
 
-3. Explain the below results.
+3. Explain the results. Why does multiplying the length by 100,000 not change the memory footprint?
     
     ``` r
     obj_size(1:10)
-    ```
-    
-    ```
-    ## 680 B
-    ```
-    
-    ``` r
     obj_size(1:1e6)
     ```
-    
-    ```
-    ## 680 B
-    ```
 
-]]
+&lt;!-- 4. Rewrite the Case Study loop using `lapply()`. Does it reduce the number of copies? --&gt;
+
+]
+]
 
 ???
 
-1. `1:10` is no binding so there's no point in tracing a value.
-
-2. Here `x` is an integer vector (`x` has `double` type as defined on Slide 11). Replacing `3L` with `4`, i.e. integer with double, triggers coercion of `x` to `double`. This always results in a copy.
-
-3. `:` is special in the sense that it generates integer sequences using only the first and the last element. The number of elements thus doesn't affect the required memory.
+1. `1:10` is not a binding — there is no name to track. `tracemem()` requires a bound object.
+2. `x` is an integer vector; assigning `4` (a double) triggers coercion of the entire vector to double, which always requires a copy.
+3. `:` stores integer sequences from just the start and end value — the number of elements does not affect memory usage.
+4. `lapply()` constructs a new list rather than modifying `x` in-place, so no copies of `x` are triggered within the loop.
 
 
 ---
@@ -621,14 +382,13 @@ ref(d1)
 
 .font90[.code90[
 
-R modifies in-place in two cases:
+R modifies in-place (without triggering a copy) in two cases:
 
 1. The object has **only one binding**
-
 2. The object is an **environment**
 
 .blockquote.exercise[
-#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example: optimised modification
+#### <svg aria-hidden="true" role="img" viewBox="0 0 576 512" style="height:1em;width:1.12em;vertical-align:-0.125em;margin-left:auto;margin-right:auto;font-size:inherit;fill:#004c93;overflow:visible;position:relative;"><path d="M64 0C28.7 0 0 28.7 0 64V352c0 35.3 28.7 64 64 64H240l-10.7 32H160c-17.7 0-32 14.3-32 32s14.3 32 32 32H416c17.7 0 32-14.3 32-32s-14.3-32-32-32H346.7L336 416H512c35.3 0 64-28.7 64-64V64c0-35.3-28.7-64-64-64H64zM512 64V288H64V64H512z"/></svg> Example: single-binding modification
 
 ```r
 v &lt;- c(1, 2, 3)
@@ -641,161 +401,86 @@ obj_addr(v)
 
 ```r
 v[[2]] &lt;- 4
-# check that v still points to the same memory location
-obj_addr(v)
+obj_addr(v)   # same address — no copy made
 ```
 
 ```
 ## [1] "0x7fcce1ca03d8"
 ```
 
-]]]
+]
+
+&lt;br/&gt;
+
+.content-box-white[
+**Note:** Running this in RStudio will still trigger a copy because the Environment pane holds an additional reference to `v`.
+]
+]
+]
 
 ???
 
-- **Q**: Running this code in _RStudio_ will trigger a copy. Why?
-
-    **A**: An entry in the Environment tab is a binding, i.e., there are more than one (two) references to `v` which triggers a copy!
-
-     You need to run the code in the GUI version of R for reproducing the results.
-    
-    (using the R-GUI for this purpose is generally a good practice!)    
-
-- Note that `tracemem()` does not play well with `knitr`
+- For testing in-place modification, run code in the R console (not RStudio) to avoid the extra binding from the Environment pane.
+- Environments are always modified in-place regardless of the number of bindings — this is one reason they are used as mutable reference objects.
 
     
 ---
-## Case Study: Copy-On-Modify Inferno
+exclude: True
+## Case Study: Copy-on-Modify Inferno
 
 .smaller[
 
-Whether or not R copies an object&amp;mdash;and if so, how often&amp;mdash;can be hard to predict.
-
-&lt;br&gt;
+Column-wise subtraction of medians — a common data-cleaning step — reveals a costly copy pattern when applied to a data frame inside a loop.
 
 .blockquote.exercise[
-#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example: loop modification of data frame (please don't!)
-
-You should **never** modify a data frame in a loop.
+#### <svg aria-hidden="true" role="img" viewBox="0 0 576 512" style="height:1em;width:1.12em;vertical-align:-0.125em;margin-left:auto;margin-right:auto;font-size:inherit;fill:#004c93;overflow:visible;position:relative;"><path d="M64 0C28.7 0 0 28.7 0 64V352c0 35.3 28.7 64 64 64H240l-10.7 32H160c-17.7 0-32 14.3-32 32s14.3 32 32 32H416c17.7 0 32-14.3 32-32s-14.3-32-32-32H346.7L336 416H512c35.3 0 64-28.7 64-64V64c0-35.3-28.7-64-64-64H64zM512 64V288H64V64H512z"/></svg> Example: loop modification of a data frame
 
 
 ``` r
-x &lt;- data.frame(
-  matrix(runif(5 * 1e4), 
-         ncol = 5)
-  )
-
-medians &lt;- apply(X = x, MARGIN =  2, FUN = median)
-
+x &lt;- data.frame(matrix(runif(5 * 1e4), ncol = 5))
+medians &lt;- apply(x, 2, median)
 tracemem(x)
 
 for (i in seq_along(medians)) {
-  x[[i]] &lt;- x[[i]] - medians[[i]]
+  x[[i]] &lt;- x[[i]] - medians[[i]]   # triggers 3 copies per iteration!
 }
 ```
+]
 
-]]
-
-???
-
-- Note that `vapply()`'s `FUN.VALUE` requires a template for the return value (which is numeric `\(1\times 1\)` here) 
-
-- We will come back to consequences of this behavior in the Chapter *Improving Performance* and benchmark against alternatives that require less copies.
-
----
-## Case Study: Copy-On-Modify Inferno
-
-`[[&lt;-.data.frame` is revealed to be quite expensive.
+Each `[[&lt;-.data.frame` call internally creates a temporary binding `*tmp*` and rebuilds the data frame — generating **three copies per column**:
 
 ```r
-tracemem[0x7fe1aed76628 -&gt; 0x7fe1ad4dc428]: 
-tracemem[0x7fe1ad4dc428 -&gt; 0x7fe1ad4dc578]: [[&lt;-.data.frame [[&lt;- 
-tracemem[0x7fe1ad4dc578 -&gt; 0x7fe1ad4dc658]: [[&lt;-.data.frame [[&lt;- 
-tracemem[0x7fe1ad4dc658 -&gt; 0x7fe1ad4dc7a8]: 
-tracemem[0x7fe1ad4dc7a8 -&gt; 0x7fe1ad4dc8f8]: [[&lt;-.data.frame [[&lt;- 
-tracemem[0x7fe1ad4dc8f8 -&gt; 0x7fe1ad4dcb98]: [[&lt;-.data.frame [[&lt;- 
-tracemem[0x7fe1ad4dcb98 -&gt; 0x7fe1ad4dcdc8]: 
-tracemem[0x7fe1ad4dcdc8 -&gt; 0x7fe1ad4dd068]: [[&lt;-.data.frame [[&lt;- 
-tracemem[0x7fe1ad4dd068 -&gt; 0x7fe1ad4dd308]: [[&lt;-.data.frame [[&lt;- 
-tracemem[0x7fe1ad4dd308 -&gt; 0x7fe1ad4dd4c8]: 
-tracemem[0x7fe1ad4dd4c8 -&gt; 0x7fe1ad4dd618]: [[&lt;-.data.frame [[&lt;- 
-tracemem[0x7fe1ad4dd618 -&gt; 0x7fe1ad4ddae8]: [[&lt;-.data.frame [[&lt;- 
-tracemem[0x7fe1ad4ddae8 -&gt; 0x7fe1acdbda28]: 
-tracemem[0x7fe1acdbda28 -&gt; 0x7fe1acdbe198]: [[&lt;-.data.frame [[&lt;- 
-tracemem[0x7fe1acdbe198 -&gt; 0x7fe1acdbe6d8]: [[&lt;-.data.frame [[&lt;- 
+tracemem[... -&gt; ...]:
+tracemem[... -&gt; ...]: [[&lt;-.data.frame [[&lt;-
+tracemem[... -&gt; ...]: [[&lt;-.data.frame [[&lt;-
 ```
+]
 
 ???
 
-Using the `$` operator makes no difference: `$&lt;-` also has a `$&lt;-.data.frame` method. The output of `tracemem()` then looks similar to this:
-
-```
-tracemem[0x7fe515db8d88 -&gt; 0x7fe513bcd788]: 
-tracemem[0x7fe513bcd788 -&gt; 0x7fe513b79a88]: $&lt;-.data.frame $&lt;- 
-tracemem[0x7fe513b79a88 -&gt; 0x7fe513b79c88]: $&lt;-.data.frame $&lt;-
-```
-
+- `x` is referenced in the global environment, inside `[[`, and inside `[[&lt;-.data.frame()` — more than one binding means every modification triggers a copy.
+- We revisit the performance implications later in the chapter on Performance.
 
 ---
-## Case Study: Copy-On-Modify Inferno
-
-What's happening here and why?
-
-- `x` is referenced more than once: 
-
-      - global environment 
-      - inside of `[[` 
-      - inside of `[[&lt;-.data.frame()` 
-    
-    &amp;rarr; modification will result in a copy
-
-- The following runs inside `[[`:
-    ```r
-    `*tmp*` &lt;- df
-    df &lt;- `[[&lt;-.data.frame`(`*tmp*`, &lt;additional arguments&gt;)
-    rm(`*tmp*`)
-    ```
-    
-    - The additional binding to `*tmp*` results in a copy
-    
-    - `[[&lt;-.data.frame` changes the class and a component of `x` (two additional copies)
-
-???
-
-- The two copies made by `[[&lt;-.data.frame` are **shallow copies** (only column references are copied)
-
-- **Q to students**: What kind of function is `[[&lt;-.data.frame`?
-
-    **A**: A regular function. It is a method of  `[[&lt;-` which is a primitive (a fast C function)
-
-- **Q to students**: How can you view the source? 
-
-    **A**: &lt;code&gt;\`[[&lt;-.data.frame\`&lt;/code&gt;
-
-- More on primitives on the next slides. More on methods, dispatch etc. in the 'OOP' Chapter.
-
-- More on how to write efficient code (and especially efficient `for()` loops) in Chapter 'Improving Performance' 
-
-
----
-## Case Study: Copy-On-Modify Inferno
+exclude: True
+## Case Study: Solution
 
 .smaller[
 
-It's better to use a list for this purpose.
+Converting the data frame to a list reduces the copy overhead dramatically.
 
 
 ``` r
 y &lt;- as.list(x)
 tracemem(y)
 
-for (i in 1:5) {
+for (i in seq_along(medians)) {
   y[[i]] &lt;- y[[i]] - medians[[i]]
 }
 ```
 
 ```r
-tracemem[0x7fba72971928 -&gt; 0x7fba72a2e178]:
+tracemem[0x... -&gt; 0x...]:   # only one copy for the entire loop
 ```
 
 .pull-left[
@@ -803,10 +488,7 @@ tracemem[0x7fba72971928 -&gt; 0x7fba72a2e178]:
 ```
 █ [1:0x7fba72971928] &lt;named list&gt; 
 ├─X1 = [2:0x10f1ec000] &lt;dbl&gt; 
-├─X2 = [3:0x115c56000] &lt;dbl&gt; 
-├─X3 = [4:0x115c6a000] &lt;dbl&gt; 
-├─X4 = [5:0x115c7e000] &lt;dbl&gt; 
-└─X5 = [6:0x115c92000] &lt;dbl&gt; 
+...
 ```
 ]
 .pull-right[
@@ -814,170 +496,71 @@ tracemem[0x7fba72971928 -&gt; 0x7fba72a2e178]:
 ```
 █ [1:0x7fba72a2e178] &lt;named list&gt; 
 ├─X1 = [2:0x115cc7000] &lt;dbl&gt; 
-├─X2 = [3:0x115ca6000] &lt;dbl&gt; 
-├─X3 = [4:0x10f07e000] &lt;dbl&gt; 
-├─X4 = [5:0x10ef83000] &lt;dbl&gt; 
-└─X5 = [6:0x10f056000] &lt;dbl&gt; 
-```
-]]
-
-???
-
-- A single copy is made from internal C code the first time we use `[[&lt;-`
-
-- This a good example where tweaking the code reduces the amount of copies made
-
-- If such a solution is not readily at hand we may resort to C++ code. More on this in the `Rcpp` chapter.
-
----
-## Modifying Lists
-
-.smaller[
-
-What happens if we modify list entries is better understood from the following example.
-
-&lt;br&gt;
-
-.blockquote.exercise[
-#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example: modifying a list
-
-Can you explain what's going on?
-
-.pull-left[
-
-``` r
-# step 1
-x &lt;- list(1:10)
-lobstr::ref(x)
-
-# step 2
-x[[2]] &lt;- x
-lobstr::ref(x)
+...
 ```
 ]
 
-.pull-right[
-
-```
-## █ [1:0x13d89a278] &lt;list&gt; 
-## └─[2:0x13287abd0] &lt;int&gt;
-```
-
-```
-## █ [1:0x114868408] &lt;list&gt; 
-## ├─[2:0x13287abd0] &lt;int&gt; 
-## └─█ [3:0x13d89a278] &lt;list&gt; 
-##   └─[2:0x13287abd0]
-```
-]]]
+Only the list spine is copied once (by internal C code on the first `[[&lt;-` call); the column vectors are then modified in-place. For even better performance, see the `Rcpp` chapter.
+]
 
 ???
 
-- `x` is assigned to itself (an additional reference) so a copy on modification is made
-
-- The the old memory location of `x` has no binding anymore but is referenced within `x`
-
-- Note that lists are always copied on modification. The copy is, however, ** *shallow* **.
+- The single copy of the spine occurs because `y` initially has more than one binding; after that copy it has one, and subsequent modifications are in-place.
+- Each column ends up at a new address because each vector is replaced (modified in-place from that point on), not because the whole structure is copied each time.
 
 ---
 ## Garbage Collection
 
 .smaller[
 
-Ubiquitous operations that are reflected in the RStudio's _Environment tab_ are 'unbind' and 'delete'. What does actually happen if we alter a name or even 'delete' the object from the (global) environment?
+When a name is rebound or removed, the old value becomes unreachable: it is **unbound**.
+
+R's **tracing Garbage Collector** (GC) automatically frees memory when objects become unreachable. It runs *on demand*. There is no need to call `gc()` manually.
 
 .blockquote.exercise[
-#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example: unbinding an object
+#### <svg aria-hidden="true" role="img" viewBox="0 0 576 512" style="height:1em;width:1.12em;vertical-align:-0.125em;margin-left:auto;margin-right:auto;font-size:inherit;fill:#004c93;overflow:visible;position:relative;"><path d="M64 0C28.7 0 0 28.7 0 64V352c0 35.3 28.7 64 64 64H240l-10.7 32H160c-17.7 0-32 14.3-32 32s14.3 32 32 32H416c17.7 0 32-14.3 32-32s-14.3-32-32-32H346.7L336 416H512c35.3 0 64-28.7 64-64V64c0-35.3-28.7-64-64-64H64zM512 64V288H64V64H512z"/></svg> Example: unbinding an object
 
 .row[
 .pull-left[
-**(a) binding** 
-
-![:image 28%](../img/unbinding-1.png)
+  &lt;br/&gt;
+  **(a) binding** &amp;nbsp; ![:image 28%](../img/unbinding-1.png)
 ]
-
 .pull-right[
 
 ``` r
 x &lt;- 1:3
 ```
-]]
-
+]
+]
 .row[
 .pull-left[
-**(b) implicit unbinding** 
-
-![:image 28%](../img/unbinding-2.png)
+  &lt;br/&gt;
+  **(b) implicit unbinding** &amp;nbsp; ![:image 28%](../img/unbinding-2.png)
 ]
-
 .pull-right[
 
 ``` r
-x &lt;- 2:4
+x &lt;- 2:4   # 1:3 is now unreachable
 ```
-]]
-
-.row[
-.pull-left[
-**(c) explicit unbinding** 
-
-![:image 28%](../img/unbinding-3.png)
 ]
-
+]
+.row[
+.pull-left[**(c) explicit unbinding** &amp;nbsp; ![:image 28%](../img/unbinding-3.png)]
 .pull-right[
 
 ``` r
 rm(x)
 ```
-]]]]
+]
+]
+]
+]
 
 ???
 
-(b) stresses why it's wrong to think of `x` to 'store' anything different than an address.
-
----
-## Garbage Collection &amp;mdash; Quick Facts
-
-.smaller[
-
-- R uses a **tracing Garbage Collector** (GC): it keeps track of objects in the global environment and references therein.
-
-- The GC runs automatically if space is needed for creating new objects. There is *no need to actively force garbage collection*. You can, however, do so by calling `gc()` with the side effect of obtaining info on memory occupation (there's also a button in *RStudio* for this).
-
-- You may run `gcinfo(TRUE)` if you wish to be informed when the GC runs
-
-.blockquote.exercise[
-#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example: garbage collection
-
-
-```r
-gc()          # just for the side effect
-```
-
-```
-##           used (Mb) gc trigger  (Mb) limit (Mb) max used  (Mb)
-## Ncells 1730109 92.4    3013450 161.0         NA  3013450 161.0
-## Vcells 4099683 31.3   10146329  77.5      32768 10146329  77.5
-```
-
-```r
-mem_used()    # only total memory usage, but more exact
-```
-
-```
-## 129,680,408 B
-```
-]]
-
-???
-
-- The only reason to call `gc()` is if you need to free-up memory for your operating system &amp;mdash; which will hardly ever happen
-
-- `vcells` = memory used by vectors; `ncells` = memory used by anything else
-
-- The 'large numbers' report cells used (8 byte each)
-
-- `lobstr::mem_used()` does not agree with what's reported by your OS: there are other objects (generated by, e.g., the R interpreter) which are not captured
+- A **tracing garbage collector** is a memory-management system that starts from known live references, follows (“traces”) all reachable objects, and automatically frees objects that cannot be reached anymore.
+- `gc()` can be called for its **side effect**: it prints a summary of current memory use. `vcells` = vector memory (atomic, interger, numeric, logical, character, raw), `ncells` = everything else.
+- `gcinfo(TRUE)` prints a message every time the GC runs — useful for diagnosing unexpected memory pressure.
 
 
 ---
@@ -999,88 +582,51 @@ Everything that happens is a function call.
 
 .smaller[
 
-- **Regular functions** (`closure` type) live in environments and consist of a **body** along with **formals**
-
-- **Primitives** are special `base` R functions that call C code
+- **Regular functions** (`closure` type) live in environments and consist of a **body** and **formals** (the argument list)
+- **Primitives** are special `base` R functions implemented in C — they have no formals or body
 
 .blockquote.exercise[
-#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example: regular functions vs. primitives
+#### <svg aria-hidden="true" role="img" viewBox="0 0 576 512" style="height:1em;width:1.12em;vertical-align:-0.125em;margin-left:auto;margin-right:auto;font-size:inherit;fill:#004c93;overflow:visible;position:relative;"><path d="M64 0C28.7 0 0 28.7 0 64V352c0 35.3 28.7 64 64 64H240l-10.7 32H160c-17.7 0-32 14.3-32 32s14.3 32 32 32H416c17.7 0 32-14.3 32-32s-14.3-32-32-32H346.7L336 416H512c35.3 0 64-28.7 64-64V64c0-35.3-28.7-64-64-64H64zM512 64V288H64V64H512z"/></svg> Example: regular functions vs. primitives
 
 .medium[
 .pull-left[
 
 ``` r
 typeof(lm)
-```
-
-```
-## [1] "closure"
-```
-
-``` r
 environment(lm)
-```
-
-```
-## &lt;environment: namespace:stats&gt;
-```
-
-``` r
 names(formals(lm))[1:4]
-```
-
-```
-## [1] "formula" "data"    "subset"  "weights"
-```
-
-``` r
-# body(lm) # too large, feel free to check!
+# body(lm) is large — check yourself!
 ```
 ]
 .pull-right[
 
 ``` r
 typeof(sum)
+environment(sum)   # NULL
+formals(sum)       # NULL
+body(sum)          # NULL
 ```
+]
+]
+]
+]
 
-```
-## [1] "builtin"
-```
+???
 
-``` r
-environment(sum)
-```
-
-```
-## NULL
-```
-
-``` r
-names(formals(sum))
-```
-
-```
-## NULL
-```
-
-``` r
-body(sum)
-```
-
-```
-## NULL
-```
-]]]]
+- The `typeof()` of regular functions is `"closure"` — reflecting that they close over their defining environment.
+- Primitives (`sum`, `+`, `[`) call C code directly and bypass the normal function-call mechanism, making them faster.
 
 ---
 ## First-Class Functions
 
 .smaller[
 
-*R functions are **objects**!* This means we may do stuff that may seem exotic when compared to languages like _C_ and _Python_ that demand very explicit definitions and are much more restrictive.
+*R functions are **objects**!* They can be stored in lists, passed as arguments, and called without ever being bound to a name.
+
+&lt;br/&gt;
 
 .blockquote.exercise[
-#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example: fun with _anonymous functions_
+#### <svg aria-hidden="true" role="img" viewBox="0 0 576 512" style="height:1em;width:1.12em;vertical-align:-0.125em;margin-left:auto;margin-right:auto;font-size:inherit;fill:#004c93;overflow:visible;position:relative;"><path d="M64 0C28.7 0 0 28.7 0 64V352c0 35.3 28.7 64 64 64H240l-10.7 32H160c-17.7 0-32 14.3-32 32s14.3 32 32 32H416c17.7 0 32-14.3 32-32s-14.3-32-32-32H346.7L336 416H512c35.3 0 64-28.7 64-64V64c0-35.3-28.7-64-64-64H64zM512 64V288H64V64H512z"/></svg> Example: anonymous functions
 
 .pull-left[
 
@@ -1089,216 +635,107 @@ funs &lt;- list(
   function(x) x^2,
   function(x) x^3
 )
-lobstr::ref(funs)
-```
-
-```
-## █ [1:0x13d794748] &lt;list&gt; 
-## ├─[2:0x133d0f128] &lt;fn&gt; 
-## └─[3:0x133d0f198] &lt;fn&gt;
-```
-
-``` r
 sapply(funs, function(z) z(5))
-```
-
-```
-## [1]  25 125
 ```
 ]
 
 .pull-right[
 
 ``` r
-(function(x) x^2)(5)
+# call immediately — no binding needed
+(\(x) x^2)(5)
+(\(x) x^3)(5)
 ```
-
-```
-## [1] 25
-```
-
-``` r
-(function(x) x^3)(5)
-```
-
-```
-## [1] 125
-```
-]]]
-
-???
-
-Obviously, R functions are objects on their own right &amp;mdash; they need not be bound to a name!
-
----
-## First-Class Functions
-
-.smaller[
-
-&lt;br&gt;
-&lt;br&gt;
-.content-box-white[
-**Task:** 
-
-Explore what kind of function '`(`' is, what it does, and explain why the statements
-```r
-(function(x) x^2)(5)
-```
-and
-
-
-``` r
-(x&lt;-5)
-```
-
-```
-## [1] 5
-```
-
-are meaningful to R.
-
-]]
-
-???
-
-- `(` is a primitive:
-    
-    ``` r
-    `(`
-    ```
-    
-    ```
-    ## .Primitive("(")
-    ```
-
--  The R-help hints that `(` is semantically equivalent to `function(x) x`. 
-
-    E.g., `(x&lt;-5)` is valid (and useful) R code!
-
----
-## Lexical Scoping
-
-.smaller[
-
-**Scoping** refers to the routine of finding the value associated with a name. R's scoping mechanism follows four concepts you should already be familiar with. We summarise them briefly here.
-
-1. **Name Masking**: 
-
-    Names defined *inside* a function mask names defined *outside* of it.
-
-2. **Functions before variables**: 
-
-    Functions and objects in *different* environments may share the same name. R ignores non-function objects in function calls. 
-
-3. **Execution Environments**:
-
-    Functions generate ephemeral environments.
-    
-4. **Dynamic Look-up**: 
-
-    `R` searches for values when the function is run (but *not* when it's created).
-
+]
 ]
 
+&lt;br/&gt;
+
+.content-box-white[
+**Task:** Explore what "`(`" is as a function. What does it return? Explain why `(x &lt;- 5)` is valid R and what makes it useful.
+]
+]
+
+???
+
+- `(\(x) ...)` is the modern lambda syntax introduced in R 4.1. It is equivalent to `(function(x) ...)`.
+- `(` is a primitive semantically equivalent to `function(x) x`. It returns its argument unchanged but forces *visible* evaluation. `(x &lt;- 5)` therefore assigns 5 to `x` *and* prints the result — useful in one-liners.
+
+---
+## R's Environment Hierarchy
+
+.font90[
+Each environment holds a **parent pointer**. Name lookup follows these pointers until the name is found or `R_EmptyEnv` is reached.
+
+&lt;img src="Advanced_files/figure-html/env-graph-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+
+- `f()`'s execution env is created fresh **per call**; its parent is where `f` was **defined** (here `.GlobalEnv`)
+- Package envs form the **search path** between `.GlobalEnv` and `base` — inspect with `search()`
+- Hitting `R_EmptyEnv` without finding the name raises: *"object 'x' not found"*
+]
+
+???
+
+- The search path can be inspected with `search()`. Packages loaded with `library()` are inserted between `.GlobalEnv` and `base`.
+- `environment(f)` returns the enclosing environment of a function — the parent of any execution environment `f` creates.
+- This hierarchy is also why `library()` order can matter: a name in a later-loaded package shadows one in an earlier-loaded one.
+
 ---
 ## Lexical Scoping
 
 .smaller[
-.content-box-white[
-**Task:**
 
-Write a code snippet which is useful for demonstrating all of the above concepts.
-]]
+**Scoping** is the process of finding the value associated with a name. R uses **lexical scoping**:
 
-???
-
-
-``` r
-rm(x)
-z &lt;- function(x) x^2
-
-# 3. everything in f() happens in an ephemeral environment
-f &lt;- function(g) {       
-    if(!exists("x")) {   
-        x &lt;- 1
-    } else {
-        x &lt;- x + 1
-    }
-    z &lt;- 2               # 1. name masking
-    
-    z(x + y)             # 2. functions before variables
-}
-
-y &lt;- 20
-f(x)                     # 4. dynamic lookup
-```
-
-```
-## [1] 441
-```
-
-
----
-## Lazy Evaluation &amp;mdash; Promises
-
-.smaller[
-
-Lazy evaluation allows R functions to behave quite differently than functions in most other languages and it's important to understand what is special about that.
-
-- A **promise** consists of an expression along with an environment and a value which is computed and cached the first time the promise is accessed
-
-- We implicitly use promises in functions via **lazy evaluation**. Here we refer to **unevaluated arguments** as promises.  
+1. **Name masking** — names defined *inside* a function mask names defined *outside* it
+2. **Functions before variables** — R ignores non-function objects when a name is used in a function call
+3. **Execution environments** — each function call creates its own *ephemeral* environment
+4. **Dynamic look-up** — R searches for values *when the function runs*, not when it is created
 
 .blockquote.exercise[
-#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example: outside evaluation
+#### <svg aria-hidden="true" role="img" viewBox="0 0 576 512" style="height:1em;width:1.12em;vertical-align:-0.125em;margin-left:auto;margin-right:auto;font-size:inherit;fill:#004c93;overflow:visible;position:relative;"><path d="M64 0C28.7 0 0 28.7 0 64V352c0 35.3 28.7 64 64 64H240l-10.7 32H160c-17.7 0-32 14.3-32 32s14.3 32 32 32H416c17.7 0 32-14.3 32-32s-14.3-32-32-32H346.7L336 416H512c35.3 0 64-28.7 64-64V64c0-35.3-28.7-64-64-64H64zM512 64V288H64V64H512z"/></svg> Example: all four rules at once
 
 
 ``` r
-f1 &lt;- function(x) { y &lt;&lt;- 5; x + 1 }
-f1(x = y &lt;- 6)
-```
+z &lt;- function(x) x^2
 
+f &lt;- function() {
+  if (!exists("x")) x &lt;- 1 else x &lt;- x + 1   # (3) x lives in f's env.
+  z &lt;- 2                                     # (1) masks the global z
+  z(x + y)                                   # (2) z() finds the function, not 2
+}                                            # (4) y is looked up at call time
+y &lt;- 20
+f()
 ```
-## [1] 7
-```
-
-``` r
-y
-```
-
-```
-## [1] 6
-```
-
-]]
+]
+]
 
 ???
 
-- Explanation: `f()` evaluates its argument `x` when it's needed: at runtime, `y&lt;-5` is bound _outside_ of `f()` in the GE. Once `x+1` needs to be computed, `y&lt;-6` is evaluated (which overwrites `y` in GE).
+- `z &lt;- 2` inside `f()` masks the outer name, but when R evaluates `z(x + y)` it looks for a *function* named `z` — finding the global `z &lt;- function(x) x^2`.
+- `y` is not defined inside `f()` and is resolved dynamically at runtime in the global environment.
 
-- Loading a data set using `data()` uses a promise. See, e.g., `data(AirPassengers)`.
-
-- The style shown in the example used by many base R function but it's not recommended since its hard to understand what's going on.
 
 ---
 ## Lazy Evaluation
 
 .smaller[
+
+Function arguments in R are **lazy**: they are not evaluated until they are actually needed. Each argument is represented internally as a **promise** — an expression paired with its evaluation environment.
+
 .blockquote.exercise[
-#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example: laziness
+#### <svg aria-hidden="true" role="img" viewBox="0 0 576 512" style="height:1em;width:1.12em;vertical-align:-0.125em;margin-left:auto;margin-right:auto;font-size:inherit;fill:#004c93;overflow:visible;position:relative;"><path d="M64 0C28.7 0 0 28.7 0 64V352c0 35.3 28.7 64 64 64H240l-10.7 32H160c-17.7 0-32 14.3-32 32s14.3 32 32 32H416c17.7 0 32-14.3 32-32s-14.3-32-32-32H346.7L336 416H512c35.3 0 64-28.7 64-64V64c0-35.3-28.7-64-64-64H64zM512 64V288H64V64H512z"/></svg> Example: a promise is evaluated only once
 
 
 ``` r
-double &lt;- function(x) { 
+double &lt;- function(x) {
   message("Computing...")
   x * 2
 }
 
-clone &lt;- function(x) {
-  c(x, x)
-}
+clone &lt;- function(x) c(x, x)
 
-clone(double(20))
+clone(double(20))   # "Computing..." appears only once
 ```
 
 ```
@@ -1308,285 +745,157 @@ clone(double(20))
 ```
 ## [1] 40 40
 ```
+]
 
-]]
+The argument `double(20)` is a promise. Although `clone()` accesses `x` twice in `c(x, x)`, the promise is **evaluated once** and its result is cached for subsequent accesses.
+
+]
 
 ???
 
-We see that `double(20)` is evaluated only once: there's only _one_ message printed. This is when `c()` inside of `clone()` looks for `x` for the first time.
+- After the first access, the promise is "forced" and replaced by its value in the function's environment. Subsequent accesses read the cached value directly.
+- This is why `c(x, x)` prints only one message despite referencing `x` twice.
 
 
 ---
-## Lazy Evaluation
+## Lazy Evaluation: Default Arguments
 
 .smaller[
 
+Default argument expressions are evaluated *in the function's environment*, not the caller's.
+
 .blockquote.exercise[
-#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example: lazy evaluation of (default) function arguments
+#### <svg aria-hidden="true" role="img" viewBox="0 0 576 512" style="height:1em;width:1.12em;vertical-align:-0.125em;margin-left:auto;margin-right:auto;font-size:inherit;fill:#004c93;overflow:visible;position:relative;"><path d="M64 0C28.7 0 0 28.7 0 64V352c0 35.3 28.7 64 64 64H240l-10.7 32H160c-17.7 0-32 14.3-32 32s14.3 32 32 32H416c17.7 0 32-14.3 32-32s-14.3-32-32-32H346.7L336 416H512c35.3 0 64-28.7 64-64V64c0-35.3-28.7-64-64-64H64zM512 64V288H64V64H512z"/></svg> Example: default arguments evaluated lazily
 
 
 ``` r
-f &lt;- function(x) {
-  cat("f: 'x doesn't matter to me.'")
-}
-f(x = stop("I don't matter."))
-```
-
-```
-## f: 'x doesn't matter to me.'
-```
-
-
-``` r
-# (default arguments)
 f &lt;- function(x = 1, y = x * 2, z = a + b) {
   a &lt;- 10
   b &lt;- 100
   c(x, y, z)
 }
-f()
+f()   # z uses a and b defined *inside* f
 ```
+]
 
-```
-## [1]   1   2 110
-```
-
-]]
-
-???
-
-- Although we do not recommend this style, it reflects great flexibility due to lazy evaluation
-
-- Note that this approach may be useful when a default argument is computationally expensive to evaluate and not needed in every call to `f()` (this usually happens when the argument is a more complex function call than `'+'()`)
-
----
-## Lazy Evaluation
-
-.smaller[
-.content-box-white[
-**Task:** 
-
-`ls()` lists objects in the environment where it is called. Explain the results below. 
+Unevaluated arguments are simply ignored if they are never accessed:
 
 
 ``` r
-f &lt;- function(x = ls()) {
-  a &lt;- 1
-  x
-}
-f()
+ignore &lt;- function(x) "I never use x"
+ignore(x = stop("never evaluated"))
 ```
 
-```
-## [1] "a" "x"
-```
-
-``` r
-f(ls())
-```
-
-```
-## [1] "desktop" "f"
-```
-
-]]
+]
 
 ???
 
-- Due to lazy evaluation, the evaluation environment for *default arguments* is the function environment
-
-- User supplied arguments are evaluated in the parent environment (GE here)
+- Default expressions can reference variables that do not yet exist at function definition — they are resolved lazily inside the function environment at call time.
+- The `stop()` example shows that R never evaluates arguments that are not needed. This is useful for expensive defaults.
 
 ---
-## Lazy Evaluation
+## Lazy Evaluation: Short-circuit Evaluation
 
-Lazy evaluation also applies to other situations, e.g., in control flow.
+Lazy evaluation extends to control flow: `&amp;&amp;` and `||` use **short-circuit evaluation**.
 
 
 ``` r
 x &lt;- NULL
 if (!is.null(x) &amp;&amp; x &gt; 0) {
- # &lt;do something&gt;
+  # do something
 }
 ```
 
 .content-box-white[
-**Task:** 
+**Task:**
 
-1. Which part of the code seems problematic at first sight? 
+1. Why does `x &gt; 0` look problematic when `x` is `NULL`?
 
-2. Give an explanation for why the statement above does not result in an error.
+2. Why does the code not throw an error despite `x` being `NULL`?
 ]
 
 ???
 
-- `NULL` represents the null object in R. `NULL` is used mainly to represent a list with zero length, and is often returned by expressions and functions whose value is _undefined_.
-
-- Without lazy evaluation this statement would throw an error because `x &gt; 0` evaluates to a logical value of length zero (you cannot compare `NULL` to `double`)
-
-- Control flow stops after evaluating the first part of the condition in `if()`: the second statement would be evaluated only if the first is `TRUE` (here it is `FALSE`)
-
-
----
-## Exercises
-
-.smaller[
-
-1. Explain why the following code does not work. Can you come up with a work-around without altering `f()`?
-    
-    ``` r
-    f &lt;- function(x, z) {
-      z + x^2
-    }
-    f(x = z^2, z = 2)
-    ```
-    
-    ```
-    ## Error: object 'z' not found
-    ```
-
-2. Explain what the `...` argument ([ellipsis](https://en.wikipedia.org/wiki/Ellipsis#Programming_languages)) does by means of the following example:
-    
-    ``` r
-    f &lt;- function(...) {
-      names(list(...))
-    }
-    f(a = 1, b = 2)
-    ```
-    
-    ```
-    ## [1] "a" "b"
-    ```
-
-]
-
-???
-
-1. Lazy evaluation happens at function definition, _not invocation_: R looks for `z` in the global environment because `x` is not `z^2` by default, like in the fixed version below.
-    
-    ``` r
-    f &lt;- function(x = z^2, z) {
-      z + x^2
-    }
-    f(2, 2)
-    ```
-    Workaround using `with`: 
-    
-    `with(list(z = 2), f(x = z^2, z))`
-
-2. `...` enables us to pass arguments the body of `f()` (to other functions!) which do not have to be specified at definition of `f()`.
-
-    Here, `f()` is a simple _wrapper_ that returns names of list elements as passed to the `...` argument.
+- `x &gt; 0` compares `NULL` to a number, which normally returns `logical(0)` — causing an error in `if()` because `if` requires a length-1 logical.
+- `&amp;&amp;` short-circuits: if the left-hand side is `FALSE`, the right-hand side is never evaluated. Since `!is.null(NULL)` is `FALSE`, `x &gt; 0` is never reached.
 
 ---
 ## Function Forms
 
-- Not all function calls look the same:
+Not all function calls look the same. R has four forms:
 
-    - **prefix**: `f(a, b)`
+&lt;br/&gt;
 
-    - **infix**: `a + b`. Also `==`, `&lt;-`, `::`, ...
+| Form | Example | Notes |
+|------|---------|-------|
+| **prefix** | `f(a, b)` | Standard call |
+| **infix** | `a + b`, `a %in% b` | Operators; user-definable with `%...%` |
+| **replacement** | `names(x) &lt;- c("a", "b")` | Assignment-like modification |
+| **special** | `for`, `[[`, `if` | Control structures and subsetting |
 
-    - **replacement**: `names(z) &lt;- c("x", "y")`
+&lt;br/&gt;
 
-    - **special**: `for`, `[[`, `if`, ...
+Every call can be rewritten in **prefix** form:
 
-- *Every* function call can be written in prefix form!
-    
-    ``` r
-    `[`(1:3, 3)
-    ```
-    
-    ```
-    ## [1] 3
-    ```
+
+``` r
+`+`(1, 2)    # infix as prefix
+`[`(1:3, 3)  # special as prefix
+```
 
 ???
 
-- @infix forms: user defined operators (which always begin and end with `%`) belong to this class.
-
-- NB: is doesn't matter whether one uses ` `` ` or `''` in prefix form
-
----
-## Function Forms
-
-.smaller[
-.blockquote.exercise[
-#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example: rewrite special and infix as prefix
-
-
-``` r
-# addition
-1 + 2
-```
-
-```
-## [1] 3
-```
-
-``` r
-`+`(1, 2)
-```
-
-```
-## [1] 3
-```
-
-``` r
-# integer sequence generation
-x &lt;- `:`(1, 10)
-x
-```
-
-```
-##  [1]  1  2  3  4  5  6  7  8  9 10
-```
-
-``` r
-# evaluation
-`(`(x)
-```
-
-```
-##  [1]  1  2  3  4  5  6  7  8  9 10
-```
-
-]]
+- User-defined infix operators must begin and end with `%`, e.g., `%+%`, `%between%`.
+- Backticks or single quotes work equally well for calling operators in prefix form.
 
 ---
-## Function Forms &amp;mdash; User defined function in infix form
+## Function Forms: Infix Operators
 
-It's straightforward to write your own operators in infix form.
+It is straightforward to define custom operators in infix form.
+
+&lt;br/&gt;
 
 .blockquote.exercise[
-#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example: `paste()` as infix
+#### <svg aria-hidden="true" role="img" viewBox="0 0 576 512" style="height:1em;width:1.12em;vertical-align:-0.125em;margin-left:auto;margin-right:auto;font-size:inherit;fill:#004c93;overflow:visible;position:relative;"><path d="M64 0C28.7 0 0 28.7 0 64V352c0 35.3 28.7 64 64 64H240l-10.7 32H160c-17.7 0-32 14.3-32 32s14.3 32 32 32H416c17.7 0 32-14.3 32-32s-14.3-32-32-32H346.7L336 416H512c35.3 0 64-28.7 64-64V64c0-35.3-28.7-64-64-64H64zM512 64V288H64V64H512z"/></svg> Example: `paste()` as a custom infix operator
 
 
 ``` r
 `%+%` &lt;- function(a, b) paste(a, b)
-"new" %+% "string"
+"Hello" %+% "World"
 ```
-
-```
-## [1] "new string"
-```
-
 ]
 
----
-## Function Forms &amp;mdash; Replacement Functions
+&lt;br/&gt;
 
-Replacement functions have the form shown below.
+.blockquote.exercise[
+#### <svg aria-hidden="true" role="img" viewBox="0 0 576 512" style="height:1em;width:1.12em;vertical-align:-0.125em;margin-left:auto;margin-right:auto;font-size:inherit;fill:#004c93;overflow:visible;position:relative;"><path d="M64 0C28.7 0 0 28.7 0 64V352c0 35.3 28.7 64 64 64H240l-10.7 32H160c-17.7 0-32 14.3-32 32s14.3 32 32 32H416c17.7 0 32-14.3 32-32s-14.3-32-32-32H346.7L336 416H512c35.3 0 64-28.7 64-64V64c0-35.3-28.7-64-64-64H64zM512 64V288H64V64H512z"/></svg> Example: a `%between%` operator for range checks
+
+
+``` r
+`%between%` &lt;- function(x, range) x &gt;= range[1] &amp; x &lt;= range[2]
+5 %between% c(1, 10)
+```
+]
+
+???
+
+- Custom infix operators are simply regular functions with `%` delimiters in the name.
+- The `data.table` package uses `%between%` and `%like%` extensively for readable filter expressions.
+
+---
+## Function Forms: Replacement Functions
+
+Replacement functions allow assignment-like syntax for modifying objects.
 
 ```r
-`some_name&lt;-` &lt;- function(x, value) {
-  &lt;do something (i.e, modify x)&gt;
-  return(x)
-} 
+`name&lt;-` &lt;- function(x, value) {
+  # modify x using value
+  x   # must return the modified object
+}
 ```
 
 .blockquote.exercise[
-#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example: replacement of the last vector element
+#### <svg aria-hidden="true" role="img" viewBox="0 0 576 512" style="height:1em;width:1.12em;vertical-align:-0.125em;margin-left:auto;margin-right:auto;font-size:inherit;fill:#004c93;overflow:visible;position:relative;"><path d="M64 0C28.7 0 0 28.7 0 64V352c0 35.3 28.7 64 64 64H240l-10.7 32H160c-17.7 0-32 14.3-32 32s14.3 32 32 32H416c17.7 0 32-14.3 32-32s-14.3-32-32-32H346.7L336 416H512c35.3 0 64-28.7 64-64V64c0-35.3-28.7-64-64-64H64zM512 64V288H64V64H512z"/></svg> Example: replacing the last vector element
 
 
 ``` r
@@ -1599,63 +908,51 @@ x &lt;- c(1, 2, 3)
 last(x) &lt;- 99
 x
 ```
-
-```
-## [1]  1  2 99
-```
-
 ]
+
+Replacement functions **always trigger a copy** because R desugars the assignment into a replacement-function call and rebinds `x`, creating a temporary binding.
 
 ???
 
-- Note that replacement functions **must** have `x` and `value` as arguments and return the modified object `x`
-
-- Additional arguments may be passed between `x` and `value`
+- Replacement functions must accept `x` and `value` as arguments and return the full modified object.
+- The copy overhead mirrors other copy-on-modify situations: one copy is made for the temporary binding inside `[[`.
 
 ---
-## Function Forms &amp;mdash; Replacement Functions
+## Exercises
 
-Replacement functions are very convenient but there is no free lunch: 
+.font90[
 
-Replacements *always* trigger copies!
+1. Explain why the following code errors. Provide a fix using `with()`.
+    
+    ``` r
+    f &lt;- function(x, z) z + x^2
+    f(x = z^2, z = 2)
+    ```
 
-.blockquote.exercise[
-#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example: replacement of last vector element &amp;mdash; ctd.
+2. What does the `...` (ellipsis) argument do? Explain using this example:
+    
+    ``` r
+    f &lt;- function(...) names(list(...))
+    f(a = 1, b = 2)
+    ```
 
-```r
-tracemem(x)
-```
-```
-## &lt;0x7feac1eb7598&gt;
-```
-
-``` r
-last(x) &lt;- 420
-```
-```
-## tracemem[0x7feac1eb7598 -&gt; 0x7feaa7ce3908]: 
-## tracemem[0x7feaa7ce3908 -&gt; 0x7feaa7ce68c8]: last&lt;- 
-```
-
-
-``` r
-x
-```
-
-```
-## [1]   1   2 420
-```
+3. Define a replacement function `winsorise&lt;-` that clips a numeric vector to a given range.
+    The `value` argument is a length-2 vector `c(lower, upper)`: values below `lower` are set to
+    `lower`, values above `upper` are set to `upper`. Test it:
+    
+    ``` r
+    returns &lt;- c(-0.52, 0.03, 0.15, 1.20, -0.08, 0.97)
+    winsorise(returns) &lt;- c(-0.5, 0.5)
+    returns   # extreme values clipped to the bounds
+    ```
 
 ]
 
 ???
 
-`tracemem()` reports two copies: the first occurs because `last&lt;-` creates a copy inside its own environment before modification and R runs
-
-```r
-x &lt;- `last&lt;-`(x, 420)
-```
-under the hood.
+1. Lazy evaluation resolves `x = z^2` in the *calling* environment (the global env.), where `z` is not yet defined. Fix: `with(list(z = 2), f(x = z^2, z = 2))`. Alternatively, make `z^2` the default: `f &lt;- function(x = z^2, z) z + x^2`.
+2. `...` captures any number of named or unnamed additional arguments and allows them to be forwarded to other functions. Here, `f()` wraps them in a list and returns the names — demonstrating that `...` preserves argument names.
+3. `winsorise&lt;-` must accept `x` and `value`, apply `x[x &lt; value[1]] &lt;- value[1]` and `x[x &gt; value[2]] &lt;- value[2]`, then return `x`. The vector-valued `value` argument is the key challenge. Winsorisation is standard in empirical finance and labour economics to handle extreme observations without dropping them.
 
 
 ---
@@ -1663,10 +960,6 @@ class: segue-red
 
 ![:image 20%](../assets/pica.gif)
 ### Thank You!
-
-
-
-
 
     </textarea>
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
