@@ -5,15 +5,11 @@
     <meta charset="utf-8" />
     <meta name="author" content="Martin Arnold" />
     <meta name="author" content="Martin Schmelzer" />
-    <meta name="date" content="2025-04-26" />
-    <script src="functional_files/header-attrs/header-attrs.js"></script>
-    <link href="functional_files/remark-css/default.css" rel="stylesheet" />
-    <script src="functional_files/clipboard/clipboard.min.js"></script>
-    <link href="functional_files/xaringanExtra-clipboard/xaringanExtra-clipboard.css" rel="stylesheet" />
-    <script src="functional_files/xaringanExtra-clipboard/xaringanExtra-clipboard.js"></script>
-    <script>window.xaringanExtraClipboard(null, {"button":"<i class=\"fa fa-clipboard\"><\/i>","success":"<i class=\"fa fa-check\" style=\"color: #00ff00\"><\/i>","error":"<i class=\"fa fa-times-circle\" style=\"color: #F94144\"><\/i>"})</script>
-    <link href="functional_files/font-awesome/css/all.min.css" rel="stylesheet" />
-    <link href="functional_files/font-awesome/css/v4-shims.min.css" rel="stylesheet" />
+    <meta name="date" content="2026-05-17" />
+    <script src="functional_files/header-attrs-2.29/header-attrs.js"></script>
+    <link href="functional_files/remark-css-0.0.1/default.css" rel="stylesheet" />
+    <link href="functional_files/font-awesome-6.5.2/css/all.min.css" rel="stylesheet" />
+    <link href="functional_files/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet" />
     <script type="text/x-mathjax-config">
       MathJax.Hub.Config({
         TeX: { equationNumbers: { autoNumber: "AMS" } },
@@ -61,94 +57,55 @@ To become significantly more reliable, code must become more transparent. In par
 &lt;/blockquote&gt;
 
 ---
-## FAQs
+## What is Functional Programming?
 
 .font90[
+
+**Two key properties of FP languages:**
+
+1. **First-class functions** — functions behave like any other data type: assign them, store them in a `list`, pass them as arguments to other functions
+
+2. **Pure functions** (optional) — no side-effects; output depends only on input. R does not strictly enforce this.
+
+]
+
+--
+
+.font90[
+
+**R and functional style**
+
+- R is not a "pure" FP language but supports a **functional style** of programming
+- R **functionals** take functions as input and return vector output — you already know `lapply()` and `integrate()`
+- FP is often **space efficient**, **readable**, and functionals are easy to **optimise and parallelise**
 
 
 ``` r
-# Packages needed
-library(dplyr)
-library(purrr)
-library(readr)
-# (or simply attach the tidyverse!)
+library(dplyr); library(purrr); library(readr)  # or: library(tidyverse)
 ```
 
-&lt;br&gt;
-
-**What is a functional programming (FP) language?**
-
-- Simply put: a language which is centered on **problem-solving using functions**!
-
-- There are **two common threads** in FP:
-
-    1. A functional language has **first-class functions** which behave like any other data type. In R this means we may treat function like variables (i.e., assign them, store them in a `list` or pass them as arguments to other functions)
-    
-    2. Many functional languages require **pure functions** only. These are functions which have **no side-effects**: they do not interfere with anything outside their scope and produce output which depends only on the input.
-
 ]
 
 ???
-
-- R has first-class functions, but it does not strictly enforce pure functions.
 
 - Side effects: writing to disk, modifying global variables, printing output, etc.
-
-- Obviously, functions which return pseudo-random numbers are not pure functions.
-
----
-## FAQs
-
-.font90[
-    
-**Is R a FP language?**
-
-- R is not a "pure" FP language but we may adopt a *functional style* of programming.
-
-- R **functionals** are functions which take functions as input and produce vector output
-
-**Why should I use functional style programming?**
-
-- FP is often **space efficient**, very **comprehensible** and easily adopted to new situations
-
-- Functionals are easily analysed in isolation and thus are often **straightforward to optimise and parallelise**
-
-    (We'll discuss functionals in a minute)
-
-]
-
-???
-
-You've probably used functionals already: `lapply()` and `integrate()` are prominent examples.
+- Functions that return pseudo-random numbers are not pure functions.
+- You've probably used functionals already: `lapply()` and `integrate()` are prominent examples.
 
 ---
-## FAQs
+## Functional Style in R
 
 .font90[
 
-**What does 'FP style' even mean?**
-
-It’s hard to describe exactly what a functional style is, but generally we will refer to the following definition:  
-
-&lt;br&gt;
 &lt;blockquote&gt;
 Functional programming style means decomposing a big problem into smaller pieces, then solving each piece with a function or combination of functions.
 .right[&amp;mdash; &lt;cite&gt;Hadley Wickham&lt;/cite&gt;]
 &lt;/blockquote&gt;
 
-]
+We focus on **`purrr` functionals** and **function factories**:
 
----
-## FAQs
-
-.font90[
-
-We will briefly discuss key techniques in functional R programming which are best summarised by the table below. We will focus on `purrr` **functionals** and **function factories**.  
-
-&lt;br&gt;
-&lt;br&gt;
 &lt;center&gt;
-![:image 35%](img/fp.png)
+![:image 32%](img/fp.png)
 ![:source 2019](Wickham)
 
 ]
@@ -189,7 +146,7 @@ randomise(mean)
 ```
 
 ```
-## [1] -0.01331963
+## [1] 0.002564157
 ```
 
 ``` r
@@ -197,7 +154,7 @@ randomise(sum)
 ```
 
 ```
-## [1] 11.53047
+## [1] -78.77633
 ```
 
 ]
@@ -256,7 +213,7 @@ Functionals can also produce other data structures, e.g., data frames as output.
 &lt;br&gt;
 &lt;br&gt;
 .blockquote.exercise[
-#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example: `map()`
+#### <svg aria-hidden="true" role="img" viewBox="0 0 576 512" style="height:1em;width:1.12em;vertical-align:-0.125em;margin-left:auto;margin-right:auto;font-size:inherit;fill:#004c93;overflow:visible;position:relative;"><path d="M64 0C28.7 0 0 28.7 0 64V352c0 35.3 28.7 64 64 64H240l-10.7 32H160c-17.7 0-32 14.3-32 32s14.3 32 32 32H416c17.7 0 32-14.3 32-32s-14.3-32-32-32H346.7L336 416H512c35.3 0 64-28.7 64-64V64c0-35.3-28.7-64-64-64H64zM512 64V288H64V64H512z"/></svg> Example: `map()`
 
 `map(1:3, f)` is `list(f(1), f(2), f(3))`.
 
@@ -288,7 +245,9 @@ map(1:3, triple)
 
 .font90[
 
-- There are more convenient variants if simpler (atomic) structures are required: `map_lgl()`, `map_int()`, `map_dbl()`, and `map_chr()` return an atomic vector of the specified type
+- **Typed variants** return an atomic vector of the specified type: `map_lgl()`, `map_int()`, `map_dbl()`, `map_chr()`
+
+- **`map_vec()`** (purrr ≥ 1.0.0) handles any vector type including dates, factors, and other S3 vectors
 
 - Base R equivalents are `sapply()` and `vapply()`
 
@@ -299,7 +258,7 @@ map(1:3, triple)
 .font80[
 
 .blockquote.exercise[
-#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example: `map_*()`
+#### <svg aria-hidden="true" role="img" viewBox="0 0 576 512" style="height:1em;width:1.12em;vertical-align:-0.125em;margin-left:auto;margin-right:auto;font-size:inherit;fill:#004c93;overflow:visible;position:relative;"><path d="M64 0C28.7 0 0 28.7 0 64V352c0 35.3 28.7 64 64 64H240l-10.7 32H160c-17.7 0-32 14.3-32 32s14.3 32 32 32H416c17.7 0 32-14.3 32-32s-14.3-32-32-32H346.7L336 416H512c35.3 0 64-28.7 64-64V64c0-35.3-28.7-64-64-64H64zM512 64V288H64V64H512z"/></svg> Example: `map_*()`
 .pull-left[
 &lt;br&gt;
 ![:image 90%](img/map-list.png)
@@ -347,22 +306,18 @@ map_int(mtcars, n_unique)
 - Of course, the `*` in `map_*()` must match the return type of the functions used for mapping
 
 ---
-## `purrr::map_*()` &amp;mdash; Producing Atomic Vectors
+## `purrr::map_*()` &amp;mdash; Anonymous Functions
 
 .font90[
 
-- The ***twiddle operator `~`*** allows to write space efficient anonymous functions. `~` conveys that the subsequent expression is a *formula*.
-
-- **A good rule of thumb:** If a function spans lines or uses `{...}`, we should give it a name.
-
-&lt;br&gt;
+Since R 4.1, the **native lambda** `\(x)` is the preferred shorthand for anonymous functions in `purrr`.
 
 .blockquote.exercise[
-#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example: `map_*()` with inline anonymous function
+#### <svg aria-hidden="true" role="img" viewBox="0 0 576 512" style="height:1em;width:1.12em;vertical-align:-0.125em;margin-left:auto;margin-right:auto;font-size:inherit;fill:#004c93;overflow:visible;position:relative;"><path d="M64 0C28.7 0 0 28.7 0 64V352c0 35.3 28.7 64 64 64H240l-10.7 32H160c-17.7 0-32 14.3-32 32s14.3 32 32 32H416c17.7 0 32-14.3 32-32s-14.3-32-32-32H346.7L336 416H512c35.3 0 64-28.7 64-64V64c0-35.3-28.7-64-64-64H64zM512 64V288H64V64H512z"/></svg> Example: `map_*()` with anonymous function
 
 
 ``` r
-map_dbl(mtcars, function(x) length(unique(x)))
+map_dbl(mtcars, function(x) length(unique(x)))   # verbose but explicit
 ```
 
 ```
@@ -372,7 +327,17 @@ map_dbl(mtcars, function(x) length(unique(x)))
 
 
 ``` r
-map_dbl(mtcars, ~ length(unique(.x)))
+map_dbl(mtcars, \(x) length(unique(x)))           # preferred: native lambda
+```
+
+```
+##  mpg  cyl disp   hp drat   wt qsec   vs   am gear carb 
+##   25    3   27   22   22   29   30    2    2    3    6
+```
+
+
+``` r
+map_dbl(mtcars, ~ length(unique(.x)))             # legacy twiddle (~) with .x
 ```
 
 ```
@@ -382,8 +347,11 @@ map_dbl(mtcars, ~ length(unique(.x)))
 
 ]]
 
----
-## `purrr::map_*()` &amp;mdash; Producing Atomic Vectors
+???
+
+- Both `\(x)` and `~` are converted to functions internally via `as_mapper()`.
+- Prefer `\(x)` in new code for consistency with modern R style.
+- Good rule of thumb: if a function spans multiple lines or uses `{...}`, give it a name.
 
 .font90[
 
@@ -393,7 +361,7 @@ map_dbl(mtcars, ~ length(unique(.x)))
 
 .blockquote.exercise[
 
-#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example: element extraction with `map_*()`
+#### <svg aria-hidden="true" role="img" viewBox="0 0 576 512" style="height:1em;width:1.12em;vertical-align:-0.125em;margin-left:auto;margin-right:auto;font-size:inherit;fill:#004c93;overflow:visible;position:relative;"><path d="M64 0C28.7 0 0 28.7 0 64V352c0 35.3 28.7 64 64 64H240l-10.7 32H160c-17.7 0-32 14.3-32 32s14.3 32 32 32H416c17.7 0 32-14.3 32-32s-14.3-32-32-32H346.7L336 416H512c35.3 0 64-28.7 64-64V64c0-35.3-28.7-64-64-64H64zM512 64V288H64V64H512z"/></svg> Example: element extraction with `map_*()`
 
 
 ``` r
@@ -419,6 +387,25 @@ map_dbl(x, 1)     # select by position
 
 ```
 ## [1] -1 -2 -3
+```
+
+For deep extraction from a **single** element, use `pluck()`:
+
+
+``` r
+pluck(x, 2, "y")                   # → c(5, 6)
+```
+
+```
+## [1] 5 6
+```
+
+``` r
+pluck(x, 3, "z", .default = NA)    # safe: returns NA if missing
+```
+
+```
+## [1] NA
 ```
 ]]
 
@@ -468,7 +455,7 @@ Note that components must exist in all entries of the object we iterate over (he
 &lt;br&gt;
 
 .blockquote.exercise[
-#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example: element extraction with `map_*()`
+#### <svg aria-hidden="true" role="img" viewBox="0 0 576 512" style="height:1em;width:1.12em;vertical-align:-0.125em;margin-left:auto;margin-right:auto;font-size:inherit;fill:#004c93;overflow:visible;position:relative;"><path d="M64 0C28.7 0 0 28.7 0 64V352c0 35.3 28.7 64 64 64H240l-10.7 32H160c-17.7 0-32 14.3-32 32s14.3 32 32 32H416c17.7 0 32-14.3 32-32s-14.3-32-32-32H346.7L336 416H512c35.3 0 64-28.7 64-64V64c0-35.3-28.7-64-64-64H64zM512 64V288H64V64H512z"/></svg> Example: element extraction with `map_*()`
 
 
 ``` r
@@ -510,7 +497,7 @@ Keep in mind that this requires your subsequent code to work with `NA`s.
 &lt;br&gt;
 
 .blockquote.exercise[
-#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example: mapping with additional arguments
+#### <svg aria-hidden="true" role="img" viewBox="0 0 576 512" style="height:1em;width:1.12em;vertical-align:-0.125em;margin-left:auto;margin-right:auto;font-size:inherit;fill:#004c93;overflow:visible;position:relative;"><path d="M64 0C28.7 0 0 28.7 0 64V352c0 35.3 28.7 64 64 64H240l-10.7 32H160c-17.7 0-32 14.3-32 32s14.3 32 32 32H416c17.7 0 32-14.3 32-32s-14.3-32-32-32H346.7L336 416H512c35.3 0 64-28.7 64-64V64c0-35.3-28.7-64-64-64H64zM512 64V288H64V64H512z"/></svg> Example: mapping with additional arguments
 
 .pull-left[
   &lt;br&gt;
@@ -523,7 +510,7 @@ Keep in mind that this requires your subsequent code to work with `NA`s.
 
 ``` r
 x &lt;- list(1:5, c(1:10, NA))
-map_dbl(x, ~ mean(.x, na.rm = TRUE))
+map_dbl(x, \(x) mean(x, na.rm = TRUE))
 ```
 
 ```
@@ -557,7 +544,7 @@ Additional arguments are **not decomposed**: `map_*()` is only vectorized over t
 &lt;br&gt;
 
 .blockquote.exercise[
-#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example: mapping with additional arguments &amp;mdash; ctd.
+#### <svg aria-hidden="true" role="img" viewBox="0 0 576 512" style="height:1em;width:1.12em;vertical-align:-0.125em;margin-left:auto;margin-right:auto;font-size:inherit;fill:#004c93;overflow:visible;position:relative;"><path d="M64 0C28.7 0 0 28.7 0 64V352c0 35.3 28.7 64 64 64H240l-10.7 32H160c-17.7 0-32 14.3-32 32s14.3 32 32 32H416c17.7 0 32-14.3 32-32s-14.3-32-32-32H346.7L336 416H512c35.3 0 64-28.7 64-64V64c0-35.3-28.7-64-64-64H64zM512 64V288H64V64H512z"/></svg> Example: mapping with additional arguments &amp;mdash; ctd.
 
 .pull-left[
 &lt;br&gt;
@@ -574,13 +561,13 @@ map(1:3, rnorm, mean = c(100, 10, 1))
 
 ```
 ## [[1]]
-## [1] 100.3796
+## [1] 100.7316
 ## 
 ## [[2]]
-## [1] 100.457075   7.665122
+## [1] 101.74209  10.78151
 ## 
 ## [[3]]
-## [1] 101.465695  10.325873   1.764735
+## [1] 98.734804 10.897914 -1.061464
 ```
 ]]]
 
@@ -596,7 +583,7 @@ Explain the outcomes of `map(1:4, rnorm, mean = c(100, 10, 1))`
 &lt;br&gt;
 
 .blockquote.exercise[
-#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example: mapping over a different argument
+#### <svg aria-hidden="true" role="img" viewBox="0 0 576 512" style="height:1em;width:1.12em;vertical-align:-0.125em;margin-left:auto;margin-right:auto;font-size:inherit;fill:#004c93;overflow:visible;position:relative;"><path d="M64 0C28.7 0 0 28.7 0 64V352c0 35.3 28.7 64 64 64H240l-10.7 32H160c-17.7 0-32 14.3-32 32s14.3 32 32 32H416c17.7 0 32-14.3 32-32s-14.3-32-32-32H346.7L336 416H512c35.3 0 64-28.7 64-64V64c0-35.3-28.7-64-64-64H64zM512 64V288H64V64H512z"/></svg> Example: mapping over a different argument
 
 .font80[
 
@@ -617,7 +604,18 @@ trims &lt;- c(0, 0.1, 0.2, 0.5)
 x &lt;- rcauchy(1000)
 ```
 
-We may switch arguments using an anonymous function:
+We may switch arguments using a lambda:
+
+
+``` r
+map_dbl(trims, \(trim) mean(x, trim = trim))
+```
+
+```
+## [1] -0.516838773 -0.015028721  0.004301151  0.014441867
+```
+
+The legacy twiddle shorthand is equivalent:
 
 
 ``` r
@@ -625,18 +623,7 @@ map_dbl(trims, ~ mean(x, trim = .x))
 ```
 
 ```
-## [1] 1.12971066 0.04254869 0.04533093 0.05402832
-```
-
-This is equivalent to:
-
-
-``` r
-map_dbl(trims, function(trim) mean(x, trim = trim))
-```
-
-```
-## [1] 1.12971066 0.04254869 0.04533093 0.05402832
+## [1] -0.516838773 -0.015028721  0.004301151  0.014441867
 ```
 
 ]]]
@@ -678,7 +665,7 @@ map_dbl(trims, function(trim) mean(x, trim = trim))
     
     trials_df &lt;- tibble(p_value = map_dbl(trials, "p.value"))
     
-    trials_df %&gt;% 
+    trials_df |&gt; 
       ggplot(aes(x = p_value, fill = p_value &lt; 0.05)) + 
       geom_histogram(binwidth = .025) +
       ggtitle("Distribution of p-values for random Poisson data.")
@@ -725,9 +712,9 @@ by_drive &lt;- split(cars2018, cars2018$Drive)
 
 
 ``` r
-by_drive %&gt;%
-  map(~ lm(MPG ~ Cylinders, data = .x)) %&gt;%
-  map(coef) %&gt;%
+by_drive |&gt;
+  map(\(data) lm(MPG ~ Cylinders, data = data)) |&gt;
+  map(coef) |&gt;
   map_dbl(2)
 ```
 
@@ -821,6 +808,8 @@ There are 23 variants of `map*()` which are variants of the following functions:
 | One argument + index	 | `imap()`	     | `imap_*()`	   | `imodify()`	 | `iwalk()`    |
 | N arguments	       	   | `pmap()`      | `pmap_*()`	   | `—`	         | `pwalk()`    |
 
+.font80[**Note:** `map_dfr()` / `map_dfc()` and similar row/col-binding variants are **superseded** — prefer `map() |&gt; list_rbind()` or `map() |&gt; list_c()`.]
+
 ]
 
 ???
@@ -837,7 +826,7 @@ The `modify()` function works on the input *components* and returns an object of
 &lt;br&gt;
 
 .blockquote.exercise[
-#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example: `data.frame` in / `data.frame` out
+#### <svg aria-hidden="true" role="img" viewBox="0 0 576 512" style="height:1em;width:1.12em;vertical-align:-0.125em;margin-left:auto;margin-right:auto;font-size:inherit;fill:#004c93;overflow:visible;position:relative;"><path d="M64 0C28.7 0 0 28.7 0 64V352c0 35.3 28.7 64 64 64H240l-10.7 32H160c-17.7 0-32 14.3-32 32s14.3 32 32 32H416c17.7 0 32-14.3 32-32s-14.3-32-32-32H346.7L336 416H512c35.3 0 64-28.7 64-64V64c0-35.3-28.7-64-64-64H64zM512 64V288H64V64H512z"/></svg> Example: `data.frame` in / `data.frame` out
 
 
 ``` r
@@ -866,6 +855,54 @@ df &lt;- modify(df, ~ .x * 2)
 ]]
 
 ---
+## Predicate Functionals: `keep()`, `discard()`, and friends
+
+.font90[
+
+Filter list or vector elements based on a **predicate function**.
+
+.blockquote.exercise[
+#### <svg aria-hidden="true" role="img" viewBox="0 0 576 512" style="height:1em;width:1.12em;vertical-align:-0.125em;margin-left:auto;margin-right:auto;font-size:inherit;fill:#004c93;overflow:visible;position:relative;"><path d="M64 0C28.7 0 0 28.7 0 64V352c0 35.3 28.7 64 64 64H240l-10.7 32H160c-17.7 0-32 14.3-32 32s14.3 32 32 32H416c17.7 0 32-14.3 32-32s-14.3-32-32-32H346.7L336 416H512c35.3 0 64-28.7 64-64V64c0-35.3-28.7-64-64-64H64zM512 64V288H64V64H512z"/></svg> Example: `keep()`, `discard()`, and `compact()`
+
+
+``` r
+# keep only well-fitting models
+models &lt;- map(split(mtcars, mtcars$cyl), \(d) lm(mpg ~ wt, data = d))
+keep(models, \(m) summary(m)$r.squared &gt; 0.75)
+```
+
+```
+## named list()
+```
+
+
+``` r
+# discard NULL elements; every()/some()/none() test predicates across all elements
+compact(list(1, NULL, 3, NULL, 5))
+```
+
+```
+## [[1]]
+## [1] 1
+## 
+## [[2]]
+## [1] 3
+## 
+## [[3]]
+## [1] 5
+```
+
+``` r
+every(models, \(m) nobs(m) &gt;= 3)   # do ALL models have at least 3 observations?
+```
+
+```
+## [1] TRUE
+```
+
+]]
+
+---
 ## `purrr::map2()`
 
 .font90[
@@ -875,7 +912,7 @@ df &lt;- modify(df, ~ .x * 2)
 &lt;br&gt;
 
 .blockquote.exercise[
-#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example: weighted mean using `map2()`
+#### <svg aria-hidden="true" role="img" viewBox="0 0 576 512" style="height:1em;width:1.12em;vertical-align:-0.125em;margin-left:auto;margin-right:auto;font-size:inherit;fill:#004c93;overflow:visible;position:relative;"><path d="M64 0C28.7 0 0 28.7 0 64V352c0 35.3 28.7 64 64 64H240l-10.7 32H160c-17.7 0-32 14.3-32 32s14.3 32 32 32H416c17.7 0 32-14.3 32-32s-14.3-32-32-32H346.7L336 416H512c35.3 0 64-28.7 64-64V64c0-35.3-28.7-64-64-64H64zM512 64V288H64V64H512z"/></svg> Example: weighted mean using `map2()`
 
 .pull-left[
   &lt;br&gt;
@@ -918,7 +955,7 @@ Additional arguments may be passed just as with `map()`.
 &lt;br&gt;
 
 .blockquote.exercise[
-#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example: weighted mean using `map2()` &amp;mdash; ctd.
+#### <svg aria-hidden="true" role="img" viewBox="0 0 576 512" style="height:1em;width:1.12em;vertical-align:-0.125em;margin-left:auto;margin-right:auto;font-size:inherit;fill:#004c93;overflow:visible;position:relative;"><path d="M64 0C28.7 0 0 28.7 0 64V352c0 35.3 28.7 64 64 64H240l-10.7 32H160c-17.7 0-32 14.3-32 32s14.3 32 32 32H416c17.7 0 32-14.3 32-32s-14.3-32-32-32H346.7L336 416H512c35.3 0 64-28.7 64-64V64c0-35.3-28.7-64-64-64H64zM512 64V288H64V64H512z"/></svg> Example: weighted mean using `map2()` &amp;mdash; ctd.
 
 .pull-left[
   ![:image 90%](img/map2-arg.png)
@@ -940,6 +977,7 @@ map2_dbl(xs, ws, weighted.mean, na.rm = TRUE)
 ]]]
 
 ---
+exclude: true
 ## `purrr::map2()`
 
 .font90[
@@ -949,7 +987,7 @@ Note that `map2()` also recycles inputs to ensure that they are the same length.
 &lt;br&gt;
 
 .blockquote.exercise[
-#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example: weighted mean using `map2()` &amp;mdash; ctd.
+#### <svg aria-hidden="true" role="img" viewBox="0 0 576 512" style="height:1em;width:1.12em;vertical-align:-0.125em;margin-left:auto;margin-right:auto;font-size:inherit;fill:#004c93;overflow:visible;position:relative;"><path d="M64 0C28.7 0 0 28.7 0 64V352c0 35.3 28.7 64 64 64H240l-10.7 32H160c-17.7 0-32 14.3-32 32s14.3 32 32 32H416c17.7 0 32-14.3 32-32s-14.3-32-32-32H346.7L336 416H512c35.3 0 64-28.7 64-64V64c0-35.3-28.7-64-64-64H64zM512 64V288H64V64H512z"/></svg> Example: weighted mean using `map2()` &amp;mdash; ctd.
 
 .pull-left[
   ![:image 90%](img/map2-recycle.png)
@@ -970,6 +1008,7 @@ map2_dbl(1:6, 1, ~ .x + .y)
 ]]]
 
 ---
+exclude: true
 ## `purrr::walk()`
 
 .font90[
@@ -979,7 +1018,7 @@ map2_dbl(1:6, 1, ~ .x + .y)
 - There is no base R equivalent but wrapping `lapply()` with `invisible()` comes close
 
 .blockquote.exercise[
-#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example: assigning and passing objects
+#### <svg aria-hidden="true" role="img" viewBox="0 0 576 512" style="height:1em;width:1.12em;vertical-align:-0.125em;margin-left:auto;margin-right:auto;font-size:inherit;fill:#004c93;overflow:visible;position:relative;"><path d="M64 0C28.7 0 0 28.7 0 64V352c0 35.3 28.7 64 64 64H240l-10.7 32H160c-17.7 0-32 14.3-32 32s14.3 32 32 32H416c17.7 0 32-14.3 32-32s-14.3-32-32-32H346.7L336 416H512c35.3 0 64-28.7 64-64V64c0-35.3-28.7-64-64-64H64zM512 64V288H64V64H512z"/></svg> Example: assigning and passing objects
 
 .pull-left[
 ![:image 50%](img/walk.png)
@@ -999,6 +1038,7 @@ Assignment to an environment is a side-effect.
 ]]]
 
 ---
+exclude: true
 ## `purrr::walk()`
 
 .font90[
@@ -1006,7 +1046,7 @@ Assignment to an environment is a side-effect.
 `walk2()` is a convenient alternative which is vectorised over two arguments. 
 
 .blockquote.exercise[
-#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example: write to disc
+#### <svg aria-hidden="true" role="img" viewBox="0 0 576 512" style="height:1em;width:1.12em;vertical-align:-0.125em;margin-left:auto;margin-right:auto;font-size:inherit;fill:#004c93;overflow:visible;position:relative;"><path d="M64 0C28.7 0 0 28.7 0 64V352c0 35.3 28.7 64 64 64H240l-10.7 32H160c-17.7 0-32 14.3-32 32s14.3 32 32 32H416c17.7 0 32-14.3 32-32s-14.3-32-32-32H346.7L336 416H512c35.3 0 64-28.7 64-64V64c0-35.3-28.7-64-64-64H64zM512 64V288H64V64H512z"/></svg> Example: write to disc
 
 .pull-left[
   ![:image 80%](img/walk2.png)
@@ -1027,6 +1067,7 @@ A common side-effect which needs two arguments (object and path) is writing to d
 
 
 ---
+exclude: true
 ## `purrr::imap()`
 
 .font90[
@@ -1038,7 +1079,7 @@ A common side-effect which needs two arguments (object and path) is writing to d
     `imap(.x, .f)` applies `.f` to values `.x` *and indices or names derived from* `.x`.
 
 .blockquote.exercise[
-#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example: named column means
+#### <svg aria-hidden="true" role="img" viewBox="0 0 576 512" style="height:1em;width:1.12em;vertical-align:-0.125em;margin-left:auto;margin-right:auto;font-size:inherit;fill:#004c93;overflow:visible;position:relative;"><path d="M64 0C28.7 0 0 28.7 0 64V352c0 35.3 28.7 64 64 64H240l-10.7 32H160c-17.7 0-32 14.3-32 32s14.3 32 32 32H416c17.7 0 32-14.3 32-32s-14.3-32-32-32H346.7L336 416H512c35.3 0 64-28.7 64-64V64c0-35.3-28.7-64-64-64H64zM512 64V288H64V64H512z"/></svg> Example: named column means
 
 `imap()` is a useful helper if we want to work with values along with variable names.
 
@@ -1052,7 +1093,7 @@ A common side-effect which needs two arguments (object and path) is writing to d
 
 - When using the formula shortcut, the first argument `.x` is the value, and the second `.y` is the position/name
 
-- `cars2018 %&gt;% select_if(is.numeric)` returns a list so `.y` is a name and `.x` the value
+- `cars2018 |&gt; select_if(is.numeric)` returns a list so `.y` is a name and `.x` the value
 
 - `character` vectors index by name, `numeric` vectors index by position
 
@@ -1066,7 +1107,7 @@ A common side-effect which needs two arguments (object and path) is writing to d
 &lt;br&gt;
 
 .blockquote.exercise[
-#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example: weighted mean with `pmap()`
+#### <svg aria-hidden="true" role="img" viewBox="0 0 576 512" style="height:1em;width:1.12em;vertical-align:-0.125em;margin-left:auto;margin-right:auto;font-size:inherit;fill:#004c93;overflow:visible;position:relative;"><path d="M64 0C28.7 0 0 28.7 0 64V352c0 35.3 28.7 64 64 64H240l-10.7 32H160c-17.7 0-32 14.3-32 32s14.3 32 32 32H416c17.7 0 32-14.3 32-32s-14.3-32-32-32H346.7L336 416H512c35.3 0 64-28.7 64-64V64c0-35.3-28.7-64-64-64H64zM512 64V288H64V64H512z"/></svg> Example: weighted mean with `pmap()`
 
 .pull-left[
   ![:image 90%](img/pmap.png)
@@ -1106,7 +1147,7 @@ As before, additional arguments may be passed after `.f` and they are recycled, 
 &lt;br&gt;
 
 .blockquote.exercise[
-#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example: weighted mean with `pmap()` &amp;mdash; ctd.
+#### <svg aria-hidden="true" role="img" viewBox="0 0 576 512" style="height:1em;width:1.12em;vertical-align:-0.125em;margin-left:auto;margin-right:auto;font-size:inherit;fill:#004c93;overflow:visible;position:relative;"><path d="M64 0C28.7 0 0 28.7 0 64V352c0 35.3 28.7 64 64 64H240l-10.7 32H160c-17.7 0-32 14.3-32 32s14.3 32 32 32H416c17.7 0 32-14.3 32-32s-14.3-32-32-32H346.7L336 416H512c35.3 0 64-28.7 64-64V64c0-35.3-28.7-64-64-64H64zM512 64V288H64V64H512z"/></svg> Example: weighted mean with `pmap()` &amp;mdash; ctd.
 
 .pull-left[
   ![:image 95%](img/pmap-arg.png)
@@ -1130,41 +1171,27 @@ pmap_dbl(list(xs, ws),
 ]]]
 
 ---
-## `purrr::pmap()`
+## `purrr::pmap()` &amp;mdash; Named and Data Frame Inputs
 
 .font90[
 
-Note that `pmap()` gives much finer control over argument matching as we may use **_named_ `list`**. This is convenient for working with complex `list` objects.
-
-&lt;br&gt;
+Use **named lists** or **data frames** to map arguments by name — especially useful with many or complex inputs.
 
 .blockquote.exercise[
-#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example: argument matching using named list
+#### <svg aria-hidden="true" role="img" viewBox="0 0 576 512" style="height:1em;width:1.12em;vertical-align:-0.125em;margin-left:auto;margin-right:auto;font-size:inherit;fill:#004c93;overflow:visible;position:relative;"><path d="M64 0C28.7 0 0 28.7 0 64V352c0 35.3 28.7 64 64 64H240l-10.7 32H160c-17.7 0-32 14.3-32 32s14.3 32 32 32H416c17.7 0 32-14.3 32-32s-14.3-32-32-32H346.7L336 416H512c35.3 0 64-28.7 64-64V64c0-35.3-28.7-64-64-64H64zM512 64V288H64V64H512z"/></svg> Example: named list and `data.frame` inputs
 
 .pull-left[
-  &lt;br&gt;
-  &lt;br&gt;
-  ![:image 95%](img/pmap-arg.png)
-  ![:source 2019](Wickham)
-]
 
-.pull-right[
-
-Look at this trimmed mean example:
+Named list: `pmap()` matches by argument name.
 
 
 ``` r
 trims &lt;- c(0, 0.1, 0.2, 0.5)
 x &lt;- rcauchy(1000)
-```
 
-Varying the argument values can be done by passing the values in a _named_ list.
-
-
-``` r
 pmap_dbl(
-  list(trim = trims, na.rm = F), 
-  .f = mean, 
+  list(trim = trims, na.rm = FALSE),
+  .f = mean,
   x = x
 )
 ```
@@ -1172,29 +1199,12 @@ pmap_dbl(
 ```
 ## [1] -0.03231537  0.06072652  0.04464511  0.04482772
 ```
-]]]
 
----
-## `purrr::pmap()`
-
-.font90[
-
-Remember that a `data.frame` is a `list` and thus can be passed to `pmap()` as a _collection of inputs_. 
-
-&lt;br&gt;
-
-.blockquote.exercise[
-#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example: `pmap()` with data.frame as input
-
-.pull-left[
-  &lt;br&gt;
-  &lt;br&gt;
-  &lt;br&gt;
-  ![:image 95%](img/pmap-3.png)
-  ![:source 2019](Wickham)
 ]
 
 .pull-right[
+
+A `data.frame` is a `list` — column names match argument names automatically.
 
 
 ``` r
@@ -1203,12 +1213,6 @@ params &lt;- tibble::tribble(
    1L,     0,     1,
    2L,    10,   100
 )
-```
-
-Column names match the arguments: we don't have to worry about their order.
-
-
-``` r
 pmap(params, runif)
 ```
 
@@ -1224,7 +1228,7 @@ pmap(params, runif)
 
 ???
 
-`tribble()`: create tibbles using an easier to read row-by-row layout. This is useful for small tables of data where readability is important.
+`tribble()`: create tibbles using an easier to read row-by-row layout.
 
 ---
 ## `purrr::pmap()` &amp;mdash; Exercises
@@ -1264,6 +1268,94 @@ pmap(params, runif)
 3. As above
     
 ---
+## Combining Map Output: `list_rbind()` and `list_c()`
+
+.font90[
+
+`map_dfr()` / `map_dfc()` are **superseded**. The modern idiom explicitly combines with `list_rbind()` or `list_c()`.
+
+.blockquote.exercise[
+#### <svg aria-hidden="true" role="img" viewBox="0 0 576 512" style="height:1em;width:1.12em;vertical-align:-0.125em;margin-left:auto;margin-right:auto;font-size:inherit;fill:#004c93;overflow:visible;position:relative;"><path d="M64 0C28.7 0 0 28.7 0 64V352c0 35.3 28.7 64 64 64H240l-10.7 32H160c-17.7 0-32 14.3-32 32s14.3 32 32 32H416c17.7 0 32-14.3 32-32s-14.3-32-32-32H346.7L336 416H512c35.3 0 64-28.7 64-64V64c0-35.3-28.7-64-64-64H64zM512 64V288H64V64H512z"/></svg> Example: replacing `map_dfr()`
+
+.pull-left[
+
+**Superseded:**
+
+
+``` r
+map_dfr(split(mtcars, mtcars$cyl),
+  \(d) broom::tidy(lm(mpg ~ wt, d)))
+```
+
+]
+
+.pull-right[
+
+**Modern:**
+
+
+``` r
+split(mtcars, mtcars$cyl) |&gt;
+  map(\(d) broom::tidy(lm(mpg ~ wt, d))) |&gt;
+  list_rbind()
+```
+
+`list_c()` collapses a list of vectors into one:
+
+
+``` r
+map(1:3, \(n) runif(n)) |&gt; list_c()
+```
+
+```
+## [1] 0.5479943 0.1492442 0.5595459 0.4268856 0.4477301 0.8332948
+```
+
+]]]
+
+---
+## Adverbs: `safely()` and `possibly()`
+
+.font90[
+
+**Adverbs** modify functions so they never throw errors — essential for robust iteration.
+
+.blockquote.exercise[
+#### <svg aria-hidden="true" role="img" viewBox="0 0 576 512" style="height:1em;width:1.12em;vertical-align:-0.125em;margin-left:auto;margin-right:auto;font-size:inherit;fill:#004c93;overflow:visible;position:relative;"><path d="M64 0C28.7 0 0 28.7 0 64V352c0 35.3 28.7 64 64 64H240l-10.7 32H160c-17.7 0-32 14.3-32 32s14.3 32 32 32H416c17.7 0 32-14.3 32-32s-14.3-32-32-32H346.7L336 416H512c35.3 0 64-28.7 64-64V64c0-35.3-28.7-64-64-64H64zM512 64V288H64V64H512z"/></svg> Example: `safely()` and `possibly()`
+
+.pull-left[
+
+`safely()` returns `list(result, error)` — always succeeds:
+
+
+``` r
+safe_log &lt;- safely(log)
+
+results &lt;- map(list(10, -1, "a"), safe_log)
+results |&gt; map("result") |&gt; compact()   # successes
+results |&gt; map("error")  |&gt; compact()   # errors
+```
+
+]
+
+.pull-right[
+
+`possibly()` returns a default on error — simpler:
+
+
+``` r
+safe_log &lt;- possibly(log, NA_real_)
+map_dbl(list(10, -1, "a"), safe_log)
+```
+
+| | `safely()` | `possibly()` |
+|---|---|---|
+| On error | `list(result, error)` | Returns default |
+| Use when | Need to inspect errors | Just need fallback |
+
+]]]
+
+---
 exclude: true
 ## `purrr::reduce()`
 
@@ -1285,7 +1377,7 @@ exclude: true
 `reduce()` is useful for generalising a binary function (a function with two inputs) to any number of inputs.
 
 .blockquote.exercise[
-#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example: set operations with vectors
+#### <svg aria-hidden="true" role="img" viewBox="0 0 576 512" style="height:1em;width:1.12em;vertical-align:-0.125em;margin-left:auto;margin-right:auto;font-size:inherit;fill:#004c93;overflow:visible;position:relative;"><path d="M64 0C28.7 0 0 28.7 0 64V352c0 35.3 28.7 64 64 64H240l-10.7 32H160c-17.7 0-32 14.3-32 32s14.3 32 32 32H416c17.7 0 32-14.3 32-32s-14.3-32-32-32H346.7L336 416H512c35.3 0 64-28.7 64-64V64c0-35.3-28.7-64-64-64H64zM512 64V288H64V64H512z"/></svg> Example: set operations with vectors
 
 Consider the following list of numeric vectors `l`.
 
@@ -1297,10 +1389,10 @@ str(l)
 
 ```
 ## List of 4
-##  $ : int [1:15] 10 5 9 3 7 7 2 2 5 8 ...
-##  $ : int [1:15] 2 2 3 6 2 10 9 3 6 3 ...
-##  $ : int [1:15] 4 7 3 10 7 10 7 2 2 2 ...
-##  $ : int [1:15] 8 1 9 3 9 2 4 8 4 2 ...
+##  $ : int [1:15] 7 7 2 2 5 8 4 4 7 10 ...
+##  $ : int [1:15] 2 10 9 3 6 3 8 1 2 5 ...
+##  $ : int [1:15] 7 10 7 2 2 2 3 8 9 1 ...
+##  $ : int [1:15] 9 2 4 8 4 2 6 3 7 3 ...
 ```
 
 Suppose you want to find values which occur in all vectors in `l`. Note that `intersect()` is binary, i.e. it returns the intersection of elements in two input vectors.
@@ -1312,7 +1404,7 @@ exclude: true
 
 .medium[
 .blockquote.exercise[
-#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example: set operations with vectors &amp;mdash; ctd.
+#### <svg aria-hidden="true" role="img" viewBox="0 0 576 512" style="height:1em;width:1.12em;vertical-align:-0.125em;margin-left:auto;margin-right:auto;font-size:inherit;fill:#004c93;overflow:visible;position:relative;"><path d="M64 0C28.7 0 0 28.7 0 64V352c0 35.3 28.7 64 64 64H240l-10.7 32H160c-17.7 0-32 14.3-32 32s14.3 32 32 32H416c17.7 0 32-14.3 32-32s-14.3-32-32-32H346.7L336 416H512c35.3 0 64-28.7 64-64V64c0-35.3-28.7-64-64-64H64zM512 64V288H64V64H512z"/></svg> Example: set operations with vectors &amp;mdash; ctd.
 
 A base R solution is rather cumbersome even for a small set of vectors.
 
@@ -1326,7 +1418,7 @@ out
 ```
 
 ```
-## [1] 9 3 2 8
+## [1] 7 2 8 3
 ```
 
 We could generalise the above to an arbitrary number of vectors using a loop but such operations are conveniently handled by `reduce()` which is also more efficient.
@@ -1337,7 +1429,7 @@ reduce(l, intersect)
 ```
 
 ```
-## [1] 9 3 2 8
+## [1] 7 2 8 3
 ```
 
 ``` r
@@ -1345,7 +1437,7 @@ reduce(l, union)
 ```
 
 ```
-##  [1] 10  5  9  3  7  2  8  4  6  1
+##  [1]  7  2  5  8  4 10  3  6  9  1
 ```
 ]]
 
@@ -1358,7 +1450,7 @@ exclude: true
 `accumulate()` is a variant of `reduce()` which returns the final and all intermediate results.
 
 .blockquote.exercise[
-#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example: cumulative sum
+#### <svg aria-hidden="true" role="img" viewBox="0 0 576 512" style="height:1em;width:1.12em;vertical-align:-0.125em;margin-left:auto;margin-right:auto;font-size:inherit;fill:#004c93;overflow:visible;position:relative;"><path d="M64 0C28.7 0 0 28.7 0 64V352c0 35.3 28.7 64 64 64H240l-10.7 32H160c-17.7 0-32 14.3-32 32s14.3 32 32 32H416c17.7 0 32-14.3 32-32s-14.3-32-32-32H346.7L336 416H512c35.3 0 64-28.7 64-64V64c0-35.3-28.7-64-64-64H64zM512 64V288H64V64H512z"/></svg> Example: cumulative sum
 
 The difference between `reduce()` and `accumulate()` is best understood using a sequence of binary arithmetic operations.
 
@@ -1391,7 +1483,7 @@ exclude: true
 
 .smaller[
 .blockquote.exercise[
-#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example: set operations with vectors &amp;mdash; ctd.
+#### <svg aria-hidden="true" role="img" viewBox="0 0 576 512" style="height:1em;width:1.12em;vertical-align:-0.125em;margin-left:auto;margin-right:auto;font-size:inherit;fill:#004c93;overflow:visible;position:relative;"><path d="M64 0C28.7 0 0 28.7 0 64V352c0 35.3 28.7 64 64 64H240l-10.7 32H160c-17.7 0-32 14.3-32 32s14.3 32 32 32H416c17.7 0 32-14.3 32-32s-14.3-32-32-32H346.7L336 416H512c35.3 0 64-28.7 64-64V64c0-35.3-28.7-64-64-64H64zM512 64V288H64V64H512z"/></svg> Example: set operations with vectors &amp;mdash; ctd.
 
 So with `.f` a function for binary intersection we also obtain the 'intermediate' sets.
 
@@ -1402,16 +1494,16 @@ accumulate(l, intersect)
 
 ```
 ## [[1]]
-##  [1] 10  5  9  3  7  7  2  2  5  8  4  4  7 10  5
+##  [1]  7  7  2  2  5  8  4  4  7 10  5  2  2  3  6
 ## 
 ## [[2]]
-## [1] 10  5  9  3  2  8
+## [1]  7  2  5  8  4 10  3  6
 ## 
 ## [[3]]
-## [1] 10  9  3  2  8
+## [1]  7  2  8 10  3
 ## 
 ## [[4]]
-## [1] 9 3 2 8
+## [1] 7 2 8 3
 ```
 ]]
 
@@ -1431,7 +1523,7 @@ A function factory is a function that *produces* functions.
 &lt;br&gt;
 
 .blockquote.exercise[
-#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example: function factory
+#### <svg aria-hidden="true" role="img" viewBox="0 0 576 512" style="height:1em;width:1.12em;vertical-align:-0.125em;margin-left:auto;margin-right:auto;font-size:inherit;fill:#004c93;overflow:visible;position:relative;"><path d="M64 0C28.7 0 0 28.7 0 64V352c0 35.3 28.7 64 64 64H240l-10.7 32H160c-17.7 0-32 14.3-32 32s14.3 32 32 32H416c17.7 0 32-14.3 32-32s-14.3-32-32-32H346.7L336 416H512c35.3 0 64-28.7 64-64V64c0-35.3-28.7-64-64-64H64zM512 64V288H64V64H512z"/></svg> Example: function factory
 
 
 ``` r
@@ -1461,7 +1553,7 @@ The enclosing environment of the manufactured function is an **execution environ
 &lt;br&gt;
 
 .blockquote.exercise[
-#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example: function factory &amp;mdash; ctd.
+#### <svg aria-hidden="true" role="img" viewBox="0 0 576 512" style="height:1em;width:1.12em;vertical-align:-0.125em;margin-left:auto;margin-right:auto;font-size:inherit;fill:#004c93;overflow:visible;position:relative;"><path d="M64 0C28.7 0 0 28.7 0 64V352c0 35.3 28.7 64 64 64H240l-10.7 32H160c-17.7 0-32 14.3-32 32s14.3 32 32 32H416c17.7 0 32-14.3 32-32s-14.3-32-32-32H346.7L336 416H512c35.3 0 64-28.7 64-64V64c0-35.3-28.7-64-64-64H64zM512 64V288H64V64H512z"/></svg> Example: function factory &amp;mdash; ctd.
 
 
 ``` r
@@ -1469,7 +1561,7 @@ rlang::env_print(cube_root)     # inspect enclosing environment
 ```
 
 ```
-## &lt;environment: 0x140cb8fa0&gt;
+## &lt;environment: 0x1099e3470&gt;
 ## Parent: &lt;environment: global&gt;
 ## Bindings:
 ## • n: &lt;dbl&gt;
@@ -1492,75 +1584,50 @@ rlang::fn_env(cube_root)$n      # retrieve from enclosing environment
 - This is different here: the enclosing environment of `cube_root()` was the execution environment of `nth_root()`&amp;mdash;a mechanism which makes function factories possible.
 
 ---
-## Function Factories
+## Function Factories &amp;mdash; Lazy Evaluation and `force()`
 
 .font90[
 
-Remember **lazy evaluation**?
-
-&lt;br&gt;
+R uses **lazy evaluation**: arguments are not evaluated until first used — this can cause unexpected behaviour in factories.
 
 .blockquote.exercise[
-#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example: function factory &amp;mdash; ctd.
+#### <svg aria-hidden="true" role="img" viewBox="0 0 576 512" style="height:1em;width:1.12em;vertical-align:-0.125em;margin-left:auto;margin-right:auto;font-size:inherit;fill:#004c93;overflow:visible;position:relative;"><path d="M64 0C28.7 0 0 28.7 0 64V352c0 35.3 28.7 64 64 64H240l-10.7 32H160c-17.7 0-32 14.3-32 32s14.3 32 32 32H416c17.7 0 32-14.3 32-32s-14.3-32-32-32H346.7L336 416H512c35.3 0 64-28.7 64-64V64c0-35.3-28.7-64-64-64H64zM512 64V288H64V64H512z"/></svg> Example: lazy evaluation bug and fix with `force()`
 
 
 ``` r
-n &lt;- 2
-sq &lt;- nth_root(n)
-n &lt;- 16
-sq(64)             # Wait... this should evaluate to 8!
+n &lt;- 2; sq &lt;- nth_root(n); n &lt;- 16
+sq(64)             # Bug! n is evaluated lazily as 16 → 1.297...
 ```
 
 ```
 ## [1] 1.29684
 ```
 
-]]
-
-???
-
-- `64^(1/16) = 1.29684`
-
-- `x` is lazily evaluated when `sq()` is run, not when `nth_root()` is run. We thus need to force evaluation.
-
-- This is likely to happen so it's a good practice to avoid such a bug by using `force()` in your factories!
-
----
-## Function Factories
-
-.font90[
-
-Remember **lazy evaluation**?
-
-&lt;br&gt;
-
-.blockquote.exercise[
-#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example: function factory &amp;mdash; ctd.
+Fix: use `force(n)` to evaluate `n` immediately when the factory runs.
 
 
 ``` r
 nth_root &lt;- function(n) {
     force(n)
-    function(x) {
-      x^(1/n)
-    }
+    function(x) x^(1/n)
 }
-
-n &lt;- 2
-sq &lt;- nth_root(n)
-n &lt;- 16
-sq(64)             # better :-)
+n &lt;- 2; sq &lt;- nth_root(n); n &lt;- 16
+sq(64)             # 8 — correct ✓
 ```
 
 ```
 ## [1] 8
 ```
 
+**Rule of thumb:** Always `force()` factory arguments that manufactured functions depend on.
+
 ]]
 
 ???
 
-- Question to students: why `force(x)` and not just `x`? (check def. of `force()`
+- `64^(1/16) = 1.29684` (with the bug)
+- `n` is lazily evaluated when `sq()` is run, not when `nth_root()` is run.
+- Question to students: why `force(n)` and not just `n`? (check def. of `force()`)
 
 - Note on Garbage Collection:
     
@@ -1584,7 +1651,7 @@ Function factories allow us to create *functions with a memory*.
 &lt;br&gt;
 
 .blockquote.exercise[
-#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example: counter
+#### <svg aria-hidden="true" role="img" viewBox="0 0 576 512" style="height:1em;width:1.12em;vertical-align:-0.125em;margin-left:auto;margin-right:auto;font-size:inherit;fill:#004c93;overflow:visible;position:relative;"><path d="M64 0C28.7 0 0 28.7 0 64V352c0 35.3 28.7 64 64 64H240l-10.7 32H160c-17.7 0-32 14.3-32 32s14.3 32 32 32H416c17.7 0 32-14.3 32-32s-14.3-32-32-32H346.7L336 416H512c35.3 0 64-28.7 64-64V64c0-35.3-28.7-64-64-64H64zM512 64V288H64V64H512z"/></svg> Example: counter
 
 
 ``` r
@@ -1691,7 +1758,7 @@ exclude: true
 Let's find the MLE for a Poisson random vector.
 
 
-```r
+``` r
 x1 &lt;- rpois(100, 30)
 llp &lt;- ll_poisson(x1)
 
@@ -1700,23 +1767,23 @@ optimise(lprob_poisson, x = x1, c(0, 40), maximum = T)
 
 ```
 ## $maximum
-## [1] 29.32
+## [1] 29.3
 ## 
 ## $objective
-## [1] -312.8643
+## [1] -313.1771
 ```
 
-```r
+``` r
 # better:
 optimise(llp, c(0, 40), maximum = T)
 ```
 
 ```
 ## $maximum
-## [1] 29.32
+## [1] 29.3
 ## 
 ## $objective
-## [1] -312.8643
+## [1] -313.1771
 ```
 
 ---

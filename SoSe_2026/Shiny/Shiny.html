@@ -5,16 +5,9 @@
     <meta charset="utf-8" />
     <meta name="author" content="Martin C. Arnold" />
     <meta name="author" content="Martin Schmelzer" />
-    <meta name="date" content="2025-06-07" />
+    <meta name="date" content="2026-05-17" />
     <script src="Shiny_files/header-attrs-2.29/header-attrs.js"></script>
     <link href="Shiny_files/remark-css-0.0.1/default.css" rel="stylesheet" />
-    <script src="Shiny_files/xaringanExtra-progressBar-0.0.1/progress-bar.js"></script>
-    <script src="Shiny_files/clipboard-2.0.6/clipboard.min.js"></script>
-    <link href="Shiny_files/xaringanExtra-clipboard-0.2.6/xaringanExtra-clipboard.css" rel="stylesheet" />
-    <script src="Shiny_files/xaringanExtra-clipboard-0.2.6/xaringanExtra-clipboard.js"></script>
-    <script>window.xaringanExtraClipboard(null, {"button":"<i class=\"fa fa-clipboard\"><\/i>","success":"<i class=\"fa fa-check\" style=\"color: #00ff00\"><\/i>","error":"<i class=\"fa fa-times-circle\" style=\"color: #F94144\"><\/i>"})</script>
-    <link href="Shiny_files/font-awesome-6.5.2/css/all.min.css" rel="stylesheet" />
-    <link href="Shiny_files/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet" />
     <script type="text/x-mathjax-config">
       MathJax.Hub.Config({
         TeX: { equationNumbers: { autoNumber: "AMS" } },
@@ -36,29 +29,6 @@
     <textarea id="source">
 
 class: title-slide title-shiny center middle
-
-
-<style>.xe__progress-bar__container {
-  bottom:0;
-  opacity: 1;
-  position:absolute;
-  right:0;
-  left: 0;
-}
-.xe__progress-bar {
-  height: 0.25em;
-  background-color: #004c93;
-  width: calc(var(--slide-current) / var(--slide-total) * 100%);
-}
-.remark-visible .xe__progress-bar {
-  animation: xe__progress-bar__wipe 200ms forwards;
-  animation-timing-function: cubic-bezier(.86,0,.07,1);
-}
-@keyframes xe__progress-bar__wipe {
-  0% { width: calc(var(--slide-previous) / var(--slide-total) * 100%); }
-  100% { width: calc(var(--slide-current) / var(--slide-total) * 100%); }
-}</style>
-
 
 
 
@@ -93,46 +63,31 @@ It can be used for, among other things:
 
 --
 .font90[
-Here are some examples: 
+Some examples:
 
-- [K-Means](https://shiny.rstudio.com/gallery/kmeans-example.html)
-- [Genome Viewer](https://shiny.rstudio.com/gallery/genome-browser.html)
-- [Shiny Gallery](https://shiny.rstudio.com/gallery/)
+- [Shiny Gallery](https://shiny.posit.co/r/gallery/)
+
+There is also a [cheatsheet](https://posit.co/wp-content/uploads/2022/10/shiny-1.pdf).
 ]
-
---
-.font90[
-There is also a [cheatsheet](https://shiny.rstudio.com/images/shiny-cheatsheet.pdf). 
-]
-
-???
-https://corona.stat.uni-muenchen.de/maps/
-https://experience.arcgis.com/experience/478220a4c454480e823b17327b2bf1d4
 
 
 ---
 
-
-
 ## Structure
 
-A Shiny app consist of 2 parts
+A Shiny app consists of 2 parts
 
-1. The user interface script 
-    - controls the layout and appearance of your app.
-    - contains elements for user input.
-    - contains the output you want to visualise.
-    
+1. The **user interface** (`ui`)
+    - controls the layout and appearance of the app
+    - contains elements for user input
+    - contains placeholders for output
+
 --
 
-&lt;ol start = "2"&gt;
-  &lt;li&gt; The server script &lt;/li&gt;
-  &lt;ul&gt;
-    &lt;li&gt;contains the instructions for the R session which always works behind the scene&lt;/li&gt;
-    &lt;li&gt;takes the user input and produces the output which is sent back to the UI&lt;/li&gt;
-  &lt;/ul&gt; 
-&lt;/ol&gt;
-    
+2. The **server** function
+    - contains the instructions for the R session running in the background
+    - takes user input and produces output sent back to the UI
+
 
 ---
 
@@ -143,50 +98,42 @@ A Shiny app consist of 2 parts
 ``` r
 library(shiny)
 
-# The user interface
-ui &lt;- fluidPage()
+ui     &lt;- fluidPage()                           # the user interface
+server &lt;- function(input, output, session) {}   # the R backend
 
-# Instructions for the R backend
-server &lt;- function(input, output) {}
-
-# Run the shiny app 
-shinyApp(ui = ui, server = server)
+shinyApp(ui = ui, server = server)              # run the app
 ```
 ]
 
 --
 
-Another way to build an app is 
-- create a new directory (say `.../App-1`) with files `ui.R` and `server.R`
-- run `shiny::runApp(".../App-1"). `
+**Alternative:** create a directory (e.g. `App-1/`) with files `ui.R` and `server.R`, then call `shiny::runApp("App-1")`.
 
 ---
 
 ## User Interface  
 
-We will now extend our app by adding a simple sidebar layout. 
+We extend the app with a sidebar layout.
 
 .blockquote.exercise[
 
 ``` r
 ui &lt;- fluidPage(
-  
-  titlePanel("Title Panel"), 
-
+  titlePanel("Title Panel"),
   sidebarLayout(
-       sidebarPanel( "Sidebar Panel"),
-       mainPanel("Main Panel")
-       )
+    sidebarPanel("Sidebar Panel"),
+    mainPanel("Main Panel")
+  )
 )
-server &lt;- function(input, output) {}
+server &lt;- function(input, output, session) {}
 shinyApp(ui = ui, server = server)
 ```
 ]
 
 --
 
-- `fluidPage()` creates a new website that we can fill with content.
--  Type any of those functions in the R console to see that HTML code is returned. 
+- `fluidPage()` creates a page that adapts to the browser window size.
+- Type any layout function in the console to see the HTML it generates.
 
 ---
 ## Adding Elements for User Input 
@@ -213,32 +160,27 @@ ui &lt;- fluidPage(
 
 --
 
-You can find an overview of input elements [here](https://shiny.rstudio.com/gallery/widget-gallery.html).
-A very convenient input element not yet contained in the overview is [varSelectInput](https://shiny.rstudio.com/reference/shiny/latest/varSelectInput.html). 
+An overview of all input widgets: [shiny.posit.co/r/components/inputs/](https://shiny.posit.co/r/components/inputs/).  
+A particularly useful one: [`varSelectInput()`](https://shiny.posit.co/r/reference/shiny/latest/varselectinput.html) for selecting data frame columns.
 ---
 ## Create Output in the Server Function 
 
-The server function takes the input from the UI and returns e.g. text, plots or tables
-back to the UI. 
+The server reads `input$inputId` values and writes to `output$outputId` using **render functions**.
 
-There are some rules: 
-
-- the input is accessed by `input$inputId`.
-- the output that depends on user input needs to be created by a render function.
-- the output to be displayed needs to be saved as `output$outputId`.
+- Access inputs via `input$inputId`.
+- Wrap reactive output in a render function.
+- Assign to `output$outputId`.
 
 --
 
 .blockquote.exercise[
-#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example
+#### <svg aria-hidden="true" role="img" viewBox="0 0 576 512" style="height:1em;width:1.12em;vertical-align:-0.125em;margin-left:auto;margin-right:auto;font-size:inherit;fill:#004c93;overflow:visible;position:relative;"><path d="M64 0C28.7 0 0 28.7 0 64V352c0 35.3 28.7 64 64 64H240l-10.7 32H160c-17.7 0-32 14.3-32 32s14.3 32 32 32H416c17.7 0 32-14.3 32-32s-14.3-32-32-32H346.7L336 416H512c35.3 0 64-28.7 64-64V64c0-35.3-28.7-64-64-64H64zM512 64V288H64V64H512z"/></svg> Example
 
 ``` r
-server &lt;- function(input, output) {
-  
-  output$hist &lt;- renderPlot({ 
-    hist(rnorm(input$num)) 
-    })
-  
+server &lt;- function(input, output, session) {
+  output$hist &lt;- renderPlot({
+    hist(rnorm(input$num))
+  })
 }
 ```
 ]
@@ -246,89 +188,70 @@ server &lt;- function(input, output) {
 ---
 ## Display Output in the User Interface
 
-Output can be added to the user interface by one of the output functions.
+Use an **output function** in `ui` to display the rendered result.
 
 .font90.blockquote.exercise[
-#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example
+#### <svg aria-hidden="true" role="img" viewBox="0 0 576 512" style="height:1em;width:1.12em;vertical-align:-0.125em;margin-left:auto;margin-right:auto;font-size:inherit;fill:#004c93;overflow:visible;position:relative;"><path d="M64 0C28.7 0 0 28.7 0 64V352c0 35.3 28.7 64 64 64H240l-10.7 32H160c-17.7 0-32 14.3-32 32s14.3 32 32 32H416c17.7 0 32-14.3 32-32s-14.3-32-32-32H346.7L336 416H512c35.3 0 64-28.7 64-64V64c0-35.3-28.7-64-64-64H64zM512 64V288H64V64H512z"/></svg> Example
 
 ``` r
 ui &lt;- fluidPage(
-  titlePanel("Title Panel"), 
+  titlePanel("Title Panel"),
   sidebarLayout(
-    
-    sidebarPanel("Sidebar Panel",
-                 br(),                        
-                 br(),
-                 sliderInput(inputId = "num", 
-                       label = "Choose a number", 
-                       value = 25, min = 1, max = 100)
-                       ),
-    
-    mainPanel("Main Panel",
-              br(),                    
-              br(),
-              plotOutput("hist")
-              )
+    sidebarPanel(
+      br(),
+      sliderInput(inputId = "num",
+                  label   = "Choose a number",
+                  value = 25, min = 1, max = 100)
+    ),
+    mainPanel(
+      br(),
+      plotOutput("hist")
+    )
   )
 )
 ```
 ]
 
+---
+## Preventing Errors with `req()`
+
+When an app starts, inputs may be `NULL` before the user interacts with them.  
+`req()` **silently stops execution** until the required input is available.
+
+.blockquote.exercise[
+#### <svg aria-hidden="true" role="img" viewBox="0 0 576 512" style="height:1em;width:1.12em;vertical-align:-0.125em;margin-left:auto;margin-right:auto;font-size:inherit;fill:#004c93;overflow:visible;position:relative;"><path d="M64 0C28.7 0 0 28.7 0 64V352c0 35.3 28.7 64 64 64H240l-10.7 32H160c-17.7 0-32 14.3-32 32s14.3 32 32 32H416c17.7 0 32-14.3 32-32s-14.3-32-32-32H346.7L336 416H512c35.3 0 64-28.7 64-64V64c0-35.3-28.7-64-64-64H64zM512 64V288H64V64H512z"/></svg> Example
+
+``` r
+server &lt;- function(input, output, session) {
+  output$hist &lt;- renderPlot({
+    req(input$num)          # stop silently if input$num is NULL or empty
+    hist(rnorm(input$num))
+  })
+}
+```
+]
+
+--
+
+`req()` is essential whenever inputs depend on earlier user selections (e.g., a dropdown that populates a plot).
 
 ---
-## Which Render and Output Functions belong together?
-&lt;br&gt;
-&lt;table&gt;
- &lt;thead&gt;
-  &lt;tr&gt;
-   &lt;th style="text-align:left;"&gt; Output Function &lt;/th&gt;
-   &lt;th style="text-align:left;"&gt; Render Function &lt;/th&gt;
-   &lt;th style="text-align:left;"&gt; What? &lt;/th&gt;
-  &lt;/tr&gt;
- &lt;/thead&gt;
-&lt;tbody&gt;
-  &lt;tr&gt;
-   &lt;td style="text-align:left;"&gt; dataTableOutput &lt;/td&gt;
-   &lt;td style="text-align:left;"&gt; renderDataTable &lt;/td&gt;
-   &lt;td style="text-align:left;"&gt; DT::datatable &lt;/td&gt;
-  &lt;/tr&gt;
-  &lt;tr&gt;
-   &lt;td style="text-align:left;"&gt; htmlOutput &lt;/td&gt;
-   &lt;td style="text-align:left;"&gt;  &lt;/td&gt;
-   &lt;td style="text-align:left;"&gt; raw HTML &lt;/td&gt;
-  &lt;/tr&gt;
-  &lt;tr&gt;
-   &lt;td style="text-align:left;"&gt; imageOutput &lt;/td&gt;
-   &lt;td style="text-align:left;"&gt; renderImage &lt;/td&gt;
-   &lt;td style="text-align:left;"&gt; e.g. .png, .jpeg &lt;/td&gt;
-  &lt;/tr&gt;
-  &lt;tr&gt;
-   &lt;td style="text-align:left;"&gt; plotOutput &lt;/td&gt;
-   &lt;td style="text-align:left;"&gt; renderPlot &lt;/td&gt;
-   &lt;td style="text-align:left;"&gt; e.g. a ggplot &lt;/td&gt;
-  &lt;/tr&gt;
-  &lt;tr&gt;
-   &lt;td style="text-align:left;"&gt; tableOutput &lt;/td&gt;
-   &lt;td style="text-align:left;"&gt; renderTable &lt;/td&gt;
-   &lt;td style="text-align:left;"&gt; e.g. data frame, matrix &lt;/td&gt;
-  &lt;/tr&gt;
-  &lt;tr&gt;
-   &lt;td style="text-align:left;"&gt; textOutput &lt;/td&gt;
-   &lt;td style="text-align:left;"&gt; renderText &lt;/td&gt;
-   &lt;td style="text-align:left;"&gt; value output &lt;/td&gt;
-  &lt;/tr&gt;
-  &lt;tr&gt;
-   &lt;td style="text-align:left;"&gt; verbatimTextOutput &lt;/td&gt;
-   &lt;td style="text-align:left;"&gt; renderPrint &lt;/td&gt;
-   &lt;td style="text-align:left;"&gt; print output &lt;/td&gt;
-  &lt;/tr&gt;
-  &lt;tr&gt;
-   &lt;td style="text-align:left;"&gt; uiOutput &lt;/td&gt;
-   &lt;td style="text-align:left;"&gt; renderUI &lt;/td&gt;
-   &lt;td style="text-align:left;"&gt; shiny UI element &lt;/td&gt;
-  &lt;/tr&gt;
-&lt;/tbody&gt;
-&lt;/table&gt;
+## Render and Output Functions
+
+Each output type requires a matching render function:
+
+.font90[
+| Output function | Render function | Displays |
+|---|---|---|
+| `plotOutput()` | `renderPlot()` | plots (e.g. ggplot2) |
+| `tableOutput()` | `renderTable()` | data frames / matrices |
+| `dataTableOutput()` | `renderDataTable()` | interactive DT table |
+| `textOutput()` | `renderText()` | plain text values |
+| `verbatimTextOutput()` | `renderPrint()` | `print()` output |
+| `imageOutput()` | `renderImage()` | image files (.png, .jpg) |
+| `uiOutput()` | `renderUI()` | dynamic Shiny UI |
+| `downloadButton()` | `downloadHandler()` | file downloads |
+]
 
 
 ---
@@ -351,6 +274,7 @@ Hints: The variables on the x and y axis must be numeric. The values returned by
 
 ---
 class: exercise_slide
+## Exercises (cont.)
 &lt;ol start=2&gt;
 &lt;li&gt; Add two more input variables that control the color and size of the points. &lt;/li&gt;
 &lt;li&gt; Add a slider that allows to subset the data by year.&lt;br&gt;
@@ -360,7 +284,7 @@ class: exercise_slide
 &lt;/ol&gt;
 
 ---
-## Reactivity
+## Reactivity — Three Kinds of Reactive Objects
 
 We have seen that the output created by a render function changes automatically when we change input values. This behavior is called reactivity. 
 
@@ -374,7 +298,7 @@ We have seen that the output created by a render function changes automatically 
 - The reactive endpoint is usually produced by one of the render functions and assigned to `output$OutputId`. It can only be dependent (it is always a child node). 
 
 ---
-## Reactivity
+## Reactivity — A Simple App
 
 We have already written a simple app using those two elements.  
 
@@ -386,7 +310,7 @@ We have already written a simple app using those two elements.
 Whenever  `input$num` changes the reactive endpoints using this input are notified that they need to re-execute. 
 
 ---
-## Reactivity
+## Reactivity — Avoiding Redundant Computation
 
 .font90[
 Which structure has the following code?
@@ -395,7 +319,7 @@ Which structure has the following code?
 ``` r
 # Calculate nth number in Fibonacci sequence
 fib &lt;- function(n) ifelse(n&lt;3, 1, fib(n-1)+fib(n-2))
-server &lt;- function(input, output) {
+server &lt;- function(input, output, session) {
   output$nthValue    &lt;- renderText({ fib(as.numeric(input$n)) })
   output$nthValueInv &lt;- renderText({ 1 / fib(as.numeric(input$n)) })
 }
@@ -413,16 +337,14 @@ Furthermore, each of the children evaluates `fib()` separately, which leads to r
 ]
 
 ---
-## Reactivity
+## Reactive Conductors with `reactive()`
 .font90[
-By using a reactive conductor created by `reactive()` we can rewrite the code so that `fib()` executes only once. 
+Use `reactive()` to cache an intermediate computation — `fib()` now runs only **once**.
 .blockquote.exercise[
 
 ``` r
-server &lt;- function(input, output) {
-  # reactive conductor depending on reactive source
+server &lt;- function(input, output, session) {
   currentFib         &lt;- reactive({ fib(as.numeric(input$n)) })
-  # reactive endpoints depending on reactive conductor
   output$nthValue    &lt;- renderText({ currentFib() })
   output$nthValueInv &lt;- renderText({ 1 / currentFib() })
 }
@@ -434,113 +356,86 @@ server &lt;- function(input, output) {
 &lt;img src="./draw.io/shiny_slide_15.png" width="35%" style="display: block; margin: auto;" /&gt;
 
 .font90[  
-Note that you need `()` (here ` currentFib()`) to access the value computed by `reactive()`. 
+Access the cached value using `currentFib()` (with parentheses).
 ]
 
 ---
-## Prevent reactivity with `isolate()`
+## Triggering Reactions on Demand
 
-Consider the case where we we have multiple inputs and the receiving end node runs some heavy computation.   
+**Problem:** with multiple numeric inputs, a heavy computation re-runs on *every* keystroke.
 
-
-&lt;img src="./draw.io/shiny_slide_16.png" width="35%" style="display: block; margin: auto;" /&gt;
-  
-  
-What is the problem here?
-
----
-## Example 
+**Solution:** `eventReactive()` re-runs only when a specific event fires (e.g., a button click).
 
 .blockquote.exercise[
+#### <svg aria-hidden="true" role="img" viewBox="0 0 576 512" style="height:1em;width:1.12em;vertical-align:-0.125em;margin-left:auto;margin-right:auto;font-size:inherit;fill:#004c93;overflow:visible;position:relative;"><path d="M64 0C28.7 0 0 28.7 0 64V352c0 35.3 28.7 64 64 64H240l-10.7 32H160c-17.7 0-32 14.3-32 32s14.3 32 32 32H416c17.7 0 32-14.3 32-32s-14.3-32-32-32H346.7L336 416H512c35.3 0 64-28.7 64-64V64c0-35.3-28.7-64-64-64H64zM512 64V288H64V64H512z"/></svg> Example
 
-#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example
+``` r
+server &lt;- function(input, output, session) {
+  # Only re-runs when goButton is clicked
+  x &lt;- eventReactive(input$goButton, {
+    rnorm(input$n, mean = input$mean, sd = input$sd)
+  })
+  output$hist &lt;- renderPlot({ hist(x()) })
+}
+```
+]
+
+--
+
+For **side effects** without a return value (e.g., logging, updating state), use `observeEvent()`:
+
+``` r
+observeEvent(input$goButton, {
+  cat("Button clicked, n =", input$n, "\n")
+})
+```
+
+---
+## <svg aria-hidden="true" role="img" viewBox="0 0 576 512" style="height:1em;width:1.12em;vertical-align:-0.125em;margin-left:auto;margin-right:auto;font-size:inherit;fill:#004c93;overflow:visible;position:relative;"><path d="M64 0C28.7 0 0 28.7 0 64V352c0 35.3 28.7 64 64 64H240l-10.7 32H160c-17.7 0-32 14.3-32 32s14.3 32 32 32H416c17.7 0 32-14.3 32-32s-14.3-32-32-32H346.7L336 416H512c35.3 0 64-28.7 64-64V64c0-35.3-28.7-64-64-64H64zM512 64V288H64V64H512z"/></svg> Example
+
+.font90.blockquote.exercise[
 
 ``` r
 ui &lt;- fluidPage(
-  numericInput("n", "Number of observations" ,10),
-  numericInput("mean", "Mean" ,10),
-  numericInput("sd", "Standard Deviation" ,10),
+  numericInput("n",    "Number of observations", 100),
+  numericInput("mean", "Mean",                   0),
+  numericInput("sd",   "Standard Deviation",     1),
   actionButton("goButton", "Go!"),
   plotOutput("hist")
 )
 
-server &lt;- function(input, output) {
-  
-output$hist &lt;- renderPlot({
-  x &lt;- rnorm(input$n, mean = input$mean, sd = input$sd)
-  hist(x)
+server &lt;- function(input, output, session) {
+  x &lt;- eventReactive(input$goButton, {
+    rnorm(input$n, mean = input$mean, sd = input$sd)
   })
-
-} 
+  output$hist &lt;- renderPlot({ hist(x()) })
+}
 
 shinyApp(ui, server)
 ```
 ]
 
----
-## Prevent reactivity with `isolate()`
-
-We can solve this by making the render function producing the output unresponsive to a change of the inputs using `isolate()`. When the user finished entering all input values e.g. a button could be used to start the 
-computation. 
-
-&lt;img src="./draw.io/shiny_slide_18.png" width="35%" style="display: block; margin: auto;" /&gt;
-  
----
-## Example
-
-.blockquote.exercise[
-
-#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example
-
-``` r
-ui &lt;- fluidPage(
-  numericInput("n", "Number of observations" ,100),
-  numericInput("mean", "Mean" ,0),
-  numericInput("sd", "Standard Deviation" ,1),
-  actionButton("goButton", "Go!"),
-  plotOutput("hist")
-)
-
-server &lt;- function(input, output) {
-  
-output$hist &lt;- renderPlot({
-  # Take a dependency on input$goButton
-  input$goButton
-  # Use isolate() to avoid dependency on the other inputs
-  x &lt;- isolate(rnorm(input$n, mean = input$mean, sd = input$sd))
-  hist(x)
-  })
-
-} 
-
-shinyApp(ui, server)
-```
+.font90[
+&gt; **Note:** `isolate()` is a lower-level alternative that suppresses reactivity for a specific expression inside a render function. `eventReactive()` is the preferred idiomatic approach.
 ]
 ---
 class: exercise_slide
 ## Exercises 
 
 &lt;ol start=4&gt;
-&lt;li&gt; Add a button to the Gapminder app and let the graph only re-render if this button is hit. &lt;/li&gt;
-&lt;li&gt; Add a checkbox "Only continents" to your app. If this checkbox is activated, a new data set
-  should be computed which summarises the data on continent level. Aggregate the data in a sensible way.  
-  Use a reactive conductor to only compute the aggregated data set once when the checkbox is activated. &lt;/li&gt;
-&lt;/ol&gt; 
-
-
+&lt;li&gt; Add an action button to the Gapminder app. The graph should only re-render when the button is clicked. Use &lt;code&gt;eventReactive()&lt;/code&gt;. &lt;/li&gt;
+&lt;li&gt; Add a checkbox “Only continents” to your app. If activated, aggregate the data at continent level in a sensible way. Use a reactive conductor (&lt;code&gt;reactive()&lt;/code&gt;) so the aggregated data is computed only once when the checkbox changes. &lt;/li&gt;
+&lt;/ol&gt;
 
 ---
 ## DataTables
 
-The `DT` package provides a powerful tool for interactive inspection and filtration of rectangular data. 
+The `DT` package provides interactive inspection and filtering of rectangular data.
 
 --
 
-&lt;br&gt;
-
 .blockquote.exercise[
-
-#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example
+#### <svg aria-hidden="true" role="img" viewBox="0 0 576 512" style="height:1em;width:1.12em;vertical-align:-0.125em;margin-left:auto;margin-right:auto;font-size:inherit;fill:#004c93;overflow:visible;position:relative;"><path d="M64 0C28.7 0 0 28.7 0 64V352c0 35.3 28.7 64 64 64H240l-10.7 32H160c-17.7 0-32 14.3-32 32s14.3 32 32 32H416c17.7 0 32-14.3 32-32s-14.3-32-32-32H346.7L336 416H512c35.3 0 64-28.7 64-64V64c0-35.3-28.7-64-64-64H64zM512 64V288H64V64H512z"/></svg> Example
 
 ``` r
 library(DT)
@@ -550,27 +445,27 @@ ui &lt;- basicPage(
   DT::dataTableOutput("mytable")
 )
 
-server &lt;- function(input, output) {
-  output$mytable = DT::renderDataTable({
-    mtcars
-  }, 
-  filter = "top"
+server &lt;- function(input, output, session) {
+  output$mytable &lt;- DT::renderDataTable(
+    mtcars,
+    filter = "top"
   )
 }
-  
+
 shinyApp(ui, server)
 ```
 ]
 ---
-## DataTables
+## DataTables — Using Filtered Rows
+
 .font90[
-We can even use the filtered rows for further computation. 
+The filtered row indices are accessible as a reactive value and can be used for further computation.
 ]
+
 --
 
 .font90.blockquote.exercise[
-
-#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example
+#### <svg aria-hidden="true" role="img" viewBox="0 0 576 512" style="height:1em;width:1.12em;vertical-align:-0.125em;margin-left:auto;margin-right:auto;font-size:inherit;fill:#004c93;overflow:visible;position:relative;"><path d="M64 0C28.7 0 0 28.7 0 64V352c0 35.3 28.7 64 64 64H240l-10.7 32H160c-17.7 0-32 14.3-32 32s14.3 32 32 32H416c17.7 0 32-14.3 32-32s-14.3-32-32-32H346.7L336 416H512c35.3 0 64-28.7 64-64V64c0-35.3-28.7-64-64-64H64zM512 64V288H64V64H512z"/></svg> Example
 
 ``` r
 ui &lt;- basicPage(
@@ -579,20 +474,18 @@ ui &lt;- basicPage(
   plotOutput("hist")
 )
 
-server &lt;- function(input, output){
-  
-  output$mytable = DT::renderDataTable({
-    mtcars
-  }, 
-  filter = "top"
+server &lt;- function(input, output, session) {
+  output$mytable &lt;- DT::renderDataTable(
+    mtcars,
+    filter = "top"
   )
-  
   output$hist &lt;- renderPlot({
-    hist(mtcars[input$mytable_rows_all, "wt"], xlim = c(min(mtcars$wt), max(mtcars$wt)))
-    })
-  
+    rows &lt;- input$mytable_rows_all
+    req(rows)
+    hist(mtcars[rows, "wt"], xlim = range(mtcars$wt))
+  })
 }
-  
+
 shinyApp(ui, server)
 ```
 ]
@@ -600,8 +493,7 @@ shinyApp(ui, server)
 class: exercise_slide
 ## Exercises 
 &lt;ol start=6&gt;
-&lt;li&gt; Add a DataTable displaying the selcted data to your Gapminder app. Use a &lt;a href = "https://shiny.rstudio.com/articles/tabsets.html"&gt;Tab Panel&lt;/a&gt; to allow switching between the
-table and the plot. &lt;/li&gt;  
+&lt;li&gt; Add a DataTable displaying the selected data to your Gapminder app. Use a &lt;a href="https://shiny.posit.co/r/articles/build/tabsets/"&gt;Tab Panel&lt;/a&gt; to allow switching between the table and the plot. &lt;/li&gt;  
 &lt;/ol&gt;
 
 

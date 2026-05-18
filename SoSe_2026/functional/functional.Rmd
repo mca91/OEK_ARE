@@ -22,30 +22,18 @@ output:
         scroll: false # disable slide transitions by scrolling
 ---
 
-```{r xaringanExtra-clipboard_2, echo=FALSE}
-# copy button styles mainly in ude.css
-htmltools::tagList(
-  xaringanExtra::use_clipboard(
-    button_text = "<i class=\"fa fa-clipboard\"></i>",
-    success_text = "<i class=\"fa fa-check\" style=\"color: #00ff00\"></i>",
-    error_text = "<i class=\"fa fa-times-circle\" style=\"color: #F94144\"></i>"
-  ),
-  rmarkdown::html_dependency_font_awesome()
-)
-```
-
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(warning=FALSE, message=FALSE)
-options(htmltools.dir.version = FALSE)
+```{r setup, echo = F, eval = T, warning = F, message = F}
+knitr::opts_chunk$set(echo = TRUE, eval = TRUE, warning = FALSE, message = FALSE)
 library(dplyr)
 library(purrr)
 library(readr)
-library(icons)
+source(here::here("SoSe_2026/utils.R"))
+fontawesome::fa_html_dependency()
+```
 
-# pre-define icons
-desktop <- icons::icon_style(icons::fontawesome$solid$desktop, fill = "#004c93")
-checker_green <- icons::icon_style(icons::fontawesome$solid$check, fill = "green")
-times_red <- icons::icon_style(icons::fontawesome$solid$times, fill = "red")
+```{r moon_reader, include=FALSE, eval = FALSE}
+options(servr.interval = 0.5)
+xaringan::inf_mr()
 ```
 
 class: title-slide title-purrr center middle
@@ -70,93 +58,54 @@ To become significantly more reliable, code must become more transparent. In par
 </blockquote>
 
 ---
-## FAQs
+## What is Functional Programming?
 
 .font90[
+
+**Two key properties of FP languages:**
+
+1. **First-class functions** — functions behave like any other data type: assign them, store them in a `list`, pass them as arguments to other functions
+
+2. **Pure functions** (optional) — no side-effects; output depends only on input. R does not strictly enforce this.
+
+]
+
+--
+
+.font90[
+
+**R and functional style**
+
+- R is not a "pure" FP language but supports a **functional style** of programming
+- R **functionals** take functions as input and return vector output — you already know `lapply()` and `integrate()`
+- FP is often **space efficient**, **readable**, and functionals are easy to **optimise and parallelise**
 
 ```{r, eval = FALSE}
-# Packages needed
-library(dplyr)
-library(purrr)
-library(readr)
-# (or simply attach the tidyverse!)
+library(dplyr); library(purrr); library(readr)  # or: library(tidyverse)
 ```
 
-<br>
-
-**What is a functional programming (FP) language?**
-
-- Simply put: a language which is centered on **problem-solving using functions**!
-
-- There are **two common threads** in FP:
-
-    1. A functional language has **first-class functions** which behave like any other data type. In R this means we may treat function like variables (i.e., assign them, store them in a `list` or pass them as arguments to other functions)
-    
-    2. Many functional languages require **pure functions** only. These are functions which have **no side-effects**: they do not interfere with anything outside their scope and produce output which depends only on the input.
-
 ]
 
 ???
-
-- R has first-class functions, but it does not strictly enforce pure functions.
 
 - Side effects: writing to disk, modifying global variables, printing output, etc.
-
-- Obviously, functions which return pseudo-random numbers are not pure functions.
-
----
-## FAQs
-
-.font90[
-    
-**Is R a FP language?**
-
-- R is not a "pure" FP language but we may adopt a *functional style* of programming.
-
-- R **functionals** are functions which take functions as input and produce vector output
-
-**Why should I use functional style programming?**
-
-- FP is often **space efficient**, very **comprehensible** and easily adopted to new situations
-
-- Functionals are easily analysed in isolation and thus are often **straightforward to optimise and parallelise**
-
-    (We'll discuss functionals in a minute)
-
-]
-
-???
-
-You've probably used functionals already: `lapply()` and `integrate()` are prominent examples.
+- Functions that return pseudo-random numbers are not pure functions.
+- You've probably used functionals already: `lapply()` and `integrate()` are prominent examples.
 
 ---
-## FAQs
+## Functional Style in R
 
 .font90[
 
-**What does 'FP style' even mean?**
-
-It’s hard to describe exactly what a functional style is, but generally we will refer to the following definition:  
-
-<br>
 <blockquote>
 Functional programming style means decomposing a big problem into smaller pieces, then solving each piece with a function or combination of functions.
 .right[&mdash; <cite>Hadley Wickham</cite>]
 </blockquote>
 
-]
+We focus on **`purrr` functionals** and **function factories**:
 
----
-## FAQs
-
-.font90[
-
-We will briefly discuss key techniques in functional R programming which are best summarised by the table below. We will focus on `purrr` **functionals** and **function factories**.  
-
-<br>
-<br>
 <center>
-![:image 35%](img/fp.png)
+![:image 32%](img/fp.png)
 ![:source 2019](Wickham)
 
 ]
@@ -252,7 +201,7 @@ Functionals can also produce other data structures, e.g., data frames as output.
 <br>
 <br>
 .blockquote.exercise[
-#### `r desktop` Example: `map()`
+#### `r ICONS$desktop` Example: `map()`
 
 `map(1:3, f)` is `list(f(1), f(2), f(3))`.
 ```{r}
@@ -272,7 +221,9 @@ map(1:3, triple)
 
 .font90[
 
-- There are more convenient variants if simpler (atomic) structures are required: `map_lgl()`, `map_int()`, `map_dbl()`, and `map_chr()` return an atomic vector of the specified type
+- **Typed variants** return an atomic vector of the specified type: `map_lgl()`, `map_int()`, `map_dbl()`, `map_chr()`
+
+- **`map_vec()`** (purrr ≥ 1.0.0) handles any vector type including dates, factors, and other S3 vectors
 
 - Base R equivalents are `sapply()` and `vapply()`
 
@@ -283,7 +234,7 @@ map(1:3, triple)
 .font80[
 
 .blockquote.exercise[
-#### `r desktop` Example: `map_*()`
+#### `r ICONS$desktop` Example: `map_*()`
 .pull-left[
 <br>
 ![:image 90%](img/map-list.png)
@@ -312,31 +263,34 @@ map_int(mtcars, n_unique)
 - Of course, the `*` in `map_*()` must match the return type of the functions used for mapping
 
 ---
-## `purrr::map_*()` &mdash; Producing Atomic Vectors
+## `purrr::map_*()` &mdash; Anonymous Functions
 
 .font90[
 
-- The ***twiddle operator `~`*** allows to write space efficient anonymous functions. `~` conveys that the subsequent expression is a *formula*.
-
-- **A good rule of thumb:** If a function spans lines or uses `{...}`, we should give it a name.
-
-<br>
+Since R 4.1, the **native lambda** `\(x)` is the preferred shorthand for anonymous functions in `purrr`.
 
 .blockquote.exercise[
-#### `r desktop` Example: `map_*()` with inline anonymous function
+#### `r ICONS$desktop` Example: `map_*()` with anonymous function
 
 ```{r}
-map_dbl(mtcars, function(x) length(unique(x)))
+map_dbl(mtcars, function(x) length(unique(x)))   # verbose but explicit
 ```
 
 ```{r}
-map_dbl(mtcars, ~ length(unique(.x)))
+map_dbl(mtcars, \(x) length(unique(x)))           # preferred: native lambda
+```
+
+```{r}
+map_dbl(mtcars, ~ length(unique(.x)))             # legacy twiddle (~) with .x
 ```
 
 ]]
 
----
-## `purrr::map_*()` &mdash; Producing Atomic Vectors
+???
+
+- Both `\(x)` and `~` are converted to functions internally via `as_mapper()`.
+- Prefer `\(x)` in new code for consistency with modern R style.
+- Good rule of thumb: if a function spans multiple lines or uses `{...}`, give it a name.
 
 .font90[
 
@@ -346,7 +300,7 @@ map_dbl(mtcars, ~ length(unique(.x)))
 
 .blockquote.exercise[
 
-#### `r desktop` Example: element extraction with `map_*()`
+#### `r ICONS$desktop` Example: element extraction with `map_*()`
 
 ```{r}
 x <- list(
@@ -359,6 +313,13 @@ x <- list(
 ```{r}
 map_dbl(x, "x")   # select by name
 map_dbl(x, 1)     # select by position
+```
+
+For deep extraction from a **single** element, use `pluck()`:
+
+```{r}
+pluck(x, 2, "y")                   # → c(5, 6)
+pluck(x, 3, "z", .default = NA)    # safe: returns NA if missing
 ```
 ]]
 
@@ -402,7 +363,7 @@ Note that components must exist in all entries of the object we iterate over (he
 <br>
 
 .blockquote.exercise[
-#### `r desktop` Example: element extraction with `map_*()`
+#### `r ICONS$desktop` Example: element extraction with `map_*()`
 
 ```{r, error=TRUE}
 map_chr(x, "z")   # z doesn't exist in x[[3]]
@@ -431,7 +392,7 @@ Keep in mind that this requires your subsequent code to work with `NA`s.
 <br>
 
 .blockquote.exercise[
-#### `r desktop` Example: mapping with additional arguments
+#### `r ICONS$desktop` Example: mapping with additional arguments
 
 .pull-left[
   <br>
@@ -443,7 +404,7 @@ Keep in mind that this requires your subsequent code to work with `NA`s.
 
 ```{r}
 x <- list(1:5, c(1:10, NA))
-map_dbl(x, ~ mean(.x, na.rm = TRUE))
+map_dbl(x, \(x) mean(x, na.rm = TRUE))
 ```
 
 More efficient:
@@ -468,7 +429,7 @@ Additional arguments are **not decomposed**: `map_*()` is only vectorized over t
 <br>
 
 .blockquote.exercise[
-#### `r desktop` Example: mapping with additional arguments &mdash; ctd.
+#### `r ICONS$desktop` Example: mapping with additional arguments &mdash; ctd.
 
 .pull-left[
 <br>
@@ -495,7 +456,7 @@ Explain the outcomes of `map(1:4, rnorm, mean = c(100, 10, 1))`
 <br>
 
 .blockquote.exercise[
-#### `r desktop` Example: mapping over a different argument
+#### `r ICONS$desktop` Example: mapping over a different argument
 
 .font80[
 
@@ -515,16 +476,16 @@ trims <- c(0, 0.1, 0.2, 0.5)
 x <- rcauchy(1000)
 ```
 
-We may switch arguments using an anonymous function:
+We may switch arguments using a lambda:
+
+```{r}
+map_dbl(trims, \(trim) mean(x, trim = trim))
+```
+
+The legacy twiddle shorthand is equivalent:
 
 ```{r}
 map_dbl(trims, ~ mean(x, trim = .x))
-```
-
-This is equivalent to:
-
-```{r}
-map_dbl(trims, function(trim) mean(x, trim = trim))
 ```
 
 ]]]
@@ -564,7 +525,7 @@ map_dbl(trims, function(trim) mean(x, trim = trim))
     
     trials_df <- tibble(p_value = map_dbl(trials, "p.value"))
     
-    trials_df %>% 
+    trials_df |> 
       ggplot(aes(x = p_value, fill = p_value < 0.05)) + 
       geom_histogram(binwidth = .025) +
       ggtitle("Distribution of p-values for random Poisson data.")
@@ -609,9 +570,9 @@ by_drive <- split(cars2018, cars2018$Drive)
 **`purrr` style:**
 
 ```{r}
-by_drive %>%
-  map(~ lm(MPG ~ Cylinders, data = .x)) %>%
-  map(coef) %>%
+by_drive |>
+  map(\(data) lm(MPG ~ Cylinders, data = data)) |>
+  map(coef) |>
   map_dbl(2)
 ```
 
@@ -685,6 +646,8 @@ There are 23 variants of `map*()` which are variants of the following functions:
 | One argument + index	 | `imap()`	     | `imap_*()`	   | `imodify()`	 | `iwalk()`    |
 | N arguments	       	   | `pmap()`      | `pmap_*()`	   | `—`	         | `pwalk()`    |
 
+.font80[**Note:** `map_dfr()` / `map_dfc()` and similar row/col-binding variants are **superseded** — prefer `map() |> list_rbind()` or `map() |> list_c()`.]
+
 ]
 
 ???
@@ -701,7 +664,7 @@ The `modify()` function works on the input *components* and returns an object of
 <br>
 
 .blockquote.exercise[
-#### `r desktop` Example: `data.frame` in / `data.frame` out
+#### `r ICONS$desktop` Example: `data.frame` in / `data.frame` out
 
 ```{r}
 df <- data.frame(
@@ -721,6 +684,30 @@ df <- modify(df, ~ .x * 2)
 ]]
 
 ---
+## Predicate Functionals: `keep()`, `discard()`, and friends
+
+.font90[
+
+Filter list or vector elements based on a **predicate function**.
+
+.blockquote.exercise[
+#### `r ICONS$desktop` Example: `keep()`, `discard()`, and `compact()`
+
+```{r}
+# keep only well-fitting models
+models <- map(split(mtcars, mtcars$cyl), \(d) lm(mpg ~ wt, data = d))
+keep(models, \(m) summary(m)$r.squared > 0.75)
+```
+
+```{r}
+# discard NULL elements; every()/some()/none() test predicates across all elements
+compact(list(1, NULL, 3, NULL, 5))
+every(models, \(m) nobs(m) >= 3)   # do ALL models have at least 3 observations?
+```
+
+]]
+
+---
 ## `purrr::map2()`
 
 .font90[
@@ -730,7 +717,7 @@ df <- modify(df, ~ .x * 2)
 <br>
 
 .blockquote.exercise[
-#### `r desktop` Example: weighted mean using `map2()`
+#### `r ICONS$desktop` Example: weighted mean using `map2()`
 
 .pull-left[
   <br>
@@ -767,7 +754,7 @@ Additional arguments may be passed just as with `map()`.
 <br>
 
 .blockquote.exercise[
-#### `r desktop` Example: weighted mean using `map2()` &mdash; ctd.
+#### `r ICONS$desktop` Example: weighted mean using `map2()` &mdash; ctd.
 
 .pull-left[
   ![:image 90%](img/map2-arg.png)
@@ -784,6 +771,7 @@ map2_dbl(xs, ws, weighted.mean, na.rm = TRUE)
 ]]]
 
 ---
+exclude: true
 ## `purrr::map2()`
 
 .font90[
@@ -793,7 +781,7 @@ Note that `map2()` also recycles inputs to ensure that they are the same length.
 <br>
 
 .blockquote.exercise[
-#### `r desktop` Example: weighted mean using `map2()` &mdash; ctd.
+#### `r ICONS$desktop` Example: weighted mean using `map2()` &mdash; ctd.
 
 .pull-left[
   ![:image 90%](img/map2-recycle.png)
@@ -809,6 +797,7 @@ map2_dbl(1:6, 1, ~ .x + .y)
 ]]]
 
 ---
+exclude: true
 ## `purrr::walk()`
 
 .font90[
@@ -818,7 +807,7 @@ map2_dbl(1:6, 1, ~ .x + .y)
 - There is no base R equivalent but wrapping `lapply()` with `invisible()` comes close
 
 .blockquote.exercise[
-#### `r desktop` Example: assigning and passing objects
+#### `r ICONS$desktop` Example: assigning and passing objects
 
 .pull-left[
 ![:image 50%](img/walk.png)
@@ -838,6 +827,7 @@ Assignment to an environment is a side-effect.
 ]]]
 
 ---
+exclude: true
 ## `purrr::walk()`
 
 .font90[
@@ -845,7 +835,7 @@ Assignment to an environment is a side-effect.
 `walk2()` is a convenient alternative which is vectorised over two arguments. 
 
 .blockquote.exercise[
-#### `r desktop` Example: write to disc
+#### `r ICONS$desktop` Example: write to disc
 
 .pull-left[
   ![:image 80%](img/walk2.png)
@@ -866,6 +856,7 @@ A common side-effect which needs two arguments (object and path) is writing to d
 
 
 ---
+exclude: true
 ## `purrr::imap()`
 
 .font90[
@@ -877,7 +868,7 @@ A common side-effect which needs two arguments (object and path) is writing to d
     `imap(.x, .f)` applies `.f` to values `.x` *and indices or names derived from* `.x`.
 
 .blockquote.exercise[
-#### `r desktop` Example: named column means
+#### `r ICONS$desktop` Example: named column means
 
 `imap()` is a useful helper if we want to work with values along with variable names.
 
@@ -891,7 +882,7 @@ A common side-effect which needs two arguments (object and path) is writing to d
 
 - When using the formula shortcut, the first argument `.x` is the value, and the second `.y` is the position/name
 
-- `cars2018 %>% select_if(is.numeric)` returns a list so `.y` is a name and `.x` the value
+- `cars2018 |> select_if(is.numeric)` returns a list so `.y` is a name and `.x` the value
 
 - `character` vectors index by name, `numeric` vectors index by position
 
@@ -905,7 +896,7 @@ A common side-effect which needs two arguments (object and path) is writing to d
 <br>
 
 .blockquote.exercise[
-#### `r desktop` Example: weighted mean with `pmap()`
+#### `r ICONS$desktop` Example: weighted mean with `pmap()`
 
 .pull-left[
   ![:image 90%](img/pmap.png)
@@ -935,7 +926,7 @@ As before, additional arguments may be passed after `.f` and they are recycled, 
 <br>
 
 .blockquote.exercise[
-#### `r desktop` Example: weighted mean with `pmap()` &mdash; ctd.
+#### `r ICONS$desktop` Example: weighted mean with `pmap()` &mdash; ctd.
 
 .pull-left[
   ![:image 95%](img/pmap-arg.png)
@@ -954,65 +945,35 @@ pmap_dbl(list(xs, ws),
 ]]]
 
 ---
-## `purrr::pmap()`
+## `purrr::pmap()` &mdash; Named and Data Frame Inputs
 
 .font90[
 
-Note that `pmap()` gives much finer control over argument matching as we may use **_named_ `list`**. This is convenient for working with complex `list` objects.
-
-<br>
+Use **named lists** or **data frames** to map arguments by name — especially useful with many or complex inputs.
 
 .blockquote.exercise[
-#### `r desktop` Example: argument matching using named list
+#### `r ICONS$desktop` Example: named list and `data.frame` inputs
 
 .pull-left[
-  <br>
-  <br>
-  ![:image 95%](img/pmap-arg.png)
-  ![:source 2019](Wickham)
-]
 
-.pull-right[
-
-Look at this trimmed mean example:
+Named list: `pmap()` matches by argument name.
 
 ```{r}
 trims <- c(0, 0.1, 0.2, 0.5)
 x <- rcauchy(1000)
-```
 
-Varying the argument values can be done by passing the values in a _named_ list.
-
-```{r}
 pmap_dbl(
-  list(trim = trims, na.rm = F), 
-  .f = mean, 
+  list(trim = trims, na.rm = FALSE),
+  .f = mean,
   x = x
 )
 ```
-]]]
 
----
-## `purrr::pmap()`
-
-.font90[
-
-Remember that a `data.frame` is a `list` and thus can be passed to `pmap()` as a _collection of inputs_. 
-
-<br>
-
-.blockquote.exercise[
-#### `r desktop` Example: `pmap()` with data.frame as input
-
-.pull-left[
-  <br>
-  <br>
-  <br>
-  ![:image 95%](img/pmap-3.png)
-  ![:source 2019](Wickham)
 ]
 
 .pull-right[
+
+A `data.frame` is a `list` — column names match argument names automatically.
 
 ```{r}
 params <- tibble::tribble(
@@ -1020,11 +981,6 @@ params <- tibble::tribble(
    1L,     0,     1,
    2L,    10,   100
 )
-```
-
-Column names match the arguments: we don't have to worry about their order.
-
-```{r}
 pmap(params, runif)
 ```
 
@@ -1032,7 +988,7 @@ pmap(params, runif)
 
 ???
 
-`tribble()`: create tibbles using an easier to read row-by-row layout. This is useful for small tables of data where readability is important.
+`tribble()`: create tibbles using an easier to read row-by-row layout.
 
 ---
 ## `purrr::pmap()` &mdash; Exercises
@@ -1070,6 +1026,85 @@ pmap(params, runif)
 3. As above
     
 ---
+## Combining Map Output: `list_rbind()` and `list_c()`
+
+.font90[
+
+`map_dfr()` / `map_dfc()` are **superseded**. The modern idiom explicitly combines with `list_rbind()` or `list_c()`.
+
+.blockquote.exercise[
+#### `r ICONS$desktop` Example: replacing `map_dfr()`
+
+.pull-left[
+
+**Superseded:**
+
+```{r, eval = FALSE}
+map_dfr(split(mtcars, mtcars$cyl),
+  \(d) broom::tidy(lm(mpg ~ wt, d)))
+```
+
+]
+
+.pull-right[
+
+**Modern:**
+
+```{r, eval = FALSE}
+split(mtcars, mtcars$cyl) |>
+  map(\(d) broom::tidy(lm(mpg ~ wt, d))) |>
+  list_rbind()
+```
+
+`list_c()` collapses a list of vectors into one:
+
+```{r}
+map(1:3, \(n) runif(n)) |> list_c()
+```
+
+]]]
+
+---
+## Adverbs: `safely()` and `possibly()`
+
+.font90[
+
+**Adverbs** modify functions so they never throw errors — essential for robust iteration.
+
+.blockquote.exercise[
+#### `r ICONS$desktop` Example: `safely()` and `possibly()`
+
+.pull-left[
+
+`safely()` returns `list(result, error)` — always succeeds:
+
+```{r, eval = FALSE}
+safe_log <- safely(log)
+
+results <- map(list(10, -1, "a"), safe_log)
+results |> map("result") |> compact()   # successes
+results |> map("error")  |> compact()   # errors
+```
+
+]
+
+.pull-right[
+
+`possibly()` returns a default on error — simpler:
+
+```{r, eval = FALSE}
+safe_log <- possibly(log, NA_real_)
+map_dbl(list(10, -1, "a"), safe_log)
+```
+
+| | `safely()` | `possibly()` |
+|---|---|---|
+| On error | `list(result, error)` | Returns default |
+| Use when | Need to inspect errors | Just need fallback |
+
+]]]
+
+---
 exclude: true
 ## `purrr::reduce()`
 
@@ -1091,7 +1126,7 @@ exclude: true
 `reduce()` is useful for generalising a binary function (a function with two inputs) to any number of inputs.
 
 .blockquote.exercise[
-#### `r desktop` Example: set operations with vectors
+#### `r ICONS$desktop` Example: set operations with vectors
 
 Consider the following list of numeric vectors `l`.
 
@@ -1109,7 +1144,7 @@ exclude: true
 
 .medium[
 .blockquote.exercise[
-#### `r desktop` Example: set operations with vectors &mdash; ctd.
+#### `r ICONS$desktop` Example: set operations with vectors &mdash; ctd.
 
 A base R solution is rather cumbersome even for a small set of vectors.
 
@@ -1138,7 +1173,7 @@ exclude: true
 `accumulate()` is a variant of `reduce()` which returns the final and all intermediate results.
 
 .blockquote.exercise[
-#### `r desktop` Example: cumulative sum
+#### `r ICONS$desktop` Example: cumulative sum
 
 The difference between `reduce()` and `accumulate()` is best understood using a sequence of binary arithmetic operations.
 
@@ -1161,7 +1196,7 @@ exclude: true
 
 .smaller[
 .blockquote.exercise[
-#### `r desktop` Example: set operations with vectors &mdash; ctd.
+#### `r ICONS$desktop` Example: set operations with vectors &mdash; ctd.
 
 So with `.f` a function for binary intersection we also obtain the 'intermediate' sets.
 
@@ -1186,7 +1221,7 @@ A function factory is a function that *produces* functions.
 <br>
 
 .blockquote.exercise[
-#### `r desktop` Example: function factory
+#### `r ICONS$desktop` Example: function factory
 
 ```{r}
 nth_root <- function(n) {   # function factory
@@ -1211,7 +1246,7 @@ The enclosing environment of the manufactured function is an **execution environ
 <br>
 
 .blockquote.exercise[
-#### `r desktop` Example: function factory &mdash; ctd.
+#### `r ICONS$desktop` Example: function factory &mdash; ctd.
 
 ```{r}
 rlang::env_print(cube_root)     # inspect enclosing environment
@@ -1227,65 +1262,40 @@ rlang::fn_env(cube_root)$n      # retrieve from enclosing environment
 - This is different here: the enclosing environment of `cube_root()` was the execution environment of `nth_root()`&mdash;a mechanism which makes function factories possible.
 
 ---
-## Function Factories
+## Function Factories &mdash; Lazy Evaluation and `force()`
 
 .font90[
 
-Remember **lazy evaluation**?
-
-<br>
+R uses **lazy evaluation**: arguments are not evaluated until first used — this can cause unexpected behaviour in factories.
 
 .blockquote.exercise[
-#### `r desktop` Example: function factory &mdash; ctd.
+#### `r ICONS$desktop` Example: lazy evaluation bug and fix with `force()`
 
 ```{r}
-n <- 2
-sq <- nth_root(n)
-n <- 16
-sq(64)             # Wait... this should evaluate to 8!
+n <- 2; sq <- nth_root(n); n <- 16
+sq(64)             # Bug! n is evaluated lazily as 16 → 1.297...
 ```
 
-]]
-
-???
-
-- `64^(1/16) = 1.29684`
-
-- `x` is lazily evaluated when `sq()` is run, not when `nth_root()` is run. We thus need to force evaluation.
-
-- This is likely to happen so it's a good practice to avoid such a bug by using `force()` in your factories!
-
----
-## Function Factories
-
-.font90[
-
-Remember **lazy evaluation**?
-
-<br>
-
-.blockquote.exercise[
-#### `r desktop` Example: function factory &mdash; ctd.
+Fix: use `force(n)` to evaluate `n` immediately when the factory runs.
 
 ```{r}
 nth_root <- function(n) {
     force(n)
-    function(x) {
-      x^(1/n)
-    }
+    function(x) x^(1/n)
 }
-
-n <- 2
-sq <- nth_root(n)
-n <- 16
-sq(64)             # better :-)
+n <- 2; sq <- nth_root(n); n <- 16
+sq(64)             # 8 — correct ✓
 ```
+
+**Rule of thumb:** Always `force()` factory arguments that manufactured functions depend on.
 
 ]]
 
 ???
 
-- Question to students: why `force(x)` and not just `x`? (check def. of `force()`
+- `64^(1/16) = 1.29684` (with the bug)
+- `n` is lazily evaluated when `sq()` is run, not when `nth_root()` is run.
+- Question to students: why `force(n)` and not just `n`? (check def. of `force()`)
 
 - Note on Garbage Collection:
     
@@ -1309,7 +1319,7 @@ Function factories allow us to create *functions with a memory*.
 <br>
 
 .blockquote.exercise[
-#### `r desktop` Example: counter
+#### `r ICONS$desktop` Example: counter
 
 ```{r}
 # factory for a counter
