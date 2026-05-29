@@ -5,7 +5,7 @@
     <meta charset="utf-8" />
     <meta name="author" content="Martin Arnold" />
     <meta name="author" content="Martin Schmelzer" />
-    <meta name="date" content="2026-05-17" />
+    <meta name="date" content="2026-05-29" />
     <script src="functional_files/header-attrs-2.29/header-attrs.js"></script>
     <link href="functional_files/remark-css-0.0.1/default.css" rel="stylesheet" />
     <link href="functional_files/font-awesome-6.5.2/css/all.min.css" rel="stylesheet" />
@@ -146,7 +146,7 @@ randomise(mean)
 ```
 
 ```
-## [1] 0.002564157
+## [1] 0.03432772
 ```
 
 ``` r
@@ -154,7 +154,7 @@ randomise(sum)
 ```
 
 ```
-## [1] -78.77633
+## [1] 21.04505
 ```
 
 ]
@@ -353,16 +353,18 @@ map_dbl(mtcars, ~ length(unique(.x)))             # legacy twiddle (~) with .x
 - Prefer `\(x)` in new code for consistency with modern R style.
 - Good rule of thumb: if a function spans multiple lines or uses `{...}`, give it a name.
 
+---
+## `purrr::map_*()` &amp;mdash; Element Extraction and `pluck()`
+
 .font90[
 
 `map_*()` is useful for selecting elements from a `list` by name, position, or both.
-
-&lt;br&gt;
 
 .blockquote.exercise[
 
 #### <svg aria-hidden="true" role="img" viewBox="0 0 576 512" style="height:1em;width:1.12em;vertical-align:-0.125em;margin-left:auto;margin-right:auto;font-size:inherit;fill:#004c93;overflow:visible;position:relative;"><path d="M64 0C28.7 0 0 28.7 0 64V352c0 35.3 28.7 64 64 64H240l-10.7 32H160c-17.7 0-32 14.3-32 32s14.3 32 32 32H416c17.7 0 32-14.3 32-32s-14.3-32-32-32H346.7L336 416H512c35.3 0 64-28.7 64-64V64c0-35.3-28.7-64-64-64H64zM512 64V288H64V64H512z"/></svg> Example: element extraction with `map_*()`
 
+.pull-left[
 
 ``` r
 x &lt;- list(
@@ -388,7 +390,9 @@ map_dbl(x, 1)     # select by position
 ```
 ## [1] -1 -2 -3
 ```
+]
 
+.pull-right[
 For deep extraction from a **single** element, use `pluck()`:
 
 
@@ -407,7 +411,7 @@ pluck(x, 3, "z", .default = NA)    # safe: returns NA if missing
 ```
 ## [1] NA
 ```
-]]
+]]]
 
 ???
 
@@ -561,13 +565,13 @@ map(1:3, rnorm, mean = c(100, 10, 1))
 
 ```
 ## [[1]]
-## [1] 100.7316
+## [1] 100.6077
 ## 
 ## [[2]]
-## [1] 101.74209  10.78151
+## [1] 100.639585   9.526168
 ## 
 ## [[3]]
-## [1] 98.734804 10.897914 -1.061464
+## [1] 101.103109  10.015626   3.082297
 ```
 ]]]
 
@@ -612,7 +616,7 @@ map_dbl(trims, \(trim) mean(x, trim = trim))
 ```
 
 ```
-## [1] -0.516838773 -0.015028721  0.004301151  0.014441867
+## [1]  0.043319456 -0.022255640  0.008036052  0.008991358
 ```
 
 The legacy twiddle shorthand is equivalent:
@@ -623,7 +627,7 @@ map_dbl(trims, ~ mean(x, trim = .x))
 ```
 
 ```
-## [1] -0.516838773 -0.015028721  0.004301151  0.014441867
+## [1]  0.043319456 -0.022255640  0.008036052  0.008991358
 ```
 
 ]]]
@@ -1561,7 +1565,7 @@ rlang::env_print(cube_root)     # inspect enclosing environment
 ```
 
 ```
-## &lt;environment: 0x1099e3470&gt;
+## &lt;environment: 0x105b114c8&gt;
 ## Parent: &lt;environment: global&gt;
 ## Bindings:
 ## • n: &lt;dbl&gt;

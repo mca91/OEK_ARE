@@ -292,16 +292,18 @@ map_dbl(mtcars, ~ length(unique(.x)))             # legacy twiddle (~) with .x
 - Prefer `\(x)` in new code for consistency with modern R style.
 - Good rule of thumb: if a function spans multiple lines or uses `{...}`, give it a name.
 
+---
+## `purrr::map_*()` &mdash; Element Extraction and `pluck()`
+
 .font90[
 
 `map_*()` is useful for selecting elements from a `list` by name, position, or both.
-
-<br>
 
 .blockquote.exercise[
 
 #### `r ICONS$desktop` Example: element extraction with `map_*()`
 
+.pull-left[
 ```{r}
 x <- list(
   list(-1, x = 1, y = c(2), z = "a"),
@@ -314,14 +316,16 @@ x <- list(
 map_dbl(x, "x")   # select by name
 map_dbl(x, 1)     # select by position
 ```
+]
 
+.pull-right[
 For deep extraction from a **single** element, use `pluck()`:
 
 ```{r}
 pluck(x, 2, "y")                   # → c(5, 6)
 pluck(x, 3, "z", .default = NA)    # safe: returns NA if missing
 ```
-]]
+]]]
 
 ???
 

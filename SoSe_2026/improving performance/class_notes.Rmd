@@ -95,7 +95,27 @@ bench::mark(
 
 The difference is indeed huge!
 
-## Slide 12: Exercises
+## Slide 10: 2. Do as Little as Possible
+
+**Example: method dispatch and primitives**
+
+```{r}
+x <- runif(1e2)
+
+bench::mark(
+  mean(x),            # generic: dispatches to mean.default()
+  mean.default(x),    # explicit: skips dispatch
+  sum(x)/length(x)    # primitive: fastest
+)
+```
+
+- `mean()` is a generic function that must first locate the right method before executing --- this lookup is called method dispatch and has a cost.
+
+- Being explicit (`mean.default()`) skips dispatch and is faster.
+
+- `sum(x)/length(x)` uses only primitive functions which bypass the R interpreter entirely, making it the fastest option.
+
+## Slide 11: Exercises
 
 **Solutions**
 
@@ -109,7 +129,7 @@ The difference is indeed huge!
 
     - `.lm.fit(X, Y)` is a 'bare bones wrapper' for the innermost _C_ code of `lm()` which computes OLS using [QR decomposition](https://en.wikipedia.org/wiki/QR_decomposition)
     
-    - Exploiting that `X` is the only regressor allows us to replace the regressor matrix product and use a more specific approch to compute $SE(\widehat\beta_1)$ in `d()`
+    - Exploiting that `X` is the only regressor allows us to replace the regressor matrix product and use a more specific approach to compute $SE(\widehat\beta_1)$ in `d()`
     
     ```{r}
     bench::mark(
@@ -119,7 +139,7 @@ The difference is indeed huge!
     )
     ```
     
-    A disadvantage is that the faster approaches `b()` and `d()` are unflexible and error prone: an unexperienced user is likely to supply inputs which will cause the function to crash or return false results--note that we don't do any checks of the input!
+    A disadvantage is that the faster approaches `b()` and `d()` are inflexible and error prone: an inexperienced user is likely to supply inputs which will cause the function to crash or return false results--note that we don't do any checks of the input!
     
 2. What’s the difference between `rowSums()` and `.rowSums()`?
 
@@ -188,7 +208,7 @@ The difference is indeed huge!
 <!-- ``` -->
 
 
-## Slide 21: Vectorise your Code
+## Slide 20: Vectorise your Code
 
 **Example: Avoid growing objects**
 
@@ -207,7 +227,7 @@ vec <- 1:n
 
 Technically this does not directly relate to vectorisation but it yet again demonstrates that growing objects using loops is a bad idea: a vectorised approach is often faster.
 
-## Slide 27: Vectorise your Code --- Exercises
+## Slide 26: Vectorise your Code --- Exercises
 
 **Solutions:**
 
@@ -218,7 +238,7 @@ Technically this does not directly relate to vectorisation but it yet again demo
     ```{r}
     library(ggplot2)
     b <- bench::press(
-      dim = c(1, 1e2, 1e3, 0.5e4, 1e4),
+      dim = c(1, 1e1, 1e2, 1e3, 0.5e4, 1e5),
       
       {
         X <- matrix(runif(dim*dim), ncol = dim)
@@ -236,7 +256,7 @@ Technically this does not directly relate to vectorisation but it yet again demo
     plot(b)
     ```
 
-    Note that `apply()` which is not 'vectorised for performance' cannot keep up with `rowSums()`: it is clearly outperformed by the _C_ internals, especially if dimensions are large. This is because the `rowSums()` and it's internal _C_ functions need less (costly) function calls and is more memory efficient. 
+    Note that `apply()` which is not 'vectorised for performance' cannot keep up with `rowSums()`: it is clearly outperformed by the _C_ internals, especially if dimensions are large. This is because the `rowSums()` and its internal _C_ functions need less (costly) function calls and is more memory efficient. 
 
 2. 
 
@@ -252,10 +272,14 @@ Technically this does not directly relate to vectorisation but it yet again demo
     (b) `crossprod()` computes the dot product which is also a weighted sum:
     
         ```{r}
-        sum(a * w) - crossprod(a, w)[1]
+        crossprod(a, w)[1]
         ```
         
-        We subset because the return value is a matrix, see`?crossprod`.
+        We subset because the return value is a matrix, see `?crossprod`. We can verify this equals `sum(a * w)`:
+        
+        ```{r}
+        sum(a * w) - crossprod(a, w)[1]   # should be approx. 0
+        ```
         
     (c) Let's benchmark these guys:
     
@@ -302,48 +326,36 @@ Technically this does not directly relate to vectorisation but it yet again demo
     
     Applying `max()` on list elements is faster than iterating over the columns of a numeric matrix.
 
-## Additional Example: Funcational Programming and parallel code execution using `furrr`
+## Additional Example: Functional Programming and parallel code execution using `furrr`
 
-Here's an example using functionals from the `furrr` package which allow to easily run `purrr`-based iteration in parallel, making use of [futures](https://medium.com/civis-analytics/programming-with-futures-in-r-401e906db384).
-
-We first setup a plan for multisession computing using `workers = 10` cores (see `?parallel::detectCores()`) for automatic CPU core detection on your machine). This plan allows to distribute computations across ten `R` sessions run in parallel (one per worker).
-
-We also set an option for sane random number generation (one needs to be careful with random number generation in parallel computing). This is not needed in our example but we consider it a good practice.
+The `furrr` package provides parallel equivalents of all `purrr` functions using the `future` backend --- a cross-platform drop-in replacement. Switching from sequential to parallel execution requires minimal code changes: replace `map()` with `future_map()`, `map_dbl()` with `future_map_dbl()`, etc.
 
 ```{r, eval = F}
 library(furrr)
-library(purrr)
 
-# parallelisation plan
-plan("multisession", workers = 10)
-
-# additional options
-fopts <- furrr_options(
-  seed = TRUE
-)
+# Set up a parallel plan using 4 sessions
+plan(multisession, workers = 4)
 ```
 
-We are now set to run iteration in parallel. The following is equivalent to the example on Slide 31: `Sys.sleep(20)` keeps `R` busy for 20 seconds. For 10 iterations of this command we thus expect a total execution time of approximately 20 * 10 = 200 seconds. 
+The following example runs a bootstrap to estimate the sampling distribution of the slope coefficient from regressing `mpg` on `wt` in the `mtcars` dataset.
 
-```{r, eval=FALSE}
-tictoc::tic()
-walk(1:10, ~ Sys.sleep(20))
-tictoc::toc()
-```
-```
-200.021 sec elapsed
+```{r, eval = FALSE}
+boot_coef <- function(i) {
+  idx <- sample(nrow(mtcars), replace = TRUE)
+  coef(lm(mpg ~ wt, data = mtcars[idx, ]))["wt"]
+}
+
+system.time(map(1:2000, boot_coef))           # sequential
+system.time(future_map(1:2000, boot_coef))    # parallel
+
+plan(sequential)  # always reset when done
 ```
 
-With `Sys.sleep(20)` being executed in 10 parallel using the `future` version of `walk()`, we expect a total computation time of approximately 20 seconds: each workers carries out _one_ call of `Sys.sleep(20)` and the workers run in parallel.
+- `future_map()` pays off when each iteration is **expensive and independent**. For cheap tasks, overhead dominates --- just as with `mclapply()`.
 
-```{r, eval=FALSE}
-tictoc::tic()
-future_walk(1:10, ~ Sys.sleep(20), .options = fopts)
-tictoc::toc()
-```
-20.866 sec elapsed
+- Works on Windows, Mac, and Linux (unlike `mclapply()`) and integrates naturally into `purrr`-style pipelines.
 
-Computation times will be different on your system as they are hardware- and OS-dependent! Also note that there is some _overhead_ (~.9 seconds) which comes from managing the parallel `R` sessions. This overhead will generally depend on the underlying computation.
+- Always call `plan(sequential)` when done to release the parallel workers.
 
 
 <!-- ## Slide 30: Vectorise your code &mdash; Case Study -->

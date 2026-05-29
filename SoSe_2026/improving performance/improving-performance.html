@@ -5,13 +5,9 @@
     <meta charset="utf-8" />
     <meta name="author" content="Martin Arnold" />
     <meta name="author" content="Martin Schmelzer" />
-    <meta name="date" content="2025-05-16" />
+    <meta name="date" content="2026-05-28" />
     <script src="improving-performance_files/header-attrs/header-attrs.js"></script>
     <link href="improving-performance_files/remark-css/default.css" rel="stylesheet" />
-    <script src="improving-performance_files/clipboard/clipboard.min.js"></script>
-    <link href="improving-performance_files/xaringanExtra-clipboard/xaringanExtra-clipboard.css" rel="stylesheet" />
-    <script src="improving-performance_files/xaringanExtra-clipboard/xaringanExtra-clipboard.js"></script>
-    <script>window.xaringanExtraClipboard(null, {"button":"<i class=\"fa fa-clipboard\"><\/i>","success":"<i class=\"fa fa-check\" style=\"color: #00ff00\"><\/i>","error":"<i class=\"fa fa-times-circle\" style=\"color: #F94144\"><\/i>"})</script>
     <link href="improving-performance_files/font-awesome/css/all.min.css" rel="stylesheet" />
     <link href="improving-performance_files/font-awesome/css/v4-shims.min.css" rel="stylesheet" />
     <script type="text/x-mathjax-config">
@@ -39,8 +35,6 @@
 
 
 
-
-
 class: title-slide title-performance center middle
 
 # Advanced R for Econometricians
@@ -54,9 +48,9 @@ class: left
 
 ``` r
 # packages needed
-library(tidyverse) # for `bench` package
-library(furrr)
+library(bench)
 library(parallel)
+library(furrr)
 ```
 
 &lt;style&gt;
@@ -136,10 +130,10 @@ If you cannot find existing solutions, start by reducing your code to the bare e
 &lt;br&gt;
 
 .blockquote.exercise[
-#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Exercise: coercion of inputs / robustness checks
+#### <svg aria-hidden="true" role="img" viewBox="0 0 576 512" style="height:1em;width:1.12em;vertical-align:-0.125em;margin-left:auto;margin-right:auto;font-size:inherit;fill:#004c93;overflow:visible;position:relative;"><path d="M64 0C28.7 0 0 28.7 0 64V352c0 35.3 28.7 64 64 64H240l-10.7 32H160c-17.7 0-32 14.3-32 32s14.3 32 32 32H416c17.7 0 32-14.3 32-32s-14.3-32-32-32H346.7L336 416H512c35.3 0 64-28.7 64-64V64c0-35.3-28.7-64-64-64H64zM512 64V288H64V64H512z"/></svg> Exercise: coercion of inputs / robustness checks
 
 
-```r
+``` r
 X &lt;- matrix(1:1000, ncol = 10)
 Y &lt;- as.data.frame(X)
 ```
@@ -168,7 +162,7 @@ A function is faster than an alternative if it has less to do &amp;mdash; obviou
 &lt;br&gt;
 
 .blockquote.exercise[
-#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Exercise: coercion of inputs / robustness checks &amp;mdash; ctd.
+#### <svg aria-hidden="true" role="img" viewBox="0 0 576 512" style="height:1em;width:1.12em;vertical-align:-0.125em;margin-left:auto;margin-right:auto;font-size:inherit;fill:#004c93;overflow:visible;position:relative;"><path d="M64 0C28.7 0 0 28.7 0 64V352c0 35.3 28.7 64 64 64H240l-10.7 32H160c-17.7 0-32 14.3-32 32s14.3 32 32 32H416c17.7 0 32-14.3 32-32s-14.3-32-32-32H346.7L336 416H512c35.3 0 64-28.7 64-64V64c0-35.3-28.7-64-64-64H64zM512 64V288H64V64H512z"/></svg> Exercise: coercion of inputs / robustness checks &amp;mdash; ctd.
 
 Which approach is faster and why?
 
@@ -188,7 +182,7 @@ apply(X, 1, sum)
 &lt;/br&gt;
 .smaller[
 .blockquote.exercise[
-#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Exercise: searching a vector
+#### <svg aria-hidden="true" role="img" viewBox="0 0 576 512" style="height:1em;width:1.12em;vertical-align:-0.125em;margin-left:auto;margin-right:auto;font-size:inherit;fill:#004c93;overflow:visible;position:relative;"><path d="M64 0C28.7 0 0 28.7 0 64V352c0 35.3 28.7 64 64 64H240l-10.7 32H160c-17.7 0-32 14.3-32 32s14.3 32 32 32H416c17.7 0 32-14.3 32-32s-14.3-32-32-32H346.7L336 416H512c35.3 0 64-28.7 64-64V64c0-35.3-28.7-64-64-64H64zM512 64V288H64V64H512z"/></svg> Exercise: searching a vector
 
 What is the fastest way to check if `10` is an element of `1:100`?
 
@@ -199,7 +193,7 @@ What is the fastest way to check if `10` is an element of `1:100`?
 
 .smaller[
 .blockquote.exercise[
-#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Exercise: Linear Regression &amp;mdash; computation of `\(SE(\widehat\beta)\)`
+#### <svg aria-hidden="true" role="img" viewBox="0 0 576 512" style="height:1em;width:1.12em;vertical-align:-0.125em;margin-left:auto;margin-right:auto;font-size:inherit;fill:#004c93;overflow:visible;position:relative;"><path d="M64 0C28.7 0 0 28.7 0 64V352c0 35.3 28.7 64 64 64H240l-10.7 32H160c-17.7 0-32 14.3-32 32s14.3 32 32 32H416c17.7 0 32-14.3 32-32s-14.3-32-32-32H346.7L336 416H512c35.3 0 64-28.7 64-64V64c0-35.3-28.7-64-64-64H64zM512 64V288H64V64H512z"/></svg> Exercise: Linear Regression &amp;mdash; computation of `\(SE(\widehat\beta)\)`
 
 Which approach is faster and why? Elaborate disadvantages of the fastest one.
 
@@ -231,58 +225,23 @@ b &lt;- function() {
 
 .smaller[
 
-Be as explicit as possible.
-
-&lt;br&gt;
+Be as explicit as possible — **method dispatch has a cost**.
 
 .blockquote.exercise[
-#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example: method dispatch takes time
+#### <svg aria-hidden="true" role="img" viewBox="0 0 576 512" style="height:1em;width:1.12em;vertical-align:-0.125em;margin-left:auto;margin-right:auto;font-size:inherit;fill:#004c93;overflow:visible;position:relative;"><path d="M64 0C28.7 0 0 28.7 0 64V352c0 35.3 28.7 64 64 64H240l-10.7 32H160c-17.7 0-32 14.3-32 32s14.3 32 32 32H416c17.7 0 32-14.3 32-32s-14.3-32-32-32H346.7L336 416H512c35.3 0 64-28.7 64-64V64c0-35.3-28.7-64-64-64H64zM512 64V288H64V64H512z"/></svg> Example: method dispatch and primitives
 
 
 ``` r
 x &lt;- runif(1e2)
 
 bench::mark(
-  mean(x),
-  mean.default(x)
+  mean(x),            # generic: dispatches to mean.default()
+  mean.default(x),    # explicit: skips dispatch
+  sum(x)/length(x)    # primitive: fastest
 )
 ```
 
-```
-## # A tibble: 2 × 6
-##   expression           min   median `itr/sec` mem_alloc `gc/sec`
-##   &lt;bch:expr&gt;      &lt;bch:tm&gt; &lt;bch:tm&gt;     &lt;dbl&gt; &lt;bch:byt&gt;    &lt;dbl&gt;
-## 1 mean(x)           1.39µs    1.6µs   574796.    23.3KB     57.5
-## 2 mean.default(x) 861.01ns   1.02µs   865135.        0B     86.5
-```
-]]
-
----
-## 2. Do as Little as Possible
-
-.smaller[
-
-Benchmark against alternatives that rely on primitive functions.
-
-&lt;br&gt;
-
-.blockquote.exercise[
-#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example: primitives are faster
-
-``` r
-bench::mark(
-  mean.default(x),
-  sum(x)/length(x)
-)
-```
-
-```
-## # A tibble: 2 × 6
-##   expression            min   median `itr/sec` mem_alloc `gc/sec`
-##   &lt;bch:expr&gt;       &lt;bch:tm&gt; &lt;bch:tm&gt;     &lt;dbl&gt; &lt;bch:byt&gt;    &lt;dbl&gt;
-## 1 mean.default(x)     861ns   1.02µs   906053.        0B     90.6
-## 2 sum(x)/length(x)    205ns 287.08ns  2954333.        0B      0
-```
+`mean()` must first locate the right method before executing. Primitive functions bypass the R interpreter entirely.
 ]]
 
 ---
@@ -359,7 +318,7 @@ Disregarding these patterns by writing code which operates on `\(1\times1\)` vec
 **Why is vectorisation efficient? &amp;mdash; ctd. **
 
 .blockquote.exercise[
-#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example: vector addition
+#### <svg aria-hidden="true" role="img" viewBox="0 0 576 512" style="height:1em;width:1.12em;vertical-align:-0.125em;margin-left:auto;margin-right:auto;font-size:inherit;fill:#004c93;overflow:visible;position:relative;"><path d="M64 0C28.7 0 0 28.7 0 64V352c0 35.3 28.7 64 64 64H240l-10.7 32H160c-17.7 0-32 14.3-32 32s14.3 32 32 32H416c17.7 0 32-14.3 32-32s-14.3-32-32-32H346.7L336 416H512c35.3 0 64-28.7 64-64V64c0-35.3-28.7-64-64-64H64zM512 64V288H64V64H512z"/></svg> Example: vector addition
 
 `$$\begin{pmatrix} 1 \\ 2\\ 3 \end{pmatrix}+\begin{pmatrix} 4 \\ 5\\ 6 \end{pmatrix} = \begin{pmatrix} 5 \\ 7\\ 9 \end{pmatrix}$$`
 
@@ -398,10 +357,6 @@ Otherwise, this shouldn't work:
 ``` r
 1[1]
 ```
-
-```
-## [1] 1
-```
 Therefore, 'scalar' operations work on vector *elements* which is (often) needlessly cumbersome.
 ]
 
@@ -417,7 +372,7 @@ By 'vectorised' we mean that the function works on vectors: performing vector ar
 &lt;br&gt;
 
 .blockquote.exercise[
-#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example: scalar vs. vectorised computation of euclidean norm
+#### <svg aria-hidden="true" role="img" viewBox="0 0 576 512" style="height:1em;width:1.12em;vertical-align:-0.125em;margin-left:auto;margin-right:auto;font-size:inherit;fill:#004c93;overflow:visible;position:relative;"><path d="M64 0C28.7 0 0 28.7 0 64V352c0 35.3 28.7 64 64 64H240l-10.7 32H160c-17.7 0-32 14.3-32 32s14.3 32 32 32H416c17.7 0 32-14.3 32-32s-14.3-32-32-32H346.7L336 416H512c35.3 0 64-28.7 64-64V64c0-35.3-28.7-64-64-64H64zM512 64V288H64V64H512z"/></svg> Example: scalar vs. vectorised computation of euclidean norm
 
 $$f(\boldsymbol{x}) = \lVert \boldsymbol{x}\rVert := \sqrt{\sum x_i^2} $$
 
@@ -461,21 +416,13 @@ By 'vectorised' we mean that the function works on vectors: performing vector ar
 &lt;br&gt;
 
 .blockquote.exercise[
-#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example: scalar vs. vectorised computation of euclidean norm
+#### <svg aria-hidden="true" role="img" viewBox="0 0 576 512" style="height:1em;width:1.12em;vertical-align:-0.125em;margin-left:auto;margin-right:auto;font-size:inherit;fill:#004c93;overflow:visible;position:relative;"><path d="M64 0C28.7 0 0 28.7 0 64V352c0 35.3 28.7 64 64 64H240l-10.7 32H160c-17.7 0-32 14.3-32 32s14.3 32 32 32H416c17.7 0 32-14.3 32-32s-14.3-32-32-32H346.7L336 416H512c35.3 0 64-28.7 64-64V64c0-35.3-28.7-64-64-64H64zM512 64V288H64V64H512z"/></svg> Example: scalar vs. vectorised computation of euclidean norm
 
-```r
+``` r
 bench::mark(
   L2_scalar(1:1e4),
   L2_vec(1:1e4)
 )
-```
-
-```
-## # A tibble: 2 × 6
-##   expression              min   median `itr/sec` mem_alloc `gc/sec`
-##   &lt;bch:expr&gt;         &lt;bch:tm&gt; &lt;bch:tm&gt;     &lt;dbl&gt; &lt;bch:byt&gt;    &lt;dbl&gt;
-## 1 L2_scalar(1:10000)  296.3µs  299.1µs     3305.    56.1KB      0  
-## 2 L2_vec(1:10000)      25.5µs   30.6µs    31854.    78.2KB     47.9
 ```
 ]]
 
@@ -529,7 +476,7 @@ Allocate the required storage before the loop and *fill* (*do not grow!*) the ob
 ## 3. Vectorise your code
 
 .blockquote.exercise[
-#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example: avoid growing objects &amp;mdash; `\(\mathcal{O}(n^2)\)` vs. `\(\mathcal{O(n)}\)`
+#### <svg aria-hidden="true" role="img" viewBox="0 0 576 512" style="height:1em;width:1.12em;vertical-align:-0.125em;margin-left:auto;margin-right:auto;font-size:inherit;fill:#004c93;overflow:visible;position:relative;"><path d="M64 0C28.7 0 0 28.7 0 64V352c0 35.3 28.7 64 64 64H240l-10.7 32H160c-17.7 0-32 14.3-32 32s14.3 32 32 32H416c17.7 0 32-14.3 32-32s-14.3-32-32-32H346.7L336 416H512c35.3 0 64-28.7 64-64V64c0-35.3-28.7-64-64-64H64zM512 64V288H64V64H512z"/></svg> Example: avoid growing objects &amp;mdash; `\(\mathcal{O}(n^2)\)` vs. `\(\mathcal{O(n)}\)`
 
 
 
@@ -546,7 +493,7 @@ Allocate the required storage before the loop and *fill* (*do not grow!*) the ob
 &lt;br&gt;
 
 .blockquote.exercise[
-#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example: good and bad `for()` loops
+#### <svg aria-hidden="true" role="img" viewBox="0 0 576 512" style="height:1em;width:1.12em;vertical-align:-0.125em;margin-left:auto;margin-right:auto;font-size:inherit;fill:#004c93;overflow:visible;position:relative;"><path d="M64 0C28.7 0 0 28.7 0 64V352c0 35.3 28.7 64 64 64H240l-10.7 32H160c-17.7 0-32 14.3-32 32s14.3 32 32 32H416c17.7 0 32-14.3 32-32s-14.3-32-32-32H346.7L336 416H512c35.3 0 64-28.7 64-64V64c0-35.3-28.7-64-64-64H64zM512 64V288H64V64H512z"/></svg> Example: good and bad `for()` loops
 .pull-left[.smaller[
 
 ``` r
@@ -574,7 +521,7 @@ rw_bad &lt;- function(N) {
 &lt;br&gt;
 
 .blockquote.exercise[
-#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example: good and bad `for()` loops
+#### <svg aria-hidden="true" role="img" viewBox="0 0 576 512" style="height:1em;width:1.12em;vertical-align:-0.125em;margin-left:auto;margin-right:auto;font-size:inherit;fill:#004c93;overflow:visible;position:relative;"><path d="M64 0C28.7 0 0 28.7 0 64V352c0 35.3 28.7 64 64 64H240l-10.7 32H160c-17.7 0-32 14.3-32 32s14.3 32 32 32H416c17.7 0 32-14.3 32-32s-14.3-32-32-32H346.7L336 416H512c35.3 0 64-28.7 64-64V64c0-35.3-28.7-64-64-64H64zM512 64V288H64V64H512z"/></svg> Example: good and bad `for()` loops
 .pull-left[.smaller[
 
 ``` r
@@ -602,21 +549,13 @@ rw_good &lt;- function(N) {
 &lt;br&gt;
 
 .blockquote.exercise[
-#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example: good and bad `for()` loops
+#### <svg aria-hidden="true" role="img" viewBox="0 0 576 512" style="height:1em;width:1.12em;vertical-align:-0.125em;margin-left:auto;margin-right:auto;font-size:inherit;fill:#004c93;overflow:visible;position:relative;"><path d="M64 0C28.7 0 0 28.7 0 64V352c0 35.3 28.7 64 64 64H240l-10.7 32H160c-17.7 0-32 14.3-32 32s14.3 32 32 32H416c17.7 0 32-14.3 32-32s-14.3-32-32-32H346.7L336 416H512c35.3 0 64-28.7 64-64V64c0-35.3-28.7-64-64-64H64zM512 64V288H64V64H512z"/></svg> Example: good and bad `for()` loops
 
 ``` r
 bench::mark(
   "good" = rw_good(1e4), 
   "bad" = rw_bad(1e4)
 )
-```
-
-```
-## # A tibble: 2 × 6
-##   expression      min   median `itr/sec` mem_alloc `gc/sec`
-##   &lt;bch:expr&gt; &lt;bch:tm&gt; &lt;bch:tm&gt;     &lt;dbl&gt; &lt;bch:byt&gt;    &lt;dbl&gt;
-## 1 good          4.7ms   5.18ms    177.       123KB     33.9
-## 2 bad         131.8ms 136.77ms      7.32     382MB     64.0
 ```
 ]
 
@@ -628,7 +567,7 @@ bench::mark(
 &lt;br&gt;
 
 .blockquote.exercise[
-#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example: `for()` vs. `apply()`
+#### <svg aria-hidden="true" role="img" viewBox="0 0 576 512" style="height:1em;width:1.12em;vertical-align:-0.125em;margin-left:auto;margin-right:auto;font-size:inherit;fill:#004c93;overflow:visible;position:relative;"><path d="M64 0C28.7 0 0 28.7 0 64V352c0 35.3 28.7 64 64 64H240l-10.7 32H160c-17.7 0-32 14.3-32 32s14.3 32 32 32H416c17.7 0 32-14.3 32-32s-14.3-32-32-32H346.7L336 416H512c35.3 0 64-28.7 64-64V64c0-35.3-28.7-64-64-64H64zM512 64V288H64V64H512z"/></svg> Example: `for()` vs. `apply()`
 
 ``` r
 X &lt;- matrix(rnorm(1e4), ncol = 1e4)
@@ -653,21 +592,13 @@ colmax &lt;- function(x) {
 &lt;br&gt;
 
 .blockquote.exercise[
-#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example: `for()` vs. `apply()` &amp;mdash; ctd. 
+#### <svg aria-hidden="true" role="img" viewBox="0 0 576 512" style="height:1em;width:1.12em;vertical-align:-0.125em;margin-left:auto;margin-right:auto;font-size:inherit;fill:#004c93;overflow:visible;position:relative;"><path d="M64 0C28.7 0 0 28.7 0 64V352c0 35.3 28.7 64 64 64H240l-10.7 32H160c-17.7 0-32 14.3-32 32s14.3 32 32 32H416c17.7 0 32-14.3 32-32s-14.3-32-32-32H346.7L336 416H512c35.3 0 64-28.7 64-64V64c0-35.3-28.7-64-64-64H64zM512 64V288H64V64H512z"/></svg> Example: `for()` vs. `apply()` &amp;mdash; ctd. 
 
 ``` r
 bench::mark(
   "colmax" = colmax(X),
   "apply" = apply(X, 2, max)
 )
-```
-
-```
-## # A tibble: 2 × 6
-##   expression      min   median `itr/sec` mem_alloc `gc/sec`
-##   &lt;bch:expr&gt; &lt;bch:tm&gt; &lt;bch:tm&gt;     &lt;dbl&gt; &lt;bch:byt&gt;    &lt;dbl&gt;
-## 1 colmax       3.03ms   3.36ms      298.     138KB     91.6
-## 2 apply         4.6ms   4.99ms      195.     313KB     90.6
 ```
 ]
 
@@ -726,14 +657,10 @@ No. The cost of managing the computations (the **overhead**) may **offset or eve
 The `parallel` package (comes with base `R`) is a good starting point for parallel computing.
 
 
-```r
+``` r
 # detect number of cores (including logical cores)
 library(parallel)
 detectCores()
-```
-
-```
-## [1] 10
 ```
 
 The notebook used to compile this script has an Apple M1 processor with 10 physical CPUs:
@@ -744,10 +671,6 @@ The notebook used to compile this script has an Apple M1 processor with 10 physi
 detectCores(logical = F)
 ```
 
-```
-## [1] 10
-```
-
 Note that the behavior of `detectCores()` is platform specific and not always reliable, see `?detectCores()`.
 
 ---
@@ -755,16 +678,19 @@ Note that the behavior of `detectCores()` is platform specific and not always re
 
 .smaller[
 .blockquote.exercise[
-#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example: send them cores to sleep (on MacOS)
+#### <svg aria-hidden="true" role="img" viewBox="0 0 576 512" style="height:1em;width:1.12em;vertical-align:-0.125em;margin-left:auto;margin-right:auto;font-size:inherit;fill:#004c93;overflow:visible;position:relative;"><path d="M64 0C28.7 0 0 28.7 0 64V352c0 35.3 28.7 64 64 64H240l-10.7 32H160c-17.7 0-32 14.3-32 32s14.3 32 32 32H416c17.7 0 32-14.3 32-32s-14.3-32-32-32H346.7L336 416H512c35.3 0 64-28.7 64-64V64c0-35.3-28.7-64-64-64H64zM512 64V288H64V64H512z"/></svg> Example: keep cores busy (macOS)
 
 ``` r
-res &lt;- mclapply(1:8, \(i) Sys.sleep(20), mc.cores = 10)
+busy &lt;- function(i) {
+  n      &lt;- 1e7
+  inside &lt;- runif(n)^2 + runif(n)^2 &lt; 1
+  4 * mean(inside)   # Monte Carlo estimate of pi
+}
+
+res &lt;- mclapply(1:8, busy, mc.cores = 8)
 ```
 
-&lt;center&gt;
-![:image 50%](../img/cpumonitor.png)
-&lt;/center&gt;
-
+Each fork draws 10 million random points and checks whether they fall inside the unit circle — a pure-R task that takes ~1–2 s per core. Open **Activity Monitor → CPU** (or `htop`) while this runs.
 ]]
 
 ---
@@ -772,39 +698,37 @@ res &lt;- mclapply(1:8, \(i) Sys.sleep(20), mc.cores = 10)
 
 .smaller[
 .blockquote.exercise[
-#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example: send them cores to sleep (on MacOS) &amp;mdash; ctd.
+#### <svg aria-hidden="true" role="img" viewBox="0 0 576 512" style="height:1em;width:1.12em;vertical-align:-0.125em;margin-left:auto;margin-right:auto;font-size:inherit;fill:#004c93;overflow:visible;position:relative;"><path d="M64 0C28.7 0 0 28.7 0 64V352c0 35.3 28.7 64 64 64H240l-10.7 32H160c-17.7 0-32 14.3-32 32s14.3 32 32 32H416c17.7 0 32-14.3 32-32s-14.3-32-32-32H346.7L336 416H512c35.3 0 64-28.7 64-64V64c0-35.3-28.7-64-64-64H64zM512 64V288H64V64H512z"/></svg> Example: keep cores busy (macOS) &amp;mdash; ctd.
 What happened?
 
-- The `R` session (the main process) opened 10 sub-processes, so-called *forks* (labeled `rsession` in the activity monitor)
+- The `R` session (the main process) opened 8 sub-processes, so-called *forks* (labeled `rsession` in the activity monitor)
 
 - The forks operate independently from the main process (but they 'know' about each other). Each fork operates on a separate core.
 
-- `mclapply()` passes a call of `function(i) Sys.sleep(20)` to each fork. Computation (or rather doing nothing for 20 seconds) now proceeds in parallel.
+- `mclapply()` dispatches `busy(i)` to each fork. Each fork independently draws 10 million uniform points and estimates π via Monte Carlo — a pure-R task that saturates one core for ~1–2 seconds, clearly visible in the activity monitor.
 
-- After 20 seconds the results are gathered in `res` and all forks are killed. Note that `res` is just a list with `NULL` entries.
+- Once all tasks complete, the results are gathered into `res` and all forks are killed.
 ]]
   
 ---
-## 4. Parallelisation - `parallel::mclapply()`
+## 4. Parallelisation — `parallel::parLapply()`
 
 .smaller[
 .blockquote.exercise[
-#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example: send them cores to sleep (Windows)  
+#### <svg aria-hidden="true" role="img" viewBox="0 0 576 512" style="height:1em;width:1.12em;vertical-align:-0.125em;margin-left:auto;margin-right:auto;font-size:inherit;fill:#004c93;overflow:visible;position:relative;"><path d="M64 0C28.7 0 0 28.7 0 64V352c0 35.3 28.7 64 64 64H240l-10.7 32H160c-17.7 0-32 14.3-32 32s14.3 32 32 32H416c17.7 0 32-14.3 32-32s-14.3-32-32-32H346.7L336 416H512c35.3 0 64-28.7 64-64V64c0-35.3-28.7-64-64-64H64zM512 64V288H64V64H512z"/></svg> Example: keep cores busy (Windows)
 
-An alternative on Windows is to use `parallel::parLapply()`. The setup is somewhat more complex.
+An alternative on Windows is `parallel::parLapply()`. Unlike `mclapply()`, it uses **socket clusters** (no forking), so exported objects must be declared explicitly.
 
 
 ``` r
-# set number of cores to be used
 cores &lt;- detectCores(logical = TRUE) - 1
+cl    &lt;- makeCluster(cores)
 
-# initialise cluster
-cl &lt;- makeCluster(cores)
+# export the worker function to each node
+clusterExport(cl, "busy")
 
-# run lapply in parallel
-parLapply(cl, 1:cores, function(i) Sys.sleep(20))
+parLapply(cl, 1:cores, busy)
 
-# stop cluster
 stopCluster(cl)
 ```
 
@@ -826,7 +750,7 @@ stopCluster(cl)
 
 .smaller[
 .blockquote.exercise[
-#### &lt;svg viewBox="0 0 576 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#004c93;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M528 0H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h192l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h192c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zm-16 352H64V64h448v288z"&gt;&lt;/path&gt;&lt;/svg&gt; Example: too much overhead &amp;mdash; parallelisation may be inefficient
+#### <svg aria-hidden="true" role="img" viewBox="0 0 576 512" style="height:1em;width:1.12em;vertical-align:-0.125em;margin-left:auto;margin-right:auto;font-size:inherit;fill:#004c93;overflow:visible;position:relative;"><path d="M64 0C28.7 0 0 28.7 0 64V352c0 35.3 28.7 64 64 64H240l-10.7 32H160c-17.7 0-32 14.3-32 32s14.3 32 32 32H416c17.7 0 32-14.3 32-32s-14.3-32-32-32H346.7L336 416H512c35.3 0 64-28.7 64-64V64c0-35.3-28.7-64-64-64H64zM512 64V288H64V64H512z"/></svg> Example: too much overhead &amp;mdash; parallelisation may be inefficient
 
 
 ``` r
@@ -834,12 +758,6 @@ system.time(mclapply(1:1e5, sqrt, mc.cores = 10))
 ```
 
 
-```
-## 
-## ##   user  system elapsed 
-## ##  0.107   0.110   0.062 
-## 
-```
 
 
 ``` r
@@ -847,14 +765,63 @@ system.time(lapply(1:1e5, sqrt))
 ```
 
 
-```
-## 
-## ##   user  system elapsed 
-## ##  0.034   0.001   0.035 
-## 
-```
 
 This is because the cost of the individual computations is low, and additional work is needed to send the computation to the different cores and to collect the results. This **overhead** exceeds the time savings. 
+]]
+
+---
+## 4. Parallelisation — `furrr`
+
+.smaller[
+
+The `furrr` package provides **parallel equivalents of all `purrr` functions** using the `future` backend — a cross-platform drop-in replacement.
+
+
+``` r
+library(furrr)
+plan(multisession, workers = 4)  # use 4 parallel R sessions
+
+results &lt;- future_map(1:4, \(i) slow_function(i))
+
+plan(sequential)  # always reset when done
+```
+
+**Why prefer `furrr` over `parallel`?**
+
+- Swap `map()` → `future_map()`, `map_dbl()` → `future_map_dbl()`, etc. — **minimal code changes**
+- Works on **Windows, Mac, and Linux** (unlike `mclapply()`)
+- Type-safe output variants: `future_map_dbl()`, `future_map_dfr()`, etc.
+- Integrates naturally into `purrr`-style pipelines
+
+**Rule of thumb:** prefer `furrr` when you already use `purrr`. Use `parallel` for fine-grained control.
+
+]
+
+---
+## 4. Parallelisation — `furrr` Example
+
+.smaller[
+
+.blockquote.exercise[
+#### <svg aria-hidden="true" role="img" viewBox="0 0 576 512" style="height:1em;width:1.12em;vertical-align:-0.125em;margin-left:auto;margin-right:auto;font-size:inherit;fill:#004c93;overflow:visible;position:relative;"><path d="M64 0C28.7 0 0 28.7 0 64V352c0 35.3 28.7 64 64 64H240l-10.7 32H160c-17.7 0-32 14.3-32 32s14.3 32 32 32H416c17.7 0 32-14.3 32-32s-14.3-32-32-32H346.7L336 416H512c35.3 0 64-28.7 64-64V64c0-35.3-28.7-64-64-64H64zM512 64V288H64V64H512z"/></svg> Example: parallel bootstrap with `furrr`
+
+
+``` r
+library(furrr)
+plan(multisession, workers = 4)
+
+boot_coef &lt;- function(i) {
+  idx &lt;- sample(nrow(mtcars), replace = TRUE)
+  coef(lm(mpg ~ wt, data = mtcars[idx, ]))["wt"]
+}
+
+system.time(map(1:2000, boot_coef))          # sequential
+system.time(future_map(1:2000, boot_coef))   # parallel
+
+plan(sequential)
+```
+
+`future_map()` pays off when each iteration is **expensive and independent**. For cheap tasks, overhead dominates — just as with `mclapply()`.
 ]]
 
 ---
