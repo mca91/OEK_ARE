@@ -1,5 +1,5 @@
 ---
-title: "Advanced R for Econometricians (Summer 2025)"
+title: "Advanced R for Econometricians (Summer 2026)"
 subtitle: "Functional R Programming --- Notes and Examples"
 author: "Martin Arnold, Martin Schmelzer"
 output: pdf_document
@@ -16,7 +16,21 @@ We need `tidyverse`.
 library(tidyverse)
 ```
 
-## Slide 10: `purrr::map()` 
+## Anonymous Functions: Native Lambda `\(x)` vs. Legacy `~`
+
+Since R 4.1 the **native lambda** `\(x)` is the preferred shorthand for anonymous functions:
+
+- `\(x) expr` is equivalent to `function(x) expr`
+- Use `\(x)` in new code; the twiddle (`~`) shorthand with `.x` is still valid but considered legacy
+
+    ```{r}
+    map_dbl(mtcars, \(x) length(unique(x)))   # preferred
+    map_dbl(mtcars, ~ length(unique(.x)))       # legacy, still works
+    ```
+
+Good rule of thumb: if a function spans multiple lines or uses `{...}`, give it a name.
+
+## `purrr::map()`
 
 - Note that `map()` always returns a list.
 
@@ -27,11 +41,37 @@ library(tidyverse)
     map_if(ggplot2::economics, is.numeric, mean)
     ```
 
-## Slide 11: `purrr::map_dbl()` and `purrr::map_int()`
+## `purrr::map_dbl()` and `purrr::map_int()`
 
 Of course, the '`*`' in `map_*()` must match the return type of the functions used for mapping!
 
-## Slide 14: `purrr::map_dbl()` — Producing Atomic Vectors
+- Note that `map_vec()` (purrr >= 1.0.0) handles any vector type including dates, factors, and S3 vectors.
+
+## `purrr::map_*()` — Element Extraction and `pluck()`
+
+Use `map_*()` with a string or integer to extract named or positional elements from a list:
+
+```{r}
+x <- list(
+  list(-1, x = 1, y = c(2), z = "a"),
+  list(-2, x = 4, y = c(5, 6), z = "b"),
+  list(-3, x = 8, y = c(9, 10, 11))
+)
+
+map_dbl(x, "x")   # by name
+map_dbl(x, 1)     # by position
+```
+
+For deep extraction from a **single** element use `pluck()`:
+
+```{r}
+pluck(x, 2, "y")                   # returns c(5, 6)
+pluck(x, 3, "z", .default = NA)    # safe: returns NA if missing
+```
+
+`pluck()` is preferable to `[[` chains for nested structures: it is safe (no error when `.default` is supplied) and readable.
+
+## `purrr::map_dbl()` — Producing Atomic Vectors (Task)
 
 **Solution to the task:**
 
@@ -46,11 +86,11 @@ sapply(x, "[[", "x")
 sapply(x, "[[", 1)
 ```
 
-## Slide 15: `purrr::map_*()` — Producing Atomic Vectors
+## `purrr::map_*()` — Producing Atomic Vectors (`.default`)
 
 Note that `.default = NA` requires your subsequent code to be compatible with `NA` values.
 
-## Slide 19: `purrr::map_*()` — Exercises
+## `purrr::map_*()` — Exercises
 
 1. Note that
 
@@ -64,7 +104,7 @@ Note that `.default = NA` requires your subsequent code to be compatible with `N
     
     trials_df <- tibble(p_value = map_dbl(trials, "p.value"))
     
-    trials_df %>% 
+    trials_df |> 
       ggplot(aes(x = p_value, fill = p_value < 0.05)) + 
       geom_histogram(binwidth = .025) +
       ggtitle("Distribution of p-values for random Poisson data.")
@@ -75,7 +115,7 @@ Note that `.default = NA` requires your subsequent code to be compatible with `N
   models <- map(formulas, lm, data = mtcars)
   ```
   
-## Slide 20: Case Study --- Model Fitting with `purrr`
+## Case Study --- Model Fitting with `purrr`
 
 **Read in the data and split by `Drive`.**
 
@@ -85,12 +125,12 @@ cars2018 <- readr::read_csv("../data/cars2018.csv")
 by_drive <- split(cars2018, cars2018$Drive)
 ```
 
-- **`purrr`-style approach:**
+- **`purrr`-style approach** (using native `|>` and `\(data)` lambda):
 
     ```{r}
-    by_drive %>%
-      map(~ lm(MPG ~ Cylinders, data = .x)) %>%
-      map(coef) %>%
+    by_drive |>
+      map(\(data) lm(MPG ~ Cylinders, data = data)) |>
+      map(coef) |>
       map_dbl(2)
     ```
 
@@ -124,7 +164,64 @@ by_drive <- split(cars2018, cars2018$Drive)
 
       - Everything may be done in a single (but messy!) `for()` loop
 
-## Slide 26: `purrr::walk()`
+## Predicate Functionals: `keep()`, `discard()`, and friends
+
+These functions filter list elements based on a **predicate** (a function returning `TRUE`/`FALSE`):
+
+- `keep(.x, .p)` — keep elements where `.p` returns `TRUE`
+- `discard(.x, .p)` — drop elements where `.p` returns `TRUE`
+- `compact(.x)` — drop `NULL` elements (shorthand for `discard(.x, is.null)`)
+- `every(.x, .p)` — `TRUE` if `.p` is `TRUE` for all elements
+- `some(.x, .p)` — `TRUE` if `.p` is `TRUE` for at least one element
+
+```{r}
+models <- map(split(mtcars, mtcars$cyl), \(d) lm(mpg ~ wt, data = d))
+keep(models, \(m) summary(m)$r.squared > 0.75)
+compact(list(1, NULL, 3, NULL, 5))
+every(models, \(m) nobs(m) >= 3)
+```
+
+## Combining Map Output: `list_rbind()` and `list_c()`
+
+`map_dfr()` and `map_dfc()` are **superseded** in purrr >= 1.0.0. Use explicit combination instead:
+
+```{r}
+# Superseded (avoid in new code):
+map_dfr(split(mtcars, mtcars$cyl), \(d) broom::tidy(lm(mpg ~ wt, d)))
+
+# Modern replacement:
+split(mtcars, mtcars$cyl) |>
+  map(\(d) broom::tidy(lm(mpg ~ wt, d))) |>
+  list_rbind()
+
+# list_c() collapses a list of atomic vectors into one:
+map(1:3, \(n) runif(n)) |> list_c()
+```
+
+## Adverbs: `safely()` and `possibly()`
+
+**Adverbs** modify functions so they never throw errors — essential for robust iteration.
+
+- `safely(f)` wraps `f` and returns `list(result, error)` — always succeeds
+- `possibly(f, otherwise)` returns `otherwise` on error — simpler API
+
+```{r}
+safe_log <- safely(log)
+results <- map(list(10, -1, "a"), safe_log)
+results |> map("result") |> compact()   # extract successes
+results |> map("error")  |> compact()   # extract errors
+
+# possibly() is simpler when you just need a fallback:
+safe_log2 <- possibly(log, NA_real_)
+map_dbl(list(10, -1, "a"), safe_log2)
+```
+
+| | `safely()` | `possibly()` |
+|---|---|---|
+| On error | `list(result = NULL, error = <cnd>)` | returns `otherwise` |
+| Use when | need to inspect errors | just need a fallback |
+
+## `purrr::walk()` *(excluded from slides — supplementary)*
 
 Assignment to an environment is a commonly used side-effect:
 
@@ -139,10 +236,10 @@ invisible(lapply(1:3, ABC))
 walk(1:3, ABC)
 
 # `walk()` in functional-style 'workflow' (un-silenced :) )
-1:26 %>% walk(., ABC) %>% cat(.)
+1:26 |> walk(ABC) |> cat()
 ```
 
-## Slide 27: `purrr::walk2()`
+## `purrr::walk2()` *(excluded from slides — supplementary)*
 
 Writing to disc is another side-effect. We need to map over two arguments: an object and a path.
 
@@ -165,22 +262,41 @@ walk2(tm, paths, write.csv)
 dir(t)
 ```
 
-## Slide 28: `purrr:imap()`
+## `purrr::imap()` *(excluded from slides — supplementary)*
 
 ```{r}
-cars2018 %>% 
-  select_if(is.numeric) %>% 
-  imap_chr(~ paste0("The Mean of ", .y, " is ", mean(.x)))
+cars2018 |> 
+  select_if(is.numeric) |> 
+  imap_chr(\(x, y) paste0("The Mean of ", y, " is ", mean(x)))
 ```
 
-## Slide 33: `purrr::pmap()` — Exercises
+## `purrr::pmap()` — Named and Data Frame Inputs
+
+Use **named lists** or **data frames** so `pmap()` matches arguments by name — especially useful with many or complex inputs:
+
+```{r}
+# Named list: pmap() matches 'trim' by name, 'x' is passed additionally
+trims <- c(0, 0.1, 0.2, 0.5)
+x <- rcauchy(1000)
+pmap_dbl(list(trim = trims, na.rm = FALSE), .f = mean, x = x)
+
+# Data frame: column names match argument names automatically
+params <- tibble::tribble(
+  ~ n, ~ min, ~ max,
+   1L,     0,     1,
+   2L,    10,   100
+)
+pmap(params, runif)
+```
+
+## `purrr::pmap()` — Exercises
 
 1. `modify()` is a shortcut for `x[[i]] <- f(x[[i]]); return(x)`. So every row is filled with its *first* value.
 
 2. This a a good example of a quite complex operation which is relatively easy to comprehend by only looking at the code.
     ```{r}
     nm <- names(trans)
-    cars2018[nm] <- map2(trans, cars2018[nm], function(f, var) f(var))
+    cars2018[nm] <- map2(trans, cars2018[nm], \(f, var) f(var))
     ```
 
     - The functions in `trans` are intended to modify certain columns in `cars2018` (column names are provided as entry names in `trans`)
@@ -205,3 +321,52 @@ cars2018 %>%
       ```
     
     - You should decide what you consider the most comprehensible!
+
+## Function Factories — Lazy Evaluation and `force()`
+
+R uses **lazy evaluation**: function arguments are not evaluated until first used. This can cause unexpected bugs in function factories:
+
+```{r}
+nth_root <- function(n) function(x) x^(1/n)
+n <- 2; sq <- nth_root(n); n <- 16
+sq(64)   # Bug! n is 16 when sq() is called: 64^(1/16) = 1.30
+```
+
+Fix: call `force(n)` inside the factory to evaluate `n` immediately when the factory runs:
+
+```{r}
+nth_root <- function(n) {
+  force(n)
+  function(x) x^(1/n)
+}
+n <- 2; sq <- nth_root(n); n <- 16
+sq(64)   # Correct: 8
+```
+
+**Rule of thumb:** always `force()` factory arguments that the manufactured function depends on.
+
+Note: `force(x)` is simply `x` — it exists to make the intent explicit.
+
+## Function Factories — Stateful Functions
+
+Function factories allow us to create **functions with a memory** (state). The state is tracked in the execution environment of the factory, which is **separate** for each manufactured function:
+
+```{r}
+new_counter <- function() {
+  i <- 0
+  function() {
+    i <<- i + 1   # <<- modifies i in the enclosing (factory) environment
+    i
+  }
+}
+
+counter_one <- new_counter()
+counter_two <- new_counter()
+
+replicate(2, counter_one())   # 1, 2
+replicate(5, counter_two())   # 1, 2, 3, 4, 5
+```
+
+The `<<-` operator modifies a variable in the **enclosing environment** rather than creating a new local binding. Inspect with `rlang::env_print(counter_one)` to see the separate environments.
+
+> **Caution:** Use stateful functions with moderation. For managing multiple variables, the R6 system is more appropriate.
