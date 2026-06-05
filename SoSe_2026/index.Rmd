@@ -44,7 +44,7 @@ class: title-slide title-index
   <li><a href="functional/functional.html">Functional Programming Tools</a></li>
   <li><a href="Shiny/Shiny.html">Shiny</a></li>
   <li><a href="improving performance/improving-performance.html">Deep Dive: Performance</a></li>
-  <li><a href="Performance/Performance.html" class="disabled">Deep Dive: Debugging</a></li>
+  <li><a href="Debugging/Debugging.html">Deep Dive: Debugging</a></li>
 </ol>
 ]
 

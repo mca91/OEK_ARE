@@ -1,0 +1,539 @@
+---
+title: "Advanced R for Econometricians"
+subtitle: "Debugging R Code"
+author:
+  - "Martin Arnold"
+  - "Martin Schmelzer"
+date: "`r Sys.Date()`"
+output:
+  xaringan::moon_reader:
+    css: ["default", "../assets/ude_fonts.css", "../assets/ude.css", "../assets/title_slides.css", "../assets/custom.css"]
+    self_contained: false
+    seal: false
+    includes:
+      in_header: "../assets/mathjax-equation-numbers.html"
+    nature:
+      beforeInit: ["../assets/navigate_home.js", "../assets/remark-zoom.js", "../xaringan_files/macros.js", "https://platform.twitter.com/widgets.js"]
+      highlightStyle: github
+      highlightLines: true
+      countIncrementalSlides: false
+      ratio: '16:9'
+      navigation:
+        scroll: false
+---
+class: title-slide title-debugging center middle
+
+```{r setup, echo = F, eval = T, warning = F}
+knitr::opts_chunk$set(echo = TRUE, eval = FALSE, warning = FALSE, message = FALSE)
+source(here::here("SoSe_2026/utils.R"))
+```
+
+```{r moon_reader, include=FALSE, eval = FALSE}
+# setup for moon reader — copy to console for live preview
+options(servr.interval = 0.5)
+xaringan::inf_mr()
+```
+
+# `r rmarkdown::metadata$title`
+## `r rmarkdown::metadata$subtitle`
+### `r rmarkdown::metadata$author`
+
+---
+## Introduction: Bugs Are Inevitable
+
+Every programmer writes bugs. The question is not *whether* your code contains bugs, but *how quickly* you can find and fix them.
+
+Three common bug types in R:
+
+--
+
+- **Syntax errors**: R cannot parse the code at all  
+  `Error: unexpected symbol in "my functon"`
+
+--
+
+- **Runtime errors**: code parses but fails during execution  
+  `Error in lm.fit(x, y): NA/NaN/Inf in 'x'`
+
+--
+
+- **Logic errors**: code runs without any error but produces wrong results (the hardest to catch!)
+
+--
+
+.content-box-white[
+**Good news:** RStudio integrates a powerful suite of debugging tools. This lecture teaches you to use them systematically.
+]
+
+---
+## A Debugging Strategy
+
+Treat debugging as a **scientific process**, not a guessing game.
+
+--
+
+**1. Make it repeatable**  
+Build a *minimal* example that reliably triggers the bug. Strip away unrelated code and data.
+
+--
+
+**2. Locate the error**  
+Use `traceback()` and `browser()` to pinpoint *where* execution goes wrong.
+
+--
+
+**3. Understand the cause**  
+Inspect variable values at the failing point. Generate and test hypotheses.
+
+--
+
+**4. Fix and verify**  
+Apply the fix, re-run the minimal example, and check that no new bugs were introduced.
+
+.pull-down[
+![:source_url https://adv-r.hadley.nz/debugging.html](https://adv-r.hadley.nz/debugging.html)
+]
+
+---
+## Reading Error Messages
+
+Error messages are your **first clue**. Read them carefully before doing anything else.
+
+```{r, eval = TRUE, error = TRUE}
+f <- function(a) g(a)
+g <- function(b) h(b)
+h <- function(c) i(c)
+i <- function(d) {
+  if (!is.numeric(d)) stop("`d` must be numeric", call. = FALSE)
+  d + 10
+}
+
+f("a")
+```
+
+--
+
+The message tells you **what** went wrong.  
+The **call stack** tells you **where**; use `traceback()` to find it.
+
+---
+## The Call Stack: `traceback()`
+
+Call `traceback()` immediately after an error to see the sequence of function calls that led to the failure.
+
+```{r}
+f("a")
+traceback()
+```
+
+```
+5: stop("`d` must be numeric", call. = FALSE)
+4: i(c)  at debugging.R#5
+3: h(b)  at debugging.R#3
+2: g(a)  at debugging.R#2
+1: f("a")
+```
+
+--
+
+.font90[
+- Read **bottom to top**: `f()` → `g()` → `h()` → `i()` → error
+- In RStudio, file paths are **clickable** and jump to the failing line in the editor
+- `traceback()` must be called **immediately**; the next command clears the call stack
+- `rlang::last_trace()` offers a tree-formatted alternative with better hierarchy
+]
+
+---
+## RStudio: "Show Traceback" and "Rerun with Debug"
+
+RStudio integrates `traceback()` directly into the console after every error:
+
+![:image 82%](https://adv-r.hadley.nz/screenshots/debugging/rstudio-error.png)
+
+Two action buttons appear to the right of the error message:
+- **Show Traceback** → expands the call stack inline below the error
+- **Rerun with Debug** → re-runs the command and **pauses execution at the error site**
+
+---
+## Entering the Interactive Debugger: `browser()`
+
+Insert `browser()` anywhere in your code to **pause execution** and open an interactive R session *inside* the function's environment.
+
+```{r}
+g <- function(b) {
+  browser()   # execution pauses here
+  h(b)
+}
+
+f("a")
+```
+
+--
+
+At the `Browse[1]>` prompt you are **inside** the function; all local variables are accessible:
+
+```
+Browse[1]> b          # prints the current value of b
+Browse[1]> ls()       # list all local variables in scope
+Browse[1]> b <- 10    # modify a variable and continue
+```
+
+--
+
+**Conditional breakpoints**: avoid stopping on every iteration:
+```{r}
+for (i in seq_along(data_list)) {
+  if (i == 47) browser()   # only pause on iteration 47
+  process(data_list[[i]])
+}
+```
+
+---
+## The RStudio Debugger Interface
+
+When `browser()` activates, RStudio enters **debug mode**. Click **Show Traceback** to see the call stack that led to the current point:
+
+![:image 68%](https://adv-r.hadley.nz/screenshots/debugging/rstudio-traceback.png)
+
+.font90[
+| Pane | What you see |
+|------|-------------|
+| **Source editor** | Currently executing function; next line highlighted in **yellow** |
+| **Environment** | All local variables in scope (gray = unevaluated promises) |
+| **Traceback** | Full call stack: click any frame to jump to its source line |
+| **Console** | `Browse[N]>` prompt, evaluated in the current function's environment |
+]
+
+---
+## Debug Toolbar Commands
+
+A toolbar appears above the console whenever RStudio is in debug mode:
+
+.center[
+![:image 40%](https://adv-r.hadley.nz/screenshots/debug-toolbar.png)
+]
+
+.font90[
+| Button | Shortcut | Command | Action |
+|--------|----------|---------|--------|
+| Next | `F10` | `n` | Execute the next statement |
+| Step into | `Shift+F4` | `s` | Step *into* the next function call |
+| Finish | `Shift+F6` | `f` | Run to the end of the current loop or function |
+| Continue | `Shift+F5` | `c` | Resume normal execution |
+| Stop | `Shift+F8` | `Q` | Quit the debugger and return to the global environment |
+]
+
+--
+
+.font90[
+**Tip:** Pressing `Enter` at `Browse[N]>` repeats the last command, useful for fast stepping. Disable accidental repeats with `options(browserNLdisabled = TRUE)`.
+]
+
+---
+## Editor Breakpoints
+
+Click to the **left of a line number** in the editor, or press `Shift+F9` on that line.
+
+.font90[
+.pull-left[
+**Advantages:**
+- No code changes required
+- One click to add or remove
+- Red dot ● = active breakpoint
+- Open circle ○ = deferred (`source()` to activate)
+]
+
+.pull-right[
+**Limitations:**
+- Named functions in `.R` files only
+- No **conditional** breakpoints
+- Requires up-to-date sourced/built copy
+]
+]
+
+---
+## `debugonce()` and `debug()`
+
+When you want to step through a function you cannot edit (e.g., a package function):
+
+```{r}
+# Enter the debugger the next time lm() is called — once only
+debugonce(lm)
+lm(mpg ~ hp, data = mtcars)
+```
+
+--
+
+```{r}
+# Enter the debugger every time the function is called
+debug(lm)
+lm(mpg ~ hp, data = mtcars)   # pauses
+lm(mpg ~ wt, data = mtcars)   # pauses again
+undebug(lm)                    # remove the debug flag
+```
+
+--
+
+.font90[
+- `debugonce()` is almost always preferable: it removes itself automatically.
+- `utils::setBreakpoint("file.R", line = 42)` sets a breakpoint by file + line number.
+- `trace(pkg::fun, browser, at = 3)` injects `browser()` at statement 3 of any function.
+]
+
+---
+## Frame Selection with `options(error = recover)`
+
+`recover()` activates *after* an error and lets you interactively **choose which call-stack frame** to enter:
+
+```{r}
+options(error = recover)
+f("a")
+```
+
+```
+Error: `d` must be numeric
+
+Enter a frame number, or 0 to exit
+
+1: f("a")
+2: g(a)  [debugging.R#2]
+3: h(b)  [debugging.R#3]
+4: i(c)  [debugging.R#4]
+
+Selection: 3   # → enters frame 3, inside h()
+Browse[1]> print(c)   # variable c (= b passed in) — avoids clashing with 'c' shortcut
+```
+
+--
+
+.font90[
+Reset with `options(error = NULL)`.  
+`recover()` is especially useful for **deeply nested pipelines**: jump to any intermediate frame without re-running the code.
+]
+
+---
+## Non-Error Failures
+
+Not all bugs throw errors. Watch out for these harder-to-detect failures:
+
+**Unexpected warnings**: promote them to errors to get a traceback:
+```{r}
+options(warn = 2)   # warnings become errors
+my_function(x)
+traceback()
+options(warn = 0)   # reset to default
+```
+
+--
+
+**Silent wrong results** (logic bugs): add assertions:
+```{r}
+standardise <- function(x) {
+  stopifnot(is.numeric(x), length(x) > 1, !all(is.na(x)))
+  (x - mean(x, na.rm = TRUE)) / sd(x, na.rm = TRUE)
+}
+```
+
+--
+
+**Hanging / infinite loop**: press `Escape` or `Ctrl+C` to interrupt, then call `traceback()` to see where execution stalled.
+
+---
+## Defensive Programming
+
+Write code that **fails fast** so bugs surface immediately.
+
+```{r}
+sharpe_ratio <- function(returns, rf = 0.02 / 252) {
+  stopifnot(is.numeric(returns), length(returns) > 1,
+            is.numeric(rf), length(rf) == 1)
+  excess <- returns - rf
+  mean(excess) / sd(excess) * sqrt(252)
+}
+```
+
+Use `tryCatch()` to **handle** anticipated errors gracefully without crashing:
+
+```{r}
+safe_read <- function(path) {
+  tryCatch(
+    readRDS(path),
+    error = function(e) { message(conditionMessage(e)); NULL }
+  )
+}
+```
+
+.font90[
+**Rule of thumb:** validate inputs at system boundaries (user-facing functions). Don't over-validate intermediate internal functions.
+]
+
+---
+class: exercise_slide
+
+## `r ICONS$desktop` Exercise 1: Tracing a Bug
+
+Run the code below and answer the questions using the debugging tools from this lecture.
+
+.code80[
+```{r}
+compute_index <- function(df) {
+  scaled <- scale_cols(df)
+  rowMeans(scaled)
+}
+
+scale_cols <- function(df) {
+  apply(df, 2, function(x) (x - mean(x)) / sd(x))
+}
+
+compute_index(
+  data.frame(a = 1:5, b = c(1, 2, NA, 4, 5), c = letters[1:5])
+)
+```
+]
+
+<ol>
+<li>What error message do you see? Which function threw it?</li>
+<li>Call <code>traceback()</code>. What is the full call sequence?</li>
+<li>Add <code>browser()</code> inside <code>scale_cols()</code>. When the pause occurs, check the type and value of <code>x</code>. Why does <code>sd(x)</code> fail?</li>
+<li>Fix <code>scale_cols()</code> to skip non-numeric columns and handle <code>NA</code> values.</li>
+</ol>
+
+---
+class: segue-red
+### Mini Case Study: Debugging a Bootstrap Function
+
+---
+## Case Study: A Buggy Bootstrap Function
+
+A colleague wrote a function to compute bootstrap confidence intervals for a regression slope. It throws an error. Can you spot the bug before running it?
+
+```{r}
+bootstrap_lm <- function(data, formula, B = 500) {
+  n          <- nrow(data)
+  boot_coefs <- numeric(B)
+
+  for (b in seq_len(B)) {
+    idx       <- sample(n, n, replace = TRUE)
+    boot_data <- data[idx]           # resample rows
+    fit       <- lm(formula, data = boot_data)
+    boot_coefs[b] <- coef(fit)[2]   # store slope
+  }
+
+  quantile(boot_coefs, c(0.025, 0.975))
+}
+
+# Run it:
+bootstrap_lm(mtcars, mpg ~ hp, B = 200)
+```
+
+---
+## Case Study: Locating the Error
+
+Running the function immediately produces:
+
+```
+Error in `[.data.frame`(data, idx) : undefined columns selected
+```
+
+--
+
+`traceback()` identifies the exact location:
+
+```
+3: `[.data.frame`(data, idx)
+2: data[idx]                   at Debugging.Rmd#7
+1: bootstrap_lm(mtcars, mpg ~ hp, B = 200)
+```
+
+--
+
+.font90[
+The error is on the line `boot_data <- data[idx]`.  
+
+For a **data frame**, `data[idx]` where `idx` is an integer vector selects **columns**, not rows. To select rows, you need `data[idx, ]` (note the trailing comma).
+]
+
+---
+## Case Study: Using `browser()` to Confirm
+
+Add `browser()` just before the failing line to inspect the intermediate state:
+
+```{r}
+bootstrap_lm <- function(data, formula, B = 500) {
+  n          <- nrow(data)
+  boot_coefs <- numeric(B)
+
+  for (b in seq_len(B)) {
+    idx       <- sample(n, n, replace = TRUE)
+    browser()                        #<<
+    boot_data <- data[idx]
+    fit       <- lm(formula, data = boot_data)
+    boot_coefs[b] <- coef(fit)[2]
+  }
+  quantile(boot_coefs, c(0.025, 0.975))
+}
+```
+
+--
+
+At `Browse[1]>`:
+
+```
+Browse[1]> head(idx)         # a length-n integer vector of row indices ✓
+Browse[1]> dim(data[idx])    # NULL — selects columns, wrong!
+Browse[1]> dim(data[idx, ])  # 32 x 11 — selects rows, correct ✓
+```
+
+---
+## Case Study: Fix and Verify
+
+**The fix:** `data[idx]` → `data[idx, ]`. Verify against the parametric CI:
+
+```{r, eval = TRUE}
+bootstrap_lm_fixed <- function(data, formula, B = 500) {
+  n <- nrow(data); boot_coefs <- numeric(B)
+  for (b in seq_len(B)) {
+    idx <- sample(n, n, replace = TRUE)
+    boot_data <- data[idx, ]   #<<
+    boot_coefs[b] <- coef(lm(formula, data = boot_data))[2]
+  }
+  quantile(boot_coefs, c(0.025, 0.975))
+}
+
+set.seed(42)
+bootstrap_lm_fixed(mtcars, mpg ~ hp, B = 1000)        # bootstrap CI
+confint(lm(mpg ~ hp, data = mtcars))["hp", ]          # parametric CI
+```
+
+.font90[
+Both CIs should be narrow and centered near the OLS estimate ($\hat\beta_{hp} \approx -0.068$).
+]
+
+---
+class: exercise_slide
+
+## `r ICONS$desktop` Exercises
+
+<ol start = "1">
+<li>The function below computes a rolling mean but returns wrong values. Use <code>browser()</code> inside the loop to identify the off-by-one error and fix it.</li>
+</ol>
+
+.code80[
+```{r}
+rolling_mean <- function(x, k = 5) {
+  n <- length(x)
+  result <- rep(NA_real_, n)
+  for (i in k:n) {
+    result[i] <- mean(x[(i - k):(i)])  # window has k+1 observations
+  }
+  result
+}
+rolling_mean(1:20, k = 5)
+```
+]
+
+<ol start = "2">
+<li>Set <code>options(error = recover)</code> and run <code>rolling_mean(letters, k = 3)</code>. Enter frame 2 at the <code>Selection:</code> prompt and inspect the local variable <code>x</code>. What is its type? Why does <code>mean()</code> fail?</li>
+<li>Rewrite <code>rolling_mean()</code> defensively: add <code>stopifnot()</code> validation that catches non-numeric input and a wrong window size (<code>k >= length(x)</code>) before the loop starts.</li>
+<li><strong>Challenge:</strong> Use <code>tryCatch()</code> to make <code>rolling_mean()</code> return an informative <code>NA</code>-filled vector (rather than an error) when given a mixed-type data frame column, and emit a single <code>warning()</code> describing the problem.</li>
+</ol>

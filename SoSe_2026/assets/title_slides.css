@@ -109,6 +109,12 @@
     color: rgba(255, 255, 255, 0.68);
 }
 
+.title-debugging {
+    background-image: url(../assets/ude_logo.png), url(../assets/RStudio.png);
+    background-position: 7% 10%, 90% 90%;
+    background-size: 220px, 180px;
+}
+
 .title-slide a {
     color: rgba(255, 255, 255, 0.68) !important;
   }

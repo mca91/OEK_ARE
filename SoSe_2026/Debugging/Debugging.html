@@ -1,0 +1,716 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>Advanced R for Econometricians</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Martin Arnold" />
+    <meta name="author" content="Martin Schmelzer" />
+    <meta name="date" content="2026-06-05" />
+    <script src="Debugging_files/header-attrs-2.29/header-attrs.js"></script>
+    <link href="Debugging_files/remark-css-0.0.1/default.css" rel="stylesheet" />
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        TeX: { equationNumbers: { autoNumber: "AMS" } },
+      });
+    </script>
+    <style>
+    .mjx-mrow a {
+      color: black;
+      pointer-events: none;
+      cursor: default;
+    }
+    </style>
+    <link rel="stylesheet" href="../assets/ude_fonts.css" type="text/css" />
+    <link rel="stylesheet" href="../assets/ude.css" type="text/css" />
+    <link rel="stylesheet" href="../assets/title_slides.css" type="text/css" />
+    <link rel="stylesheet" href="../assets/custom.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+
+class: title-slide title-debugging center middle
+
+
+
+
+
+# Advanced R for Econometricians
+## Debugging R Code
+### Martin Arnold, Martin Schmelzer
+
+---
+## Introduction: Bugs Are Inevitable
+
+Every programmer writes bugs. The question is not *whether* your code contains bugs, but *how quickly* you can find and fix them.
+
+Three common bug types in R:
+
+--
+
+- **Syntax errors**: R cannot parse the code at all  
+  `Error: unexpected symbol in "my functon"`
+
+--
+
+- **Runtime errors**: code parses but fails during execution  
+  `Error in lm.fit(x, y): NA/NaN/Inf in 'x'`
+
+--
+
+- **Logic errors**: code runs without any error but produces wrong results (the hardest to catch!)
+
+--
+
+.content-box-white[
+**Good news:** RStudio integrates a powerful suite of debugging tools. This lecture teaches you to use them systematically.
+]
+
+---
+## A Debugging Strategy
+
+Treat debugging as a **scientific process**, not a guessing game.
+
+--
+
+**1. Make it repeatable**  
+Build a *minimal* example that reliably triggers the bug. Strip away unrelated code and data.
+
+--
+
+**2. Locate the error**  
+Use `traceback()` and `browser()` to pinpoint *where* execution goes wrong.
+
+--
+
+**3. Understand the cause**  
+Inspect variable values at the failing point. Generate and test hypotheses.
+
+--
+
+**4. Fix and verify**  
+Apply the fix, re-run the minimal example, and check that no new bugs were introduced.
+
+.pull-down[
+![:source_url https://adv-r.hadley.nz/debugging.html](https://adv-r.hadley.nz/debugging.html)
+]
+
+---
+## Reading Error Messages
+
+Error messages are your **first clue**. Read them carefully before doing anything else.
+
+
+``` r
+f &lt;- function(a) g(a)
+g &lt;- function(b) h(b)
+h &lt;- function(c) i(c)
+i &lt;- function(d) {
+  if (!is.numeric(d)) stop("`d` must be numeric", call. = FALSE)
+  d + 10
+}
+
+f("a")
+```
+
+```
+## Error: `d` must be numeric
+```
+
+--
+
+The message tells you **what** went wrong.  
+The **call stack** tells you **where**; use `traceback()` to find it.
+
+---
+## The Call Stack: `traceback()`
+
+Call `traceback()` immediately after an error to see the sequence of function calls that led to the failure.
+
+
+``` r
+f("a")
+traceback()
+```
+
+```
+5: stop("`d` must be numeric", call. = FALSE)
+4: i(c)  at debugging.R#5
+3: h(b)  at debugging.R#3
+2: g(a)  at debugging.R#2
+1: f("a")
+```
+
+--
+
+.font90[
+- Read **bottom to top**: `f()` → `g()` → `h()` → `i()` → error
+- In RStudio, file paths are **clickable** and jump to the failing line in the editor
+- `traceback()` must be called **immediately**; the next command clears the call stack
+- `rlang::last_trace()` offers a tree-formatted alternative with better hierarchy
+]
+
+---
+## RStudio: "Show Traceback" and "Rerun with Debug"
+
+RStudio integrates `traceback()` directly into the console after every error:
+
+![:image 82%](https://adv-r.hadley.nz/screenshots/debugging/rstudio-error.png)
+
+Two action buttons appear to the right of the error message:
+- **Show Traceback** → expands the call stack inline below the error
+- **Rerun with Debug** → re-runs the command and **pauses execution at the error site**
+
+---
+## Entering the Interactive Debugger: `browser()`
+
+Insert `browser()` anywhere in your code to **pause execution** and open an interactive R session *inside* the function's environment.
+
+
+``` r
+g &lt;- function(b) {
+  browser()   # execution pauses here
+  h(b)
+}
+
+f("a")
+```
+
+--
+
+At the `Browse[1]&gt;` prompt you are **inside** the function; all local variables are accessible:
+
+```
+Browse[1]&gt; b          # prints the current value of b
+Browse[1]&gt; ls()       # list all local variables in scope
+Browse[1]&gt; b &lt;- 10    # modify a variable and continue
+```
+
+--
+
+**Conditional breakpoints**: avoid stopping on every iteration:
+
+``` r
+for (i in seq_along(data_list)) {
+  if (i == 47) browser()   # only pause on iteration 47
+  process(data_list[[i]])
+}
+```
+
+---
+## The RStudio Debugger Interface
+
+When `browser()` activates, RStudio enters **debug mode**. Click **Show Traceback** to see the call stack that led to the current point:
+
+![:image 68%](https://adv-r.hadley.nz/screenshots/debugging/rstudio-traceback.png)
+
+.font90[
+| Pane | What you see |
+|------|-------------|
+| **Source editor** | Currently executing function; next line highlighted in **yellow** |
+| **Environment** | All local variables in scope (gray = unevaluated promises) |
+| **Traceback** | Full call stack: click any frame to jump to its source line |
+| **Console** | `Browse[N]&gt;` prompt, evaluated in the current function's environment |
+]
+
+---
+## Debug Toolbar Commands
+
+A toolbar appears above the console whenever RStudio is in debug mode:
+
+.center[
+![:image 40%](https://adv-r.hadley.nz/screenshots/debug-toolbar.png)
+]
+
+.font90[
+| Button | Shortcut | Command | Action |
+|--------|----------|---------|--------|
+| Next | `F10` | `n` | Execute the next statement |
+| Step into | `Shift+F4` | `s` | Step *into* the next function call |
+| Finish | `Shift+F6` | `f` | Run to the end of the current loop or function |
+| Continue | `Shift+F5` | `c` | Resume normal execution |
+| Stop | `Shift+F8` | `Q` | Quit the debugger and return to the global environment |
+]
+
+--
+
+.font90[
+**Tip:** Pressing `Enter` at `Browse[N]&gt;` repeats the last command, useful for fast stepping. Disable accidental repeats with `options(browserNLdisabled = TRUE)`.
+]
+
+---
+## Editor Breakpoints
+
+Click to the **left of a line number** in the editor, or press `Shift+F9` on that line.
+
+.font90[
+.pull-left[
+**Advantages:**
+- No code changes required
+- One click to add or remove
+- Red dot ● = active breakpoint
+- Open circle ○ = deferred (`source()` to activate)
+]
+
+.pull-right[
+**Limitations:**
+- Named functions in `.R` files only
+- No **conditional** breakpoints
+- Requires up-to-date sourced/built copy
+]
+]
+
+---
+## `debugonce()` and `debug()`
+
+When you want to step through a function you cannot edit (e.g., a package function):
+
+
+``` r
+# Enter the debugger the next time lm() is called — once only
+debugonce(lm)
+lm(mpg ~ hp, data = mtcars)
+```
+
+--
+
+
+``` r
+# Enter the debugger every time the function is called
+debug(lm)
+lm(mpg ~ hp, data = mtcars)   # pauses
+lm(mpg ~ wt, data = mtcars)   # pauses again
+undebug(lm)                    # remove the debug flag
+```
+
+--
+
+.font90[
+- `debugonce()` is almost always preferable: it removes itself automatically.
+- `utils::setBreakpoint("file.R", line = 42)` sets a breakpoint by file + line number.
+- `trace(pkg::fun, browser, at = 3)` injects `browser()` at statement 3 of any function.
+]
+
+---
+## Frame Selection with `options(error = recover)`
+
+`recover()` activates *after* an error and lets you interactively **choose which call-stack frame** to enter:
+
+
+``` r
+options(error = recover)
+f("a")
+```
+
+```
+Error: `d` must be numeric
+
+Enter a frame number, or 0 to exit
+
+1: f("a")
+2: g(a)  [debugging.R#2]
+3: h(b)  [debugging.R#3]
+4: i(c)  [debugging.R#4]
+
+Selection: 3   # → enters frame 3, inside h()
+Browse[1]&gt; print(c)   # variable c (= b passed in) — avoids clashing with 'c' shortcut
+```
+
+--
+
+.font90[
+Reset with `options(error = NULL)`.  
+`recover()` is especially useful for **deeply nested pipelines**: jump to any intermediate frame without re-running the code.
+]
+
+---
+## Non-Error Failures
+
+Not all bugs throw errors. Watch out for these harder-to-detect failures:
+
+**Unexpected warnings**: promote them to errors to get a traceback:
+
+``` r
+options(warn = 2)   # warnings become errors
+my_function(x)
+traceback()
+options(warn = 0)   # reset to default
+```
+
+--
+
+**Silent wrong results** (logic bugs): add assertions:
+
+``` r
+standardise &lt;- function(x) {
+  stopifnot(is.numeric(x), length(x) &gt; 1, !all(is.na(x)))
+  (x - mean(x, na.rm = TRUE)) / sd(x, na.rm = TRUE)
+}
+```
+
+--
+
+**Hanging / infinite loop**: press `Escape` or `Ctrl+C` to interrupt, then call `traceback()` to see where execution stalled.
+
+---
+## Defensive Programming
+
+Write code that **fails fast** so bugs surface immediately.
+
+
+``` r
+sharpe_ratio &lt;- function(returns, rf = 0.02 / 252) {
+  stopifnot(is.numeric(returns), length(returns) &gt; 1,
+            is.numeric(rf), length(rf) == 1)
+  excess &lt;- returns - rf
+  mean(excess) / sd(excess) * sqrt(252)
+}
+```
+
+Use `tryCatch()` to **handle** anticipated errors gracefully without crashing:
+
+
+``` r
+safe_read &lt;- function(path) {
+  tryCatch(
+    readRDS(path),
+    error = function(e) { message(conditionMessage(e)); NULL }
+  )
+}
+```
+
+.font90[
+**Rule of thumb:** validate inputs at system boundaries (user-facing functions). Don't over-validate intermediate internal functions.
+]
+
+---
+class: exercise_slide
+
+## <svg aria-hidden="true" role="img" viewBox="0 0 576 512" style="height:1em;width:1.12em;vertical-align:-0.125em;margin-left:auto;margin-right:auto;font-size:inherit;fill:#004c93;overflow:visible;position:relative;"><path d="M64 0C28.7 0 0 28.7 0 64V352c0 35.3 28.7 64 64 64H240l-10.7 32H160c-17.7 0-32 14.3-32 32s14.3 32 32 32H416c17.7 0 32-14.3 32-32s-14.3-32-32-32H346.7L336 416H512c35.3 0 64-28.7 64-64V64c0-35.3-28.7-64-64-64H64zM512 64V288H64V64H512z"/></svg> Exercise 1: Tracing a Bug
+
+Run the code below and answer the questions using the debugging tools from this lecture.
+
+.code80[
+
+``` r
+compute_index &lt;- function(df) {
+  scaled &lt;- scale_cols(df)
+  rowMeans(scaled)
+}
+
+scale_cols &lt;- function(df) {
+  apply(df, 2, function(x) (x - mean(x)) / sd(x))
+}
+
+compute_index(
+  data.frame(a = 1:5, b = c(1, 2, NA, 4, 5), c = letters[1:5])
+)
+```
+]
+
+&lt;ol&gt;
+&lt;li&gt;What error message do you see? Which function threw it?&lt;/li&gt;
+&lt;li&gt;Call &lt;code&gt;traceback()&lt;/code&gt;. What is the full call sequence?&lt;/li&gt;
+&lt;li&gt;Add &lt;code&gt;browser()&lt;/code&gt; inside &lt;code&gt;scale_cols()&lt;/code&gt;. When the pause occurs, check the type and value of &lt;code&gt;x&lt;/code&gt;. Why does &lt;code&gt;sd(x)&lt;/code&gt; fail?&lt;/li&gt;
+&lt;li&gt;Fix &lt;code&gt;scale_cols()&lt;/code&gt; to skip non-numeric columns and handle &lt;code&gt;NA&lt;/code&gt; values.&lt;/li&gt;
+&lt;/ol&gt;
+
+---
+class: segue-red
+### Mini Case Study: Debugging a Bootstrap Function
+
+---
+## Case Study: A Buggy Bootstrap Function
+
+A colleague wrote a function to compute bootstrap confidence intervals for a regression slope. It throws an error. Can you spot the bug before running it?
+
+
+``` r
+bootstrap_lm &lt;- function(data, formula, B = 500) {
+  n          &lt;- nrow(data)
+  boot_coefs &lt;- numeric(B)
+
+  for (b in seq_len(B)) {
+    idx       &lt;- sample(n, n, replace = TRUE)
+    boot_data &lt;- data[idx]           # resample rows
+    fit       &lt;- lm(formula, data = boot_data)
+    boot_coefs[b] &lt;- coef(fit)[2]   # store slope
+  }
+
+  quantile(boot_coefs, c(0.025, 0.975))
+}
+
+# Run it:
+bootstrap_lm(mtcars, mpg ~ hp, B = 200)
+```
+
+---
+## Case Study: Locating the Error
+
+Running the function immediately produces:
+
+```
+Error in `[.data.frame`(data, idx) : undefined columns selected
+```
+
+--
+
+`traceback()` identifies the exact location:
+
+```
+3: `[.data.frame`(data, idx)
+2: data[idx]                   at Debugging.Rmd#7
+1: bootstrap_lm(mtcars, mpg ~ hp, B = 200)
+```
+
+--
+
+.font90[
+The error is on the line `boot_data &lt;- data[idx]`.  
+
+For a **data frame**, `data[idx]` where `idx` is an integer vector selects **columns**, not rows. To select rows, you need `data[idx, ]` (note the trailing comma).
+]
+
+---
+## Case Study: Using `browser()` to Confirm
+
+Add `browser()` just before the failing line to inspect the intermediate state:
+
+
+``` r
+bootstrap_lm &lt;- function(data, formula, B = 500) {
+  n          &lt;- nrow(data)
+  boot_coefs &lt;- numeric(B)
+
+  for (b in seq_len(B)) {
+    idx       &lt;- sample(n, n, replace = TRUE)
+*   browser()
+    boot_data &lt;- data[idx]
+    fit       &lt;- lm(formula, data = boot_data)
+    boot_coefs[b] &lt;- coef(fit)[2]
+  }
+  quantile(boot_coefs, c(0.025, 0.975))
+}
+```
+
+--
+
+At `Browse[1]&gt;`:
+
+```
+Browse[1]&gt; head(idx)         # a length-n integer vector of row indices ✓
+Browse[1]&gt; dim(data[idx])    # NULL — selects columns, wrong!
+Browse[1]&gt; dim(data[idx, ])  # 32 x 11 — selects rows, correct ✓
+```
+
+---
+## Case Study: Fix and Verify
+
+**The fix:** `data[idx]` → `data[idx, ]`. Verify against the parametric CI:
+
+
+``` r
+bootstrap_lm_fixed &lt;- function(data, formula, B = 500) {
+  n &lt;- nrow(data); boot_coefs &lt;- numeric(B)
+  for (b in seq_len(B)) {
+    idx &lt;- sample(n, n, replace = TRUE)
+*   boot_data &lt;- data[idx, ]
+    boot_coefs[b] &lt;- coef(lm(formula, data = boot_data))[2]
+  }
+  quantile(boot_coefs, c(0.025, 0.975))
+}
+
+set.seed(42)
+bootstrap_lm_fixed(mtcars, mpg ~ hp, B = 1000)        # bootstrap CI
+```
+
+```
+##        2.5%       97.5% 
+## -0.10048389 -0.04751213
+```
+
+``` r
+confint(lm(mpg ~ hp, data = mtcars))["hp", ]          # parametric CI
+```
+
+```
+##       2.5 %      97.5 % 
+## -0.08889465 -0.04756190
+```
+
+.font90[
+Both CIs should be narrow and centered near the OLS estimate (`\(\hat\beta_{hp} \approx -0.068\)`).
+]
+
+---
+class: exercise_slide
+
+## <svg aria-hidden="true" role="img" viewBox="0 0 576 512" style="height:1em;width:1.12em;vertical-align:-0.125em;margin-left:auto;margin-right:auto;font-size:inherit;fill:#004c93;overflow:visible;position:relative;"><path d="M64 0C28.7 0 0 28.7 0 64V352c0 35.3 28.7 64 64 64H240l-10.7 32H160c-17.7 0-32 14.3-32 32s14.3 32 32 32H416c17.7 0 32-14.3 32-32s-14.3-32-32-32H346.7L336 416H512c35.3 0 64-28.7 64-64V64c0-35.3-28.7-64-64-64H64zM512 64V288H64V64H512z"/></svg> Exercises
+
+&lt;ol start = "1"&gt;
+&lt;li&gt;The function below computes a rolling mean but returns wrong values. Use &lt;code&gt;browser()&lt;/code&gt; inside the loop to identify the off-by-one error and fix it.&lt;/li&gt;
+&lt;/ol&gt;
+
+.code80[
+
+``` r
+rolling_mean &lt;- function(x, k = 5) {
+  n &lt;- length(x)
+  result &lt;- rep(NA_real_, n)
+  for (i in k:n) {
+    result[i] &lt;- mean(x[(i - k):(i)])  # window has k+1 observations
+  }
+  result
+}
+rolling_mean(1:20, k = 5)
+```
+]
+
+&lt;ol start = "2"&gt;
+&lt;li&gt;Set &lt;code&gt;options(error = recover)&lt;/code&gt; and run &lt;code&gt;rolling_mean(letters, k = 3)&lt;/code&gt;. Enter frame 2 at the &lt;code&gt;Selection:&lt;/code&gt; prompt and inspect the local variable &lt;code&gt;x&lt;/code&gt;. What is its type? Why does &lt;code&gt;mean()&lt;/code&gt; fail?&lt;/li&gt;
+&lt;li&gt;Rewrite &lt;code&gt;rolling_mean()&lt;/code&gt; defensively: add &lt;code&gt;stopifnot()&lt;/code&gt; validation that catches non-numeric input and a wrong window size (&lt;code&gt;k &gt;= length(x)&lt;/code&gt;) before the loop starts.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Challenge:&lt;/strong&gt; Use &lt;code&gt;tryCatch()&lt;/code&gt; to make &lt;code&gt;rolling_mean()&lt;/code&gt; return an informative &lt;code&gt;NA&lt;/code&gt;-filled vector (rather than an error) when given a mixed-type data frame column, and emit a single &lt;code&gt;warning()&lt;/code&gt; describing the problem.&lt;/li&gt;
+&lt;/ol&gt;
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script src="../assets/navigate_home.js"></script>
+<script src="../assets/remark-zoom.js"></script>
+<script src="../xaringan_files/macros.js"></script>
+<script src="https://platform.twitter.com/widgets.js"></script>
+<script>var slideshow = remark.create({
+  "highlightStyle": "github",
+  "highlightLines": true,
+  "countIncrementalSlides": false,
+  "ratio": "16:9",
+  "navigation": {
+    "scroll": false
+  }
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+// add `data-at-shortcutkeys` attribute to <body> to resolve conflicts with JAWS
+// screen reader (see PR #262)
+(function(d) {
+  let res = {};
+  d.querySelectorAll('.remark-help-content table tr').forEach(tr => {
+    const t = tr.querySelector('td:nth-child(2)').innerText;
+    tr.querySelectorAll('td:first-child .key').forEach(key => {
+      const k = key.innerText;
+      if (/^[a-z]$/.test(k)) res[k] = t;  // must be a single letter (key)
+    });
+  });
+  d.body.setAttribute('data-at-shortcutkeys', JSON.stringify(res));
+})(document);
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>
