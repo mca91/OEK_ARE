@@ -31,20 +31,9 @@ gap_avg_db <-
 
 
 # database try
+library(RSQLite)
 
-library(dbplyr)
-library(dplyr)
-library(DBI)
-con <- DBI::dbConnect(
-  drv = RMariaDB::MariaDB(), # MariaDB driver works for MySQL as well
-  username = keyring::key_list('sql_try')[1,2],
-  dbname   = keyring::key_list('sql_try')[1,2], 
-  host     = "sql11.freesqldatabase.com",
-  password = keyring::key_get('sql_try',
-                              keyring::key_list('sql_try')[1,2]),
-  port     = "3306"
-)
-
+con <- DBI::dbConnect(drv = RSQLite::SQLite(), db = r"{D:/Github/OEK_ARE/SoSq_2026/databases/local_db.sqlite}")
 DBI::dbWriteTable(con, "gapminder", gapminder::gapminder)
 DBI::dbWriteTable(con, "country_codes", gapminder::country_codes)
 

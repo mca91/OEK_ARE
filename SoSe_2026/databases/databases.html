@@ -5,7 +5,7 @@
     <meta charset="utf-8" />
     <meta name="author" content="Martin Arnold" />
     <meta name="author" content="Martin Schmelzer" />
-    <meta name="date" content="2026-04-25" />
+    <meta name="date" content="2026-06-15" />
     <script src="databases_files/header-attrs/header-attrs.js"></script>
     <link href="databases_files/remark-css/default.css" rel="stylesheet" />
     <link href="databases_files/font-awesome/css/all.min.css" rel="stylesheet" />
@@ -315,7 +315,7 @@ install.packages("dbplyr")
 
 --
 
-- You’ll also need to install a `DBI` backend package. The `DBI` package provides a common interface that allows `dplyr` to work with many different databases using the same code. 
+- You’ll also need to install the `DBI` (backend) package. The `DBI` package provides a common interface that allows `dplyr` to work with many different databases using the same code. 
 
 --
 
@@ -347,11 +347,11 @@ library(dbplyr)
 library(DBI)
 con &lt;- DBI::dbConnect(
           drv = RMariaDB::MariaDB(), # MariaDB driver works for MySQL as well
-          username = keyring::key_list('sql_try')[1,2],
-          dbname   = keyring::key_list('sql_try')[1,2], 
+          username = keyring::key_list("sql_try")[1,2],
+          dbname   = keyring::key_list("sql_try")[1,2], 
           host     = "sql11.freesqldatabase.com",
           password = keyring::key_get('sql_try',
-                                      keyring::key_list('sql_try')[1,2]),
+                                      keyring::key_list("sql_try")[1,2]),
           port     = "3306"
           )
 ```
@@ -374,7 +374,7 @@ con &lt;- DBI::dbConnect(
 
 - SQLite is a light weight Database Management System 
 - An SQLite database is contained in a single file. There is no need for a server. 
-- Everything you need is to install the `RSQLite` packages. 
+- Everything you need is to install the `RSQLite` package. 
 ]
 
 --
@@ -413,7 +413,7 @@ SQLite -&gt; SQLite is a C-language library that implements a small, fast, self-
 ## Write Data to the Database
 .font80[
 - When the connection is established we can use the object `con` to communicate with the database.
-- We add the data frame `mtcars` as a new table to the database.
+- We add the data frame `gapminder::gapminder` as a new table to the database.
 ]
 --
 
@@ -421,9 +421,7 @@ SQLite -&gt; SQLite is a C-language library that implements a small, fast, self-
 #### <svg aria-hidden="true" role="img" viewBox="0 0 576 512" style="height:1em;width:1.12em;vertical-align:-0.125em;margin-left:auto;margin-right:auto;font-size:inherit;fill:#004c93;overflow:visible;position:relative;"><path d="M64 0C28.7 0 0 28.7 0 64V352c0 35.3 28.7 64 64 64H240l-10.7 32H160c-17.7 0-32 14.3-32 32s14.3 32 32 32H416c17.7 0 32-14.3 32-32s-14.3-32-32-32H346.7L336 416H512c35.3 0 64-28.7 64-64V64c0-35.3-28.7-64-64-64H64zM512 64V288H64V64H512z"/></svg> Example 
 
 ``` r
-DBI::dbWriteTable(con,
-                  name = "tbl_mtcars", 
-                  value = mtcars)
+DBI::dbWriteTable(con, name = "tbl_gapminder", value = gapminder::gapminder)
 ```
 ]
 
@@ -439,21 +437,21 @@ DBI::dbWriteTable(con,
 
 
 ``` r
-new_car &lt;- data.frame(mpg = 1, cyl = 16, disp = 800, hp = 210, 
-                      drat = 5, wt = 6, qsec = 2, vs = 1, am = 0)
-rownames(new_car) &lt;- "Super Car 500"
-
-DBI::dbWriteTable(con, 
-                  name = "tbl_mtcars", 
-                  value = new_car, 
-                  append = TRUE)
-
+new_row &lt;- data.frame(country = "Gondor", continent = "Middleearth", year = 251, 
+                      lifeExp = 72.1, pop = 435961, gdpPercap = 12.34)
+DBI::dbWriteTable(con, name = "tbl_gapminder", value = new_row, append = TRUE)
 DBI::dbDisconnect(con)
 ```
 ]
 
+--
+.font80[
+- Always make sure, your database connection is being closed using `dbDisconnect`
+]
+
+
 ???
-with name `mtcars_db` 
+Closeing connections: pool manages connections for you 
 
 
 
@@ -472,7 +470,7 @@ DBI::dbListTables(con)
 
 --
 
-- With `dplyr::tbl()` we can create an object which is a reference to a table in the database. Most `dplyr` functions work on this object as it was as a data frame (or `tibble`).
+- With `dplyr::tbl()` we can create an object which is a reference to a table in the database. Most `dplyr` functions work on this object as it was a (regular) data frame (or `tibble`).
 
 --
 
