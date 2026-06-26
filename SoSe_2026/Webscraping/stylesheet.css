@@ -1,0 +1,13 @@
+div h1 {
+  color: green;
+  text-align: center;
+};
+
+.blue h1 {
+  color: blue;
+  text-align: center;
+}
+.red h1 {
+  color: red;
+  text-align: center;
+}

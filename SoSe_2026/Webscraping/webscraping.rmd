@@ -23,6 +23,8 @@ output:
 editor_options: 
   chunk_output_type: console
 ---
+
+
 class: title-slide title-rvest center middle
 ```{r moon_reader, include = FALSE, eval = FALSE}
 # setup for moon reader
@@ -32,7 +34,13 @@ xaringan::inf_mr()
 ```
 
 ```{r xaringanExtra_progress-bar, echo = FALSE}
-xaringanExtra::use_progress_bar(color = "#004c93", location = "bottom")
+knitr::opts_chunk$set(echo = T, warning=FALSE, message=FALSE, 
+                      fig.align = 'center', cache = F,  
+                      dpi = 250, fig.width=10, out.width='72%')
+
+source(here::here("SoSe_2026/utils.R"))
+fontawesome::fa_html_dependency()
+options(htmltools.dir.version = FALSE)
 ```
 
 ```{r xaringanExtra-clipboard_2, echo=FALSE}
@@ -52,13 +60,8 @@ knitr::opts_chunk$set(echo = TRUE, eval = F, warning=FALSE, message=FALSE)
 options(htmltools.dir.version = FALSE)
 def.chunk.hook  <- knitr::knit_hooks$get("chunk")
 
-library(icons)
 library(dplyr)
 
-# pre-define icons
-desktop <- icons::icon_style(icons::fontawesome$solid$desktop, fill = "#004c93")
-checker_green <- icons::icon_style(icons::fontawesome$solid$check, fill = "green")
-times_red <- icons::icon_style(icons::fontawesome$solid$times, fill = "red")
 ```
 
 # `r rmarkdown::metadata$title`
@@ -74,7 +77,7 @@ Web scraping is the process of extracting data from websites. It can be used if 
 
 .font90.blockquote.exercise[
 
-#### `r desktop` Example
+#### `r ICONS$desktop` Example
 
 Consider the website https://www.trustpilot.com/ which is a platform for customer reviews.
 
@@ -131,7 +134,7 @@ To extract data from a website it is necessary to understand the basics of how a
 
 .font70.blockquote.exercise[
 
-#### `r desktop` Basic HTML example:
+#### `r ICONS$desktop` Basic HTML example:
 
 ```{}
 <!DOCTYPE html>
@@ -164,7 +167,7 @@ To extract data from a website it is necessary to understand the basics of how a
 
 .code70.blockquote.exercise[
 
-#### `r desktop` Example
+#### `r ICONS$desktop` Example
 ```{}
 <body>
   <h1>This is a Heading</h1>
@@ -209,7 +212,7 @@ The first step is to load the website into R using `read_html()`.
 --
 
 .font90.blockquote.exercise[
-#### `r desktop` Example
+#### `r ICONS$desktop` Example
 
 ```{r, eval = T}
 library(rvest)
@@ -246,7 +249,7 @@ We can navigate through the `xml` object using `rvest::html_element()` and `rves
 - Get all `p` nodes
 
 .font80.blockquote.exercise[
-#### `r desktop` Example
+#### `r ICONS$desktop` Example
 
 ```{r, eval = T}
 doc %>% html_elements("p")
@@ -259,7 +262,7 @@ doc %>% html_elements("p")
 - Get only `p` nodes which are children of `div` nodes
 
 .font80.blockquote.exercise[
-#### `r desktop` Example
+#### `r ICONS$desktop` Example
 
 ```{r, eval = T}
 doc %>% 
@@ -281,7 +284,7 @@ extract the data (i.e. the text between the tags) as a normal character vector.
 
 
 .font90.blockquote.exercise[
-#### `r desktop` Example
+#### `r ICONS$desktop` Example
 ```{r, eval = T}
 doc %>% 
   html_elements("div") %>% 
@@ -366,7 +369,7 @@ Having added a class attribute to our `div` sections, we can now use this class 
 }
 
 .red h1 {
-  color: green;
+  color: red;  
   text-align: center;
 }
 ```
@@ -404,7 +407,7 @@ Let's say we want to select all paragraphs (`p`) which are a descendant of an el
 --
 
 .font90.blockquote.exercise[
-#### `r desktop` Example
+#### `r ICONS$desktop` Example
 ```{r, eval = T}
 page_url <- here::here("SoSe_2025/Webscraping/examples/simple_html_page_with_css.html")
 doc <- read_html(page_url)
@@ -419,7 +422,7 @@ doc %>%
 
 or in short
 .font90.blockquote.exercise[
-#### `r desktop` Example
+#### `r ICONS$desktop` Example
 
 ```{r}
 doc %>%  
@@ -440,7 +443,7 @@ Attributes are everything that is defined in the opening tag, e.g. in
 --
 
 .font70.blockquote.exercise[
-#### `r desktop` Example
+#### `r ICONS$desktop` Example
 
 ```{}
 <div class = "blue"> ... </div> 
@@ -458,7 +461,7 @@ With `html_attrs()` and `html_attr()`  we can extract these information.
 --
 
 .font70.blockquote.exercise[
-#### `r desktop` Example
+#### `r ICONS$desktop` Example
 ```{r}
 # Get all attributes
 doc %>%  
@@ -481,7 +484,7 @@ Since data is often stored in tables, `rvest` provides the function `html_table(
 --
 .pull-left-1[
 .font80.blockquote.exercise[
-#### `r desktop` Example
+#### `r ICONS$desktop` Example
 
 ```{}
 <table style="width:100%">
@@ -509,7 +512,7 @@ Since data is often stored in tables, `rvest` provides the function `html_table(
 .pull-right-2.font80[
 <br> <br>
 .blockquote.exercise[
-#### `r desktop` Exercise:
+#### `r ICONS$desktop` Exercise:
 - Add this table to your HTML file.
 - Try to scrape the data using `html_table()`
 ]
@@ -540,7 +543,7 @@ Instead of reading the DOM (the source code) into R, a headless instance of a Ch
 
 
 .blockquote.exercise[
-#### `r desktop` Example
+#### `r ICONS$desktop` Example
 ```{r, eval = FALSE}
 # Static
 doc <- read_html("https://www.espn.com/nba/stats/player")
@@ -553,7 +556,7 @@ sess <- read_html_live("https://www.espn.com/nba/stats/player")
 ---
 ## Dynamically injected content
 .blockquote.exercise[
-#### `r desktop` Example
+#### `r ICONS$desktop` Example
 ```{r, eval = FALSE}
 players_xpath <- "/html/body/div[1]/div/div/div/div/main/div[2]/div[2]/div/div/section/div/div[3]/div[1]/div/table"
 # Static

@@ -68,13 +68,12 @@ knit_hooks$set(
 ### `r rmarkdown::metadata$author`
 
 ---
-## Memory Limitations of R
+## Why Databases for Econometricians?
 
-- The amount of data you can work with in R is mainly constraint by your computers memory. 
-- In times where data sets with several 100 GB or even TB become more and more common,
-  loading all data into memory is usually not feasable. 
-- Often only a subset or an aggregation of the data is required for the analysis which requires much less memory space.
-- How to subset or aggregate data? &rarr; Use a database!
+- **Memory Limitations**: RAM capacity is often smaller than modern datasets.
+- **Persistence**: Data is stored in a structured way on disk rather than volatile memory.
+- **Efficiency**: Only required aggregations or subsets are loaded into R.
+- **Workflow**: R acts as an interface, while the database performs the heavy lifting (Lazy Evaluation).
 
 ---
 ## (Relational) Databases
@@ -156,77 +155,82 @@ knitr::kable(customer, format = "html", caption = "Customer")
 
 
 ---
-## R and Databases
+## DBI Interface and Backends
 
-- `dplyr` also works with remote on-disk data stored in relational databases.
-- For this to work you need 
+
+- `DBI` is the standard for communication between R and databases. 
+- Provides a consistent syntax across different systems (SQL dialects).
+
 
 --
 
-.blockquote.exercise[
-```{r, echo = T, eval = FALSE}
-install.packages("dbplyr")
+**Important Backends**:
+
+- RSQLite: File-based, ideal for local projects
+- duckdb: Columnar, extremely fast for analytical queries
+- RMariaDB / RPostgres: For server environments
+
+```{r, echo = T, eval = F}
+install.packages(c("DBI", "dbplyr", "RSQLite"))
 ```
-]
 
---
-
-- You’ll also need to install the `DBI` (backend) package. The `DBI` package provides a common interface that allows `dplyr` to work with many different databases using the same code. 
-
---
-
-- Some commonly used backends are:
-    - `RMariaDB` connects to MySQL and MariaDB.
-    - `RPostgreSQL` connects to Postgres and Redshift.
-    - `RSQLite` embeds a SQLite database.
-    - `duckdb` embeds a fast, in-process analytical db optimized for large data and complex queries.
-    - `bigrquery` connects to Google’s BigQuery.
 
 ---
 ## Connect to a Database
 
-.font80[
-- To connect to a database authentication information such as 
+
+- Usually, to connect to a database authentication information such as 
   username and password are required (the database admin should provide those). 
 - You also need to specify a driver that makes communication with the database possible.
-]
+
 
 --
 
 .font80[.blockquote.exercise[
 
-#### `r ICONS$desktop` Setup the connection 
+#### `r ICONS$desktop` Setup a connection 
 
 ```{r, eval = FALSE}
 library(dbplyr)
 library(DBI)
 con <- DBI::dbConnect(
           drv = RMariaDB::MariaDB(), # MariaDB driver works for MySQL as well
-          username = keyring::key_list("sql_try")[1,2],
-          dbname   = keyring::key_list("sql_try")[1,2], 
+          username = "admin",
+          dbname   = "my_db", 
           host     = "sql11.freesqldatabase.com",
-          password = keyring::key_get('sql_try',
-                                      keyring::key_list("sql_try")[1,2]),
+          password = "password",
           port     = "3306"
           )
 ```
 ]]
 
-```{r, eval = FALSE, echo = FALSE}
-library(dplyr)
-con <- DBI::dbConnect(
-               drv = RMariaDB::MariaDB(), # MariaDB driver works for MySQL as well
-               username = 'sql11460561',
-               dbname   = keyring::key_list('sql_try')[1,2], 
-               host     = 'sql11.freesqldatabase.com',
-               password = keyring::key_get('sql_try',
-                                           keyring::key_list('sql_try')[1,2]),
-               port     = '3306'
-               )
+
+
+
+
+---
+## Let `pool` manage your db connections
+
+- `DBI::dbConnect()` can drop connections during unstable network conditions.
+- `pool` manages connections automatically (Connection Pooling).
+
+
+.blockquote.exercise[
+```{r, eval = F}
+install.packages("pool")
+library(pool)
+# Create a pool instead of a static connection
+con <- pool::dbPool(
+  drv = RSQLite::SQLite(),
+  dbdir = "local_db.sqlite"
+)
+
+# ... Operations ...
+
+# Close pool safely
+pool::poolClose(con)
 ```
-
-
-
+]
 
 
 
@@ -247,7 +251,7 @@ con <- DBI::dbConnect(
 
 .font90[
 #### Set up a SQLite Database
-- A new SQLite database is automatically created if you call `DBI::dbConnect()`
+- A new SQLite database is automatically created if you call `DBI::dbConnect()` (or `dbPool()`)
 with argument `dbname = "path_to_database"` where `"path_to_database"` is a path to 
 a non-existing file. 
 - In case `"path_to_database"` is an existing SQLite database it 
@@ -261,10 +265,11 @@ connects to that database.
 
 ```{r, echo = TRUE, eval = FALSE}
 library(dplyr)
-con <- DBI::dbConnect(
+pool <- pool::dbPool(
   drv = RSQLite::SQLite(),
   dbname = "local_db.sqlite"
 )
+pool::poolClose(pool)
 ```
 ]
 
@@ -277,7 +282,7 @@ SQLite -> SQLite is a C-language library that implements a small, fast, self-con
 ---
 ## Write Data to the Database
 .font80[
-- When the connection is established we can use the object `con` to communicate with the database.
+- When the connection is established we can use the object `pool` to communicate with the database.
 - We add the data frame `gapminder::gapminder` as a new table to the database.
 ]
 --
@@ -285,13 +290,15 @@ SQLite -> SQLite is a C-language library that implements a small, fast, self-con
 .font90.blockquote.exercise[
 #### `r ICONS$desktop` Example 
 ```{r, eval = FALSE}
-DBI::dbWriteTable(con, name = "tbl_gapminder", value = gapminder::gapminder)
+pool::dbWriteTable(pool, name = "tbl_cars", value = mtcars)
+# OR
+dplyr::copy_to(pool, name = "tbl_mtcars", df = mtcars)
 ```
 ]
 
 --
 .font80[
-- To add data to an existing table we use the additional argument `append = TRUE`.
+- To add data to an existing table we use the additional argument `append = TRUE` (or `dbAppendTable`).
 ]
 
 --
@@ -300,33 +307,29 @@ DBI::dbWriteTable(con, name = "tbl_gapminder", value = gapminder::gapminder)
 #### `r ICONS$desktop` Example 
 
 ```{r, eval = FALSE}
-new_row <- data.frame(country = "Gondor", continent = "Middleearth", year = 251, 
-                      lifeExp = 72.1, pop = 435961, gdpPercap = 12.34)
-DBI::dbWriteTable(con, name = "tbl_gapminder", value = new_row, append = TRUE)
-DBI::dbDisconnect(con)
+nrw_row <- data.frame(mpg = 50, cyl = 7, disp = 200, hp = 323, drat = 4.2, wt = 3.1, 
+                      qsec = 19.2, vs = 0, am = 1, gear = 5, carb = 3)
+dbWriteTable(pool, name = "tbl_cars", value = nrw_row, append = T)
+pool::poolClose(con)
 ```
 ]
 
 --
 .font80[
-- Always make sure, your database connection is being closed using `dbDisconnect`
+- Always make sure, your pool/connection is being closed using `closePool` (or, if you used `dbConnect` directly, `dbDisconnect`)
 ]
 
-
 ???
-Closeing connections: pool manages connections for you 
-
-
+Closing connections: pool manages connections for you
 
 ---
 ## Access Data
 
-- The function `DBI::dbListTables()` tells us which tables are in the database.
+- The function `dbListTables()` tells us which tables are in the database.
 
 .blockquote.exercise[
-
 ```{r, eval = FALSE}
-DBI::dbListTables(con)
+dbListTables(pool)
 ```
 ]
 
@@ -337,11 +340,10 @@ DBI::dbListTables(con)
 --
 
 .blockquote.exercise[
-
 #### `r ICONS$desktop` Example 
 ```{r, eval = FALSE}
-gap_tbl <- tbl(con, "tbl_gapminder")
-class(gap_tbl)
+tbl_cars <- tbl(pool, "tbl_cars")
+class(tbl_cars)
 ```
 ]
 ---
@@ -351,10 +353,9 @@ class(gap_tbl)
 
 #### `r ICONS$desktop` Example 
 ```{r, message=FALSE, warning=FALSE, eval = FALSE}
-gap_avg_tbl <- gap_tbl %>%
-  group_by(continent) %>% 
+avg_mpg <- tbl_cars %>%
+  group_by(cyl) %>% 
   select_if(is.numeric) %>% 
-  select(-year) %>%
   summarise_all(mean)
 ```
 
@@ -363,7 +364,7 @@ gap_avg_tbl <- gap_tbl %>%
 --
 
 .font90[
-- Even if it seems as if `gap_avg_tbl` is a data frame it still is only a set of instructions to be performed by the database. 
+- Even if it seems as if `avg_mpg` is a data frame it still is only a set of instructions to be performed by the database. 
 - `show_query()` tells us which instructions are sent to the database. 
 ]
 
@@ -373,17 +374,14 @@ gap_avg_tbl <- gap_tbl %>%
 
 #### `r ICONS$desktop` Example 
 ```{r, warning=FALSE, eval = FALSE}
-show_query(gap_avg_tbl)
+show_query(avg_mpg)
 ```
 ]
 
 ???
 
-
 - select_if superseded
 - but dbplyr **do not** support predicate functions, i.e. you can not use where(is.numeric) to select all numeric variables.
-
-
 
 ---
 ## Use Standard `dplyr` Functions on the Database
@@ -398,15 +396,32 @@ When working with databases, `dplyr` tries to be as lazy as possible:
 
 --
 
-
 .font90.blockquote.exercise[
 #### `r ICONS$desktop` Example 
 
 ```{r, eval = FALSE}
-gap_avg <- gap_avg_tbl %>% collect(n = Inf)
-print(gap_avg)
+avg_mpg <- avg_mpg %>% collect(n = Inf)
+print(avg_mpg)
 ```
 ]
+
+---
+## Raw SQL
+
+- If dbplyr reaches its limits, you can execute SQL directly.
+
+.blockquote.exercise[
+```{r, eval = F}
+# Passing SQL query as a string
+query <- "SELECT cyl, AVG(mpg) FROM tbl_cars GROUP BY cyl"
+result <- pool::dbGetQuery(pool, query)
+
+# Returns a standard R data.frame
+head(result)
+```
+]
+
+
 ---
 ## Disconnect
 
@@ -418,6 +433,10 @@ print(gap_avg)
 ```{r, eval = FALSE}
 DBI::dbDisconnect(con)
 rm(con)
+
+# OR
+pool::poolClose(pool)
+rm(pool) # tidy up
 ```
 ]
 
@@ -428,18 +447,19 @@ rm(con)
 class: exercise_slide
 ## Exercises
 
+1. Set up a new SQLite database and write the `gapminder::gapminder` dataset to it.
 
-1. Set up a new SQLite database containing the Boston Crime data (in the same folder where your RMarkdown report is located).
+2. Add a new row of (fictive) data.
 
-2. Rewrite your RMarkdown report on crime so that
-  - It establishes a connection to the crime database.
-  - All the other lines of code work with the new data source.
-  - Make sure the database connection is closed at the end of your document.
+3. Add the `gapminder::country_codes` dataset to it.
 
+4. Use `dplyr::tbl` and select all unique countries in the gapminder table.
 
+5. Create a query to select all records where the year is 2007 and lifeExp is greater than 80. Retrieve the results.
 
+6. Calculate the average gdpPercap per continent for the year 2002.
 
-
+7. Join `gapminder` and `country_codes` by `country`. Filter for 2007 and select `country`, `year`, and `iso_alpha`.
 
 
 
