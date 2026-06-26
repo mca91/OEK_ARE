@@ -5,7 +5,7 @@
     <meta charset="utf-8" />
     <meta name="author" content="Martin Arnold" />
     <meta name="author" content="Martin Schmelzer" />
-    <meta name="date" content="2026-06-22" />
+    <meta name="date" content="2026-06-26" />
     <script src="databases_files/header-attrs/header-attrs.js"></script>
     <link href="databases_files/remark-css/default.css" rel="stylesheet" />
     <link href="databases_files/font-awesome/css/all.min.css" rel="stylesheet" />
@@ -430,7 +430,7 @@ SQLite -&gt; SQLite is a C-language library that implements a small, fast, self-
 ## Write Data to the Database
 .font80[
 - When the connection is established we can use the object `pool` to communicate with the database.
-- We add the data frame `gapminder::gapminder` as a new table to the database.
+- We add the data frame `mtcars` as a new table to the database.
 ]
 --
 
@@ -438,7 +438,7 @@ SQLite -&gt; SQLite is a C-language library that implements a small, fast, self-
 #### <svg aria-hidden="true" role="img" viewBox="0 0 576 512" style="height:1em;width:1.12em;vertical-align:-0.125em;margin-left:auto;margin-right:auto;font-size:inherit;fill:#004c93;overflow:visible;position:relative;"><path d="M64 0C28.7 0 0 28.7 0 64V352c0 35.3 28.7 64 64 64H240l-10.7 32H160c-17.7 0-32 14.3-32 32s14.3 32 32 32H416c17.7 0 32-14.3 32-32s-14.3-32-32-32H346.7L336 416H512c35.3 0 64-28.7 64-64V64c0-35.3-28.7-64-64-64H64zM512 64V288H64V64H512z"/></svg> Example 
 
 ``` r
-pool::dbWriteTable(pool, name = "tbl_cars", value = mtcars)
+pool::dbWriteTable(pool, name = "tbl_mtcars", value = mtcars)
 # OR
 dplyr::copy_to(pool, name = "tbl_mtcars", df = mtcars)
 ```
@@ -458,7 +458,7 @@ dplyr::copy_to(pool, name = "tbl_mtcars", df = mtcars)
 ``` r
 nrw_row &lt;- data.frame(mpg = 50, cyl = 7, disp = 200, hp = 323, drat = 4.2, wt = 3.1, 
                       qsec = 19.2, vs = 0, am = 1, gear = 5, carb = 3)
-dbWriteTable(pool, name = "tbl_cars", value = nrw_row, append = T)
+dbWriteTable(pool, name = "tbl_mtcars", value = nrw_row, append = T)
 pool::poolClose(con)
 ```
 ]
@@ -493,8 +493,8 @@ dbListTables(pool)
 #### <svg aria-hidden="true" role="img" viewBox="0 0 576 512" style="height:1em;width:1.12em;vertical-align:-0.125em;margin-left:auto;margin-right:auto;font-size:inherit;fill:#004c93;overflow:visible;position:relative;"><path d="M64 0C28.7 0 0 28.7 0 64V352c0 35.3 28.7 64 64 64H240l-10.7 32H160c-17.7 0-32 14.3-32 32s14.3 32 32 32H416c17.7 0 32-14.3 32-32s-14.3-32-32-32H346.7L336 416H512c35.3 0 64-28.7 64-64V64c0-35.3-28.7-64-64-64H64zM512 64V288H64V64H512z"/></svg> Example 
 
 ``` r
-tbl_cars &lt;- tbl(pool, "tbl_cars")
-class(tbl_cars)
+tbl_mtcars &lt;- tbl(pool, "tbl_mtcars")
+class(tbl_mtcars)
 ```
 ]
 ---
@@ -505,7 +505,7 @@ class(tbl_cars)
 #### <svg aria-hidden="true" role="img" viewBox="0 0 576 512" style="height:1em;width:1.12em;vertical-align:-0.125em;margin-left:auto;margin-right:auto;font-size:inherit;fill:#004c93;overflow:visible;position:relative;"><path d="M64 0C28.7 0 0 28.7 0 64V352c0 35.3 28.7 64 64 64H240l-10.7 32H160c-17.7 0-32 14.3-32 32s14.3 32 32 32H416c17.7 0 32-14.3 32-32s-14.3-32-32-32H346.7L336 416H512c35.3 0 64-28.7 64-64V64c0-35.3-28.7-64-64-64H64zM512 64V288H64V64H512z"/></svg> Example 
 
 ``` r
-avg_mpg &lt;- tbl_cars %&gt;%
+avg_mpg &lt;- tbl_mtcars %&gt;%
   group_by(cyl) %&gt;% 
   select_if(is.numeric) %&gt;% 
   summarise_all(mean)
@@ -568,7 +568,7 @@ print(avg_mpg)
 
 ``` r
 # Passing SQL query as a string
-query &lt;- "SELECT cyl, AVG(mpg) FROM tbl_cars GROUP BY cyl"
+query &lt;- "SELECT cyl, AVG(mpg) FROM tbl_mtcars GROUP BY cyl"
 result &lt;- pool::dbGetQuery(pool, query)
 
 # Returns a standard R data.frame

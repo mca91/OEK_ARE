@@ -1,69 +1,41 @@
-x <- 3
-square_1 <- function() x^2
-square_1()
 
-
-x <- 3
-square_2 <- function(){ 
-  x   <- 2
-  foo <- function() x^2
-  foo()
-}
-square_2()
-
-
-library(dplyr)
+library(tidyverse)
 library(dbplyr)
-library(magrittr)
-
-gap_db <- gapminder::gapminder
-
-
-gap_avg_db <- 
-  
-  
-  gap_db %>%
-  group_by(continent) %>%
-  select(where(is.numeric), -year) %>%
-  summarise(across(everything(),mean))
-
-
-
-
-# database try
+library(pool)
 library(RSQLite)
 
-con <- DBI::dbConnect(drv = RSQLite::SQLite(), db = r"{D:/Github/OEK_ARE/SoSq_2026/databases/local_db.sqlite}")
-DBI::dbWriteTable(con, "gapminder", gapminder::gapminder)
-DBI::dbWriteTable(con, "country_codes", gapminder::country_codes)
 
-gap_db <- tbl(con, "gapminder")  # funktioniert nicht 
-
-gap_db_2 <- tbl(con, "gapminder") %>% 
-  collect(n = Inf)
+db_path <- file.path(here::here("SoSe_2026/databases"), "local_db.sqlite")
+pool <- pool::dbPool(drv = RSQLite::SQLite(), db = db_path)
+DBI::dbWriteTable(pool, "tbl_gapminder", gapminder::gapminder)
 
 
-gap_avg_db <- gap_db %>%
-  group_by(continent) %>%
-  select(where(is.numeric), -year) %>%
-  summarise(across(everything(), mean))
+new_row <- data.frame(country = "Gondor", continent = "Middleearth", 
+                      year = 1123, lifeExp = 42, pop = 422156, gdpPercap = 121)
+DBI::dbWriteTable(pool, "tbl_gapminder", value = new_row, append = T)
+
+
+DBI::dbWriteTable(pool, "tbl_country_codes", gapminder::country_codes)
+
+
+
+query <- tbl(pool, "tbl_gapminder") %>%
+  filter(year == 2007, lifeExp > 80) 
+show_query(query)
+
+collect(query)
 
 
 gap_avg_db_old <- gap_db %>%
-  group_by(continent) %>% 
-  select_if(is.numeric) %>% 
-  select(-year) %>%
-  summarise_all(mean)
+  group_by(continent, year) %>% 
+  summarise(meanGdpPerCap = mean(gdpPercap)) %>%
+  filter(year == 2002)
 
 
-
-gap_avg_db <- gap_db %>%
-  group_by(continent) %>%
-  select(lifeExp, pop, gdpPercap) %>%
-  summarise(across(everything(), mean))
-
-show_query(gap_avg_db)
-
-show_query(gap_avg_db_old)
+tbl(pool, "tbl_gapminder") %>%
+  left_join(tbl(pool, "tbl_country_codes"), by = "country") %>%
+  filter(year == 2007) %>%
+  select(country, year, iso_alpha)
 
 
+pool::poolClose(pool)

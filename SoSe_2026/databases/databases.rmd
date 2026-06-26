@@ -283,14 +283,14 @@ SQLite -> SQLite is a C-language library that implements a small, fast, self-con
 ## Write Data to the Database
 .font80[
 - When the connection is established we can use the object `pool` to communicate with the database.
-- We add the data frame `gapminder::gapminder` as a new table to the database.
+- We add the data frame `mtcars` as a new table to the database.
 ]
 --
 
 .font90.blockquote.exercise[
 #### `r ICONS$desktop` Example 
 ```{r, eval = FALSE}
-pool::dbWriteTable(pool, name = "tbl_cars", value = mtcars)
+pool::dbWriteTable(pool, name = "tbl_mtcars", value = mtcars)
 # OR
 dplyr::copy_to(pool, name = "tbl_mtcars", df = mtcars)
 ```
@@ -309,7 +309,7 @@ dplyr::copy_to(pool, name = "tbl_mtcars", df = mtcars)
 ```{r, eval = FALSE}
 nrw_row <- data.frame(mpg = 50, cyl = 7, disp = 200, hp = 323, drat = 4.2, wt = 3.1, 
                       qsec = 19.2, vs = 0, am = 1, gear = 5, carb = 3)
-dbWriteTable(pool, name = "tbl_cars", value = nrw_row, append = T)
+dbWriteTable(pool, name = "tbl_mtcars", value = nrw_row, append = T)
 pool::poolClose(con)
 ```
 ]
@@ -342,8 +342,8 @@ dbListTables(pool)
 .blockquote.exercise[
 #### `r ICONS$desktop` Example 
 ```{r, eval = FALSE}
-tbl_cars <- tbl(pool, "tbl_cars")
-class(tbl_cars)
+tbl_mtcars <- tbl(pool, "tbl_mtcars")
+class(tbl_mtcars)
 ```
 ]
 ---
@@ -353,7 +353,7 @@ class(tbl_cars)
 
 #### `r ICONS$desktop` Example 
 ```{r, message=FALSE, warning=FALSE, eval = FALSE}
-avg_mpg <- tbl_cars %>%
+avg_mpg <- tbl_mtcars %>%
   group_by(cyl) %>% 
   select_if(is.numeric) %>% 
   summarise_all(mean)
@@ -413,7 +413,7 @@ print(avg_mpg)
 .blockquote.exercise[
 ```{r, eval = F}
 # Passing SQL query as a string
-query <- "SELECT cyl, AVG(mpg) FROM tbl_cars GROUP BY cyl"
+query <- "SELECT cyl, AVG(mpg) FROM tbl_mtcars GROUP BY cyl"
 result <- pool::dbGetQuery(pool, query)
 
 # Returns a standard R data.frame
