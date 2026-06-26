@@ -5,7 +5,7 @@
     <meta charset="utf-8" />
     <meta name="author" content="Martin Arnold" />
     <meta name="author" content="Martin Schmelzer" />
-    <meta name="date" content="2026-06-24" />
+    <meta name="date" content="2026-06-26" />
     <script src="webscraping_files/header-attrs/header-attrs.js"></script>
     <link href="webscraping_files/remark-css/default.css" rel="stylesheet" />
     <link href="webscraping_files/font-awesome/css/all.min.css" rel="stylesheet" />
@@ -205,8 +205,8 @@ page_url &lt;- here::here("SoSe_2025/Webscraping/examples/simple_html_page.html"
 ```
 ## {html_document}
 ## &lt;html&gt;
-## [1] &lt;head&gt;\n&lt;meta http-equiv="Content-Type" content="text/html; charset=UTF-8 ...
-## [2] &lt;body&gt;\r\n  &lt;div class="red"&gt;\r\n    &lt;h1&gt;This is a Heading&lt;/h1&gt;\r\n    &lt;p ...
+## [1] &lt;head&gt;\n&lt;meta charset="UTF-8"&gt;\n&lt;link rel="stylesheet" href="stylesheet.c ...
+## [2] &lt;body&gt;\n  &lt;div class="red"&gt;\n    &lt;h1&gt;This is a Heading&lt;/h1&gt;\n    &lt;p&gt;This  ...
 ```
 ]
 
@@ -375,7 +375,8 @@ Having added a class attribute to our `div` sections, we can now use this class 
 }
 
 .red h1 {
-  color: red;  text-align: center;
+  color: red;  
+  text-align: center;
 }
 ```
 ]
